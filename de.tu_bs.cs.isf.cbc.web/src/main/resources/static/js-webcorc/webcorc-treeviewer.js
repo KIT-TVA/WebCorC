@@ -64,12 +64,12 @@ function createFolder(name = "defaultFolder", parentFolderId = "treeView", path)
 }
 
 
-function addFileToTreeviewer(fileName, type, parentFolderId = "treeView", path) {
+function addFileToTreeviewer(fileName, type, parentFolderId = "treeView") {
     let fileLi = document.createElement("li");
     fileLi.classList.add("corc-ellipsis");
     fileLi.classList.add("corc-file-clickable");
     fileName.replace(/ /g, "_");
-    fileLi.id = path + fileName + "." + type;
+    fileLi.id = parentFolderId + "/" + fileName + "." + type;
 
     fileLi.addEventListener("click", ()=>{fileClicked(fileLi, type, fileName)});
 

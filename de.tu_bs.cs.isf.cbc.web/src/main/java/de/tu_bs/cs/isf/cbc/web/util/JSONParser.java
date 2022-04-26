@@ -1,13 +1,22 @@
 package de.tu_bs.cs.isf.cbc.web.util;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 
 import javax.servlet.http.HttpSession;
 
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.emfjson.jackson.databind.EMFContext;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.tu_bs.cs.isf.cbc.cbcmodel.AbstractStatement;
 import de.tu_bs.cs.isf.cbc.cbcmodel.CbCFormula;
@@ -20,46 +29,48 @@ import de.tu_bs.cs.isf.cbc.cbcmodel.SmallRepetitionStatement;
 import de.tu_bs.cs.isf.cbc.cbcmodel.Variant;
 
 public class JSONParser {
-	
-	public static String getContentString(JSONObject jObj) {		
+
+	public static String getContentString(JSONObject jObj) {
 		String content = jObj.getString("content");
 		return content;
 	}
-	
+
 	public static String getPathString(JSONObject jObj, HttpSession session) {
 		String pathString = jObj.getString("path");
 		String[] pathParts = pathString.split("/");
 		// do not care about the name
-		pathParts = Arrays.copyOf(pathParts, pathParts.length -1);
+		pathParts = Arrays.copyOf(pathParts, pathParts.length - 1);
 		pathString = String.join(File.separator, pathParts);
 		pathString = pathString.replace("treeView", session.getId() + File.separator + "WebDirectory");
 		System.out.println("path: " + pathString);
 //		Path path = Path.of(SZ_LOCATION + File.separator + pathString);
 		return pathString;
 	}
-	
+
 	public static String getNameString(JSONObject jObj) {
 		String pathString = jObj.getString("path");
 		String[] pathParts = pathString.split("/");
-		String fileName = pathParts[pathParts.length -1];
+		String fileName = pathParts[pathParts.length - 1];
 		System.out.println("name: " + fileName);
 //		Path path = Path.of(SZ_LOCATION + File.separator + pathString);
 		return fileName;
 	}
-	
+
 	/**
-	 * Parses the JSON tree recursively and processes each CbC refinement that it finds along the tree to rebuild
-	 * the encapsulated CbC-Model of the JSON.
-	 * @param jObjInput JSON representation of the model according to CbC-Ecore-Model.
+	 * Parses the JSON tree recursively and processes each CbC refinement that it
+	 * finds along the tree to rebuild the encapsulated CbC-Model of the JSON.
+	 * 
+	 * @param jObjInput JSON representation of the model according to
+	 *                  CbC-Ecore-Model.
 	 */
 	public static void parseFormulaTree(JSONObject jObjInput, Resource rResource, AbstractStatement parent) {
-		//Iterate through JSON-object, attention: case-sensitive for now
+		// Iterate through JSON-object, attention: case-sensitive for now
 		switch (jObjInput.getString("type")) {
 		case "CBCFormula":
-			//Assumption: first/root element in CorCInput/JSON-tree is a CbC-formula
+			// Assumption: first/root element in CorCInput/JSON-tree is a CbC-formula
 			CbCFormula formula = createFormula(jObjInput);
 			rResource.getContents().add(formula);
-			//Starting recursive parsing steps into child nodes
+			// Starting recursive parsing steps into child nodes
 			parseFormulaTree(jObjInput.getJSONObject("statement"), rResource, formula.getStatement());
 			break;
 		case "AbstractStatement":
@@ -71,9 +82,9 @@ public class JSONParser {
 			SelectionStatement selStatement = createSimpleSelection(jObjInput);
 			parent.setRefinement(selStatement);
 			UpdateConditionsOfChildren.updateRefinedStatement(parent, selStatement);
-			//if a child was found, continue, else the recursive path ends here
+			// if a child was found, continue, else the recursive path ends here
 			JSONArray jArrCommands = jObjInput.getJSONArray("statements");
-			for (int i = 0; i < jArrCommands.length(); i++) { //attention: zero-based vs. one-based JSON
+			for (int i = 0; i < jArrCommands.length(); i++) { // attention: zero-based vs. one-based JSON
 				parseFormulaTree(jArrCommands.getJSONObject(i), rResource, selStatement.getCommands().get(i));
 			}
 			break;
@@ -91,9 +102,11 @@ public class JSONParser {
 			parseFormulaTree(jObjInput.getJSONObject("loopStatement"), rResource, repStatement.getLoopStatement());
 			break;
 		case "strongWeakStatement":
-			if(jObjInput.get("statements") instanceof JSONObject) {
-				//Condition adjustments were made with the SW-statement, but it is not a leaf, so just continuing parsing
-				parseFormulaTree(jObjInput.getJSONObject("statements"), rResource, parent); //strwkStatement itself is the parent
+			if (jObjInput.get("statements") instanceof JSONObject) {
+				// Condition adjustments were made with the SW-statement, but it is not a leaf,
+				// so just continuing parsing
+				parseFormulaTree(jObjInput.getJSONObject("statements"), rResource, parent); // strwkStatement itself is
+																							// the parent
 			} else {
 				AbstractStatement strwkStatement = createStatement(jObjInput);
 				parent.setRefinement(strwkStatement);
@@ -102,20 +115,23 @@ public class JSONParser {
 			break;
 		}
 	}
-	
+
 	/**
-	 * Parses the JSON input once again to rill out the JSON response with boolean flags, which are extracted from the formula.
-	 * JSON tree and refinement tree should have the same structure for this recursive method to work.
+	 * Parses the JSON input once again to rill out the JSON response with boolean
+	 * flags, which are extracted from the formula. JSON tree and refinement tree
+	 * should have the same structure for this recursive method to work.
+	 * 
 	 * @param jObjInput JSON input
-	 * @param formula Evaluated formula
+	 * @param formula   Evaluated formula
 	 */
 	public static void createJSONResponse(JSONObject jObjInput, AbstractStatement formula) {
-		//Iterate through JSON-object and read/adjust the proven-booleans, attention: case-sensitive for now
+		// Iterate through JSON-object and read/adjust the proven-booleans, attention:
+		// case-sensitive for now
 		switch (jObjInput.getString("type")) {
 		case "CBCFormula":
-			//Assumption: first/root element in CorCInput/JSON-tree is a CbC-formula
+			// Assumption: first/root element in CorCInput/JSON-tree is a CbC-formula
 			jObjInput.put("proven", formula.isProven());
-			//Starting recursive parsing steps into child nodes
+			// Starting recursive parsing steps into child nodes
 			createJSONResponse(jObjInput.getJSONObject("statement"), formula.getRefinement());
 			break;
 		case "AbstractStatement":
@@ -123,20 +139,23 @@ public class JSONParser {
 			break;
 		case "selectionStatement":
 			jObjInput.put("proven", formula.isProven());
-			//if a child was found, continue, else the recursive path ends here
+			// if a child was found, continue, else the recursive path ends here
 			JSONArray jArrCommands = jObjInput.getJSONArray("statements");
 			if (formula instanceof SelectionStatement) {
 				jObjInput.put("preProven", ((SelectionStatement) formula).isPreProve());
-				for (int i = 0; i < jArrCommands.length(); i++) { //attention: zero-based vs. one-based JSON
-					createJSONResponse(jArrCommands.getJSONObject(i), ((SelectionStatement) formula).getCommands().get(i).getRefinement());
+				for (int i = 0; i < jArrCommands.length(); i++) { // attention: zero-based vs. one-based JSON
+					createJSONResponse(jArrCommands.getJSONObject(i),
+							((SelectionStatement) formula).getCommands().get(i).getRefinement());
 				}
 			}
 			break;
 		case "compositionStatement":
 			jObjInput.put("proven", formula.isProven());
 			if (formula instanceof CompositionStatement) {
-				createJSONResponse(jObjInput.getJSONObject("statement1"), ((CompositionStatement) formula).getFirstStatement().getRefinement());
-				createJSONResponse(jObjInput.getJSONObject("statement2"), ((CompositionStatement) formula).getSecondStatement().getRefinement());
+				createJSONResponse(jObjInput.getJSONObject("statement1"),
+						((CompositionStatement) formula).getFirstStatement().getRefinement());
+				createJSONResponse(jObjInput.getJSONObject("statement2"),
+						((CompositionStatement) formula).getSecondStatement().getRefinement());
 			}
 			break;
 		case "repetitionStatement":
@@ -145,12 +164,14 @@ public class JSONParser {
 				jObjInput.put("preProven", ((SmallRepetitionStatement) formula).isPreProven());
 				jObjInput.put("postProven", ((SmallRepetitionStatement) formula).isPostProven());
 				jObjInput.put("variantProven", ((SmallRepetitionStatement) formula).isVariantProven());
-				createJSONResponse(jObjInput.getJSONObject("loopStatement"), ((SmallRepetitionStatement) formula).getLoopStatement().getRefinement());
+				createJSONResponse(jObjInput.getJSONObject("loopStatement"),
+						((SmallRepetitionStatement) formula).getLoopStatement().getRefinement());
 			}
 			break;
 		case "strongWeakStatement":
-			if(jObjInput.get("statements") instanceof JSONObject) {
-				//Condition adjustments were made with the SW-statement, but it is not a leaf, so just continuing parsing and take child proof boolean
+			if (jObjInput.get("statements") instanceof JSONObject) {
+				// Condition adjustments were made with the SW-statement, but it is not a leaf,
+				// so just continuing parsing and take child proof boolean
 				jObjInput.put("proven", formula.isProven());
 				createJSONResponse(jObjInput.getJSONObject("statements"), formula);
 			} else {
@@ -159,7 +180,7 @@ public class JSONParser {
 			break;
 		}
 	}
-	
+
 	private static CbCFormula createFormula(JSONObject jObjInput) {
 		CbCFormula formula = CbcmodelFactory.eINSTANCE.createCbCFormula();
 		formula.setName(jObjInput.getString("name"));
@@ -184,14 +205,49 @@ public class JSONParser {
 		Condition postCondition2 = CbcmodelFactory.eINSTANCE.createCondition();
 		postCondition2.setName(jObjInput.getJSONObject("statement").getJSONObject("postCondition").getString("name"));
 		statement.setPostCondition(postCondition2);
+
+		ObjectMapper mapper = new ObjectMapper();
+
+		try {
+			String jsonString = mapper.writeValueAsString(formula);
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		// testing area for emfjson-jackson 
+		
+//		JsonNode data = mapper.valueToTree(formula);
+//		
+//		ResourceSet rs = new ResourceSetImpl();
+//		rs.
+//
+//		Resource resource = mapper.reader().withAttribute(EMFContext.Attributes.RESOURCE_SET, resourceSet)
+//				.withAttribute(EMFContext.Attributes.RESOURCE_URI, "src/main/resources/data.json")
+//				.forType(Resource.class).readValue(data);
+		
+//		JsonNode data =  mapper.valueToTree(formula);
+//				Resource resource = new ResourceImpl();
+//				resource.
+//
+//				try {
+//					CbCFormula formula2 = mapper.reader()
+//						.withAttribute(EMFContext.Attributes.RESOURCE, resource)
+//						.forType(CbCFormula.class)
+//						.readValue(data);
+//				} catch (IOException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+
 		return formula;
 	}
-	
+
 	private static CompositionStatement createComposition(JSONObject jObjInput) {
 		CompositionStatement composition = CbcmodelFactory.eINSTANCE.createCompositionStatement();
 		composition.setName(jObjInput.getString("name"));
 		composition.setProven(Boolean.parseBoolean(jObjInput.getString("proven")));
-		
+
 		AbstractStatement statement1 = CbcmodelFactory.eINSTANCE.createAbstractStatement();
 		statement1.setName(jObjInput.getJSONObject("statement1").getString("name"));
 		composition.setFirstStatement(statement1);
@@ -220,7 +276,7 @@ public class JSONParser {
 		statement2.setComment(jObjInput.getJSONObject("statement2").getString("comment"));
 		return composition;
 	}
-	
+
 	private static SmallRepetitionStatement createRepetition(JSONObject jObjInput) {
 		SmallRepetitionStatement repetitionStatement = CbcmodelFactory.eINSTANCE.createSmallRepetitionStatement();
 		repetitionStatement.setName(jObjInput.getString("name"));
@@ -258,11 +314,11 @@ public class JSONParser {
 		repetitionStatement.setProven(Boolean.parseBoolean(jObjInput.getString("proven")));
 		return repetitionStatement;
 	}
-	
+
 	private static SelectionStatement createSimpleSelection(JSONObject jObjInput) {
 		SelectionStatement selectionStatement = CbcmodelFactory.eINSTANCE.createSelectionStatement();
 		selectionStatement.setName(jObjInput.getString("name"));
-		
+
 		JSONArray jArrCommands = jObjInput.getJSONArray("statements");
 		for (int i = 0; i < jArrCommands.length(); i++) {
 			JSONObject jObjCurrent = jArrCommands.getJSONObject(i);
@@ -276,23 +332,23 @@ public class JSONParser {
 			post.setName(jObjCurrent.getJSONObject("postCondition").getString("name"));
 			statement.setPostCondition(post);
 			statement.setProven(Boolean.parseBoolean(jObjCurrent.getString("proven")));
-			statement.setComment(jObjCurrent.getString("comment"));	
+			statement.setComment(jObjCurrent.getString("comment"));
 		}
-		
+
 		JSONArray jArrGuards = jObjInput.getJSONArray("guards");
 		for (int i = 0; i < jArrGuards.length(); i++) {
 			Condition condition = CbcmodelFactory.eINSTANCE.createCondition();
 			condition.setName(jArrGuards.getJSONObject(i).getString("name"));
 			selectionStatement.getGuards().add(condition);
 		}
-		
+
 		selectionStatement.setProven(Boolean.parseBoolean(jObjInput.getString("proven")));
 		selectionStatement.setComment(jObjInput.getString("comment"));
 		selectionStatement.setPreProve(Boolean.parseBoolean(jObjInput.getString("preProven")));
 		return selectionStatement;
 	}
-	
-	//identical for leaf strong-weak statements
+
+	// identical for leaf strong-weak statements
 	private static AbstractStatement createStatement(JSONObject jObjInput) {
 		AbstractStatement statement = CbcmodelFactory.eINSTANCE.createAbstractStatement();
 		if (jObjInput.getString("type").equals("strongWeakStatement")) {
@@ -300,7 +356,7 @@ public class JSONParser {
 		} else {
 			statement.setName(jObjInput.getString("name"));
 		}
-		
+
 		Condition preCondition = CbcmodelFactory.eINSTANCE.createCondition();
 		preCondition.setName(jObjInput.getJSONObject("preCondition").getString("name"));
 		statement.setPreCondition(preCondition);

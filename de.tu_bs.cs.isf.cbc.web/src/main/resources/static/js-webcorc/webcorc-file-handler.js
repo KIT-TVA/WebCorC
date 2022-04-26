@@ -61,10 +61,12 @@ function createNewFile(createButton, type, dummyEditorId) {
         // TODO: display it in the tree viewer / display that it is active
 
         // TODO: fullPath is empty
-        // let webcorcObject = buildWebCorCModel();
-        // let fullPath = getCurrentFilePath();
-        //
-        // createNewFileOnServer(fullPath, JSON.stringify(webcorcObject));
+        let webcorcObject = buildWebCorCModel();
+        //let fullPath = getCurrentFilePath();
+        // TODO: important! implement a way to know the parent structure (just treeview as parent or any folders?)
+        let fullPath = "treeView/" + fileName + "." + type;
+
+        createNewFileOnServer(fullPath, JSON.stringify(webcorcObject));
     }
 }
 

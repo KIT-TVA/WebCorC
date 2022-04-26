@@ -8,8 +8,8 @@ This is a guide on how to launch and set up WebCorC for development.
 
 * go to the root folder and open a commandline tool.  
  UNIX syntax:`./mvnw spring-boot:run`  
- Windows syntax: `mvnw spring-boot:run`
-* **done:** open your favorite browser and go to *localhost:8080*
+  Windows syntax: `mvnw spring-boot:run`
+* **done:** open a browser (preferably Google Chrome) and go to *localhost:8080/de.tu_bs.cs.isf.cbc.web*
 
 ---
 #### Setup EclipseIDE for backend development
@@ -18,9 +18,9 @@ This is a guide on how to launch and set up WebCorC for development.
 * Spring Tools (aka Spring Tool Suite) *installation via Marketplace*
 * [M2Eclipse](https://www.eclipse.org/m2e/) *installation via update site*
 
-
 Run or debug the 'WebCorCApplication' as Spring Boot App or Java Application 
-and view the frontend as usual on *localhost:8080*
+and view the frontend on *localhost:8080/de.tu_bs.cs.isf.cbc.web*
+
 ___
 
 #### Frontend development
