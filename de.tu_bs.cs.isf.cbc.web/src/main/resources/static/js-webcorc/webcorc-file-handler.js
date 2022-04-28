@@ -34,7 +34,7 @@ function createNewJavaFile(createButton) {
 function createNewFile(createButton, type, dummyEditorId) {
 
     let fileName = getFileName(createButton, type);
-    addFileToTreeviewer(fileName, type);
+
 
     // removePreviousEditor();
 
@@ -67,6 +67,8 @@ function createNewFile(createButton, type, dummyEditorId) {
         let fullPath = "treeView/" + fileName + "." + type;
 
         createNewFileOnServer(fullPath, JSON.stringify(webcorcObject));
+        addFileToTreeviewer(fileName, type);
+        setCurrentPathToCookie(fullPath);
     }
 }
 
@@ -100,14 +102,14 @@ function removePreviousDiagram() {
 
 function saveJavaFile(){
     let content =  document.querySelector('.CodeMirror').CodeMirror.getValue();
-    let fullPath = getCurrentFilePath();
+    let fullPath = getCurrentPathFromCookie();
 
     saveFileToServer(fullPath, content);
 }
 
 function saveDiagramFile() {
     let webcorcObject = buildWebCorCModel();
-    let fullPath = getCurrentFilePath();
+    let fullPath =getCurrentPathFromCookie();
 
     saveFileToServer(fullPath, JSON.stringify(webcorcObject));
 }

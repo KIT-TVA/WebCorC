@@ -103,6 +103,15 @@ function getSessionIdFromCookie() {
     return /SESS\w*ID=([^;]+)/i.test(document.cookie) ? RegExp.$1 : false;
 }
 
+// TODO: this function may cause session id confusion on server side! Take a closer look.
 function setSessionIdToCookie(sessionId) {
     document.cookie = "SESSIONID=" + sessionId + "; path=/";
+}
+
+function setCurrentPathToCookie(path) {
+    document.cookie = "CURRENTDIRPATH=" + path + ";path=/";
+}
+
+function getCurrentPathFromCookie(){
+    return /CURRENTDIRPATH=([^;]+)/i.test(document.cookie) ? RegExp.$1 : false;
 }

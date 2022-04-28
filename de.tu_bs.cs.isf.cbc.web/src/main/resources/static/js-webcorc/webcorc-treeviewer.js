@@ -1,5 +1,4 @@
 // TODO: get the current file out of working Object (like workingDirectory)
-var currentlyOpenedFile = "";
 var workingDirectory = "";
 
 function setListenerToTreeview() {
@@ -16,28 +15,31 @@ function setListenerToTreeview() {
 }
 
 function toggleFolder (fullFolderPath, folderName){
-    // console.log(fullFolderPath +"  - "+ folderName);
-    // let treePath = fullFolderPath.split("/");
-    // let jsonElement = workingDirectory;
-    // for (let i = 1; i<treePath.length; i++){
-    //     //TODO! json is not build like this x)
-    //     if (jsonElement[i-1].FolderName === treePath[i]){
-    //         jsonElement = jsonElement[i-1].FolderContent;
-    //     }
-    // }
-    // if (jsonElement.isOpened ){
-    //     jsonElement.isOpened = false;
-    // }
-    // else{
-    //     jsonElement.isOpened = true;
-    // }
+    console.log(fullFolderPath +"  - "+ folderName);
+    let treePath = fullFolderPath.split("/");
+    let jsonElement = workingDirectory;
+    for (let i = 1; i<treePath.length; i++){
+        //TODO! json is not build like this x)
+        if (jsonElement[i-1].FolderName === treePath[i]){
+            jsonElement = jsonElement[i-1].FolderContent;
+        }
+    }
+    if (jsonElement.isOpened ){
+        jsonElement.isOpened = false;
+    }
+    else{
+        jsonElement.isOpened = true;
+    }
 }
 
-function createFolder(name = "defaultFolder", parentFolderId = "treeView", path) {
+function createFolder(name = "defaultFolder", parentFolderId = "treeView") {
     //TODO: other ids than names -> also a problem with spaces
     // use path plus name as id, also eliminate
+    let path = getCurrentPathFromCookie();
+    path = path.substring(0, path.lastIndexOf("/")) + "/";
+
     if(name === "defaultFolder"){
-        name = path + window.prompt("Folder name pleeaaase");
+        name = window.prompt("Folder name pleeaaase");
     }
 
     let folder = document.createElement("li");
@@ -61,6 +63,8 @@ function createFolder(name = "defaultFolder", parentFolderId = "treeView", path)
     }else{
         document.getElementById(parentFolderId + "FolderInside").appendChild(folder);
     }
+    createNewDirectoryOnServer(path + name);
+    // TODO: add to dropdown menu (in modal)
 }
 
 
@@ -91,6 +95,8 @@ function addFileToTreeviewer(fileName, type, parentFolderId = "treeView") {
         parentFolderId = parentFolderId + "FolderInside";
     }
     document.getElementById(parentFolderId).appendChild(fileLi);
+    setCurrentPathToCookie(parentFolderId + "/" + fileName + "." + type);
+    setTreeviewElementOnActive(fileLi);
 }
 
 function createDirectory(directoryObject, parentId = "treeView", path = "/") {
@@ -140,11 +146,7 @@ function initializeTree(treeObject) {
 }
 
 function fileClicked(domElement, type, fileName) {
-    let elements = document.getElementsByClassName("corc-file-clicked");
-    Array.prototype.forEach.call(elements, function(el) {
-        el.classList.remove("corc-file-clicked");
-    });
-    domElement.classList.add("corc-file-clicked");
+    setTreeviewElementOnActive(domElement);
 
     let fullPath = domElement.id;
     console.log(fullPath);
@@ -155,7 +157,27 @@ function fileClicked(domElement, type, fileName) {
     // }
 }
 
-function getCurrentFilePath() {
-    return currentlyOpenedFile;
+// function folderClicked(domElement) {
+//     setTreeviewElementOnActive(domElement);
+//
+//     let fullPath = domElement.id;
+//     console.log(fullPath);
+//
+//     // if(currentlyOpenedFile !== fullPath) {
+//     // let fileContent = getFile(fullPath.replace("treeView", "WebDirectory"));
+//     // openFile(fileContent, type, fullPath, fileName);
+//     // }
+//
+//     setCurrentPathToCookie(fullPath.replace("Folder", "/"));
+//     // TODO: close any editors
+// }
+
+function setTreeviewElementOnActive(domElement) {
+    let elements = document.getElementsByClassName("corc-file-clicked");
+    Array.prototype.forEach.call(elements, function(el) {
+        el.classList.remove("corc-file-clicked");
+    });
+    domElement.classList.add("corc-file-clicked");
 }
+
 

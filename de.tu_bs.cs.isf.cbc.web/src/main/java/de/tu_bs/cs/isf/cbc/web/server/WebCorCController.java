@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Collections;
 import java.util.Map;
@@ -100,6 +101,24 @@ public class WebCorCController {
 				System.out.println("File already exists.");
 				return "File " + newFile.getName() + " already exists";
 			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+	}
+	
+	@RequestMapping(value = "/createDirectory", method = RequestMethod.POST)
+	public String createNewDirectory(@RequestBody String fileAndContent, HttpSession session) {
+		// file content is most likely an empty string. May be different with other usages in the future.
+		JSONObject jObj = new JSONObject(fileAndContent);
+
+		String pathString = JSONParser.getPathString(jObj, session);
+		String nameString = JSONParser.getNameString(jObj);
+		String systemPath = SZ_LOCATION + File.separator + pathString + File.separator + nameString;
+
+		try {
+			Files.createDirectories(Paths.get(systemPath));
+			return "Directory " + nameString + " created successfully";
 		} catch (IOException e) {
 			e.printStackTrace();
 			return e.getMessage();
