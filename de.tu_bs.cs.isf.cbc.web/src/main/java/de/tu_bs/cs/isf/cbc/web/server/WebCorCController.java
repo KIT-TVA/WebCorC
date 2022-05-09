@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -51,7 +53,7 @@ public class WebCorCController {
 
 	// continue using this directory path
 //	private final String SZ_LOCATION = System.getProperty("java.io.tmpdir") + "WebCorC";
-	private final String SZ_LOCATION = "C:\\Users\\Malena\\Desktop\\WebCorCTemp";
+	private final String SZ_LOCATION = "C:\\Users\\m-hor\\Desktop\\WebCorCTemp";
 
 	@GetMapping(value = "/sessionId")
 	public String getSessionId(HttpSession session) {
@@ -60,6 +62,34 @@ public class WebCorCController {
 		System.out.println(SZ_LOCATION);
 		return session.getId();
 	}
+	
+	@RequestMapping(value = "/deleteFileOrFolder", method = RequestMethod.POST)
+	public void deleteFileOrFolder(@RequestBody String fileAndContent, HttpSession session) throws IOException {
+		// TODO: if the file is not existing: create one
+		JSONObject jObj = new JSONObject(fileAndContent);
+		
+		System.out.println("delete: "+ fileAndContent);
+
+		String pathString = JSONParser.getPathString(jObj, session);
+		String nameString = JSONParser.getNameString(jObj);
+		
+		String systemPath = SZ_LOCATION + File.separator + pathString + File.separator + nameString;
+
+		try {
+		    Files.delete(Path.of(systemPath));
+		} catch (NoSuchFileException x) {
+		    System.err.format("%s: no such" + " file or directory%n", Path.of(systemPath));
+		} catch (DirectoryNotEmptyException x) {
+		    System.err.format("%s not empty%n", Path.of(systemPath));
+		} catch (IOException x) {
+		    // File permission problems are caught here.
+		    System.err.println(x);
+		}
+
+		System.out.println("Element deleted");
+
+	}
+
 
 	@RequestMapping(value = "/saveFile", method = RequestMethod.POST)
 	public void saveFileToDisk(@RequestBody String fileAndContent, HttpSession session) throws IOException {

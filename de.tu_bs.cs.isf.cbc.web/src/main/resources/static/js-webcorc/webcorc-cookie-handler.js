@@ -109,9 +109,18 @@ function setSessionIdToCookie(sessionId) {
 }
 
 function setCurrentPathToCookie(path) {
-    document.cookie = "CURRENTDIRPATH=" + path + ";path=/";
+    document.cookie = "CURRENTPATH=" + path + ";path=/";
+    setCurrentDirectoryPathToCookie(path.substring(0, path.lastIndexOf("/")));
 }
 
 function getCurrentPathFromCookie(){
+    return /CURRENTPATH=([^;]+)/i.test(document.cookie) ? RegExp.$1 : false;
+}
+
+function setCurrentDirectoryPathToCookie(path) {
+    document.cookie = "CURRENTDIRPATH=" + path + ";path=/";
+}
+
+function getCurrentDirectoryFromCookie(){
     return /CURRENTDIRPATH=([^;]+)/i.test(document.cookie) ? RegExp.$1 : false;
 }

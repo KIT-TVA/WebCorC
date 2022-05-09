@@ -30,6 +30,9 @@ function createNewJavaFile(createButton) {
     removePreviousCode();
     createNewFile(createButton, "java", "dummyCodeEditorDom");
 }
+function createNewFolderFromModal(createButton) {
+    createFolder(getFileName(createButton), getCurrentDirectoryFromCookie());
+}
 
 function createNewFile(createButton, type, dummyEditorId) {
 
@@ -64,10 +67,15 @@ function createNewFile(createButton, type, dummyEditorId) {
         let webcorcObject = buildWebCorCModel();
         //let fullPath = getCurrentFilePath();
         // TODO: important! implement a way to know the parent structure (just treeview as parent or any folders?)
-        let fullPath = "treeView/" + fileName + "." + type;
+        let directoryPath = getCurrentDirectoryFromCookie();
+        // let folderId = directoryPath;
+        // if (directoryPath !== "treeView") {
+        //     folderId = directoryPath + "Folder";
+        // }
+        let fullPath = directoryPath+"/" + fileName + "." + type;
 
         createNewFileOnServer(fullPath, JSON.stringify(webcorcObject));
-        addFileToTreeviewer(fileName, type);
+        addFileToTreeviewer(fileName, type, directoryPath);
         setCurrentPathToCookie(fullPath);
     }
 }
@@ -116,4 +124,15 @@ function saveDiagramFile() {
 
 function saveCurrentFile() {
     // currentlyOpenedFile saves the full path of the current file
+}
+
+function deleteCurrentDirectoryElement() {
+    // TODO: implement this function
+    let currentFile = getCurrentPathFromCookie();
+    if (currentFile === ""){
+        // it is a folder, delete on server and remove from treeview
+    }
+    else {
+        // it is a file (same)
+    }
 }

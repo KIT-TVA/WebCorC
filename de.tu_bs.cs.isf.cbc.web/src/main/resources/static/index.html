@@ -222,11 +222,14 @@
             <a class="corc-file-button" href="#" id="createNewFile" data-toggle="modal" data-target="#modal-new-file">
                 <i class="fas fa-file"></i>
             </a>
-            <a class="corc-file-button" href="#" id="createNewFolder" onclick="createFolder()">
+            <a class="corc-file-button" href="#" id="createNewFolder" data-toggle="modal" data-target="#modal-new-folder">
                 <i class="fas fa-folder"></i>
             </a>
             <a class="corc-file-button" href="#" id="uploadFile">
                 <i class="fas fa-upload"></i>
+            </a>
+            <a class="corc-file-button" href="#" id="deleteCurrentDirectoryElement" onclick="deleteCurrentDirectoryElement();">
+                <i class="fas fa-trash"></i>
             </a>
         </div>
 
@@ -768,14 +771,14 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <p> Select a folder.</p>
+<!--                        <p> Select a folder.</p>-->
 
-                        <div class="input-group mb-3">
-                            <select class="custom-select" id="inutParentFolder">
-                                <option selected>Root</option>
-                                <option value="1">Test</option>
-                            </select>
-                        </div>
+<!--                        <div class="input-group mb-3">-->
+<!--                            <select class="custom-select" id="inutParentFolder">-->
+<!--                                <option selected>Root</option>-->
+<!--                                <option value="1">Test</option>-->
+<!--                            </select>-->
+<!--                        </div>-->
 
                         <p>
                             Select a name.
@@ -787,6 +790,35 @@
                     <div class="modal-footer">
                         <button type="button" class="corc-button" data-dismiss="modal"
                                 onclick="createNewJavaFile(this)">
+                            Create
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modal-new-folder" tabindex="-1" role="dialog"
+             aria-labelledby="modal-about" aria-hidden="true">
+            <div class="modal-dialog modal-sm" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Create New Folder</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+                        <p>
+                            Select a name.
+                        </p>
+                        <div class="row">
+                            <input class="corc-input">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="corc-button" data-dismiss="modal"
+                                onclick="createNewFolderFromModal(this)">
                             Create
                         </button>
                     </div>

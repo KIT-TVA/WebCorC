@@ -93,6 +93,30 @@ function createNewDirectoryOnServer(fullPath) {
     });
 }
 
+function deleteFileOrFolderOnServer(fullPath) {
+    let data = {
+        "path": fullPath
+    };
+
+    $.ajax({
+        type: "POST",
+        url: "http://" + window.location.host + "/de.tu_bs.cs.isf.cbc.web/deleteFileOrFolder",
+        // The key needs to match your method's input parameter (case-sensitive).
+        data: JSON.stringify(data),
+        contentType: false,
+        dataType: false,
+        success: function (data) {
+            returnValue = data;
+        },
+        error: function (xhr, status, errMsg) {
+            console.log("An Error occurred: ")
+            console.log(errMsg);
+            returnValue = -1;
+        },
+        async: false
+    });
+}
+
 function getFile(path) {
     let returnValue = "sync failed";
     $.ajax({
