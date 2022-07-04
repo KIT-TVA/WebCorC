@@ -11,6 +11,7 @@ function exportJson() {
     //Check the Browser.
     var isIE = false || !!document.documentMode;
     if (isIE) {
+        // TODO: get name of file or get file from server
         window.navigator.msSaveBlob(blob1, "WebCorCDiagram.json");
     } else {
         var url = window.URL || window.webkitURL;
@@ -22,4 +23,8 @@ function exportJson() {
         a.click();
         document.body.removeChild(a);
     }
+}
+
+function exportWorkspace() {
+
 }

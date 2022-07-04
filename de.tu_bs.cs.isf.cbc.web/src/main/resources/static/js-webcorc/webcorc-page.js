@@ -7,6 +7,13 @@ var activeContextMenuIds = [];
 var globalMenuFields ={"entrys": [{"name": "Refresh", "extraClass": ["disabled"]}]};
 
 // TODO register these listener in a function and call it when needed
+$('#leftSidebar').on('click', function (e){
+    if(e.target=== this){
+        setCurrentDirectoryPathToCookie("treeView");
+        setCurrentPathToCookie("");
+        deselectTreeviewElements();
+    }
+})
 
 createContextMenu("context-menu-global", globalMenuFields , $("#page-top"));
 

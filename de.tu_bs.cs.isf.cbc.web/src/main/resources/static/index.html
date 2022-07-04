@@ -92,15 +92,21 @@
 
                     <a class="dropdown-item-corc" href="#" onclick="exportJson()">Export Graph</a>
 
+                    <a class="dropdown-item-corc" href="#" onclick="exportWorkspaceAsArchive()">Export Workspace</a>
+
                     <a class="dropdown-item-corc custom-file" href="#">
-                        <input type="file" class="custom-file-input" accept=".json" id="importGraph">
-                        <label class="corc-file-label" for="importGraph">Import Graph</label>
+                        <input type="file" class="custom-file-input" id="importFile">
+                        <label class="corc-file-label" for="importFile">Import File</label>
                     </a>
 
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item-corc custom-file" href="#">
                         <input type="file" class="custom-file-input" id="uploadHelperfile">
                         <label class="corc-file-label" for="uploadHelperfile">Upload Helperfile</label>
+                    </a>
+                    <a class="dropdown-item-corc custom-file" href="#">
+                        <input type="file" accept=".zip" class="custom-file-input" id="uploadZipArchive">
+                        <label class="corc-file-label" for="uploadZipArchive">Upload Workspace</label>
                     </a>
                 </div>
             </li>
@@ -167,8 +173,8 @@
         </ul>
 
         <!--     Logos-->
-        <a href="https://www.tu-braunschweig.de/isf" target="_blank" rel="noopener noreferrer">
-            <img class="logo-corc-isf" src="imgs/isf-logo-color.svg" alt="ISF" id="isf-logo">
+        <a href="https://www.kit.edu/" target="_blank" rel="noopener noreferrer">
+            <img class="logo-corc-kit" src="imgs/kit-logo-schrift.svg" alt="KIT" id="kit-logo">
         </a>
 
         <a href="https://www.tu-braunschweig.de/" target="_blank" rel="noopener noreferrer">
@@ -222,13 +228,28 @@
             <a class="corc-file-button" href="#" id="createNewFile" data-toggle="modal" data-target="#modal-new-file">
                 <i class="fas fa-file"></i>
             </a>
-            <a class="corc-file-button" href="#" id="createNewFolder" data-toggle="modal" data-target="#modal-new-folder">
+            <a class="corc-file-button" href="#" id="createNewFolder" data-toggle="modal"
+               data-target="#modal-new-folder">
                 <i class="fas fa-folder"></i>
             </a>
-            <a class="corc-file-button" href="#" id="uploadFile">
-                <i class="fas fa-upload"></i>
-            </a>
-            <a class="corc-file-button" href="#" id="deleteCurrentDirectoryElement" onclick="deleteCurrentDirectoryElement();">
+<!--            <a class="custom-file corc-file-button" href="#">-->
+<!--                <input type="file" class="custom-file-input" id="importFileSidebar">-->
+<!--                <label class="corc-file-label" for="importFileSidebar">-->
+<!--                    <i class="fas fa-upload"></i>-->
+<!--                </label>-->
+<!--            </a>-->
+            <!--            <a class="corc-file-button" href="#" id="uploadFileSymbol">-->
+            <!--                <i class="fas fa-upload"></i>-->
+            <!--                &lt;!&ndash;                <input type="file" class="custom-file-input" id="importFileSidebar">&ndash;&gt;-->
+            <!--            </a>-->
+            <!--            <input type="file" class="custom-file-input corc-file-button" id="importFileSidebar">-->
+            <!--            <lable class="corc-file-button" id="importFileSymbol" for="importFileSidebar">-->
+            <!--                <i class="fas fa-upload"></i>-->
+            <!--                &lt;!&ndash;                <input type="file" class="custom-file-input" id="importFileSidebar">&ndash;&gt;-->
+            <!--&lt;!&ndash;                <label for="importFile"></label>&ndash;&gt;-->
+<!--            </lable>-->
+            <a class="corc-file-button" href="#" id="deleteCurrentDirectoryElement"
+               onclick="deleteCurrentDirectoryElement();">
                 <i class="fas fa-trash"></i>
             </a>
         </div>
@@ -248,7 +269,7 @@
     <div id="" class="background-corc">
 
         <div class="corc-placeholder-container">
-<!--            <i class="fas fa-circle"></i>-->
+            <!--            <i class="fas fa-circle"></i>-->
             <span>no files opened</span>
         </div>
 
@@ -676,23 +697,85 @@
                             <img alt="" class="" src="imgs/corc-logo-color.svg" style="height: 250px">
                         </div>
 
+
+                        <h3>Correctness-by-Construction (CbC)</h3>
+
                         <p>
-                            CorC is an editor to construct algorithms following the
-                            Correctness-by-Construction
-                            approach.
+                            <!--                            https://www.tu-braunschweig.de/isf/research/cbc-->
+                            <b>Projektzeitraum</b>: Dezember 2017 - offen
+                            </br>
+                            </br>
+                            Correctness-by-Construction (CbC) is an approach to incrementally create correct programs.
+                            CbC starts with an abstract Hoare triple {P} S {Q} consisting of a precondition P, an
+                            abstract statement S, and a postcondition Q. Hoare triples represent total correctness
+                            assertions that valuate only to true if, beginning from the precondition, the postcondition
+                            is met after executing the eventually defined concrete program. With CbC, the Hoare triple
+                            is successively refined using a set of refinement rules to a concrete implementation, which
+                            satisfies the specification. The correctness is guaranteed because every refinement rule is
+                            proven sound and preserves the correctness of the program. CbC is implemted in the tool
+                            CorC. CorC is a graphical and textual IDE to construct algorithms following the
+                            Correctness-by-Construction approach. It supports CbC developers to refine a program by a
+                            sequence of refinement steps and to verify the correctness of these refinement steps using a
+                            theorem prover.
+                            </br>
+                            </br>
+                            <b>Information Flow Control-by-Construction</b>
+                            </br>
+                            </br>
+                            Besides of verifying the functional correctness, refinements rules can also be utilized to
+                            ensure security of programs. An information flow policy defines how information may flow in
+                            a program (e.g., a flow from public to secret data is allowed, but the other way is
+                            prohibited). The extension of CbC to ensure security is called Information Flow
+                            Control-by-Construction (IFbC). Programs are constructed incrementally using refinement
+                            rules to follow an information flow policy. In every refinement step, security and
+                            functional correctness of the program is guaranteed, such that insecure programs are
+                            prohibited by construction. The information flow policy can be specified in any bounded
+                            upper semi-lattice (i.e., security levels are arranged in a partially ordered set
+                            representing the allowed direction of information flow). IFbC is implemented in an extension
+                            of CorC.
+                            </br>
+                            </br>
+                            <b>Correctness-by-Construction for Software Product Lines</b>
+                            </br>
+                            </br>
+                            Software product lines provide systematic reuse of software and other artifacts paired with
+                            variability mechanisms in the code to implement whole product families rather than single
+                            software products. The commonalities and differences of the single variants are communicated
+                            as features, whose relationships are often modelled in feature models. Guaranteeing the
+                            correctness of a product line is especially challenging because of the amount of possible
+                            variants resulting from the number of feature configurations and the variable code
+                            structures. To create a correct product line using CbC, we therefore extended the original
+                            CbC approach with a new refinement rule for a variability mechanism in the statements of the
+                            Hoare triple and combined it with contract composition for variability in the pre- and
+                            postcondition. We call this extension variational Correctness-by-Construction. VarCorC uses
+                            FeatureIDE and variational CbC to support the development of correct-by-construction
+                            software product lines.
+                            </br>
+                            </br>
+                            <b>Github</b>: <a href="https://github.com/TUBS-ISF/CorC" target="_blank"
+                                              rel="noopener noreferrer">CorC</a> </br>
+                            <b>Github</b>: <a href="https://github.com/TUBS-ISF/WebCorC" target="_blank"
+                                              rel="noopener noreferrer">WebCorC</a>
+                            </br>
+                            </br>
+                            <b>Involvierte Mitarbeiter</b>:
+                            <a href="https://tva.kastel.kit.edu/team/team_bordis.php" target="_blank"
+                               rel="noopener noreferrer">Tabea Bordis</a>,
+                            <a href="https://tva.kastel.kit.edu/team/team_runge.php" target="_blank"
+                               rel="noopener noreferrer">Tobias Runge</a>,
+                            <a href="https://tva.kastel.kit.edu/team_77.php" target="_blank" rel="noopener noreferrer">Ina
+                                Schaefer</a>
                         </p>
-                        <p>
-                            Correctness-by-Construction (CbC) is an approach to incrementally create correct
-                            programs. Guided by pre-/postcondition specifications, a program is created
-                            using
-                            refinement rules, guaranteeing the resulting implementation is correct. We
-                            implemented a graphical and textual IDE to create programs following the CbC
-                            approach. Starting with an abstract specification, our tool supports CbC
-                            developers
-                            to refine a program by a sequence of refinement steps and to verify the
-                            correctness
-                            of these refinement steps using a theorem prover.
-                        </p>
+                        <div class="" style="border: #dcdcdc 2px solid; background-color: #ededed;border-radius: 5px">
+                            <a href="https://tva.kastel.kit.edu/index.php" target="_blank" rel="noopener noreferrer">
+                                <img alt="" class="" src="imgs/isf-logo-color-schrift.png"
+                                     style="margin: 5px; height: 80px">
+                            </a>
+                            <a href="https://www.tu-braunschweig.de/isf" target="_blank" rel="noopener noreferrer">
+                                <img alt="" class="" src="imgs/tva-logo-banner-english-color.svg"
+                                     style="margin: 5px; height: 85px">
+                            </a>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="corc-button" data-dismiss="modal">Close</button>
@@ -771,14 +854,14 @@
                         </button>
                     </div>
                     <div class="modal-body">
-<!--                        <p> Select a folder.</p>-->
+                        <!--                        <p> Select a folder.</p>-->
 
-<!--                        <div class="input-group mb-3">-->
-<!--                            <select class="custom-select" id="inutParentFolder">-->
-<!--                                <option selected>Root</option>-->
-<!--                                <option value="1">Test</option>-->
-<!--                            </select>-->
-<!--                        </div>-->
+                        <!--                        <div class="input-group mb-3">-->
+                        <!--                            <select class="custom-select" id="inutParentFolder">-->
+                        <!--                                <option selected>Root</option>-->
+                        <!--                                <option value="1">Test</option>-->
+                        <!--                            </select>-->
+                        <!--                        </div>-->
 
                         <p>
                             Select a name.

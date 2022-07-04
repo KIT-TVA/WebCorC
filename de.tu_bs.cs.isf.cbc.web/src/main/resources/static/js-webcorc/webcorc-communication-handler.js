@@ -2,6 +2,8 @@
  * here lives all the communication between server and client. The object created by the object handler will be
  * communicated and altered by the server.
  */
+// import axios from "../vendor/jquery/jquery-2";
+
 setSessionId();
 
 setTimeout(() => {
@@ -90,6 +92,63 @@ function createNewDirectoryOnServer(fullPath) {
             returnValue = -1;
         },
         async: false
+    });
+}
+
+function exportWorkspaceAsArchive(){
+    $.ajax({
+        type: "GET",
+        url: "http://" + window.location.host + "/de.tu_bs.cs.isf.cbc.web/getWorkspaceAsArchive",
+        contentType: 'application/json',
+        xhrFields:{
+            responseType: 'blob'
+        },
+        success: function (data) {
+            console.log(data);
+            const url = URL.createObjectURL(data);
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', "WebCorCWorkspace.zip");
+                document.body.append(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+        },
+        error: function (errMsg) {
+            console.log("An Error occurred: ");
+            console.log(errMsg);
+        },
+        statusCode: {
+            404: function () {
+                // createToast("404: Server connection failed.", "Export Workspace failed");
+            }
+        }
+    });
+}
+
+function uploadWorkspaceAsArchive(zipArchive){
+    var form_zip_archive_upload = new FormData();
+    form_zip_archive_upload.append('file', zipArchive);
+    $.ajax({
+        type: "POST",
+        url: "http://" + window.location.host + "/de.tu_bs.cs.isf.cbc.web/uploadWorkspaceAsArchive",
+        data: form_zip_archive_upload,
+        contentType: false,
+        dataType: false,
+        processData: false,
+        success: function (data) {
+            console.log(data);
+            document.location.reload();
+        },
+        error: function (errMsg) {
+            console.log("An Error occurred: ");
+            console.log(errMsg);
+        },
+        statusCode: {
+            404: function () {
+                // createToast("404: Server connection failed.", "Failed to send Helperfile");
+            }
+        }
     });
 }
 

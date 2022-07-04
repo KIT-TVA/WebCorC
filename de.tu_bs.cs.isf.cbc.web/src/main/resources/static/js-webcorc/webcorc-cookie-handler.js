@@ -114,7 +114,11 @@ function setCurrentPathToCookie(path) {
 }
 
 function getCurrentPathFromCookie(){
-    return /CURRENTPATH=([^;]+)/i.test(document.cookie) ? RegExp.$1 : false;
+    let currentPath = /CURRENTPATH=([^;]+)/i.test(document.cookie) ? RegExp.$1 : false;
+    // if(currentPath === false){
+    //     currentPath = "treeView";
+    // }
+    return currentPath;
 }
 
 function setCurrentDirectoryPathToCookie(path) {
@@ -122,5 +126,9 @@ function setCurrentDirectoryPathToCookie(path) {
 }
 
 function getCurrentDirectoryFromCookie(){
-    return /CURRENTDIRPATH=([^;]+)/i.test(document.cookie) ? RegExp.$1 : false;
+    let currentDir = /CURRENTDIRPATH=([^;]+)/i.test(document.cookie) ? RegExp.$1 : false;
+    if(currentDir === false){
+        return "treeView";
+    }
+    return currentDir;
 }

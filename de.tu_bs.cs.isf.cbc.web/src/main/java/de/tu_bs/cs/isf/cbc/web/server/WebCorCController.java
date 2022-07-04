@@ -1,6 +1,7 @@
 package de.tu_bs.cs.isf.cbc.web.server;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
@@ -12,7 +13,9 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Collections;
 import java.util.Map;
+import java.util.zip.ZipOutputStream;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.eclipse.emf.common.util.URI;
@@ -23,6 +26,7 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.springframework.web.util.HtmlUtils;
 
 import de.tu_bs.cs.isf.cbc.cbcmodel.CbCFormula;
@@ -40,6 +45,7 @@ import de.tu_bs.cs.isf.cbc.cbcmodel.GlobalConditions;
 import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariable;
 import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariables;
 import de.tu_bs.cs.isf.cbc.web.java.compilation.WebCorcCompileJava;
+import de.tu_bs.cs.isf.cbc.web.util.FileUtil;
 import de.tu_bs.cs.isf.cbc.web.util.JSONBuildHelper;
 import de.tu_bs.cs.isf.cbc.web.util.JSONParser;
 import de.tu_bs.cs.isf.cbc.web.util.ProveWithKey;
@@ -52,8 +58,8 @@ public class WebCorCController {
 	// claimed again... not the desired behavior
 
 	// continue using this directory path
-//	private final String SZ_LOCATION = System.getProperty("java.io.tmpdir") + "WebCorC";
-	private final String SZ_LOCATION = "C:\\Users\\m-hor\\Desktop\\WebCorCTemp";
+	private final String SZ_LOCATION = System.getProperty("java.io.tmpdir") + "WebCorC";
+//	private final String SZ_LOCATION = "C:\\Users\\m-hor\\Desktop\\WebCorCTemp";
 
 	@GetMapping(value = "/sessionId")
 	public String getSessionId(HttpSession session) {
@@ -62,40 +68,80 @@ public class WebCorCController {
 		System.out.println(SZ_LOCATION);
 		return session.getId();
 	}
-	
+
+	@GetMapping(path = "/getWorkspaceAsArchive")
+	public ResponseEntity<StreamingResponseBody> downloadZip(HttpServletResponse response, HttpSession session) {
+
+		return ResponseEntity.ok().header("Content-Disposition", "attachment;filename=export.zip").body(out -> {
+			final ZipOutputStream zipOutputStream = new ZipOutputStream(out);
+
+			// for testing purposes: save file to directory with FileOutputStream instead of
+			// StreamingResponseBody
+//			Path zipPath = Paths.get(SZ_LOCATION  + File.separator + "test.zip");
+//			final ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipPath.toFile()));
+
+			File directory = new File(SZ_LOCATION + File.separator + session.getId());
+
+			System.out.println("zipping...");
+
+			FileUtil.zipDirectory(directory, SZ_LOCATION + File.separator + session.getId(), zipOutputStream);
+//			FileUtil.zipDirectory(directory, SZ_LOCATION + File.separator + session.getId(), zos);
+
+			System.out.println("directory zipped, shipping...");
+
+//			}
+
+		});
+	}
+
 	@RequestMapping(value = "/deleteFileOrFolder", method = RequestMethod.POST)
 	public void deleteFileOrFolder(@RequestBody String fileAndContent, HttpSession session) throws IOException {
-		// TODO: if the file is not existing: create one
 		JSONObject jObj = new JSONObject(fileAndContent);
-		
-		System.out.println("delete: "+ fileAndContent);
+
+		System.out.println("delete: " + fileAndContent);
 
 		String pathString = JSONParser.getPathString(jObj, session);
 		String nameString = JSONParser.getNameString(jObj);
-		
+
 		String systemPath = SZ_LOCATION + File.separator + pathString + File.separator + nameString;
 
-		try {
-		    Files.delete(Path.of(systemPath));
-		} catch (NoSuchFileException x) {
-		    System.err.format("%s: no such" + " file or directory%n", Path.of(systemPath));
-		} catch (DirectoryNotEmptyException x) {
-		    System.err.format("%s not empty%n", Path.of(systemPath));
-		} catch (IOException x) {
-		    // File permission problems are caught here.
-		    System.err.println(x);
+		if (Files.isDirectory(Path.of(systemPath))) {
+			File file = new File(systemPath);
+			deleteRecursively(file);
+		} else {
+			try {
+				Files.delete(Path.of(systemPath));
+			} catch (NoSuchFileException x) {
+				System.err.format("%s: no such" + " file or directory%n", Path.of(systemPath));
+			} catch (DirectoryNotEmptyException x) {
+				System.err.format("%s not empty%n", Path.of(systemPath));
+			} catch (IOException x) {
+				// File permission problems are caught here.
+				System.err.println(x);
+			}
 		}
 
 		System.out.println("Element deleted");
 
 	}
 
+	private boolean deleteRecursively(File directoryToBeDeleted) {
+		// TODO Auto-generated method stub
+
+		File[] allContents = directoryToBeDeleted.listFiles();
+		if (allContents != null) {
+			for (File file : allContents) {
+				deleteRecursively(file);
+			}
+		}
+		return directoryToBeDeleted.delete();
+	}
 
 	@RequestMapping(value = "/saveFile", method = RequestMethod.POST)
 	public void saveFileToDisk(@RequestBody String fileAndContent, HttpSession session) throws IOException {
 		// TODO: if the file is not existing: create one
 		JSONObject jObj = new JSONObject(fileAndContent);
-		
+
 		System.out.println(fileAndContent);
 
 		String pathString = JSONParser.getPathString(jObj, session);
@@ -115,17 +161,22 @@ public class WebCorCController {
 
 	@RequestMapping(value = "/createFile", method = RequestMethod.POST)
 	public String createNewFile(@RequestBody String fileAndContent, HttpSession session) {
-		// file content is most likely an empty string. May be different with other usages in the future.
+		// file content is most likely an empty string. May be different with other
+		// usages in the future.
 		JSONObject jObj = new JSONObject(fileAndContent);
 
 		String pathString = JSONParser.getPathString(jObj, session);
 		String nameString = JSONParser.getNameString(jObj);
 		String systemPath = SZ_LOCATION + File.separator + pathString + File.separator + nameString;
+		String content = JSONParser.getContentString(jObj);
 
 		File newFile = new File(systemPath);
 		try {
 			if (newFile.createNewFile()) {
 				System.out.println("File created: " + newFile.getName());
+				Writer writer = new FileWriter(systemPath, false);
+				writer.write(content);
+				writer.close();
 				return "File " + newFile.getName() + " created successfully";
 			} else {
 				System.out.println("File already exists.");
@@ -136,10 +187,11 @@ public class WebCorCController {
 			return e.getMessage();
 		}
 	}
-	
+
 	@RequestMapping(value = "/createDirectory", method = RequestMethod.POST)
 	public String createNewDirectory(@RequestBody String fileAndContent, HttpSession session) {
-		// file content is most likely an empty string. May be different with other usages in the future.
+		// file content is most likely an empty string. May be different with other
+		// usages in the future.
 		JSONObject jObj = new JSONObject(fileAndContent);
 
 		String pathString = JSONParser.getPathString(jObj, session);
@@ -225,6 +277,20 @@ public class WebCorCController {
 		}
 
 		return "Upload of file successful";
+	}
+
+	@RequestMapping(value = "/uploadWorkspaceAsArchive", method = RequestMethod.POST)
+	public String uploadWorkspace(@RequestParam("file") MultipartFile file, HttpSession session) {
+		Path target = Paths.get(SZ_LOCATION + File.separator + session.getId());
+		try {
+			File source = new File(SZ_LOCATION + File.separator + session.getId() + File.separator + ".meta"
+					+ File.separator + "temp.zip");
+			file.transferTo(source);
+			FileUtil.unzipDirectory(source, target);
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+		}
+		return "";
 	}
 
 	@RequestMapping(value = "/javaFileUpload", method = RequestMethod.POST)

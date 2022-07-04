@@ -208,19 +208,43 @@ function setTreeviewElementOnActive(domElement) {
         setCurrentPathToCookie("");
         setCurrentDirectoryPathToCookie(path.substring(0, path.length - 6));
         domElement = domElement.firstChild;
-    }
-    else{
+    } else {
         setCurrentPathToCookie(path);
     }
-
-    let elements = document.getElementsByClassName("corc-file-clicked");
-    Array.prototype.forEach.call(elements, function (el) {
-        el.classList.remove("corc-file-clicked");
-    });
+    deselectTreeviewElements();
     domElement.classList.add("corc-file-clicked");
 
 }
 
+function deselectTreeviewElements() {
+    let elements = document.getElementsByClassName("corc-file-clicked");
+    Array.prototype.forEach.call(elements, function (el) {
+        el.classList.remove("corc-file-clicked");
+    });
+
+    removePreviousDiagram();
+    removePreviousCode();
+}
+
 function getFolderDomElementByPath(path) {
     return document.getElementById(path + "Folder");
+}
+
+function getFileDomElementByPath(path) {
+    return document.getElementById(path);
+}
+
+function removeFolderFromTreeview(path) {
+    let domFolderElement = getFolderDomElementByPath(path);
+    domFolderElement.remove();
+}
+function removeFileFromTreeview(path) {
+
+    let domFileElement = getFileDomElementByPath(path);
+    domFileElement.remove();
+    if (path.includes("java")) {
+        removePreviousCode();
+    } else if (path.includes("diagram")) {
+        removePreviousDiagram();
+    }
 }

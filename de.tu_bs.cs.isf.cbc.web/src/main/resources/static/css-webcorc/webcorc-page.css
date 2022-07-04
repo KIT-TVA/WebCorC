@@ -127,7 +127,7 @@
     justify-content: center;
 }
 
-.logo-corc-isf, .logo-corc-tubs{
+.logo-corc-isf, .logo-corc-tubs, .logo-corc-kit{
     z-index: 600;
     position: absolute;
     /* border-radius: 10px; */
@@ -136,7 +136,7 @@
 }
 
 .logo-corc-tubs{
-        right: 0px;
+    right: 0px;
     height: 70px;
     border-left: #323e58 3px solid;
 }
@@ -146,6 +146,14 @@
     height: 70px;
     /* background: white; */
     padding: 7px;
+}
+
+.logo-corc-kit{
+    right: 191px;
+    height: 70px;
+    border-left: #323e58 3px solid;
+    padding: 10px 20px;
+    background: white;
 }
 
 .topbar-corc{
@@ -371,7 +379,7 @@ body{
 
 .corc-session-label{
     position: absolute;
-    right: 320px;
+    right: 340px;
     top: 0px;
 }
 

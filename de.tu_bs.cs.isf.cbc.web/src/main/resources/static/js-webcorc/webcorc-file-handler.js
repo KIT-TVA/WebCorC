@@ -31,7 +31,12 @@ function createNewJavaFile(createButton) {
     createNewFile(createButton, "java", "dummyCodeEditorDom");
 }
 function createNewFolderFromModal(createButton) {
-    createFolder(getFileName(createButton), getCurrentDirectoryFromCookie());
+    let currentDir = getCurrentDirectoryFromCookie();
+    if (currentDir === false){
+        // TODO: treeview string should be a global static variable
+        currentDir = "treeView";
+    }
+    createFolder(getFileName(createButton), currentDir);
 }
 
 function createNewFile(createButton, type, dummyEditorId) {
@@ -129,10 +134,15 @@ function saveCurrentFile() {
 function deleteCurrentDirectoryElement() {
     // TODO: implement this function
     let currentFile = getCurrentPathFromCookie();
-    if (currentFile === ""){
+    if (currentFile === "" || currentFile === false){
         // it is a folder, delete on server and remove from treeview
+        deleteFileOrFolderOnServer(getCurrentDirectoryFromCookie());
+        removeFolderFromTreeview(getCurrentDirectoryFromCookie());
     }
     else {
+        deleteFileOrFolderOnServer(currentFile);
+        removeFileFromTreeview(currentFile);
         // it is a file (same)
     }
+    setCurrentPathToCookie("treeView");
 }

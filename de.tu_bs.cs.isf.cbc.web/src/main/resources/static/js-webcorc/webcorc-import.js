@@ -2,12 +2,13 @@
  * import management for import graph and helper file(tbd)
  */
 
-$("#importGraph").change(function(){
+$("#importGraph, #importFileSidebar").change(function(){
 
-    var graph = document.getElementById("importGraph").files[0];
+    var graph = document.getElementById("importFile").files[0];
 
     let reader = new FileReader();
     let result = "";
+    let fileName = graph.name;
 
     reader.readAsText(graph);
 
@@ -15,9 +16,11 @@ $("#importGraph").change(function(){
         result = reader.result;
         console.log("file:");
         console.log(result);
-        clearLists();
-        deleteAllKnots();
-        createGraph(JSON.parse(result));
+        // clearLists();
+        // deleteAllKnots();
+        // createGraph(JSON.parse(result));
+        fileName = fileName.replace("json","diagram");
+        createNewFileOnServer(getCurrentDirectoryFromCookie() + "/" + fileName, result);
     };
 
     reader.onerror = function() {
@@ -31,7 +34,13 @@ $("#uploadHelperfile").change(function(){
     sendHelperFile(helperFile);
 });
 
+$("#uploadZipArchive").change(function(){
+    var archive = document.getElementById("uploadZipArchive").files[0];
+    uploadWorkspaceAsArchive(archive);
+});
+
 $("#uploadJavaFile").change(function(){
     var javaFile = document.getElementById("uploadJavaFile").files[0];
     sendJavaFile(javaFile);
 });
+

@@ -72,8 +72,9 @@
     background: rgb(24 32 51);
     text-decoration: none;
     border-radius: 8px;
-    padding: 2px ;
+    padding: 3px 5px; ;
 }
+
 
 .corc-vertical-divider{
     position: relative;

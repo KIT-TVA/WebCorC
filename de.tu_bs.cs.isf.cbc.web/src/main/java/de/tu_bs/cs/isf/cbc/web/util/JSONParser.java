@@ -32,7 +32,13 @@ public class JSONParser {
 
 	public static String getContentString(JSONObject jObj) {
 		String content = jObj.getString("content");
+//		content = content.replaceAll("[\\n\\t ]", "");
 		return content;
+	}
+	
+	public static String stripString(String string) {
+		string = string.replaceAll("[\\n\\t ]", "");
+		return string;
 	}
 
 	public static String getPathString(JSONObject jObj, HttpSession session) {
@@ -226,19 +232,19 @@ public class JSONParser {
 //				.withAttribute(EMFContext.Attributes.RESOURCE_URI, "src/main/resources/data.json")
 //				.forType(Resource.class).readValue(data);
 		
-//		JsonNode data =  mapper.valueToTree(formula);
-//				Resource resource = new ResourceImpl();
+		JsonNode data =  mapper.valueToTree(formula);
+				Resource resource = new ResourceImpl();
 //				resource.
-//
-//				try {
-//					CbCFormula formula2 = mapper.reader()
-//						.withAttribute(EMFContext.Attributes.RESOURCE, resource)
-//						.forType(CbCFormula.class)
-//						.readValue(data);
-//				} catch (IOException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
+
+				try {
+					CbCFormula formula2 = mapper.reader()
+						.withAttribute(EMFContext.Attributes.RESOURCE, resource)
+						.forType(CbCFormula.class)
+						.readValue(data);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 
 		return formula;
 	}
