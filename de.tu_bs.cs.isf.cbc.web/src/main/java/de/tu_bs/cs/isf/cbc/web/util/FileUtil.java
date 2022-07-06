@@ -51,7 +51,12 @@ public class FileUtil implements IFileUtil {
 
 		Files.walkFileTree(folder.toPath(), new SimpleFileVisitor<Path>() {
 			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-				zos.putNextEntry(new ZipEntry(folder.toPath().relativize(file).toString()));
+				
+				String pathNewEntry = folder.toPath().relativize(file).toString();
+				if (pathNewEntry.startsWith(".meta")) {
+					return FileVisitResult.CONTINUE;
+				}
+				zos.putNextEntry(new ZipEntry(pathNewEntry));
 				Files.copy(file, zos);
 				zos.closeEntry();
 				return FileVisitResult.CONTINUE;
@@ -67,6 +72,11 @@ public class FileUtil implements IFileUtil {
 			ZipEntry zipEntry = zis.getNextEntry();
 
 			while (zipEntry != null) {
+				
+				if(zipEntry.toString().startsWith(".meta")) {
+					zipEntry = zis.getNextEntry();
+					continue;
+				}
 
 				boolean isDirectory = false;
 				// some zip stored files and folders separately
@@ -89,6 +99,7 @@ public class FileUtil implements IFileUtil {
 							Files.createDirectories(newPath.getParent());
 						}
 					}
+					
 					// copy files, nio
 					Files.copy(zis, newPath, StandardCopyOption.REPLACE_EXISTING);
 				}

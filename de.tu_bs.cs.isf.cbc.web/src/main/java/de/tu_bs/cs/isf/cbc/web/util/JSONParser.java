@@ -1,16 +1,20 @@
 package de.tu_bs.cs.isf.cbc.web.util;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 
 import javax.servlet.http.HttpSession;
 
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.emfjson.jackson.databind.EMFContext;
+import org.emfjson.jackson.module.EMFModule;
+import org.emfjson.jackson.resource.JsonResourceFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -35,7 +39,7 @@ public class JSONParser {
 //		content = content.replaceAll("[\\n\\t ]", "");
 		return content;
 	}
-	
+
 	public static String stripString(String string) {
 		string = string.replaceAll("[\\n\\t ]", "");
 		return string;
@@ -212,39 +216,68 @@ public class JSONParser {
 		postCondition2.setName(jObjInput.getJSONObject("statement").getJSONObject("postCondition").getString("name"));
 		statement.setPostCondition(postCondition2);
 
-		ObjectMapper mapper = new ObjectMapper();
+		ResourceSet resourceSet = new ResourceSetImpl();
+		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("json", new JsonResourceFactory());
 
+		ObjectMapper mapperSerialize = EMFModule.setupDefaultMapper();
+		String jsonFormula = "";
+		JsonNode jsonNodeFormula = mapperSerialize.valueToTree(formula);
 		try {
-			String jsonString = mapper.writeValueAsString(formula);
+			jsonFormula = mapperSerialize.writeValueAsString(formula);
 		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println(e.getMessage());
+		}
+		URI uri = URI.createURI(jsonFormula);
+		Resource mapperDeserialize = resourceSet.createResource(URI.createURI(" http:///dummy.json"));
+
+		InputStream stream = new ByteArrayInputStream(jsonFormula.getBytes(Charset.forName("UTF-8")));
+		try {
+			mapperDeserialize.load(stream, null);
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
 		}
 
-		// testing area for emfjson-jackson 
-		
+		CbCFormula formula2 = CbcmodelFactory.eINSTANCE.createCbCFormula();
+		formula2 = (CbCFormula) mapperDeserialize.getContents().get(0);
+
+//
+//		try {
+//			String jsonString = mapper.writeValueAsString(formula);
+//		} catch (JsonProcessingException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//
+//		// testing area for emfjson-jackson
+//
 //		JsonNode data = mapper.valueToTree(formula);
 //		
+//		var resourceSet = new ResourceSetImpl();
+//		var formula2 = CbcmodelFactory.eINSTANCE.createCbCFormula();
+//		
 //		ResourceSet rs = new ResourceSetImpl();
-//		rs.
+////		rs.
+////
+//		try {
+//			Resource resource = mapper.reader().withAttribute(EMFContext.Attributes.RESOURCE_SET, rs)
+//					.withAttribute(EMFContext.Attributes.RESOURCE_URI, "src/main/resources/data.json")
+//					.forType(Resource.class).readValue(data);
+//		} catch (IOException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
 //
-//		Resource resource = mapper.reader().withAttribute(EMFContext.Attributes.RESOURCE_SET, resourceSet)
-//				.withAttribute(EMFContext.Attributes.RESOURCE_URI, "src/main/resources/data.json")
-//				.forType(Resource.class).readValue(data);
-		
-		JsonNode data =  mapper.valueToTree(formula);
-				Resource resource = new ResourceImpl();
-//				resource.
-
-				try {
-					CbCFormula formula2 = mapper.reader()
-						.withAttribute(EMFContext.Attributes.RESOURCE, resource)
-						.forType(CbCFormula.class)
-						.readValue(data);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+////		JsonNode data = mapper.valueToTree(formula);
+//		Resource resource2 = new ResourceImpl();
+////				resource.
+//
+//		try {
+//			CbCFormula formula2 = mapper.reader().withAttribute(EMFContext.Attributes.RESOURCE, resource2)
+//					.forType(CbCFormula.class).readValue(data);
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 
 		return formula;
 	}
