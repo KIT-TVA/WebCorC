@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>WebCorC</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+
+    <!-- Custom fonts for this template-->
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+          rel="stylesheet">
+
+    <!-- codemirror -->
+    <script src="js-codemirror/lib/codemirror.js"></script>
+    <link rel="stylesheet" href="js-codemirror/lib/codemirror.css">
+    <script src="js-codemirror/mode/clike/clike.js"></script>
+    <script src="js-codemirror/addon/hint/show-hint.js"></script>
+    <link rel="stylesheet" href="js-codemirror/addon/hint/show-hint.css">
+    <script src="js-codemirror/addon/hint/anyword-hint.js"></script>
+
+    <!-- Custom styles for this template-->
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="css-webcorc/webcorc-page.css" rel="stylesheet">
+    <link href="css-webcorc/webcorc-knots.css" rel="stylesheet">
+    <link href="css-webcorc/webcorc-file-tabs.css" rel="stylesheet">
+    <link href="css-webcorc/webcorc-custom-codemirror.css" rel="stylesheet">
+    <link href="css-webcorc/webcorc-treeviewer.css" rel="stylesheet">
+
+</head>
+
+<body id="page-top">
+
+<!-- Contextmenu's -->
+<!--<div class="dropdown-menu dropdown-menu-sm" id="context-menu-default">-->
+<!--    <a class="dropdown-item dropdown-item-corc context-menu-button-verify" href="#">Verify All</a>-->
+<!--</div>-->
+
+<div id="context-menu-container"></div>
+<div class="dropdown-menu dropdown-menu-sm" id="context-menu-statement">
+    <a class="dropdown-item dropdown-item-corc context-menu-button-verify-statement disabled" href="#">Verify
+        Statement</a>
+    <a class="dropdown-item dropdown-item-corc context-menu-button-verify" href="#">Verify All</a>
+    <!--    <hr class="divider context-menu-divider-corc">-->
+    <!--    <a class="dropdown-item dropdown-item-corc context-menu-button-other" href="#">Other</a>-->
+</div>
+
+<div class="dropdown-menu dropdown-menu-sm" id="context-menu-repetition">
+    <a class="dropdown-item dropdown-item-corc context-menu-button-verify-statement disabled" href="#">Verify
+        Precondition</a>
+    <a class="dropdown-item dropdown-item-corc context-menu-button-verify-statement disabled" href="#">Verify
+        Postcondition</a>
+    <a class="dropdown-item dropdown-item-corc context-menu-button-verify-statement disabled" href="#">Verify
+        Variant</a>
+    <a class="dropdown-item dropdown-item-corc context-menu-button-verify" href="#">Verify All</a>
+</div>
+
+<!--<div class="dropdown-menu dropdown-menu-sm" id="context-menu-selection">-->
+<!--    <a class="dropdown-item dropdown-item-corc context-menu-button-verify-statement disabled" href="#">Verify-->
+<!--        Precondition</a>-->
+<!--    <a class="dropdown-item dropdown-item-corc context-menu-button-verify" href="#">Verify All</a>-->
+<!--</div>-->
+
+<!-- Topbar -->
+<nav class="topbar-corc navbar navbar-expand-sm navbar-light" id="corc-topbar">
+
+    <!-- topbar - Brand -->
+    <a class="sidebar-brand d-flex align-items-center justify-content-center">
+        <div class="sidebar-brand-icon ">
+            <!-- <i class="fas fa-screwdriver"></i> -->
+            <img class="logo-corc" src="imgs/corc-logo-color.svg" alt="CorC" id="corc-logo">
+        </div>
+        <!--            <div class="sidebar-brand-text mx-3">Webcorc</div>-->
+    </a>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+
+            <li class="nav-item dropdown">
+                <a class="corc-navbar-dropdown dropdown-toggle" href="#" id="navbar-file" role="button"
+                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    File
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbar-file">
+                    <a class="dropdown-item-corc" href="#" data-toggle="modal" data-target="#modal-new-file">New</a>
+
+                    <a class="dropdown-item-corc" href="#" onclick="exportJson()">Export Graph</a>
+
+                    <a class="dropdown-item-corc" href="#" onclick="exportWorkspaceAsArchive()">Export Workspace</a>
+
+                    <a class="dropdown-item-corc custom-file" href="#">
+                        <input type="file" class="custom-file-input" id="importFile">
+                        <label class="corc-file-label" for="importFile">Import File</label>
+                    </a>
+
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item-corc custom-file" href="#">
+                        <input type="file" class="custom-file-input" id="uploadHelperfile">
+                        <label class="corc-file-label" for="uploadHelperfile">Upload Helperfile</label>
+                    </a>
+                    <a class="dropdown-item-corc custom-file" href="#">
+                        <input type="file" accept=".zip" class="custom-file-input" id="uploadZipArchive">
+                        <label class="corc-file-label" for="uploadZipArchive">Upload Workspace</label>
+                    </a>
+                </div>
+            </li>
+
+            <!--                <li class="nav-item dropdown">-->
+            <!--                    <a class="nav-link dropdown-toggle" href="#" id="navbar-edit" role="button"-->
+            <!--                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
+            <!--                        Edit-->
+            <!--                    </a>-->
+            <!--                    <div class="dropdown-menu" aria-labelledby="navbar-edit">-->
+            <!--                        <a class="dropdown-item-corc" href="#">Undo</a>-->
+            <!--                    </div>-->
+            <!--                </li>-->
+
+
+            <li class="nav-item dropdown">
+                <a class="corc-navbar-dropdown dropdown-toggle" href="#" id="navbar-help" role="button"
+                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Help
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbar-help">
+                    <a class="dropdown-item-corc-disabled" href="#" id="positionResetButton">Reset Positions</a>
+                    <a class="dropdown-item-corc" href="https://www.tu-braunschweig.de/datenschutzerklaerung"
+                       target="_blank" rel="noopener noreferrer" id="privacyInformation">Privacy Information</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item-corc" href="#" data-toggle="modal" data-target="#modal-about">About</a>
+                </div>
+            </li>
+            <li class="nav-item ">
+                <!--                    <a class="nav-link" href="#" id="navbar-upload-javafile" role="button"-->
+                <!--                       aria-haspopup="true" aria-expanded="false">-->
+                <!--                        <input type="file" class="custom-file-input" accept=".java" id="importJavaFile">-->
+                <!--                        <label for="importGraph">Import Graph</label>-->
+                <!--                    </a>-->
+                <a class=" custom-file" href="#">
+                    <input type="file" class="custom-file-input" id="uploadJavaFile" style="display: none">
+
+                    <button type="button" class="corc-button">
+                        <label class="corc-button-label" for="uploadJavaFile">Upload Java File</label>
+                    </button>
+                </a>
+            </li>
+            <li class="nav-item ">
+
+                <!--                <a class=" custom-file" href="#">-->
+                <!--                    <button type="button" class="corc-button">-->
+                <!--                        <label class="corc-button-label" onclick="compileCode()">Compile</label>-->
+                <!--                    </button>-->
+                </a>
+            </li>
+
+            <!--            Session ID-->
+            <li class="nav-item ">
+                <div class="corc-session-label">
+                    <label>
+                        Session ID:
+                        <i class="fas fa-clipboard" style="cursor: pointer"></i>
+                        <input placeholder="-" class="corc-session-label-input" readonly id="sessionIdLabel"
+                               onclick="copyLabel(this)">
+
+                    </label>
+                </div>
+            </li>
+        </ul>
+
+        <!--     Logos-->
+        <a href="https://www.kit.edu/" target="_blank" rel="noopener noreferrer">
+            <img class="logo-corc-kit" src="imgs/kit-logo-schrift.svg" alt="KIT" id="kit-logo">
+        </a>
+
+        <a href="https://www.tu-braunschweig.de/" target="_blank" rel="noopener noreferrer">
+            <img class="logo-corc-tubs" src="imgs/tubs-logo.svg" alt="TU Braunschweig" id="tubs-logo">
+        </a>
+
+    </div>
+
+
+    <div class="spinner-border corc-spinner" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+
+    <!-- Toasts -->
+
+    <div style="position: absolute; right: 1%; top: -15px" id="toastContainer">
+        <!-- Then put toasts within -->
+        <div class="toast corc-toast" role="alert" aria-live="assertive" aria-atomic="true" id="defaultToast"
+             data-delay="6000">
+            <div class="toast-header corc-toast-header">
+                <!--                            <img src="..." class="rounded mr-2" alt="...">-->
+                <i class="fas fa-exclamation-circle" style="padding-right: 5px"></i>
+                <strong class="mr-auto corcToastHeader">Bootstrap</strong>
+                <!--                            <small class="text-muted">just now</small>-->
+                <button type="button" class="ml-2 mb-1 close corc-toast-close-button" data-dismiss="toast"
+                        aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="toast-body corcToastBody">
+                See? Just like this.
+            </div>
+        </div>
+
+    </div>
+
+</nav>
+<!-- End of Topbar -->
+
+
+<!-- Page Wrapper -->
+<div id="wrapper">
+
+    <!-- Sidebar -->
+    <div class="sidebar-corc navbar-nav  webcorc-resizable-horizontal"
+         id="leftSidebar">
+
+
+        <!-- Heading -->
+        <div class="corc-sidebar-heading">
+            <a class="corc-file-button" href="#" id="createNewFile" data-toggle="modal" data-target="#modal-new-file">
+                <i class="fas fa-file"></i>
+            </a>
+            <a class="corc-file-button" href="#" id="createNewFolder" data-toggle="modal"
+               data-target="#modal-new-folder">
+                <i class="fas fa-folder"></i>
+            </a>
+<!--            <a class="custom-file corc-file-button" href="#">-->
+<!--                <input type="file" class="custom-file-input" id="importFileSidebar">-->
+<!--                <label class="corc-file-label" for="importFileSidebar">-->
+<!--                    <i class="fas fa-upload"></i>-->
+<!--                </label>-->
+<!--            </a>-->
+            <!--            <a class="corc-file-button" href="#" id="uploadFileSymbol">-->
+            <!--                <i class="fas fa-upload"></i>-->
+            <!--                &lt;!&ndash;                <input type="file" class="custom-file-input" id="importFileSidebar">&ndash;&gt;-->
+            <!--            </a>-->
+            <!--            <input type="file" class="custom-file-input corc-file-button" id="importFileSidebar">-->
+            <!--            <lable class="corc-file-button" id="importFileSymbol" for="importFileSidebar">-->
+            <!--                <i class="fas fa-upload"></i>-->
+            <!--                &lt;!&ndash;                <input type="file" class="custom-file-input" id="importFileSidebar">&ndash;&gt;-->
+            <!--&lt;!&ndash;                <label for="importFile"></label>&ndash;&gt;-->
+<!--            </lable>-->
+            <a class="corc-file-button" href="#" id="deleteCurrentDirectoryElement"
+               onclick="deleteCurrentDirectoryElement();">
+                <i class="fas fa-trash"></i>
+            </a>
+        </div>
+
+        <!-- file list -->
+        <!--        <ul>-->
+        <!--            <li>java.java</li>-->
+        <!--            <li style="background-color: #a5a5a5;color: white;width: available">corc.diagram</li>-->
+        <!--        </ul>-->
+        <ul id="treeView"></ul>
+
+        <div id="webcorcLeftSidebarResizer" class="webcorc-resizer-horizontal"></div>
+
+    </div>
+    <!-- End of Sidebar -->
+
+    <div id="" class="background-corc">
+
+        <div class="corc-placeholder-container">
+            <!--            <i class="fas fa-circle"></i>-->
+            <span>no files opened</span>
+        </div>
+
+        <!-- Main Content -->
+        <!--        <di id="content">-->
+        <span id="hidden-input-measure" style="display: block; position: absolute"></span>
+
+        <div id="dummyCodeEditorDom" class="corc-code-editor" style="display: none">
+            <!--            <div id="dummyCoryCodeWrapper" class="corc-code-wrapper">-->
+            <div id="dummyCorcCodeToolbar" class="corc-toolbar-button-container">
+                <a class="corc-file-button" href="#" onclick="compileCode()">
+                    <i class="fas fa-file-export"> </i>
+                    compile code
+                </a>
+                <span class="corc-vertical-divider"> </span>
+                <a class="corc-file-button" href="#" onclick="saveJavaFile()">
+                    <i class="fas fa-save"> </i>
+                    save code
+                </a>
+            </div>
+            <div id="dummyCorcCodeArea" class="corc-code-area webcorc-resizable-vertical"></div>
+            <div id="codeResizer" class="webcorc-resizer-vertical"></div>
+            <!--            </div>-->
+
+            <div id="dummyCorcConsoleArea" class="corc-console-area">
+                <textarea id="corcConsole" class="corc-console" readonly></textarea>
+            </div>
+        </div>
+
+        <div id="dummyDiagramEditorDom" class="corc-code-editor" style="display: none">
+            <div id="dummyDiagramToolbar" class="corc-toolbar-button-container">
+                <a class="corc-file-button " href="#" id="createStatement" onclick="createStatement(this)">
+                    <i class="fas fa-user-check"></i>
+                    <span class="corc-tooltip-text">Create a Statement</span>
+                    statement
+                </a>
+                <span class="corc-vertical-divider"> </span>
+                <a class="corc-file-button" href="#" id="createSelectionStatement"
+                   onclick="createSelectionStatement(this)">
+                    <i class="fas fa-check-square"></i>
+                    selection
+                </a>
+                <span class="corc-vertical-divider"> </span>
+                <a class="corc-file-button" href="#" id="createCompositionStatement"
+                   onclick="createCompositionStatement(this)">
+                    <i class="fas fa-puzzle-piece"></i>
+                    composition
+                </a>
+                <span class="corc-vertical-divider"> </span>
+                <a class="corc-file-button" href="#" id="createRepetitionStatement"
+                   onclick="createRepetitionStatement(this)">
+                    <i class="fas fa-redo-alt"></i>
+                    repetition
+                </a>
+                <span class="corc-vertical-divider"> </span>
+                <a class="corc-file-button" href="#" id="createStrongWeakStatement"
+                   onclick="createStrongWeakStatement(this)">
+                    <i class="fas fa-exclamation"></i>
+                    strong-weak
+                </a>
+                <span class="corc-vertical-divider"> </span>
+                <a class="corc-file-button" href="#" onclick="saveDiagramFile()">
+                    <i class="fas fa-save"> </i>
+                    save diagram
+                </a>
+            </div>
+
+            <div class="sidebar-corc-right navbar-nav sidebar-dark webcorc-resizable-horizontal"
+                 id="accordionRightSidebar">
+
+                <div class="sidebar-container ">
+
+                    <div id="corcJavaVariableContainer" class="corc-java-variable-container webcorc-resizable-vertical">
+                        <div class="corc-sidebar-heading java-variable-heading">
+                            Java Variables
+                            <i class="fas fa-plus sidebar-plus-icon" onclick="addListElement(this);"
+                               id="dummyJavaVariable"></i>
+                        </div>
+                        <ul class="list-group corc-list" id="javaVariableList">
+                            <li class="list-group-item" style="display: none">
+                                <input type="text" spellcheck="false" placeholder="int i"
+                                       class="javaVariable corcListElement">
+                                <!--                <div contenteditable="true" spellcheck="false" style="width: 135px" class="javaVariable">...</div>-->
+                                <i class="fas fa-trash sidebar-bin-icon" onclick="deleteListElement(this);"></i>
+                            </li>
+                        </ul>
+
+
+                        <!-- Divider -->
+                        <div id="sidebarResizer" class="webcorc-resizer-vertical sidebar-resizer"></div>
+                    </div>
+
+
+                    <div id="corcGlobalConditionContainer" class="corc-global-condition-container">
+                        <div class="corc-sidebar-heading">
+                            Global Conditions
+                            <i class="fas fa-plus sidebar-plus-icon" onclick="addListElement(this);"
+                               id="dummyGlobalCondition"></i>
+                        </div>
+                        <ul class="list-group corc-list" id="globalConditionList">
+                            <li class="list-group-item" style="display: none">
+                                <input type="text" spellcheck="false" placeholder="i > 7"
+                                       class="globalCondition corcListElement">
+                                <!--                <div contenteditable="true" spellcheck="false" style="width: 90%" class="globalCondition corcListElement">...</div>-->
+                                <i class="fas fa-trash sidebar-bin-icon" onclick="deleteListElement(this);"></i>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+                <div class="webcorc-resizer-horizontal corc-diagram"></div>
+            </div>
+
+            <div id="dummyDiagramArea" class="corc-diagram-area webcorc-resizable-vertical">
+
+                <div id="corcDiagramKnotContainer" class="movableDiagramDiv">
+
+                    <div class="corc-crosshair"><i class="fas fa-plus"></i></div>
+
+                    <div class="knot" id="formula" style="">
+                        <!--suppress JSDeprecatedSymbols -->
+                        <div class="knot-header" onmousedown="dragStart(event, this)">
+                            Root
+                        </div>
+                        <div class="row knot-container">
+                            <table class="table table-bordered knot-table">
+                                <tbody>
+                                <tr>
+                                    <th class="knot-element-header">precondition</th>
+                                    <th class="knot-element-header">statement</th>
+                                    <th class="knot-element-header">postcondition</th>
+                                </tr>
+                                <tr>
+                                    <td class="knot-element-body">
+                                        <!--                                    <div spellcheck="false" contenteditable="true" class="precondition">condition</div>-->
+                                        <input spellcheck="false" class="precondition corc-knot-input"
+                                               placeholder="A.length>0">
+                                        <i class="fas fa-pen knot-pen-icon"></i>
+                                    </td>
+                                    <td class="knot-element-body">
+                                        <div>statement</div>
+                                    </td>
+                                    <td class="knot-element-body">
+                                        <!--                                    <div spellcheck="false" contenteditable="true" class="postcondition">condition</div>-->
+                                        <input spellcheck="false" class="postcondition corc-knot-input"
+                                               placeholder="max(A,0,A.length,i)">
+                                        <i class="fas fa-pen knot-pen-icon"></i>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="knot" id="statement-prototype" style="display:none">
+                        <!--suppress JSDeprecatedSymbols -->
+                        <div class="knot-header" onmousedown="dragStart(event, this)">
+                            Statement
+                            <i class="fas fa-trash-alt knot-bin-icon" onclick="deleteElement(this);"></i>
+                        </div>
+                        <div class="row knot-container">
+                            <table class="table table-bordered knot-table">
+                                <tbody>
+                                <tr>
+                                    <td class="knot-element-body">
+                                        <div class="precondition">condition</div>
+                                    </td>
+                                    <td class="knot-element-body">
+                                        <!--                                    <div spellcheck="false" contenteditable="true" class="statement">statement</div>-->
+                                        <input spellcheck="false" class="statement corc-knot-input"
+                                               placeholder="statement">
+                                        <i class="fas fa-pen knot-pen-icon"></i>
+                                    </td>
+                                    <td class="knot-element-body">
+                                        <div class="postcondition">condition</div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="knot" id="selection-statement-prototype" style="display:none">
+                        <!--suppress JSDeprecatedSymbols -->
+                        <div class="knot-header" onmousedown="dragStart(event, this)">
+                            Selection
+                            <i class="fas fa-trash-alt knot-bin-icon" onclick="deleteElement(this);"></i>
+                            <i class="fas fa-plus knot-plus-icon" onclick="addSelection(this);"></i>
+                            <i class="fas fa-minus knot-minus-icon" onclick="deleteSelection(this);"></i>
+                        </div>
+                        <div class="row knot-container">
+                            <table class="table table-bordered knot-table">
+                                <tbody>
+                                <tr>
+                                    <th class="knot-element-header">guards</th>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <table class="table table-bordered knot-table">
+                                <tbody>
+                                <tr>
+                                    <td class="knot-element-body">
+                                        <!--                                    <div spellcheck="false" contenteditable="true" class="guard">guard</div>-->
+                                        <input spellcheck="false" class="guard corc-knot-input" placeholder="guard">
+                                        <i class="fas fa-pen knot-pen-icon"></i>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <table class="table table-bordered knot-table">
+                                <tbody>
+                                <tr>
+                                    <th class="knot-element-header">precondition</th>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <table class="table table-bordered knot-table">
+                                <tbody>
+                                <tr>
+                                    <td class="knot-element-body precondition">condition</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <table class="table table-bordered knot-table">
+                                <tbody>
+                                <tr>
+                                    <th class="knot-element-header">statements</th>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <table class="table table-bordered knot-table">
+                                <tbody>
+                                <tr>
+                                    <td class="knot-element-body">
+                                        <!--                                    <div spellcheck="false" contenteditable="true" class="statement">statement</div>-->
+                                        <input spellcheck="false" class="statement corc-knot-input"
+                                               placeholder="statement">
+                                        <i class="fas fa-pen knot-pen-icon"></i>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <table class="table table-bordered knot-table">
+                                <tbody>
+                                <tr>
+                                    <th class="knot-element-header">postcondition</th>
+                                </tr>
+                                <tr>
+                                    <td class="knot-element-body postcondition">condition</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="knot" id="composition-statement-prototype" style="display: none">
+                        <!--suppress JSDeprecatedSymbols -->
+                        <div class="knot-header" onmousedown="dragStart(event, this)">
+                            Composition
+                            <i class="fas fa-trash-alt knot-bin-icon" onclick="deleteElement(this);"></i>
+                        </div>
+                        <div class="row knot-container">
+                            <table class="table table-bordered knot-table">
+                                <tbody>
+                                <tr>
+                                    <th class="knot-element-header">precondition</th>
+                                    <th class="knot-element-header">postcondition</th>
+                                </tr>
+                                <tr>
+                                    <td class="knot-element-body">
+                                        <div class="precondition">condition</div>
+                                    </td>
+                                    <td class="knot-element-body">
+                                        <div class="postcondition">condition</div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <table class="table table-bordered knot-table">
+                                <tbody>
+                                <tr>
+                                    <th class="knot-element-header">statement 1</th>
+                                    <th class="knot-element-header">intermediate condition</th>
+                                    <th class="knot-element-header">statement 2</th>
+                                </tr>
+                                <tr>
+                                    <td class="knot-element-body">
+                                        <!--                                    <div spellcheck="false" contenteditable="true">statement1</div>-->
+                                        <input spellcheck="false" class="corc-knot-input" placeholder="statement1">
+                                        <i class="fas fa-pen knot-pen-icon"></i>
+                                    </td>
+                                    <td class="knot-element-body">
+                                        <!--                                    <div spellcheck="false" contenteditable="true" class="intermediateCondition">{intermediateCond}</div>-->
+                                        <input spellcheck="false" class="intermediateCondition corc-knot-input"
+                                               placeholder="intermediateCond">
+                                        <i class="fas fa-pen knot-pen-icon"></i>
+                                    </td>
+                                    <td class="knot-element-body">
+                                        <!--                                    <div spellcheck="false" contenteditable="true">statement2</div>-->
+                                        <input spellcheck="false" class="corc-knot-input" placeholder="statement2">
+                                        <i class="fas fa-pen knot-pen-icon"></i>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="knot" id="repetition-statement-prototype" style="display: none">
+                        <div class="knot-header" onmousedown="dragStart(event, this)">
+                            Repetition Statement DO..OD
+                            <i class="fas fa-trash-alt knot-bin-icon" onclick="deleteElement(this);"></i>
+                        </div>
+                        <div class="row knot-container">
+                            <table class="table table-bordered knot-table">
+                                <tbody>
+                                <tr>
+                                    <th class="knot-element-header">invariant</th>
+                                    <th class="knot-element-header">guard</th>
+                                    <th class="knot-element-header">variant</th>
+                                </tr>
+                                <tr>
+                                    <td class="knot-element-body">
+                                        <!--                                        <div spellcheck="false" contenteditable="true" class="invariant">invariant</div>-->
+                                        <input spellcheck="false" class="invariant corc-knot-input"
+                                               placeholder="invariant">
+                                        <i class="fas fa-pen knot-pen-icon"></i>
+                                    </td>
+                                    <td class="knot-element-body">
+                                        <!--                                        <div spellcheck="false" contenteditable="true" class="guard">guard</div>-->
+                                        <input spellcheck="false" class="guard corc-knot-input" placeholder="guard">
+                                        <i class="fas fa-pen knot-pen-icon"></i>
+                                    </td>
+                                    <td class="knot-element-body">
+                                        <!--                                        <div spellcheck="false" contenteditable="true" class="variant">variant</div>-->
+                                        <input spellcheck="false" class="variant corc-knot-input" placeholder="variant">
+                                        <i class="fas fa-pen knot-pen-icon"></i>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th class="knot-element-header">precondition</th>
+                                    <th class="knot-element-header">loop statement</th>
+                                    <th class="knot-element-header">postcondition</th>
+                                </tr>
+                                <tr>
+                                    <td class="knot-element-body">
+                                        <div class="precondition">condition</div>
+                                    </td>
+                                    <td class="knot-element-body">
+                                        <!--                                        <div spellcheck="false" contenteditable="true">LoopStatement</div>-->
+                                        <input spellcheck="false" class="corc-knot-input" placeholder="LoopStatement">
+                                        <i class="fas fa-pen knot-pen-icon"></i>
+                                    </td>
+                                    <td class="knot-element-body">
+                                        <div class="postcondition">condition</div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="knot" id="strong-weak-statement-prototype" style="display: none">
+                        <div class="knot-header" onmousedown="dragStart(event, this)">
+                            Strong-Weak Statement
+                            <i class="fas fa-trash-alt knot-bin-icon" onclick="deleteElement(this);"></i>
+                        </div>
+                        <div class="row knot-container">
+                            <table class="table table-bordered knot-table">
+                                <tbody>
+                                <tr>
+                                    <th class="knot-element-header">weak precondition</th>
+                                    <th class="knot-element-header">Statement</th>
+                                    <th class="knot-element-header">strong postcondition</th>
+                                </tr>
+                                <tr>
+                                    <td class="knot-element-body">
+                                        <!--                                        <div contenteditable="true" class="precondition">condition</div>-->
+                                        <input spellcheck="false" class="precondition corc-knot-input"
+                                               placeholder="precondition">
+                                        <i class="fas fa-pen knot-pen-icon"></i>
+                                    </td>
+                                    <td class="knot-element-body">
+                                        <!--                                        <div contenteditable="true" class="statement">Statement</div>-->
+                                        <input spellcheck="false" class="statement corc-knot-input"
+                                               placeholder="statement">
+                                        <i class="fas fa-pen knot-pen-icon"></i>
+                                    </td>
+                                    <td class="knot-element-body">
+                                        <!--                                        <div contenteditable="true" class="postcondition">condition</div>-->
+                                        <input spellcheck="false" class="postcondition corc-knot-input"
+                                               placeholder="postcondition">
+                                        <i class="fas fa-pen knot-pen-icon"></i>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+            <div id="diagramResizer" class="webcorc-resizer-vertical"></div>
+
+            <div id="dummyCorcDiagramConsoleArea" class="corc-console-area corc-diagram">
+                <textarea id="corcDiagramConsole" class="corc-console" readonly></textarea>
+            </div>
+        </div>
+
+        <!-- Modals -->
+        <div class="modal fade" id="modal-about" tabindex="-1" role="dialog"
+             aria-labelledby="modal-about" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">About</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="media logo-corc-about">
+                            <img alt="" class="" src="imgs/corc-logo-color.svg" style="height: 250px">
+                        </div>
+
+
+                        <h3>Correctness-by-Construction (CbC)</h3>
+
+                        <p>
+                            <!--                            https://www.tu-braunschweig.de/isf/research/cbc-->
+                            <b>Projektzeitraum</b>: Dezember 2017 - offen
+                            </br>
+                            </br>
+                            Correctness-by-Construction (CbC) is an approach to incrementally create correct programs.
+                            CbC starts with an abstract Hoare triple {P} S {Q} consisting of a precondition P, an
+                            abstract statement S, and a postcondition Q. Hoare triples represent total correctness
+                            assertions that valuate only to true if, beginning from the precondition, the postcondition
+                            is met after executing the eventually defined concrete program. With CbC, the Hoare triple
+                            is successively refined using a set of refinement rules to a concrete implementation, which
+                            satisfies the specification. The correctness is guaranteed because every refinement rule is
+                            proven sound and preserves the correctness of the program. CbC is implemted in the tool
+                            CorC. CorC is a graphical and textual IDE to construct algorithms following the
+                            Correctness-by-Construction approach. It supports CbC developers to refine a program by a
+                            sequence of refinement steps and to verify the correctness of these refinement steps using a
+                            theorem prover.
+                            </br>
+                            </br>
+                            <b>Information Flow Control-by-Construction</b>
+                            </br>
+                            </br>
+                            Besides of verifying the functional correctness, refinements rules can also be utilized to
+                            ensure security of programs. An information flow policy defines how information may flow in
+                            a program (e.g., a flow from public to secret data is allowed, but the other way is
+                            prohibited). The extension of CbC to ensure security is called Information Flow
+                            Control-by-Construction (IFbC). Programs are constructed incrementally using refinement
+                            rules to follow an information flow policy. In every refinement step, security and
+                            functional correctness of the program is guaranteed, such that insecure programs are
+                            prohibited by construction. The information flow policy can be specified in any bounded
+                            upper semi-lattice (i.e., security levels are arranged in a partially ordered set
+                            representing the allowed direction of information flow). IFbC is implemented in an extension
+                            of CorC.
+                            </br>
+                            </br>
+                            <b>Correctness-by-Construction for Software Product Lines</b>
+                            </br>
+                            </br>
+                            Software product lines provide systematic reuse of software and other artifacts paired with
+                            variability mechanisms in the code to implement whole product families rather than single
+                            software products. The commonalities and differences of the single variants are communicated
+                            as features, whose relationships are often modelled in feature models. Guaranteeing the
+                            correctness of a product line is especially challenging because of the amount of possible
+                            variants resulting from the number of feature configurations and the variable code
+                            structures. To create a correct product line using CbC, we therefore extended the original
+                            CbC approach with a new refinement rule for a variability mechanism in the statements of the
+                            Hoare triple and combined it with contract composition for variability in the pre- and
+                            postcondition. We call this extension variational Correctness-by-Construction. VarCorC uses
+                            FeatureIDE and variational CbC to support the development of correct-by-construction
+                            software product lines.
+                            </br>
+                            </br>
+                            <b>Github</b>: <a href="https://github.com/TUBS-ISF/CorC" target="_blank"
+                                              rel="noopener noreferrer">CorC</a> </br>
+                            <b>Github</b>: <a href="https://github.com/TUBS-ISF/WebCorC" target="_blank"
+                                              rel="noopener noreferrer">WebCorC</a>
+                            </br>
+                            </br>
+                            <b>Involvierte Mitarbeiter</b>:
+                            <a href="https://tva.kastel.kit.edu/team/team_bordis.php" target="_blank"
+                               rel="noopener noreferrer">Tabea Bordis</a>,
+                            <a href="https://tva.kastel.kit.edu/team/team_runge.php" target="_blank"
+                               rel="noopener noreferrer">Tobias Runge</a>,
+                            <a href="https://tva.kastel.kit.edu/team_77.php" target="_blank" rel="noopener noreferrer">Ina
+                                Schaefer</a>
+                        </p>
+                        <div class="" style="border: #dcdcdc 2px solid; background-color: #ededed;border-radius: 5px">
+                            <a href="https://tva.kastel.kit.edu/index.php" target="_blank" rel="noopener noreferrer">
+                                <img alt="" class="" src="imgs/isf-logo-color-schrift.png"
+                                     style="margin: 5px; height: 80px">
+                            </a>
+                            <a href="https://www.tu-braunschweig.de/isf" target="_blank" rel="noopener noreferrer">
+                                <img alt="" class="" src="imgs/tva-logo-banner-english-color.svg"
+                                     style="margin: 5px; height: 85px">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="corc-button" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modal-new-file" tabindex="-1" role="dialog"
+             aria-labelledby="modal-about" aria-hidden="true">
+            <div class="modal-dialog modal-sm" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Create New File</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+                        <p>
+                            Select a type.
+                        </p>
+                        <div class="row">
+                            <button type="button" class="corc-button" data-dismiss="modal" data-toggle="modal"
+                                    data-target="#modal-new-diagram">New Diagram
+                            </button>
+                            <button type="button" class="corc-button" data-dismiss="modal" data-toggle="modal"
+                                    data-target="#modal-new-java-editor">New Java File
+                            </button>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="corc-button" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modal-new-diagram" tabindex="-1" role="dialog"
+             aria-labelledby="modal-about" aria-hidden="true">
+            <div class="modal-dialog modal-sm" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Create New Diagram</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+                        <p>
+                            Select a name.
+                        </p>
+                        <div class="row">
+                            <input class="corc-input">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="corc-button" data-dismiss="modal" onclick="createNewDiagram(this)">
+                            Create
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modal-new-java-editor" tabindex="-1" role="dialog"
+             aria-labelledby="modal-about" aria-hidden="true">
+            <div class="modal-dialog modal-sm" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Create New Java File</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <!--                        <p> Select a folder.</p>-->
+
+                        <!--                        <div class="input-group mb-3">-->
+                        <!--                            <select class="custom-select" id="inutParentFolder">-->
+                        <!--                                <option selected>Root</option>-->
+                        <!--                                <option value="1">Test</option>-->
+                        <!--                            </select>-->
+                        <!--                        </div>-->
+
+                        <p>
+                            Select a name.
+                        </p>
+                        <div class="row">
+                            <input class="corc-input">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="corc-button" data-dismiss="modal"
+                                onclick="createNewJavaFile(this)">
+                            Create
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modal-new-folder" tabindex="-1" role="dialog"
+             aria-labelledby="modal-about" aria-hidden="true">
+            <div class="modal-dialog modal-sm" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Create New Folder</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+                        <p>
+                            Select a name.
+                        </p>
+                        <div class="row">
+                            <input class="corc-input">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="corc-button" data-dismiss="modal"
+                                onclick="createNewFolderFromModal(this)">
+                            Create
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- End of Main Content -->
+        <!--                </div>-->
+
+        <!--            </di>-->
+
+
+        <!-- Toasts -->
+
+        <!--            <div style="position: absolute; right: 15px; bottom: 15px;" id="toastContainer">-->
+        <!--                    &lt;!&ndash; Then put toasts within &ndash;&gt;-->
+        <!--                    <div class="toast corc-toast" role="alert" aria-live="assertive" aria-atomic="true" id="defaultToast" data-delay ="6000">-->
+        <!--                        <div class="toast-header">-->
+        <!--&lt;!&ndash;                            <img src="..." class="rounded mr-2" alt="...">&ndash;&gt;-->
+        <!--                            <i class="fas fa-exclamation-circle" style="padding-right: 5px"></i>-->
+        <!--                            <strong class="mr-auto corcToastHeader">Bootstrap</strong>-->
+        <!--&lt;!&ndash;                            <small class="text-muted">just now</small>&ndash;&gt;-->
+        <!--                            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">-->
+        <!--                                <span aria-hidden="true">&times;</span>-->
+        <!--                            </button>-->
+        <!--                        </div>-->
+        <!--                        <div class="toast-body corcToastBody">-->
+        <!--                            See? Just like this.-->
+        <!--                        </div>-->
+        <!--                    </div>-->
+
+        <!--            </div>-->
+
+        <!-- End of Content Wrapper -->
+        <!--        </di>-->
+    </div>
+
+</div>
+<!-- End of Page Wrapper -->
+
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<!-- Bootstrap core JavaScript-->
+<script src="vendor/jquery/jquery.min.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Core plugin JavaScript-->
+<script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+<!-- Custom scripts for all pages-->
+<script src="js/sb-admin-2.min.js"></script>
+
+<!-- jsplumb for drawing lines -->
+<script src="vendor/jsplumb/dist/js/jsplumb.min.js"></script>
+
+
+<!-- Custom script CorC -->
+<script src="js-webcorc/webcorc-page.js"></script>
+<script src="js-webcorc/webcorc-drawing.js"></script>
+<script src="js-webcorc/webcorc-knots-function.js"></script>
+<script src="js-webcorc/webcorc-knots-creation.js"></script>
+<script src="js-webcorc/webcorc-command-stack.js"></script>
+<script src="js-webcorc/webcorc-object-handler.js"></script>
+<script src="js-webcorc/webcorc-test-json.js"></script>
+<script src="js-webcorc/webcorc-propagation.js"></script>
+<script src="js-webcorc/webcorc-export.js"></script>
+<script src="js-webcorc/webcorc-cookie-handler.js"></script>
+<script src="js-webcorc/webcorc-page-zoom.js"></script>
+<!--<script src="js-webcorc/webcorc-page-scroll-by-grab.js"></script>-->
+<script src="js-webcorc/webcorc-import.js"></script>
+<script src="js-webcorc/webcorc-code-handler.js"></script>
+<script src="js-webcorc/webcorc-file-handler.js"></script>
+<script src="js-webcorc/webcorc-treeviewer.js"></script>
+<script src="js-webcorc/webcorc-diagram-navigation.js"></script>
+<script src="js-webcorc/webcorc-communication-handler.js"></script>
+
+</body>
+
+</html>

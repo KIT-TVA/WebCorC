@@ -1,0 +1,68 @@
+/* Remove default bullets */
+ul, #treeView {
+    list-style-type: none;
+    padding-inline-start: 25px;
+}
+
+/* Remove margins and padding from the parent ul */
+#treeView {
+    margin: 5px;
+    padding: 5px;
+}
+
+/* Style the caret/arrow */
+.folder {
+    cursor: pointer;
+    user-select: none; /* Prevent text selection */
+}
+
+/* Create the caret/arrow with a unicode, and style it */
+.folder::before {
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    content: "\f07b";
+    /*color: black;*/
+    display: inline-block;
+    margin-right: 6px;
+}
+
+/* Rotate the caret/arrow icon when clicked on (using JavaScript) */
+.folder-down::before {
+    /*transform: rotate(90deg);*/
+    content: "\f07c";
+}
+
+/* Hide the nested list */
+.nested {
+    display: none;
+}
+
+/* Show the nested list when the user clicks on the caret/arrow (with JavaScript) */
+.active {
+    display: block;
+}
+
+.corc-ellipsis{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.corc-file-clickable:hover{
+    cursor: pointer;
+
+}
+
+.corc-file-clickable:active{
+     background: var(--headingsFontColor);
+     color: var(--headings);
+     padding: 0 5px;
+     border-radius: 5px;
+ }
+
+.corc-file-clicked{
+     background: var(--headingsFontColor);
+     color: var(--headings);
+     padding: 0 5px;
+     border-radius: 5px;
+ }
