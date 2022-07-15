@@ -240,7 +240,11 @@ public class WebCorCController {
 					SZ_LOCATION + File.separator + session.getId() + File.separator + "ProofData");
 			File newSubDirHelper = new File(
 					SZ_LOCATION + File.separator + session.getId() + File.separator + "HelperFiles");
-			newRootDir.mkdir();
+			try {
+				Files.createDirectories(newRootDir.toPath());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+			}
 			newSubDir.mkdir();
 			newSubDirMeta.mkdir();
 			newSubDirProof.mkdir();
