@@ -1,1 +1,0 @@
-//TODO: command stack - später nicht löschen sondern unsichtbar machen für STR + Z usw.
