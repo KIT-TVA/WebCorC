@@ -51,6 +51,10 @@ function createNewFile(createButton, type, dummyEditorId) {
         // TODO if this is the case, modal should stay opened
     }
     else {
+        let fileContent = "class "+fileName+"{\n" +
+            "  public void main(String[] args){\n" +
+            "  }\n" +
+            "}";
         // let newKnot = $("#"+dummyEditorId).clone(true, true).css("display", "block").prop('id', fileName);
         // $("#content-wrapper").append(newKnot);
         $("#"+dummyEditorId).css("display", "flex");
@@ -66,6 +70,9 @@ function createNewFile(createButton, type, dummyEditorId) {
         if(type === "java"){
             createCodeMirrorInstance(fileName);
         }
+        else{
+            fileContent =JSON.stringify(webcorcObject);
+        }
         // TODO: display it in the tree viewer / display that it is active
 
         // TODO: fullPath is empty
@@ -79,7 +86,7 @@ function createNewFile(createButton, type, dummyEditorId) {
         // }
         let fullPath = directoryPath+"/" + fileName + "." + type;
 
-        createNewFileOnServer(fullPath, JSON.stringify(webcorcObject));
+        createNewFileOnServer(fullPath, fileContent);
         addFileToTreeviewer(fileName, type, directoryPath);
         setCurrentPathToCookie(fullPath);
     }

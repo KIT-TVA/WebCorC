@@ -29,9 +29,10 @@ $("#importGraph, #importFileSidebar").change(function(){
 
 });
 
-$("#uploadHelperfile").change(function(){
-    var helperFile = document.getElementById("uploadHelperfile").files[0];
-    sendHelperFile(helperFile);
+$("#uploadFile").change(function(){
+    let file = document.getElementById("uploadFile").files[0];
+    // sendHelperFile(helperFile);
+    uploadFileAtCurrentPath(file);
 });
 
 $("#uploadZipArchive").change(function(){

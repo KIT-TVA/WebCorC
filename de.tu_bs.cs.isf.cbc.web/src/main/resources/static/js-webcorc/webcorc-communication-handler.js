@@ -11,7 +11,7 @@ setTimeout(() => {
 }, 100);
 
 $(".context-menu-button-verify").click(function () {
-    verifyWebCorCModel();
+    verifyWebCorCModel(getCurrentPathFromCookie(),{CorcInput: buildWebCorCModel()});
     console.log("verification started ...");
 });
 
@@ -199,14 +199,18 @@ function getFile(path) {
     return returnValue;
 }
 
-function verifyWebCorCModel() {
+function verifyWebCorCModel(fullPath, content) {
     $(".corc-spinner").css("display", "flex")
+    let data = {
+        "path": fullPath,
+        "content": content
+    };
     $.ajax({
         type: "POST",
-        url: "http://" + window.location.host + "/de.tu_bs.cs.isf.cbc.web/verifyAll",
+        url: "http://" + window.location.host + "/de.tu_bs.cs.isf.cbc.web/verifyDiagramFile",
         // The key needs to match your method's input parameter (case-sensitive).
         // TODO: check if buidWebCorCModel is complete
-        data: JSON.stringify({CorcInput: buildWebCorCModel()}),
+        data: JSON.stringify(data),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (data) {
@@ -322,6 +326,27 @@ function sendJavaFile(javaFile) {
             404: function () {
                 createToast("404: Server connection failed.", "Failed to send Java File.");
             }
+        }
+    });
+}
+
+function uploadFileAtCurrentPath(file) {
+    var form_data_java = new FormData();
+    form_data_java.append('file', file);
+    form_data_java.append('pathCurrentDir', getCurrentDirectoryFromCookie());
+    $.ajax({
+        type: "POST",
+        url: "http://" + window.location.host + "/de.tu_bs.cs.isf.cbc.web/uploadFileToPath",
+        data: form_data_java,
+        contentType: false,
+        dataType: false,
+        processData: false,
+        success: function (data) {
+            console.log(data);
+        },
+        error: function (errMsg) {
+            console.log("An Error occurred: ");
+            console.log(errMsg);
         }
     });
 }

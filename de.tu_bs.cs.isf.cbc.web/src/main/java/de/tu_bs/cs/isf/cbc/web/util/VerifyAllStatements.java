@@ -18,7 +18,7 @@ import de.tu_bs.cs.isf.cbc.cbcmodel.Variant;
 
 public class VerifyAllStatements {
     
-	public static void verify(Resource rResource) {
+	public static void verify(Resource rResource, URI proofFileUri) {
     	JavaVariables vars = null;
 		Renaming renaming = null;
 		CbCFormula formula = null;
@@ -38,7 +38,7 @@ public class VerifyAllStatements {
 		
 		AbstractStatement statement = formula.getStatement();
 		boolean prove = false;
-		prove = proveChildStatement(statement.getRefinement(), vars, conds, renaming, rResource.getURI());	
+		prove = proveChildStatement(statement.getRefinement(), vars, conds, renaming, proofFileUri);	
 		if (prove) {
 			statement.setProven(true);
 		} else {

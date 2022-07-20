@@ -1,7 +1,6 @@
 package de.tu_bs.cs.isf.cbc.web.server;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
@@ -243,7 +242,7 @@ public class WebCorCController {
 			try {
 				Files.createDirectories(newRootDir.toPath());
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				System.out.println(e.getMessage());
 			}
 			newSubDir.mkdir();
 			newSubDirMeta.mkdir();
@@ -264,11 +263,19 @@ public class WebCorCController {
 		return javaCompiler.compileJavaString(javaCodeBlock);
 	}
 
+	@Deprecated
 	@RequestMapping(value = "/helperFileUpload", method = RequestMethod.POST)
 	public String uploadHelperFile(@RequestParam("file") MultipartFile file, HttpSession session) {
 		String szSessionId = session.getId();
-		File keyHelperFile = new File(URI
-				.createFileURI(SZ_LOCATION + "/" + "Proofs" + "/" + szSessionId + "/" + "helper.key").toFileString());
+		// TODO: get information about the corresponding diagram and put in prove_xProof
+		// folder
+//		File keyHelperFile = new File(URI
+//				.createFileURI(SZ_LOCATION + File.separator + szSessionId + File.separator + "HelperFiles" + File.separator + "helper.key").toFileString());
+		// fixed path for testing purposes
+		File keyHelperFile = new File(URI.createFileURI(
+				SZ_LOCATION + File.separator + szSessionId + File.separator + "WebDirectory" + File.separator
+						+ "LinearSearch" + File.separator + "prove_linearSearchProof" + File.separator + "helper.key")
+				.toFileString());
 		try {
 			keyHelperFile.getParentFile().mkdirs();
 			file.transferTo(keyHelperFile);
@@ -297,6 +304,30 @@ public class WebCorCController {
 		return "";
 	}
 
+	@RequestMapping(value = "/uploadFileToPath", method = RequestMethod.POST)
+	public String uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("pathCurrentDir") String path,
+			HttpSession session) {
+//	public String uploadFile(@RequestBody String whatIsIt, HttpSession session) {
+		String sessionId = session.getId();
+		File newFile = new File(SZ_LOCATION + File.separator + sessionId + File.separator
+				+ path.replace("treeView", "WebDirectory") + File.separator + file.getOriginalFilename());
+		try {
+			if (newFile.createNewFile()) {
+				System.out.println("File created: " + newFile.getName());
+				file.transferTo(newFile);
+				return "File " + newFile.getName() + " created successfully";
+			} else {
+				System.out.println("File already exists, updated File.");
+				file.transferTo(newFile);
+				return "File " + newFile.getName() + " already exists, updated File";
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+	}
+
+	@Deprecated
 	@RequestMapping(value = "/javaFileUpload", method = RequestMethod.POST)
 	public String uploadJavaFile(@RequestParam("file") MultipartFile file, HttpSession session) {
 		String szSessionId = session.getId();
@@ -322,6 +353,7 @@ public class WebCorCController {
 		return "Proof is closed: " + result;
 	}
 
+	@Deprecated
 	@RequestMapping(value = "/verifyAll", method = RequestMethod.POST, consumes = "application/json")
 	public String processJson(@RequestBody String requestPayload, HttpSession session) {
 		String szSessionId = session.getId();
@@ -386,7 +418,7 @@ public class WebCorCController {
 		}
 
 		// Verify model, result be written into the resource
-		VerifyAllStatements.verify(rResource);
+		VerifyAllStatements.verify(rResource, rResource.getURI());
 		szPathName = System.currentTimeMillis() + "_" + jObjTree.getString("name").replace(" ", "")
 				+ "_evaluated.cbcmodel";
 		rResource.setURI(URI.createFileURI(SZ_LOCATION + "/" + "Proofs" + "/" + szSessionId + "/" + szPathName));
@@ -409,6 +441,124 @@ public class WebCorCController {
 		jObjResponse.put("sessionId", szSessionId);
 		jObjResponse.put("CorcOutput", jObjTree);
 
+		return jObjResponse.toString();
+	}
+
+	@RequestMapping(value = "/verifyDiagramFile", method = RequestMethod.POST, consumes = "application/json")
+	public String processDiagramFileVerification(@RequestBody String fileAndContent, HttpSession session) {
+		String szSessionId = session.getId();
+		// Parsing the JSON-tree and create the EObject with the CbcmodelFactory,
+		// unescaping necessary of HTML entities
+//		JSONObject jObjTree = new JSONObject(HtmlUtils.htmlUnescape(requestPayload));
+		JSONObject jObj = new JSONObject(fileAndContent);
+		JSONObject jObjTree = jObj.getJSONObject("content");
+		jObjTree = jObjTree.getJSONObject("CorcInput");
+		String pathString = JSONParser.getPathString(jObj, session);
+		String fileName = JSONParser.getNameString(jObj);
+//		File proofFolder = new File(SZ_LOCATION + File.separator + pathString + File.separator
+//				+ JSONParser.getNameString(jObj).replace(".diagram", "") + "Proof");
+		String proofFolderPath = SZ_LOCATION + File.separator + pathString + File.separator
+						+ JSONParser.getNameString(jObj).replace(".diagram", "");
+//		try {
+//			Files.createDirectories(proofFolder.toPath());
+//		}
+//		catch(Exception e){}
+		// Initializations and registrations
+
+		// Ecore Magie
+		{
+			// Ecore aufwecken / initialisieren!?
+			CbcmodelPackage.eINSTANCE.eClass();
+			// Ecore file extension registry holen und .cbcmode erweiterung mit XMI
+			// resources mappen
+			Resource.Factory.Registry reg = Resource.Factory.Registry.INSTANCE;
+			Map<String, Object> m = reg.getExtensionToFactoryMap();
+			m.put("cbcmodel", new XMIResourceFactoryImpl());
+		}
+
+		// ressourcen liste um ressourcen zu erstellen
+		ResourceSet rs = new ResourceSetImpl();
+
+		// Create resource & model instance
+		// name einfach um das von der nächsten verifikation zu unterscheiden
+		String szPathName = System.currentTimeMillis() + "_" + jObjTree.getString("name").replace(" ", "")
+				+ ".cbcmodel";
+		// ressource mithilfe vom ressource set erstellen --> vielleicht nicht jedes mal
+		// ein neues set?
+		Resource rResource = rs.createResource(URI.createFileURI(
+				SZ_LOCATION + File.separator + szSessionId + File.separator + ".meta" + File.separator + szPathName));
+
+		// add variables and global conditions
+		JavaVariables jvVars = CbcmodelFactory.eINSTANCE.createJavaVariables();
+
+		JSONArray jArrVariables = jObjTree.getJSONArray("javaVariables");
+		for (int i = 0; i < jArrVariables.length(); i++) {
+			JavaVariable jvVar = CbcmodelFactory.eINSTANCE.createJavaVariable();
+			jvVar.setName(jArrVariables.getString(i));
+			jvVars.getVariables().add(jvVar);
+		}
+
+		// hier das gleiche
+		GlobalConditions gcConditions = CbcmodelFactory.eINSTANCE.createGlobalConditions();
+		JSONArray jArrGlobals = jObjTree.getJSONArray("globalConditions");
+		for (int i = 0; i < jArrGlobals.length(); i++) {
+			Condition gc = CbcmodelFactory.eINSTANCE.createCondition();
+			gc.setName(jArrGlobals.getString(i));
+			gcConditions.getConditions().add(gc);
+		}
+
+		rResource.getContents().add(jvVars);
+		rResource.getContents().add(gcConditions);
+
+		// initiate recursive parsing, also adding the formula to the rResource
+		JSONParser.parseFormulaTree(jObjTree, rResource, null);
+
+		try {
+			rResource.save(Collections.EMPTY_MAP);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		// Verify model, result be written into the resource
+		VerifyAllStatements.verify(rResource, URI.createFileURI(proofFolderPath));
+		szPathName = System.currentTimeMillis() + "_" + jObjTree.getString("name").replace(" ", "")
+				+ "_evaluated.cbcmodel";
+		rResource.setURI(URI.createFileURI(SZ_LOCATION + File.separator + szSessionId + File.separator +".meta"+File.separator +szPathName));
+
+		try {
+			rResource.save(Collections.EMPTY_MAP);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		CbCFormula formula = null;
+		for (EObject eObj : rResource.getContents()) {
+			if (eObj instanceof CbCFormula) {
+				formula = (CbCFormula) eObj;
+			}
+		}
+
+		JSONParser.createJSONResponse(jObjTree, formula.getStatement());
+		JSONObject jObjResponse = new JSONObject();
+		jObjResponse.put("sessionId", szSessionId);
+		jObjResponse.put("CorcOutput", jObjTree);
+		
+		// TODO: auslagern (save content to file)
+//		File newFile = new File(SZ_LOCATION + File.separator + pathString  + File.separator + fileName);
+//		try {
+//			if (newFile.createNewFile()) {
+//				System.out.println("File created: " + newFile.getName());
+//			} else {
+//				System.out.println("File already exists.");
+//			}
+//			Writer writer = new FileWriter(SZ_LOCATION + File.separator + pathString  + File.separator + fileName, false);
+//			writer.write(jObjResponse.toString());
+//			writer.close();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+		
+		// TODO: also save response to file -> pathString
 		return jObjResponse.toString();
 	}
 }
