@@ -71,12 +71,12 @@ function createNewFile(createButton, type, dummyEditorId) {
             createCodeMirrorInstance(fileName);
         }
         else{
+            let webcorcObject = buildWebCorCModel();
             fileContent =JSON.stringify(webcorcObject);
         }
         // TODO: display it in the tree viewer / display that it is active
 
         // TODO: fullPath is empty
-        let webcorcObject = buildWebCorCModel();
         //let fullPath = getCurrentFilePath();
         // TODO: important! implement a way to know the parent structure (just treeview as parent or any folders?)
         let directoryPath = getCurrentDirectoryFromCookie();
