@@ -388,7 +388,7 @@ public class JSONParser {
 	}
 
 	// identical for leaf strong-weak statements
-	private static AbstractStatement createStatement(JSONObject jObjInput) {
+	public static AbstractStatement createStatement(JSONObject jObjInput) {
 		AbstractStatement statement = CbcmodelFactory.eINSTANCE.createAbstractStatement();
 		if (jObjInput.getString("type").equals("strongWeakStatement")) {
 			statement.setName(";");

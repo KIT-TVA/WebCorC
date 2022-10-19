@@ -24,7 +24,7 @@ createContextMenu("context-menu-default", menuFields, $("#dummyDiagramArea"));
 
 menuFields = {"entrys" : []};
 Array.prototype.push.apply(menuFields.entrys, globalMenuFields.entrys);
-menuFields.entrys.push({"name": "Verify Precondition", "extraClass": ["context-menu-button-verify-statement","disabled"]},{"name": "Verify All", "extraClass":[ "context-menu-button-verify"]});
+menuFields.entrys.push({"name": "Verify Precondition", "extraClass": ["context-menu-button-verify-statement","disabled"]},{"name": "Verify All", "extraClass":["context-menu-button-verify"]});
 createContextMenu("context-menu-selection", menuFields,  $("[id^=selection]"));
 
 $('body').on('contextmenu', function (e) {

@@ -12,6 +12,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 import java.util.zip.ZipOutputStream;
 
 import javax.servlet.http.HttpServletResponse;
@@ -28,6 +29,7 @@ import org.json.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -58,7 +60,7 @@ public class WebCorCController {
 
 	// continue using this directory path
 	private final String SZ_LOCATION = System.getProperty("java.io.tmpdir") + "WebCorC";
-//	private final String SZ_LOCATION = "C:\\Users\\m-hor\\Desktop\\WebCorCTemp";
+	// private final String SZ_LOCATION = "C:\\Users\\m-hor\\Desktop\\WebCorCTemp";
 
 	@GetMapping(value = "/sessionId")
 	public String getSessionId(HttpSession session) {
@@ -76,19 +78,21 @@ public class WebCorCController {
 
 			// for testing purposes: save file to directory with FileOutputStream instead of
 			// StreamingResponseBody
-//			Path zipPath = Paths.get(SZ_LOCATION  + File.separator + "test.zip");
-//			final ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipPath.toFile()));
+			// Path zipPath = Paths.get(SZ_LOCATION + File.separator + "test.zip");
+			// final ZipOutputStream zos = new ZipOutputStream(new
+			// FileOutputStream(zipPath.toFile()));
 
 			File directory = new File(SZ_LOCATION + File.separator + session.getId());
 
 			System.out.println("zipping...");
 
 			FileUtil.zipDirectory(directory, SZ_LOCATION + File.separator + session.getId(), zipOutputStream);
-//			FileUtil.zipDirectory(directory, SZ_LOCATION + File.separator + session.getId(), zos);
+			// FileUtil.zipDirectory(directory, SZ_LOCATION + File.separator +
+			// session.getId(), zos);
 
 			System.out.println("directory zipped, shipping...");
 
-//			}
+			// }
 
 		});
 	}
@@ -152,7 +156,7 @@ public class WebCorCController {
 		writer.write(content);
 		writer.close();
 
-//		Files.writeString(path, content, StandardOpenOption.APPEND );
+		// Files.writeString(path, content, StandardOpenOption.APPEND );
 
 		System.out.println("File saved");
 
@@ -218,9 +222,10 @@ public class WebCorCController {
 
 	@RequestMapping(value = "/initialize", method = RequestMethod.POST)
 	public String initializeWorkspace(HttpSession session) {
-//		if (!session.getId().equals(sessionId)) {
-//			System.out.println("Session Id proplem occured! At this point of implementation, this should not be the case!");
-//		}
+		// if (!session.getId().equals(sessionId)) {
+		// System.out.println("Session Id proplem occured! At this point of
+		// implementation, this should not be the case!");
+		// }
 
 		// check if there is an existing folder named sessionId. If not - create new
 		// "web workspace"
@@ -269,8 +274,9 @@ public class WebCorCController {
 		String szSessionId = session.getId();
 		// TODO: get information about the corresponding diagram and put in prove_xProof
 		// folder
-//		File keyHelperFile = new File(URI
-//				.createFileURI(SZ_LOCATION + File.separator + szSessionId + File.separator + "HelperFiles" + File.separator + "helper.key").toFileString());
+		// File keyHelperFile = new File(URI
+		// .createFileURI(SZ_LOCATION + File.separator + szSessionId + File.separator +
+		// "HelperFiles" + File.separator + "helper.key").toFileString());
 		// fixed path for testing purposes
 		File keyHelperFile = new File(URI.createFileURI(
 				SZ_LOCATION + File.separator + szSessionId + File.separator + "WebDirectory" + File.separator
@@ -307,7 +313,7 @@ public class WebCorCController {
 	@RequestMapping(value = "/uploadFileToPath", method = RequestMethod.POST)
 	public String uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("pathCurrentDir") String path,
 			HttpSession session) {
-//	public String uploadFile(@RequestBody String whatIsIt, HttpSession session) {
+		// public String uploadFile(@RequestBody String whatIsIt, HttpSession session) {
 		String sessionId = session.getId();
 		File newFile = new File(SZ_LOCATION + File.separator + sessionId + File.separator
 				+ path.replace("treeView", "WebDirectory") + File.separator + file.getOriginalFilename());
@@ -447,22 +453,20 @@ public class WebCorCController {
 	@RequestMapping(value = "/verifyDiagramFile", method = RequestMethod.POST, consumes = "application/json")
 	public String processDiagramFileVerification(@RequestBody String fileAndContent, HttpSession session) {
 		String szSessionId = session.getId();
-		// Parsing the JSON-tree and create the EObject with the CbcmodelFactory,
-		// unescaping necessary of HTML entities
-//		JSONObject jObjTree = new JSONObject(HtmlUtils.htmlUnescape(requestPayload));
 		JSONObject jObj = new JSONObject(fileAndContent);
 		JSONObject jObjTree = jObj.getJSONObject("content");
 		jObjTree = jObjTree.getJSONObject("CorcInput");
 		String pathString = JSONParser.getPathString(jObj, session);
 		String fileName = JSONParser.getNameString(jObj);
-//		File proofFolder = new File(SZ_LOCATION + File.separator + pathString + File.separator
-//				+ JSONParser.getNameString(jObj).replace(".diagram", "") + "Proof");
+		// File proofFolder = new File(SZ_LOCATION + File.separator + pathString +
+		// File.separator
+		// + JSONParser.getNameString(jObj).replace(".diagram", "") + "Proof");
 		String proofFolderPath = SZ_LOCATION + File.separator + pathString + File.separator
-						+ JSONParser.getNameString(jObj).replace(".diagram", "");
-//		try {
-//			Files.createDirectories(proofFolder.toPath());
-//		}
-//		catch(Exception e){}
+				+ JSONParser.getNameString(jObj).replace(".diagram", "");
+		// try {
+		// Files.createDirectories(proofFolder.toPath());
+		// }
+		// catch(Exception e){}
 		// Initializations and registrations
 
 		// Ecore Magie
@@ -523,7 +527,8 @@ public class WebCorCController {
 		VerifyAllStatements.verify(rResource, URI.createFileURI(proofFolderPath));
 		szPathName = System.currentTimeMillis() + "_" + jObjTree.getString("name").replace(" ", "")
 				+ "_evaluated.cbcmodel";
-		rResource.setURI(URI.createFileURI(SZ_LOCATION + File.separator + szSessionId + File.separator +".meta"+File.separator +szPathName));
+		rResource.setURI(URI.createFileURI(
+				SZ_LOCATION + File.separator + szSessionId + File.separator + ".meta" + File.separator + szPathName));
 
 		try {
 			rResource.save(Collections.EMPTY_MAP);
@@ -542,23 +547,134 @@ public class WebCorCController {
 		JSONObject jObjResponse = new JSONObject();
 		jObjResponse.put("sessionId", szSessionId);
 		jObjResponse.put("CorcOutput", jObjTree);
-		
+
 		// TODO: auslagern (save content to file)
-//		File newFile = new File(SZ_LOCATION + File.separator + pathString  + File.separator + fileName);
-//		try {
-//			if (newFile.createNewFile()) {
-//				System.out.println("File created: " + newFile.getName());
-//			} else {
-//				System.out.println("File already exists.");
-//			}
-//			Writer writer = new FileWriter(SZ_LOCATION + File.separator + pathString  + File.separator + fileName, false);
-//			writer.write(jObjResponse.toString());
-//			writer.close();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-		
+		// File newFile = new File(SZ_LOCATION + File.separator + pathString +
+		// File.separator + fileName);
+		// try {
+		// if (newFile.createNewFile()) {
+		// System.out.println("File created: " + newFile.getName());
+		// } else {
+		// System.out.println("File already exists.");
+		// }
+		// Writer writer = new FileWriter(SZ_LOCATION + File.separator + pathString +
+		// File.separator + fileName, false);
+		// writer.write(jObjResponse.toString());
+		// writer.close();
+		// } catch (IOException e) {
+		// e.printStackTrace();
+		// }
+
 		// TODO: also save response to file -> pathString
 		return jObjResponse.toString();
+	}
+
+	@RequestMapping(value = "/verifyStatement", method = RequestMethod.POST, consumes = "application/json")
+	public String processSingleStatementVerification(@RequestHeader String statementId,
+			@RequestBody String fileAndContent, HttpSession session) {
+		String szSessionId = session.getId();
+		JSONObject jObj = new JSONObject(fileAndContent);
+		JSONObject jObjTree = jObj.getJSONObject("content");
+		jObjTree = jObjTree.getJSONObject("CorcInput");
+		jObjTree.getJSONObject(szSessionId);
+		String pathString = JSONParser.getPathString(jObj, session);
+		String proofFolderPath = SZ_LOCATION + File.separator + pathString + File.separator
+				+ JSONParser.getNameString(jObj).replace(".diagram", "");
+		{
+			// Ecore aufwecken / initialisieren!?
+			CbcmodelPackage.eINSTANCE.eClass();
+			// Ecore file extension registry holen und .cbcmode erweiterung mit XMI
+			// resources mappen
+			Resource.Factory.Registry reg = Resource.Factory.Registry.INSTANCE;
+			Map<String, Object> m = reg.getExtensionToFactoryMap();
+			m.put("cbcmodel", new XMIResourceFactoryImpl());
+		}
+
+		// ressourcen liste um ressourcen zu erstellen
+		ResourceSet rs = new ResourceSetImpl();
+
+		// Create resource & model instance
+		// name einfach um das von der nächsten verifikation zu unterscheiden
+		String szPathName = System.currentTimeMillis() + "_" + jObjTree.getString("name").replace(" ", "")
+				+ ".cbcmodel";
+		// ressource mithilfe vom ressource set erstellen --> vielleicht nicht jedes mal
+		// ein neues set?
+		Resource rResource = rs.createResource(URI.createFileURI(
+				SZ_LOCATION + File.separator + szSessionId + File.separator + ".meta" + File.separator + szPathName));
+
+		// add variables and global conditions
+		JavaVariables jvVars = CbcmodelFactory.eINSTANCE.createJavaVariables();
+		JSONArray jArrVariables = jObjTree.getJSONArray("javaVariables");
+		for (int i = 0; i < jArrVariables.length(); i++) {
+			JavaVariable jvVar = CbcmodelFactory.eINSTANCE.createJavaVariable();
+			jvVar.setName(jArrVariables.getString(i));
+			jvVars.getVariables().add(jvVar);
+		}
+
+		// hier das gleiche
+		GlobalConditions gcConditions = CbcmodelFactory.eINSTANCE.createGlobalConditions();
+		JSONArray jArrGlobals = jObjTree.getJSONArray("globalConditions");
+		for (int i = 0; i < jArrGlobals.length(); i++) {
+			Condition gc = CbcmodelFactory.eINSTANCE.createCondition();
+			gc.setName(jArrGlobals.getString(i));
+			gcConditions.getConditions().add(gc);
+		}
+
+		try {
+			rResource.save(Collections.EMPTY_MAP);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		// Verify model, result be written into the resource
+		VerifyAllStatements.verify(rResource, URI.createFileURI(proofFolderPath));
+		szPathName = System.currentTimeMillis() + "_" + jObjTree.getString("name").replace(" ", "")
+				+ "_evaluated.cbcmodel";
+		rResource.setURI(URI.createFileURI(
+				SZ_LOCATION + File.separator + szSessionId + File.separator + ".meta" + File.separator + szPathName));
+
+		try {
+			rResource.save(Collections.EMPTY_MAP);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		CbCFormula formula = null;
+		for (EObject eObj : rResource.getContents()) {
+			if (eObj instanceof CbCFormula) {
+				formula = (CbCFormula) eObj;
+			}
+		}
+
+		JSONParser.createJSONResponse(jObjTree, formula.getStatement());
+		JSONObject jObjResponse = new JSONObject();
+		jObjResponse.put("sessionId", szSessionId);
+		jObjResponse.put("CorcOutput", jObjTree);
+
+		return jObjResponse.toString();
+	}
+
+	private void propagateResult(boolean result, JSONObject jObjTree, String statementId) {
+		// 
+	}
+
+	private JSONObject extractStatement(JSONObject jObjTree, String statementId) {
+		switch (jObjTree.getString("type")) {
+		case "CBCFormula":
+			// Iterate further
+			return extractStatement(jObjTree.getJSONObject("statement"), statementId);
+		case "CompositionStatement":
+			return Optional.ofNullable(extractStatement(jObjTree.getJSONObject("statement1"), statementId))
+					.orElse(extractStatement(jObjTree.getJSONObject("statement2"), statementId));
+		case "RepetitionStatement":
+			// No different than a CBCFormula, iterate further
+			return extractStatement(jObjTree.getJSONObject("loopStatement"), statementId);
+		case "AbstractStatement":
+			// Check if statementId matches
+			return jObjTree.getString("id") == statementId ? jObjTree : null;
+		default:
+			return null;
+		}
+		// TODO Implement handling of selection statements
 	}
 }

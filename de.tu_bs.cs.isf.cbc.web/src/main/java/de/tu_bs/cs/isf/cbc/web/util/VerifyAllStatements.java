@@ -62,7 +62,7 @@ public class VerifyAllStatements {
 		return prove;
 	}
 
-	private static boolean proveAbstractStatement(AbstractStatement statement, JavaVariables vars, GlobalConditions conds, 
+	public static boolean proveAbstractStatement(AbstractStatement statement, JavaVariables vars, GlobalConditions conds, 
 			Renaming renaming, URI uri) {
 		if (!statement.isProven()) {
 			boolean prove = false;
