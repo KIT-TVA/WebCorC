@@ -38,6 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.springframework.web.util.HtmlUtils;
 
+import de.tu_bs.cs.isf.cbc.cbcmodel.AbstractStatement;
 import de.tu_bs.cs.isf.cbc.cbcmodel.CbCFormula;
 import de.tu_bs.cs.isf.cbc.cbcmodel.CbcmodelFactory;
 import de.tu_bs.cs.isf.cbc.cbcmodel.CbcmodelPackage;
@@ -620,14 +621,28 @@ public class WebCorCController {
 			gcConditions.getConditions().add(gc);
 		}
 
+		rResource.getContents().add(jvVars);
+		rResource.getContents().add(gcConditions);
+
+		// initiate recursive parsing, also adding the formula to the rResource
+		JSONParser.parseFormulaTree(jObjTree, rResource, null);
+
 		try {
 			rResource.save(Collections.EMPTY_MAP);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		// Verify model, result be written into the resource
-		VerifyAllStatements.verify(rResource, URI.createFileURI(proofFolderPath));
+		CbCFormula ft = (CbCFormula) rResource.getContents().stream().filter(eObject -> eObject instanceof CbCFormula)
+				.findFirst().orElse(null);
+		/*
+		 * This is not very type-safe but due to the way ECore resources are built there
+		 * is no better way of extracting the formula tree
+		 */
+		AbstractStatement extracted = extractStatement(ft, statementId);
+		VerifyAllStatements.proveAbstractStatement(extracted, jvVars, gcConditions, null, null);
+		refreshProofState(ft);
+
 		szPathName = System.currentTimeMillis() + "_" + jObjTree.getString("name").replace(" ", "")
 				+ "_evaluated.cbcmodel";
 		rResource.setURI(URI.createFileURI(
@@ -654,27 +669,17 @@ public class WebCorCController {
 		return jObjResponse.toString();
 	}
 
-	private void propagateResult(boolean result, JSONObject jObjTree, String statementId) {
-		// 
+	private void refreshProofState(CbCFormula ft) {
+		/*
+		 * Here WebCorc should simply refresh the proof state of the formula tree,
+		 * ensuring that the tree is an consistent state (this might not always be the
+		 * case if a single-proof statement was done)
+		 */
+		return;
 	}
 
-	private JSONObject extractStatement(JSONObject jObjTree, String statementId) {
-		switch (jObjTree.getString("type")) {
-		case "CBCFormula":
-			// Iterate further
-			return extractStatement(jObjTree.getJSONObject("statement"), statementId);
-		case "CompositionStatement":
-			return Optional.ofNullable(extractStatement(jObjTree.getJSONObject("statement1"), statementId))
-					.orElse(extractStatement(jObjTree.getJSONObject("statement2"), statementId));
-		case "RepetitionStatement":
-			// No different than a CBCFormula, iterate further
-			return extractStatement(jObjTree.getJSONObject("loopStatement"), statementId);
-		case "AbstractStatement":
-			// Check if statementId matches
-			return jObjTree.getString("id") == statementId ? jObjTree : null;
-		default:
-			return null;
-		}
-		// TODO Implement handling of selection statements
+	private AbstractStatement extractStatement(CbCFormula ft, String statementId) {
+		// TODO Implement depth-first search and return statement with the given ID
+		return null;
 	}
 }
