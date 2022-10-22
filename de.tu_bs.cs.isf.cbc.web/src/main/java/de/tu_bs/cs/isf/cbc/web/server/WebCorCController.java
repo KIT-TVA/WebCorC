@@ -42,10 +42,13 @@ import de.tu_bs.cs.isf.cbc.cbcmodel.AbstractStatement;
 import de.tu_bs.cs.isf.cbc.cbcmodel.CbCFormula;
 import de.tu_bs.cs.isf.cbc.cbcmodel.CbcmodelFactory;
 import de.tu_bs.cs.isf.cbc.cbcmodel.CbcmodelPackage;
+import de.tu_bs.cs.isf.cbc.cbcmodel.CompositionStatement;
 import de.tu_bs.cs.isf.cbc.cbcmodel.Condition;
 import de.tu_bs.cs.isf.cbc.cbcmodel.GlobalConditions;
 import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariable;
 import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariables;
+import de.tu_bs.cs.isf.cbc.cbcmodel.SelectionStatement;
+import de.tu_bs.cs.isf.cbc.cbcmodel.SmallRepetitionStatement;
 import de.tu_bs.cs.isf.cbc.web.java.compilation.WebCorcCompileJava;
 import de.tu_bs.cs.isf.cbc.web.util.FileUtil;
 import de.tu_bs.cs.isf.cbc.web.util.JSONBuildHelper;
@@ -571,8 +574,9 @@ public class WebCorCController {
 	}
 
 	@RequestMapping(value = "/verifyStatement", method = RequestMethod.POST, consumes = "application/json")
-	public String processSingleStatementVerification(@RequestHeader String statementId,
+	public String processSingleStatementVerification(@RequestHeader String statementName, @RequestHeader String proofType,
 			@RequestBody String fileAndContent, HttpSession session) {
+		// TODO Update client-side implementation to ensure that proof type and statement name is sent
 		String szSessionId = session.getId();
 		JSONObject jObj = new JSONObject(fileAndContent);
 		JSONObject jObjTree = jObj.getJSONObject("content");
@@ -624,7 +628,6 @@ public class WebCorCController {
 		rResource.getContents().add(jvVars);
 		rResource.getContents().add(gcConditions);
 
-		// initiate recursive parsing, also adding the formula to the rResource
 		JSONParser.parseFormulaTree(jObjTree, rResource, null);
 
 		try {
@@ -639,9 +642,12 @@ public class WebCorCController {
 		 * This is not very type-safe but due to the way ECore resources are built there
 		 * is no better way of extracting the formula tree
 		 */
-		AbstractStatement extracted = extractStatement(ft, statementId);
-		VerifyAllStatements.proveAbstractStatement(extracted, jvVars, gcConditions, null, null);
-		refreshProofState(ft);
+		AbstractStatement rootStatement = ft.getStatement();
+		AbstractStatement extractedStatement = extractStatement(rootStatement, statementName);
+		// statementId is discarded after parsing, look for name instead (this means the client-side implementation must be adapted)
+		// Is extractedStatement a SmallRepetitionStatement or any other type of Statement?
+		VerifyAllStatements.proveChildStatement(extractedStatement, jvVars, gcConditions, null, null);
+		refreshProofState(rootStatement);
 
 		szPathName = System.currentTimeMillis() + "_" + jObjTree.getString("name").replace(" ", "")
 				+ "_evaluated.cbcmodel";
@@ -669,17 +675,47 @@ public class WebCorCController {
 		return jObjResponse.toString();
 	}
 
-	private void refreshProofState(CbCFormula ft) {
+	private void refreshProofState(EObject ft) {
 		/*
 		 * Here WebCorc should simply refresh the proof state of the formula tree,
 		 * ensuring that the tree is an consistent state (this might not always be the
 		 * case if a single-proof statement was done)
 		 */
+		// TODO Ensure that the given formula tree is contained within the CbCFormula of treeContainer
+		// TODO Refresh own proof state before jumping over to parent
+		EObject parent = ((AbstractStatement) ft).getParent().eContainer();
+		if (parent instanceof SmallRepetitionStatement) {
+			SmallRepetitionStatement srs = (SmallRepetitionStatement) parent;
+			srs.setProven(srs.isPostProven() && srs.isPreProven() && srs.isVariantProven() && srs.getLoopStatement().isProven());
+		} else if (parent instanceof CompositionStatement) {
+			CompositionStatement cs = (CompositionStatement) parent;
+			cs.setProven(cs.getFirstStatement().getRefinement().isProven() && cs.getSecondStatement().getRefinement().isProven());
+			// TODO Watch out for missing refinements!
+		} else if (parent instanceof SelectionStatement) {
+			SelectionStatement ss = (SelectionStatement) parent;
+			ss.setProven(ss.isPreProve() && ss.getCommands().stream().allMatch(e -> e.getRefinement().isProven()));
+			// TODO Watch out for missing refinements!
+		}
+		refreshProofState(parent);
 		return;
 	}
 
-	private AbstractStatement extractStatement(CbCFormula ft, String statementId) {
-		// TODO Implement depth-first search and return statement with the given ID
+	private AbstractStatement extractStatement(AbstractStatement ft, String statementName) {
+		if (ft.getName() == statementName)
+			return ft;
+		if (ft instanceof SmallRepetitionStatement) {
+			return extractStatement(((SmallRepetitionStatement) ft).getLoopStatement(), statementName);
+		} else if (ft instanceof CompositionStatement) {
+			return Optional.ofNullable(extractStatement(((CompositionStatement) ft).getFirstStatement().getRefinement(), statementName))
+					.orElse(extractStatement(((CompositionStatement) ft).getSecondStatement().getRefinement(), statementName));
+		} else if (ft instanceof SelectionStatement) {
+			SelectionStatement ss = (SelectionStatement) ft;
+			for (AbstractStatement command : ss.getCommands()) {
+				extractStatement(command, statementName);
+			}
+		} else if (ft instanceof AbstractStatement) {
+			// Do nothing as we have reached a leaf
+		}
 		return null;
 	}
 }

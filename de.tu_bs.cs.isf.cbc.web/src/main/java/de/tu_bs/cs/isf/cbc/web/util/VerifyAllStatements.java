@@ -48,10 +48,11 @@ public class VerifyAllStatements {
 		System.out.println("All statements verified");
     }
 	
-    private static boolean proveChildStatement(AbstractStatement statement, JavaVariables vars, GlobalConditions conds, Renaming renaming, URI uri) {
+    public static boolean proveChildStatement(AbstractStatement statement, JavaVariables vars, GlobalConditions conds, Renaming renaming, URI uri) {
 		boolean prove = false;
 		 if (statement instanceof SmallRepetitionStatement) {
-			prove = proveSmallReptitionStatement(statement, vars, conds, renaming, uri);
+			 // TODO Switch between proof types according to method argument
+			prove = proveSmallRepetitionStatement(statement, vars, conds, renaming, uri);
 		} else if (statement instanceof CompositionStatement) {
 			prove = proveCompositionStatement(statement, vars, conds, renaming, uri);
 		} else if (statement instanceof SelectionStatement) {
@@ -80,7 +81,7 @@ public class VerifyAllStatements {
 		}
     }
     
-    private static boolean proveCompositionStatement(AbstractStatement statement, JavaVariables vars, GlobalConditions conds, Renaming renaming, URI uri) {
+    public static boolean proveCompositionStatement(AbstractStatement statement, JavaVariables vars, GlobalConditions conds, Renaming renaming, URI uri) {
     	boolean prove1, prove2 = false;
     	CompositionStatement compositionStatement = (CompositionStatement) statement;
     	if (compositionStatement.getFirstStatement().getRefinement() != null) {
@@ -96,7 +97,7 @@ public class VerifyAllStatements {
     	if (prove1 && prove2 && true)  {
     		statement.setProven(true);
     	} else {
-    		statement.setProven(false);//
+    		statement.setProven(false);
     	}
 		return (prove1 && prove2 && true);
     }
@@ -129,7 +130,7 @@ public class VerifyAllStatements {
     }
     
 	
-	private static boolean proveSmallReptitionStatement(AbstractStatement statement, JavaVariables vars, GlobalConditions conds, Renaming renaming, URI uri) {
+	public static boolean proveSmallRepetitionStatement(AbstractStatement statement, JavaVariables vars, GlobalConditions conds, Renaming renaming, URI uri) {
 		SmallRepetitionStatement repStatement = (SmallRepetitionStatement) statement;
 		boolean proven = true;
 		if (repStatement.getLoopStatement().getRefinement() != null) {
