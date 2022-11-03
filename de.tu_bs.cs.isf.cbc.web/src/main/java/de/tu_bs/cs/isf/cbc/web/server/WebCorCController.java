@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.zip.ZipOutputStream;
@@ -53,6 +54,7 @@ import de.tu_bs.cs.isf.cbc.web.java.compilation.WebCorcCompileJava;
 import de.tu_bs.cs.isf.cbc.web.util.FileUtil;
 import de.tu_bs.cs.isf.cbc.web.util.JSONBuildHelper;
 import de.tu_bs.cs.isf.cbc.web.util.JSONParser;
+import de.tu_bs.cs.isf.cbc.web.util.ProofType;
 import de.tu_bs.cs.isf.cbc.web.util.ProveWithKey;
 import de.tu_bs.cs.isf.cbc.web.util.VerifyAllStatements;
 
@@ -586,28 +588,28 @@ public class WebCorCController {
 		String proofFolderPath = SZ_LOCATION + File.separator + pathString + File.separator
 				+ JSONParser.getNameString(jObj).replace(".diagram", "");
 		{
-			// Ecore aufwecken / initialisieren!?
+			// Initialise ECore
 			CbcmodelPackage.eINSTANCE.eClass();
-			// Ecore file extension registry holen und .cbcmode erweiterung mit XMI
-			// resources mappen
+			// Use .cbcmodel file extension for ECore data
+			// See called getExtensionToFactoryMap method for more details
 			Resource.Factory.Registry reg = Resource.Factory.Registry.INSTANCE;
 			Map<String, Object> m = reg.getExtensionToFactoryMap();
 			m.put("cbcmodel", new XMIResourceFactoryImpl());
 		}
 
-		// ressourcen liste um ressourcen zu erstellen
+		// Create empty set of resources
 		ResourceSet rs = new ResourceSetImpl();
 
-		// Create resource & model instance
-		// name einfach um das von der nächsten verifikation zu unterscheiden
+		/* Create the resource corresponding to the received JSON data */ 
+		
+		// Save ECore file, use current millisecond timestamp as file name
 		String szPathName = System.currentTimeMillis() + "_" + jObjTree.getString("name").replace(" ", "")
 				+ ".cbcmodel";
-		// ressource mithilfe vom ressource set erstellen --> vielleicht nicht jedes mal
-		// ein neues set?
+		
 		Resource rResource = rs.createResource(URI.createFileURI(
 				SZ_LOCATION + File.separator + szSessionId + File.separator + ".meta" + File.separator + szPathName));
 
-		// add variables and global conditions
+		// Extract list of global variables (read from dedicated field in JSON schema)
 		JavaVariables jvVars = CbcmodelFactory.eINSTANCE.createJavaVariables();
 		JSONArray jArrVariables = jObjTree.getJSONArray("javaVariables");
 		for (int i = 0; i < jArrVariables.length(); i++) {
@@ -615,8 +617,8 @@ public class WebCorCController {
 			jvVar.setName(jArrVariables.getString(i));
 			jvVars.getVariables().add(jvVar);
 		}
-
-		// hier das gleiche
+		
+		// Extract list of global conditions (read from dedicated field in JSON schema)
 		GlobalConditions gcConditions = CbcmodelFactory.eINSTANCE.createGlobalConditions();
 		JSONArray jArrGlobals = jObjTree.getJSONArray("globalConditions");
 		for (int i = 0; i < jArrGlobals.length(); i++) {
@@ -625,9 +627,11 @@ public class WebCorCController {
 			gcConditions.getConditions().add(gc);
 		}
 
+		// Push extracted material in the previously initialised resource
 		rResource.getContents().add(jvVars);
 		rResource.getContents().add(gcConditions);
 
+		// Parse JSON data into AST
 		JSONParser.parseFormulaTree(jObjTree, rResource, null);
 
 		try {
@@ -636,6 +640,7 @@ public class WebCorCController {
 			e.printStackTrace();
 		}
 
+		// Extract the AST just pushed in by parseFormulaTree
 		CbCFormula ft = (CbCFormula) rResource.getContents().stream().filter(eObject -> eObject instanceof CbCFormula)
 				.findFirst().orElse(null);
 		/*
@@ -644,11 +649,10 @@ public class WebCorCController {
 		 */
 		AbstractStatement rootStatement = ft.getStatement();
 		AbstractStatement extractedStatement = extractStatement(rootStatement, statementName);
-		// statementId is discarded after parsing, look for name instead (this means the client-side implementation must be adapted)
-		// Is extractedStatement a SmallRepetitionStatement or any other type of Statement?
-		VerifyAllStatements.proveChildStatement(extractedStatement, jvVars, gcConditions, null, null);
+		VerifyAllStatements.proveStatement(extractedStatement, jvVars, gcConditions, null, null, ProofType.valueOf(proofType));
 		refreshProofState(rootStatement);
 
+		// Create new ECore file after evaluating the relevant statement and refreshing the proof state of the diagram
 		szPathName = System.currentTimeMillis() + "_" + jObjTree.getString("name").replace(" ", "")
 				+ "_evaluated.cbcmodel";
 		rResource.setURI(URI.createFileURI(
@@ -681,22 +685,27 @@ public class WebCorCController {
 		 * ensuring that the tree is an consistent state (this might not always be the
 		 * case if a single-proof statement was done)
 		 */
-		// TODO Ensure that the given formula tree is contained within the CbCFormula of treeContainer
-		// TODO Refresh own proof state before jumping over to parent
-		EObject parent = ((AbstractStatement) ft).getParent().eContainer();
-		if (parent instanceof SmallRepetitionStatement) {
-			SmallRepetitionStatement srs = (SmallRepetitionStatement) parent;
-			srs.setProven(srs.isPostProven() && srs.isPreProven() && srs.isVariantProven() && srs.getLoopStatement().isProven());
-		} else if (parent instanceof CompositionStatement) {
-			CompositionStatement cs = (CompositionStatement) parent;
-			cs.setProven(cs.getFirstStatement().getRefinement().isProven() && cs.getSecondStatement().getRefinement().isProven());
-			// TODO Watch out for missing refinements!
-		} else if (parent instanceof SelectionStatement) {
-			SelectionStatement ss = (SelectionStatement) parent;
-			ss.setProven(ss.isPreProve() && ss.getCommands().stream().allMatch(e -> e.getRefinement().isProven()));
-			// TODO Watch out for missing refinements!
+		if (ft instanceof SmallRepetitionStatement) {
+			SmallRepetitionStatement srs = (SmallRepetitionStatement) ft;
+			srs.setProven(srs.isPostProven() && srs.isPreProven() && srs.isVariantProven()
+					&& srs.getLoopStatement().isProven());
+		} else if (ft instanceof CompositionStatement) {
+			CompositionStatement cs = (CompositionStatement) ft;
+			/* Missing refinements are evaluated as null. We filter these out before calling isProven on the stream */
+			cs.setProven(List.of(cs.getFirstStatement().getRefinement(), cs.getSecondStatement().getRefinement()).stream()
+					.filter(e -> e != null).allMatch(e -> e.isProven()));
+			// TODO Evaluate non-existent children as false
+		} else if (ft instanceof SelectionStatement) {
+			// See previous comment
+			SelectionStatement ss = (SelectionStatement) ft;
+			ss.setProven(ss.isPreProve() && ss.getCommands().stream().map(e -> e.getRefinement()).filter(e -> e != null)
+					.allMatch(e -> e.isProven()));
+		} else if (ft instanceof CbCFormula) {
+			CbCFormula cbcf = (CbCFormula) ft;
+			cbcf.setProven(cbcf.getStatement().getRefinement().isProven());
 		}
-		refreshProofState(parent);
+		EObject parent = ((AbstractStatement) ft).getParent().eContainer();
+		if (parent != null) refreshProofState(parent);
 		return;
 	}
 
