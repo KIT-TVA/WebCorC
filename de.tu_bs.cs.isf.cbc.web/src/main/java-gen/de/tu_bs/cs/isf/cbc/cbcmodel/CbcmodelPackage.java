@@ -5,6 +5,7 @@ package de.tu_bs.cs.isf.cbc.cbcmodel;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EEnum;
+import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
@@ -131,22 +132,13 @@ public interface CbcmodelPackage extends EPackage {
 	int CB_CFORMULA__COMPOSITION_TECHNIQUE = 6;
 
 	/**
-	 * The feature id for the '<em><b>Tax Method</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int CB_CFORMULA__TAX_METHOD = 7;
-
-	/**
 	 * The feature id for the '<em><b>Class Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CB_CFORMULA__CLASS_NAME = 8;
+	int CB_CFORMULA__CLASS_NAME = 7;
 
 	/**
 	 * The feature id for the '<em><b>Method Name</b></em>' attribute.
@@ -155,7 +147,7 @@ public interface CbcmodelPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CB_CFORMULA__METHOD_NAME = 9;
+	int CB_CFORMULA__METHOD_NAME = 8;
 
 	/**
 	 * The feature id for the '<em><b>Method Obj</b></em>' reference.
@@ -164,7 +156,7 @@ public interface CbcmodelPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CB_CFORMULA__METHOD_OBJ = 10;
+	int CB_CFORMULA__METHOD_OBJ = 9;
 
 	/**
 	 * The number of structural features of the '<em>Cb CFormula</em>' class.
@@ -173,7 +165,7 @@ public interface CbcmodelPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CB_CFORMULA_FEATURE_COUNT = 11;
+	int CB_CFORMULA_FEATURE_COUNT = 10;
 
 	/**
 	 * The number of operations of the '<em>Cb CFormula</em>' class.
@@ -204,13 +196,22 @@ public interface CbcmodelPackage extends EPackage {
 	int CONDITION__NAME = 0;
 
 	/**
+	 * The feature id for the '<em><b>Modifiables</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CONDITION__MODIFIABLES = 1;
+
+	/**
 	 * The number of structural features of the '<em>Condition</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CONDITION_FEATURE_COUNT = 1;
+	int CONDITION_FEATURE_COUNT = 2;
 
 	/**
 	 * The number of operations of the '<em>Condition</em>' class.
@@ -295,13 +296,31 @@ public interface CbcmodelPackage extends EPackage {
 	int ABSTRACT_STATEMENT__COMMENT = 6;
 
 	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ABSTRACT_STATEMENT__ID = 7;
+
+	/**
 	 * The number of structural features of the '<em>Abstract Statement</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ABSTRACT_STATEMENT_FEATURE_COUNT = 7;
+	int ABSTRACT_STATEMENT_FEATURE_COUNT = 8;
+
+	/**
+	 * The operation id for the '<em>Generate ID</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ABSTRACT_STATEMENT___GENERATE_ID = 0;
 
 	/**
 	 * The number of operations of the '<em>Abstract Statement</em>' class.
@@ -310,7 +329,7 @@ public interface CbcmodelPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ABSTRACT_STATEMENT_OPERATION_COUNT = 0;
+	int ABSTRACT_STATEMENT_OPERATION_COUNT = 1;
 
 	/**
 	 * The meta object id for the '{@link de.tu_bs.cs.isf.cbc.cbcmodel.impl.SkipStatementImpl <em>Skip Statement</em>}' class.
@@ -386,6 +405,15 @@ public interface CbcmodelPackage extends EPackage {
 	int SKIP_STATEMENT__COMMENT = ABSTRACT_STATEMENT__COMMENT;
 
 	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SKIP_STATEMENT__ID = ABSTRACT_STATEMENT__ID;
+
+	/**
 	 * The number of structural features of the '<em>Skip Statement</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -393,6 +421,15 @@ public interface CbcmodelPackage extends EPackage {
 	 * @ordered
 	 */
 	int SKIP_STATEMENT_FEATURE_COUNT = ABSTRACT_STATEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The operation id for the '<em>Generate ID</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SKIP_STATEMENT___GENERATE_ID = ABSTRACT_STATEMENT___GENERATE_ID;
 
 	/**
 	 * The number of operations of the '<em>Skip Statement</em>' class.
@@ -477,6 +514,15 @@ public interface CbcmodelPackage extends EPackage {
 	int COMPOSITION_STATEMENT__COMMENT = ABSTRACT_STATEMENT__COMMENT;
 
 	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPOSITION_STATEMENT__ID = ABSTRACT_STATEMENT__ID;
+
+	/**
 	 * The feature id for the '<em><b>First Statement</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -511,6 +557,15 @@ public interface CbcmodelPackage extends EPackage {
 	 * @ordered
 	 */
 	int COMPOSITION_STATEMENT_FEATURE_COUNT = ABSTRACT_STATEMENT_FEATURE_COUNT + 3;
+
+	/**
+	 * The operation id for the '<em>Generate ID</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPOSITION_STATEMENT___GENERATE_ID = ABSTRACT_STATEMENT___GENERATE_ID;
 
 	/**
 	 * The number of operations of the '<em>Composition Statement</em>' class.
@@ -595,6 +650,15 @@ public interface CbcmodelPackage extends EPackage {
 	int SELECTION_STATEMENT__COMMENT = ABSTRACT_STATEMENT__COMMENT;
 
 	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SELECTION_STATEMENT__ID = ABSTRACT_STATEMENT__ID;
+
+	/**
 	 * The feature id for the '<em><b>Guards</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -631,6 +695,15 @@ public interface CbcmodelPackage extends EPackage {
 	int SELECTION_STATEMENT_FEATURE_COUNT = ABSTRACT_STATEMENT_FEATURE_COUNT + 3;
 
 	/**
+	 * The operation id for the '<em>Generate ID</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SELECTION_STATEMENT___GENERATE_ID = ABSTRACT_STATEMENT___GENERATE_ID;
+
+	/**
 	 * The number of operations of the '<em>Selection Statement</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -640,6 +713,115 @@ public interface CbcmodelPackage extends EPackage {
 	int SELECTION_STATEMENT_OPERATION_COUNT = ABSTRACT_STATEMENT_OPERATION_COUNT + 0;
 
 	/**
+	 * The meta object id for the '{@link de.tu_bs.cs.isf.cbc.cbcmodel.impl.MethodStatementImpl <em>Method Statement</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see de.tu_bs.cs.isf.cbc.cbcmodel.impl.MethodStatementImpl
+	 * @see de.tu_bs.cs.isf.cbc.cbcmodel.impl.CbcmodelPackageImpl#getMethodStatement()
+	 * @generated
+	 */
+	int METHOD_STATEMENT = 6;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METHOD_STATEMENT__NAME = ABSTRACT_STATEMENT__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Refinement</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METHOD_STATEMENT__REFINEMENT = ABSTRACT_STATEMENT__REFINEMENT;
+
+	/**
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METHOD_STATEMENT__PARENT = ABSTRACT_STATEMENT__PARENT;
+
+	/**
+	 * The feature id for the '<em><b>Post Condition</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METHOD_STATEMENT__POST_CONDITION = ABSTRACT_STATEMENT__POST_CONDITION;
+
+	/**
+	 * The feature id for the '<em><b>Pre Condition</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METHOD_STATEMENT__PRE_CONDITION = ABSTRACT_STATEMENT__PRE_CONDITION;
+
+	/**
+	 * The feature id for the '<em><b>Proven</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METHOD_STATEMENT__PROVEN = ABSTRACT_STATEMENT__PROVEN;
+
+	/**
+	 * The feature id for the '<em><b>Comment</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METHOD_STATEMENT__COMMENT = ABSTRACT_STATEMENT__COMMENT;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METHOD_STATEMENT__ID = ABSTRACT_STATEMENT__ID;
+
+	/**
+	 * The number of structural features of the '<em>Method Statement</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METHOD_STATEMENT_FEATURE_COUNT = ABSTRACT_STATEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The operation id for the '<em>Generate ID</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METHOD_STATEMENT___GENERATE_ID = ABSTRACT_STATEMENT___GENERATE_ID;
+
+	/**
+	 * The number of operations of the '<em>Method Statement</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METHOD_STATEMENT_OPERATION_COUNT = ABSTRACT_STATEMENT_OPERATION_COUNT + 0;
+
+	/**
 	 * The meta object id for the '{@link de.tu_bs.cs.isf.cbc.cbcmodel.impl.VariantImpl <em>Variant</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -647,7 +829,7 @@ public interface CbcmodelPackage extends EPackage {
 	 * @see de.tu_bs.cs.isf.cbc.cbcmodel.impl.CbcmodelPackageImpl#getVariant()
 	 * @generated
 	 */
-	int VARIANT = 6;
+	int VARIANT = 7;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -684,7 +866,7 @@ public interface CbcmodelPackage extends EPackage {
 	 * @see de.tu_bs.cs.isf.cbc.cbcmodel.impl.CbcmodelPackageImpl#getReturnStatement()
 	 * @generated
 	 */
-	int RETURN_STATEMENT = 7;
+	int RETURN_STATEMENT = 8;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -750,6 +932,15 @@ public interface CbcmodelPackage extends EPackage {
 	int RETURN_STATEMENT__COMMENT = ABSTRACT_STATEMENT__COMMENT;
 
 	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RETURN_STATEMENT__ID = ABSTRACT_STATEMENT__ID;
+
+	/**
 	 * The number of structural features of the '<em>Return Statement</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -757,6 +948,15 @@ public interface CbcmodelPackage extends EPackage {
 	 * @ordered
 	 */
 	int RETURN_STATEMENT_FEATURE_COUNT = ABSTRACT_STATEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The operation id for the '<em>Generate ID</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RETURN_STATEMENT___GENERATE_ID = ABSTRACT_STATEMENT___GENERATE_ID;
 
 	/**
 	 * The number of operations of the '<em>Return Statement</em>' class.
@@ -775,7 +975,7 @@ public interface CbcmodelPackage extends EPackage {
 	 * @see de.tu_bs.cs.isf.cbc.cbcmodel.impl.CbcmodelPackageImpl#getSmallRepetitionStatement()
 	 * @generated
 	 */
-	int SMALL_REPETITION_STATEMENT = 8;
+	int SMALL_REPETITION_STATEMENT = 9;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -839,6 +1039,15 @@ public interface CbcmodelPackage extends EPackage {
 	 * @ordered
 	 */
 	int SMALL_REPETITION_STATEMENT__COMMENT = ABSTRACT_STATEMENT__COMMENT;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SMALL_REPETITION_STATEMENT__ID = ABSTRACT_STATEMENT__ID;
 
 	/**
 	 * The feature id for the '<em><b>Loop Statement</b></em>' containment reference.
@@ -913,6 +1122,15 @@ public interface CbcmodelPackage extends EPackage {
 	int SMALL_REPETITION_STATEMENT_FEATURE_COUNT = ABSTRACT_STATEMENT_FEATURE_COUNT + 7;
 
 	/**
+	 * The operation id for the '<em>Generate ID</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SMALL_REPETITION_STATEMENT___GENERATE_ID = ABSTRACT_STATEMENT___GENERATE_ID;
+
+	/**
 	 * The number of operations of the '<em>Small Repetition Statement</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -929,7 +1147,7 @@ public interface CbcmodelPackage extends EPackage {
 	 * @see de.tu_bs.cs.isf.cbc.cbcmodel.impl.CbcmodelPackageImpl#getJavaVariables()
 	 * @generated
 	 */
-	int JAVA_VARIABLES = 9;
+	int JAVA_VARIABLES = 10;
 
 	/**
 	 * The feature id for the '<em><b>Variables</b></em>' containment reference list.
@@ -941,13 +1159,31 @@ public interface CbcmodelPackage extends EPackage {
 	int JAVA_VARIABLES__VARIABLES = 0;
 
 	/**
+	 * The feature id for the '<em><b>Fields</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_VARIABLES__FIELDS = 1;
+
+	/**
+	 * The feature id for the '<em><b>Params</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_VARIABLES__PARAMS = 2;
+
+	/**
 	 * The number of structural features of the '<em>Java Variables</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int JAVA_VARIABLES_FEATURE_COUNT = 1;
+	int JAVA_VARIABLES_FEATURE_COUNT = 3;
 
 	/**
 	 * The number of operations of the '<em>Java Variables</em>' class.
@@ -966,7 +1202,7 @@ public interface CbcmodelPackage extends EPackage {
 	 * @see de.tu_bs.cs.isf.cbc.cbcmodel.impl.CbcmodelPackageImpl#getJavaVariable()
 	 * @generated
 	 */
-	int JAVA_VARIABLE = 10;
+	int JAVA_VARIABLE = 11;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1021,7 +1257,7 @@ public interface CbcmodelPackage extends EPackage {
 	 * @see de.tu_bs.cs.isf.cbc.cbcmodel.impl.CbcmodelPackageImpl#getGlobalConditions()
 	 * @generated
 	 */
-	int GLOBAL_CONDITIONS = 11;
+	int GLOBAL_CONDITIONS = 12;
 
 	/**
 	 * The feature id for the '<em><b>Conditions</b></em>' containment reference list.
@@ -1058,7 +1294,7 @@ public interface CbcmodelPackage extends EPackage {
 	 * @see de.tu_bs.cs.isf.cbc.cbcmodel.impl.CbcmodelPackageImpl#getRenaming()
 	 * @generated
 	 */
-	int RENAMING = 12;
+	int RENAMING = 13;
 
 	/**
 	 * The feature id for the '<em><b>Rename</b></em>' containment reference list.
@@ -1095,7 +1331,7 @@ public interface CbcmodelPackage extends EPackage {
 	 * @see de.tu_bs.cs.isf.cbc.cbcmodel.impl.CbcmodelPackageImpl#getRename()
 	 * @generated
 	 */
-	int RENAME = 13;
+	int RENAME = 14;
 
 	/**
 	 * The feature id for the '<em><b>Type</b></em>' attribute.
@@ -1150,7 +1386,7 @@ public interface CbcmodelPackage extends EPackage {
 	 * @see de.tu_bs.cs.isf.cbc.cbcmodel.impl.CbcmodelPackageImpl#getCbCProblem()
 	 * @generated
 	 */
-	int CB_CPROBLEM = 14;
+	int CB_CPROBLEM = 15;
 
 	/**
 	 * The feature id for the '<em><b>Globalcondition</b></em>' containment reference.
@@ -1189,31 +1425,13 @@ public interface CbcmodelPackage extends EPackage {
 	int CB_CPROBLEM__RENAMING = 3;
 
 	/**
-	 * The feature id for the '<em><b>Methodsignature</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int CB_CPROBLEM__METHODSIGNATURE = 4;
-
-	/**
-	 * The feature id for the '<em><b>Method Class</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int CB_CPROBLEM__METHOD_CLASS = 5;
-
-	/**
 	 * The number of structural features of the '<em>Cb CProblem</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CB_CPROBLEM_FEATURE_COUNT = 6;
+	int CB_CPROBLEM_FEATURE_COUNT = 4;
 
 	/**
 	 * The number of operations of the '<em>Cb CProblem</em>' class.
@@ -1232,7 +1450,7 @@ public interface CbcmodelPackage extends EPackage {
 	 * @see de.tu_bs.cs.isf.cbc.cbcmodel.impl.CbcmodelPackageImpl#getStrengthWeakStatement()
 	 * @generated
 	 */
-	int STRENGTH_WEAK_STATEMENT = 15;
+	int STRENGTH_WEAK_STATEMENT = 16;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1298,6 +1516,15 @@ public interface CbcmodelPackage extends EPackage {
 	int STRENGTH_WEAK_STATEMENT__COMMENT = ABSTRACT_STATEMENT__COMMENT;
 
 	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STRENGTH_WEAK_STATEMENT__ID = ABSTRACT_STATEMENT__ID;
+
+	/**
 	 * The number of structural features of the '<em>Strength Weak Statement</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1305,6 +1532,15 @@ public interface CbcmodelPackage extends EPackage {
 	 * @ordered
 	 */
 	int STRENGTH_WEAK_STATEMENT_FEATURE_COUNT = ABSTRACT_STATEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The operation id for the '<em>Generate ID</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STRENGTH_WEAK_STATEMENT___GENERATE_ID = ABSTRACT_STATEMENT___GENERATE_ID;
 
 	/**
 	 * The number of operations of the '<em>Strength Weak Statement</em>' class.
@@ -1316,78 +1552,113 @@ public interface CbcmodelPackage extends EPackage {
 	int STRENGTH_WEAK_STATEMENT_OPERATION_COUNT = ABSTRACT_STATEMENT_OPERATION_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link de.tu_bs.cs.isf.cbc.cbcmodel.impl.MethodSignatureImpl <em>Method Signature</em>}' class.
+	 * The meta object id for the '{@link de.tu_bs.cs.isf.cbc.cbcmodel.impl.OriginalStatementImpl <em>Original Statement</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see de.tu_bs.cs.isf.cbc.cbcmodel.impl.MethodSignatureImpl
-	 * @see de.tu_bs.cs.isf.cbc.cbcmodel.impl.CbcmodelPackageImpl#getMethodSignature()
+	 * @see de.tu_bs.cs.isf.cbc.cbcmodel.impl.OriginalStatementImpl
+	 * @see de.tu_bs.cs.isf.cbc.cbcmodel.impl.CbcmodelPackageImpl#getOriginalStatement()
 	 * @generated
 	 */
-	int METHOD_SIGNATURE = 16;
+	int ORIGINAL_STATEMENT = 17;
 
 	/**
-	 * The feature id for the '<em><b>Method Signature</b></em>' attribute.
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int METHOD_SIGNATURE__METHOD_SIGNATURE = 0;
+	int ORIGINAL_STATEMENT__NAME = ABSTRACT_STATEMENT__NAME;
 
 	/**
-	 * The number of structural features of the '<em>Method Signature</em>' class.
+	 * The feature id for the '<em><b>Refinement</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int METHOD_SIGNATURE_FEATURE_COUNT = 1;
+	int ORIGINAL_STATEMENT__REFINEMENT = ABSTRACT_STATEMENT__REFINEMENT;
 
 	/**
-	 * The number of operations of the '<em>Method Signature</em>' class.
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int METHOD_SIGNATURE_OPERATION_COUNT = 0;
+	int ORIGINAL_STATEMENT__PARENT = ABSTRACT_STATEMENT__PARENT;
 
 	/**
-	 * The meta object id for the '{@link de.tu_bs.cs.isf.cbc.cbcmodel.impl.MethodClassImpl <em>Method Class</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see de.tu_bs.cs.isf.cbc.cbcmodel.impl.MethodClassImpl
-	 * @see de.tu_bs.cs.isf.cbc.cbcmodel.impl.CbcmodelPackageImpl#getMethodClass()
-	 * @generated
-	 */
-	int METHOD_CLASS = 17;
-
-	/**
-	 * The feature id for the '<em><b>Method Class</b></em>' attribute.
+	 * The feature id for the '<em><b>Post Condition</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int METHOD_CLASS__METHOD_CLASS = 0;
+	int ORIGINAL_STATEMENT__POST_CONDITION = ABSTRACT_STATEMENT__POST_CONDITION;
 
 	/**
-	 * The number of structural features of the '<em>Method Class</em>' class.
+	 * The feature id for the '<em><b>Pre Condition</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int METHOD_CLASS_FEATURE_COUNT = 1;
+	int ORIGINAL_STATEMENT__PRE_CONDITION = ABSTRACT_STATEMENT__PRE_CONDITION;
 
 	/**
-	 * The number of operations of the '<em>Method Class</em>' class.
+	 * The feature id for the '<em><b>Proven</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int METHOD_CLASS_OPERATION_COUNT = 0;
+	int ORIGINAL_STATEMENT__PROVEN = ABSTRACT_STATEMENT__PROVEN;
+
+	/**
+	 * The feature id for the '<em><b>Comment</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ORIGINAL_STATEMENT__COMMENT = ABSTRACT_STATEMENT__COMMENT;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ORIGINAL_STATEMENT__ID = ABSTRACT_STATEMENT__ID;
+
+	/**
+	 * The number of structural features of the '<em>Original Statement</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ORIGINAL_STATEMENT_FEATURE_COUNT = ABSTRACT_STATEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The operation id for the '<em>Generate ID</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ORIGINAL_STATEMENT___GENERATE_ID = ABSTRACT_STATEMENT___GENERATE_ID;
+
+	/**
+	 * The number of operations of the '<em>Original Statement</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ORIGINAL_STATEMENT_OPERATION_COUNT = ABSTRACT_STATEMENT_OPERATION_COUNT + 0;
 
 	/**
 	 * The meta object id for the '{@link de.tu_bs.cs.isf.cbc.cbcmodel.VariableKind <em>Variable Kind</em>}' enum.
@@ -1498,17 +1769,6 @@ public interface CbcmodelPackage extends EPackage {
 	EAttribute getCbCFormula_CompositionTechnique();
 
 	/**
-	 * Returns the meta object for the attribute '{@link de.tu_bs.cs.isf.cbc.cbcmodel.CbCFormula#getTaxMethod <em>Tax Method</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Tax Method</em>'.
-	 * @see de.tu_bs.cs.isf.cbc.cbcmodel.CbCFormula#getTaxMethod()
-	 * @see #getCbCFormula()
-	 * @generated
-	 */
-	EAttribute getCbCFormula_TaxMethod();
-
-	/**
 	 * Returns the meta object for the attribute '{@link de.tu_bs.cs.isf.cbc.cbcmodel.CbCFormula#getClassName <em>Class Name</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1561,6 +1821,17 @@ public interface CbcmodelPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getCondition_Name();
+
+	/**
+	 * Returns the meta object for the attribute list '{@link de.tu_bs.cs.isf.cbc.cbcmodel.Condition#getModifiables <em>Modifiables</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Modifiables</em>'.
+	 * @see de.tu_bs.cs.isf.cbc.cbcmodel.Condition#getModifiables()
+	 * @see #getCondition()
+	 * @generated
+	 */
+	EAttribute getCondition_Modifiables();
 
 	/**
 	 * Returns the meta object for class '{@link de.tu_bs.cs.isf.cbc.cbcmodel.AbstractStatement <em>Abstract Statement</em>}'.
@@ -1648,6 +1919,27 @@ public interface CbcmodelPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getAbstractStatement_Comment();
+
+	/**
+	 * Returns the meta object for the attribute '{@link de.tu_bs.cs.isf.cbc.cbcmodel.AbstractStatement#getId <em>Id</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Id</em>'.
+	 * @see de.tu_bs.cs.isf.cbc.cbcmodel.AbstractStatement#getId()
+	 * @see #getAbstractStatement()
+	 * @generated
+	 */
+	EAttribute getAbstractStatement_Id();
+
+	/**
+	 * Returns the meta object for the '{@link de.tu_bs.cs.isf.cbc.cbcmodel.AbstractStatement#generateID() <em>Generate ID</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Generate ID</em>' operation.
+	 * @see de.tu_bs.cs.isf.cbc.cbcmodel.AbstractStatement#generateID()
+	 * @generated
+	 */
+	EOperation getAbstractStatement__GenerateID();
 
 	/**
 	 * Returns the meta object for class '{@link de.tu_bs.cs.isf.cbc.cbcmodel.SkipStatement <em>Skip Statement</em>}'.
@@ -1744,6 +2036,16 @@ public interface CbcmodelPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getSelectionStatement_PreProve();
+
+	/**
+	 * Returns the meta object for class '{@link de.tu_bs.cs.isf.cbc.cbcmodel.MethodStatement <em>Method Statement</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Method Statement</em>'.
+	 * @see de.tu_bs.cs.isf.cbc.cbcmodel.MethodStatement
+	 * @generated
+	 */
+	EClass getMethodStatement();
 
 	/**
 	 * Returns the meta object for class '{@link de.tu_bs.cs.isf.cbc.cbcmodel.Variant <em>Variant</em>}'.
@@ -1883,6 +2185,28 @@ public interface CbcmodelPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getJavaVariables_Variables();
+
+	/**
+	 * Returns the meta object for the reference list '{@link de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariables#getFields <em>Fields</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference list '<em>Fields</em>'.
+	 * @see de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariables#getFields()
+	 * @see #getJavaVariables()
+	 * @generated
+	 */
+	EReference getJavaVariables_Fields();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariables#getParams <em>Params</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Params</em>'.
+	 * @see de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariables#getParams()
+	 * @see #getJavaVariables()
+	 * @generated
+	 */
+	EReference getJavaVariables_Params();
 
 	/**
 	 * Returns the meta object for class '{@link de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariable <em>Java Variable</em>}'.
@@ -2067,28 +2391,6 @@ public interface CbcmodelPackage extends EPackage {
 	EReference getCbCProblem_Renaming();
 
 	/**
-	 * Returns the meta object for the containment reference '{@link de.tu_bs.cs.isf.cbc.cbcmodel.CbCProblem#getMethodsignature <em>Methodsignature</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference '<em>Methodsignature</em>'.
-	 * @see de.tu_bs.cs.isf.cbc.cbcmodel.CbCProblem#getMethodsignature()
-	 * @see #getCbCProblem()
-	 * @generated
-	 */
-	EReference getCbCProblem_Methodsignature();
-
-	/**
-	 * Returns the meta object for the containment reference '{@link de.tu_bs.cs.isf.cbc.cbcmodel.CbCProblem#getMethodClass <em>Method Class</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference '<em>Method Class</em>'.
-	 * @see de.tu_bs.cs.isf.cbc.cbcmodel.CbCProblem#getMethodClass()
-	 * @see #getCbCProblem()
-	 * @generated
-	 */
-	EReference getCbCProblem_MethodClass();
-
-	/**
 	 * Returns the meta object for class '{@link de.tu_bs.cs.isf.cbc.cbcmodel.StrengthWeakStatement <em>Strength Weak Statement</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2099,46 +2401,14 @@ public interface CbcmodelPackage extends EPackage {
 	EClass getStrengthWeakStatement();
 
 	/**
-	 * Returns the meta object for class '{@link de.tu_bs.cs.isf.cbc.cbcmodel.MethodSignature <em>Method Signature</em>}'.
+	 * Returns the meta object for class '{@link de.tu_bs.cs.isf.cbc.cbcmodel.OriginalStatement <em>Original Statement</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Method Signature</em>'.
-	 * @see de.tu_bs.cs.isf.cbc.cbcmodel.MethodSignature
+	 * @return the meta object for class '<em>Original Statement</em>'.
+	 * @see de.tu_bs.cs.isf.cbc.cbcmodel.OriginalStatement
 	 * @generated
 	 */
-	EClass getMethodSignature();
-
-	/**
-	 * Returns the meta object for the attribute '{@link de.tu_bs.cs.isf.cbc.cbcmodel.MethodSignature#getMethodSignature <em>Method Signature</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Method Signature</em>'.
-	 * @see de.tu_bs.cs.isf.cbc.cbcmodel.MethodSignature#getMethodSignature()
-	 * @see #getMethodSignature()
-	 * @generated
-	 */
-	EAttribute getMethodSignature_MethodSignature();
-
-	/**
-	 * Returns the meta object for class '{@link de.tu_bs.cs.isf.cbc.cbcmodel.MethodClass <em>Method Class</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Method Class</em>'.
-	 * @see de.tu_bs.cs.isf.cbc.cbcmodel.MethodClass
-	 * @generated
-	 */
-	EClass getMethodClass();
-
-	/**
-	 * Returns the meta object for the attribute '{@link de.tu_bs.cs.isf.cbc.cbcmodel.MethodClass#getMethodClass <em>Method Class</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Method Class</em>'.
-	 * @see de.tu_bs.cs.isf.cbc.cbcmodel.MethodClass#getMethodClass()
-	 * @see #getMethodClass()
-	 * @generated
-	 */
-	EAttribute getMethodClass_MethodClass();
+	EClass getOriginalStatement();
 
 	/**
 	 * Returns the meta object for enum '{@link de.tu_bs.cs.isf.cbc.cbcmodel.VariableKind <em>Variable Kind</em>}'.
@@ -2250,14 +2520,6 @@ public interface CbcmodelPackage extends EPackage {
 		EAttribute CB_CFORMULA__COMPOSITION_TECHNIQUE = eINSTANCE.getCbCFormula_CompositionTechnique();
 
 		/**
-		 * The meta object literal for the '<em><b>Tax Method</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute CB_CFORMULA__TAX_METHOD = eINSTANCE.getCbCFormula_TaxMethod();
-
-		/**
 		 * The meta object literal for the '<em><b>Class Name</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2298,6 +2560,14 @@ public interface CbcmodelPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute CONDITION__NAME = eINSTANCE.getCondition_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>Modifiables</b></em>' attribute list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute CONDITION__MODIFIABLES = eINSTANCE.getCondition_Modifiables();
 
 		/**
 		 * The meta object literal for the '{@link de.tu_bs.cs.isf.cbc.cbcmodel.impl.AbstractStatementImpl <em>Abstract Statement</em>}' class.
@@ -2364,6 +2634,22 @@ public interface CbcmodelPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute ABSTRACT_STATEMENT__COMMENT = eINSTANCE.getAbstractStatement_Comment();
+
+		/**
+		 * The meta object literal for the '<em><b>Id</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ABSTRACT_STATEMENT__ID = eINSTANCE.getAbstractStatement_Id();
+
+		/**
+		 * The meta object literal for the '<em><b>Generate ID</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation ABSTRACT_STATEMENT___GENERATE_ID = eINSTANCE.getAbstractStatement__GenerateID();
 
 		/**
 		 * The meta object literal for the '{@link de.tu_bs.cs.isf.cbc.cbcmodel.impl.SkipStatementImpl <em>Skip Statement</em>}' class.
@@ -2442,6 +2728,16 @@ public interface CbcmodelPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute SELECTION_STATEMENT__PRE_PROVE = eINSTANCE.getSelectionStatement_PreProve();
+
+		/**
+		 * The meta object literal for the '{@link de.tu_bs.cs.isf.cbc.cbcmodel.impl.MethodStatementImpl <em>Method Statement</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see de.tu_bs.cs.isf.cbc.cbcmodel.impl.MethodStatementImpl
+		 * @see de.tu_bs.cs.isf.cbc.cbcmodel.impl.CbcmodelPackageImpl#getMethodStatement()
+		 * @generated
+		 */
+		EClass METHOD_STATEMENT = eINSTANCE.getMethodStatement();
 
 		/**
 		 * The meta object literal for the '{@link de.tu_bs.cs.isf.cbc.cbcmodel.impl.VariantImpl <em>Variant</em>}' class.
@@ -2554,6 +2850,22 @@ public interface CbcmodelPackage extends EPackage {
 		 * @generated
 		 */
 		EReference JAVA_VARIABLES__VARIABLES = eINSTANCE.getJavaVariables_Variables();
+
+		/**
+		 * The meta object literal for the '<em><b>Fields</b></em>' reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference JAVA_VARIABLES__FIELDS = eINSTANCE.getJavaVariables_Fields();
+
+		/**
+		 * The meta object literal for the '<em><b>Params</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference JAVA_VARIABLES__PARAMS = eINSTANCE.getJavaVariables_Params();
 
 		/**
 		 * The meta object literal for the '{@link de.tu_bs.cs.isf.cbc.cbcmodel.impl.JavaVariableImpl <em>Java Variable</em>}' class.
@@ -2702,22 +3014,6 @@ public interface CbcmodelPackage extends EPackage {
 		EReference CB_CPROBLEM__RENAMING = eINSTANCE.getCbCProblem_Renaming();
 
 		/**
-		 * The meta object literal for the '<em><b>Methodsignature</b></em>' containment reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference CB_CPROBLEM__METHODSIGNATURE = eINSTANCE.getCbCProblem_Methodsignature();
-
-		/**
-		 * The meta object literal for the '<em><b>Method Class</b></em>' containment reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference CB_CPROBLEM__METHOD_CLASS = eINSTANCE.getCbCProblem_MethodClass();
-
-		/**
 		 * The meta object literal for the '{@link de.tu_bs.cs.isf.cbc.cbcmodel.impl.StrengthWeakStatementImpl <em>Strength Weak Statement</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2728,40 +3024,14 @@ public interface CbcmodelPackage extends EPackage {
 		EClass STRENGTH_WEAK_STATEMENT = eINSTANCE.getStrengthWeakStatement();
 
 		/**
-		 * The meta object literal for the '{@link de.tu_bs.cs.isf.cbc.cbcmodel.impl.MethodSignatureImpl <em>Method Signature</em>}' class.
+		 * The meta object literal for the '{@link de.tu_bs.cs.isf.cbc.cbcmodel.impl.OriginalStatementImpl <em>Original Statement</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see de.tu_bs.cs.isf.cbc.cbcmodel.impl.MethodSignatureImpl
-		 * @see de.tu_bs.cs.isf.cbc.cbcmodel.impl.CbcmodelPackageImpl#getMethodSignature()
+		 * @see de.tu_bs.cs.isf.cbc.cbcmodel.impl.OriginalStatementImpl
+		 * @see de.tu_bs.cs.isf.cbc.cbcmodel.impl.CbcmodelPackageImpl#getOriginalStatement()
 		 * @generated
 		 */
-		EClass METHOD_SIGNATURE = eINSTANCE.getMethodSignature();
-
-		/**
-		 * The meta object literal for the '<em><b>Method Signature</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute METHOD_SIGNATURE__METHOD_SIGNATURE = eINSTANCE.getMethodSignature_MethodSignature();
-
-		/**
-		 * The meta object literal for the '{@link de.tu_bs.cs.isf.cbc.cbcmodel.impl.MethodClassImpl <em>Method Class</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see de.tu_bs.cs.isf.cbc.cbcmodel.impl.MethodClassImpl
-		 * @see de.tu_bs.cs.isf.cbc.cbcmodel.impl.CbcmodelPackageImpl#getMethodClass()
-		 * @generated
-		 */
-		EClass METHOD_CLASS = eINSTANCE.getMethodClass();
-
-		/**
-		 * The meta object literal for the '<em><b>Method Class</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute METHOD_CLASS__METHOD_CLASS = eINSTANCE.getMethodClass_MethodClass();
+		EClass ORIGINAL_STATEMENT = eINSTANCE.getOriginalStatement();
 
 		/**
 		 * The meta object literal for the '{@link de.tu_bs.cs.isf.cbc.cbcmodel.VariableKind <em>Variable Kind</em>}' enum.

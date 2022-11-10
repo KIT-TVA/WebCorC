@@ -2,7 +2,7 @@
  */
 package de.tu_bs.cs.isf.cbc.cbcmodel;
 
-import cbcclass.Method;
+import de.tu_bs.cs.isf.cbc.cbcclass.model.cbcclass.Method;
 
 import org.eclipse.emf.ecore.EObject;
 
@@ -22,7 +22,6 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link de.tu_bs.cs.isf.cbc.cbcmodel.CbCFormula#isProven <em>Proven</em>}</li>
  *   <li>{@link de.tu_bs.cs.isf.cbc.cbcmodel.CbCFormula#getComment <em>Comment</em>}</li>
  *   <li>{@link de.tu_bs.cs.isf.cbc.cbcmodel.CbCFormula#getCompositionTechnique <em>Composition Technique</em>}</li>
- *   <li>{@link de.tu_bs.cs.isf.cbc.cbcmodel.CbCFormula#getTaxMethod <em>Tax Method</em>}</li>
  *   <li>{@link de.tu_bs.cs.isf.cbc.cbcmodel.CbCFormula#getClassName <em>Class Name</em>}</li>
  *   <li>{@link de.tu_bs.cs.isf.cbc.cbcmodel.CbCFormula#getMethodName <em>Method Name</em>}</li>
  *   <li>{@link de.tu_bs.cs.isf.cbc.cbcmodel.CbCFormula#getMethodObj <em>Method Obj</em>}</li>
@@ -192,28 +191,6 @@ public interface CbCFormula extends EObject {
 	void setCompositionTechnique(CompositionTechnique value);
 
 	/**
-	 * Returns the value of the '<em><b>Tax Method</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Tax Method</em>' attribute.
-	 * @see #setTaxMethod(String)
-	 * @see de.tu_bs.cs.isf.cbc.cbcmodel.CbcmodelPackage#getCbCFormula_TaxMethod()
-	 * @model unique="false"
-	 * @generated
-	 */
-	String getTaxMethod();
-
-	/**
-	 * Sets the value of the '{@link de.tu_bs.cs.isf.cbc.cbcmodel.CbCFormula#getTaxMethod <em>Tax Method</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Tax Method</em>' attribute.
-	 * @see #getTaxMethod()
-	 * @generated
-	 */
-	void setTaxMethod(String value);
-
-	/**
 	 * Returns the value of the '<em><b>Class Name</b></em>' attribute.
 	 * The default value is <code>""</code>.
 	 * <!-- begin-user-doc -->
@@ -261,12 +238,14 @@ public interface CbCFormula extends EObject {
 
 	/**
 	 * Returns the value of the '<em><b>Method Obj</b></em>' reference.
+	 * It is bidirectional and its opposite is '{@link de.tu_bs.cs.isf.cbc.cbcclass.model.cbcclass.Method#getCbcStartTriple <em>Cbc Start Triple</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Method Obj</em>' reference.
 	 * @see #setMethodObj(Method)
 	 * @see de.tu_bs.cs.isf.cbc.cbcmodel.CbcmodelPackage#getCbCFormula_MethodObj()
-	 * @model
+	 * @see de.tu_bs.cs.isf.cbc.cbcclass.model.cbcclass.Method#getCbcStartTriple
+	 * @model opposite="cbcStartTriple"
 	 * @generated
 	 */
 	Method getMethodObj();

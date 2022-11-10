@@ -74,13 +74,13 @@ public interface JavaVariable extends EObject {
 
 	/**
 	 * Returns the value of the '<em><b>Displayed Name</b></em>' attribute.
-	 * The default value is <code>"name"</code>.
+	 * The default value is <code>"kind + \" \" + name"</code>.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Displayed Name</em>' attribute.
 	 * @see #isSetDisplayedName()
 	 * @see de.tu_bs.cs.isf.cbc.cbcmodel.CbcmodelPackage#getJavaVariable_DisplayedName()
-	 * @model default="name" unsettable="true" transient="true" changeable="false" volatile="true" derived="true"
+	 * @model default="kind + \" \" + name" unsettable="true" transient="true" changeable="false" volatile="true" derived="true"
 	 * @generated
 	 */
 	String getDisplayedName();

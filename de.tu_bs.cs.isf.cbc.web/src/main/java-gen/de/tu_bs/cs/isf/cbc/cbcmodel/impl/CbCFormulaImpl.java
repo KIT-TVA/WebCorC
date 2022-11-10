@@ -2,7 +2,8 @@
  */
 package de.tu_bs.cs.isf.cbc.cbcmodel.impl;
 
-import cbcclass.Method;
+import de.tu_bs.cs.isf.cbc.cbcclass.model.cbcclass.CbcclassPackage;
+import de.tu_bs.cs.isf.cbc.cbcclass.model.cbcclass.Method;
 
 import de.tu_bs.cs.isf.cbc.cbcmodel.AbstractStatement;
 import de.tu_bs.cs.isf.cbc.cbcmodel.CbCFormula;
@@ -34,7 +35,6 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  *   <li>{@link de.tu_bs.cs.isf.cbc.cbcmodel.impl.CbCFormulaImpl#isProven <em>Proven</em>}</li>
  *   <li>{@link de.tu_bs.cs.isf.cbc.cbcmodel.impl.CbCFormulaImpl#getComment <em>Comment</em>}</li>
  *   <li>{@link de.tu_bs.cs.isf.cbc.cbcmodel.impl.CbCFormulaImpl#getCompositionTechnique <em>Composition Technique</em>}</li>
- *   <li>{@link de.tu_bs.cs.isf.cbc.cbcmodel.impl.CbCFormulaImpl#getTaxMethod <em>Tax Method</em>}</li>
  *   <li>{@link de.tu_bs.cs.isf.cbc.cbcmodel.impl.CbCFormulaImpl#getClassName <em>Class Name</em>}</li>
  *   <li>{@link de.tu_bs.cs.isf.cbc.cbcmodel.impl.CbCFormulaImpl#getMethodName <em>Method Name</em>}</li>
  *   <li>{@link de.tu_bs.cs.isf.cbc.cbcmodel.impl.CbCFormulaImpl#getMethodObj <em>Method Obj</em>}</li>
@@ -152,26 +152,6 @@ public class CbCFormulaImpl extends MinimalEObjectImpl.Container implements CbCF
 	 * @ordered
 	 */
 	protected CompositionTechnique compositionTechnique = COMPOSITION_TECHNIQUE_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getTaxMethod() <em>Tax Method</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getTaxMethod()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String TAX_METHOD_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getTaxMethod() <em>Tax Method</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getTaxMethod()
-	 * @generated
-	 * @ordered
-	 */
-	protected String taxMethod = TAX_METHOD_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getClassName() <em>Class Name</em>}' attribute.
@@ -475,29 +455,6 @@ public class CbCFormulaImpl extends MinimalEObjectImpl.Container implements CbCF
 	 * @generated
 	 */
 	@Override
-	public String getTaxMethod() {
-		return taxMethod;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public void setTaxMethod(String newTaxMethod) {
-		String oldTaxMethod = taxMethod;
-		taxMethod = newTaxMethod;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, CbcmodelPackage.CB_CFORMULA__TAX_METHOD, oldTaxMethod, taxMethod));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
 	public String getClassName() {
 		return className;
 	}
@@ -570,12 +527,50 @@ public class CbCFormulaImpl extends MinimalEObjectImpl.Container implements CbCF
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
-	public void setMethodObj(Method newMethodObj) {
+	public NotificationChain basicSetMethodObj(Method newMethodObj, NotificationChain msgs) {
 		Method oldMethodObj = methodObj;
 		methodObj = newMethodObj;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, CbcmodelPackage.CB_CFORMULA__METHOD_OBJ, oldMethodObj, methodObj));
+		if (eNotificationRequired()) {
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, CbcmodelPackage.CB_CFORMULA__METHOD_OBJ, oldMethodObj, newMethodObj);
+			if (msgs == null) msgs = notification; else msgs.add(notification);
+		}
+		return msgs;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setMethodObj(Method newMethodObj) {
+		if (newMethodObj != methodObj) {
+			NotificationChain msgs = null;
+			if (methodObj != null)
+				msgs = ((InternalEObject)methodObj).eInverseRemove(this, CbcclassPackage.METHOD__CBC_START_TRIPLE, Method.class, msgs);
+			if (newMethodObj != null)
+				msgs = ((InternalEObject)newMethodObj).eInverseAdd(this, CbcclassPackage.METHOD__CBC_START_TRIPLE, Method.class, msgs);
+			msgs = basicSetMethodObj(newMethodObj, msgs);
+			if (msgs != null) msgs.dispatch();
+		}
+		else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, CbcmodelPackage.CB_CFORMULA__METHOD_OBJ, newMethodObj, newMethodObj));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+		switch (featureID) {
+			case CbcmodelPackage.CB_CFORMULA__METHOD_OBJ:
+				if (methodObj != null)
+					msgs = ((InternalEObject)methodObj).eInverseRemove(this, CbcclassPackage.METHOD__CBC_START_TRIPLE, Method.class, msgs);
+				return basicSetMethodObj((Method)otherEnd, msgs);
+		}
+		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}
 
 	/**
@@ -592,6 +587,8 @@ public class CbCFormulaImpl extends MinimalEObjectImpl.Container implements CbCF
 				return basicSetPreCondition(null, msgs);
 			case CbcmodelPackage.CB_CFORMULA__POST_CONDITION:
 				return basicSetPostCondition(null, msgs);
+			case CbcmodelPackage.CB_CFORMULA__METHOD_OBJ:
+				return basicSetMethodObj(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -618,8 +615,6 @@ public class CbCFormulaImpl extends MinimalEObjectImpl.Container implements CbCF
 				return getComment();
 			case CbcmodelPackage.CB_CFORMULA__COMPOSITION_TECHNIQUE:
 				return getCompositionTechnique();
-			case CbcmodelPackage.CB_CFORMULA__TAX_METHOD:
-				return getTaxMethod();
 			case CbcmodelPackage.CB_CFORMULA__CLASS_NAME:
 				return getClassName();
 			case CbcmodelPackage.CB_CFORMULA__METHOD_NAME:
@@ -659,9 +654,6 @@ public class CbCFormulaImpl extends MinimalEObjectImpl.Container implements CbCF
 				return;
 			case CbcmodelPackage.CB_CFORMULA__COMPOSITION_TECHNIQUE:
 				setCompositionTechnique((CompositionTechnique)newValue);
-				return;
-			case CbcmodelPackage.CB_CFORMULA__TAX_METHOD:
-				setTaxMethod((String)newValue);
 				return;
 			case CbcmodelPackage.CB_CFORMULA__CLASS_NAME:
 				setClassName((String)newValue);
@@ -705,9 +697,6 @@ public class CbCFormulaImpl extends MinimalEObjectImpl.Container implements CbCF
 			case CbcmodelPackage.CB_CFORMULA__COMPOSITION_TECHNIQUE:
 				setCompositionTechnique(COMPOSITION_TECHNIQUE_EDEFAULT);
 				return;
-			case CbcmodelPackage.CB_CFORMULA__TAX_METHOD:
-				setTaxMethod(TAX_METHOD_EDEFAULT);
-				return;
 			case CbcmodelPackage.CB_CFORMULA__CLASS_NAME:
 				setClassName(CLASS_NAME_EDEFAULT);
 				return;
@@ -743,8 +732,6 @@ public class CbCFormulaImpl extends MinimalEObjectImpl.Container implements CbCF
 				return COMMENT_EDEFAULT == null ? comment != null : !COMMENT_EDEFAULT.equals(comment);
 			case CbcmodelPackage.CB_CFORMULA__COMPOSITION_TECHNIQUE:
 				return compositionTechnique != COMPOSITION_TECHNIQUE_EDEFAULT;
-			case CbcmodelPackage.CB_CFORMULA__TAX_METHOD:
-				return TAX_METHOD_EDEFAULT == null ? taxMethod != null : !TAX_METHOD_EDEFAULT.equals(taxMethod);
 			case CbcmodelPackage.CB_CFORMULA__CLASS_NAME:
 				return CLASS_NAME_EDEFAULT == null ? className != null : !CLASS_NAME_EDEFAULT.equals(className);
 			case CbcmodelPackage.CB_CFORMULA__METHOD_NAME:
@@ -773,8 +760,6 @@ public class CbCFormulaImpl extends MinimalEObjectImpl.Container implements CbCF
 		result.append(comment);
 		result.append(", compositionTechnique: ");
 		result.append(compositionTechnique);
-		result.append(", TaxMethod: ");
-		result.append(taxMethod);
 		result.append(", className: ");
 		result.append(className);
 		result.append(", methodName: ");

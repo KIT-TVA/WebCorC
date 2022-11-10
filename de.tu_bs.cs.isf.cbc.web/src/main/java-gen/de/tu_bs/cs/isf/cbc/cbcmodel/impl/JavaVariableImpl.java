@@ -77,7 +77,7 @@ public class JavaVariableImpl extends MinimalEObjectImpl.Container implements Ja
 	 * @generated
 	 * @ordered
 	 */
-	protected static final String DISPLAYED_NAME_EDEFAULT = "name";
+	protected static final String DISPLAYED_NAME_EDEFAULT = "kind + \" \" + name";
 
 	/**
 	 * <!-- begin-user-doc -->
