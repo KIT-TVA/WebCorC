@@ -238,11 +238,11 @@ function verifyWebCorCModel(fullPath, content) {
     });
 }
 
-function verifyWebCorCModelStatement(idClickedStatement) {
+function verifyWebCorCModelStatement(idClickedStatement, proofType) {
     let model = buildWebCorCModel();
     $(".corc-spinner").css("display", "flex")
     $.ajax({
-        headers: {"statement": idClickedStatement},
+        headers: {"statement": idClickedStatement, "proofType": proofType},
         type: "POST",
         url: "http://" + window.location.host + "/de.tu_bs.cs.isf.cbc.web/verifyStatement",
         // The key needs to match your method's input parameter (case-sensitive).

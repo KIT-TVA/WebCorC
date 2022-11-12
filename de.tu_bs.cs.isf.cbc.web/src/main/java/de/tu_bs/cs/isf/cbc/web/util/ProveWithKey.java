@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 
+import de.tu_bs.cs.isf.cbc.cbcclass.model.cbcclass.ModelClass;
 import de.tu_bs.cs.isf.cbc.cbcmodel.AbstractStatement;
 import de.tu_bs.cs.isf.cbc.cbcmodel.CbCFormula;
 import de.tu_bs.cs.isf.cbc.cbcmodel.CompositionTechnique;
@@ -20,7 +21,6 @@ import de.tu_bs.cs.isf.cbc.cbcmodel.Condition;
 import de.tu_bs.cs.isf.cbc.cbcmodel.GlobalConditions;
 import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariable;
 import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariables;
-import de.tu_bs.cs.isf.cbc.cbcmodel.MethodClass;
 import de.tu_bs.cs.isf.cbc.cbcmodel.Renaming;
 import de.tu_bs.cs.isf.cbc.cbcmodel.Variant;
 import de.uka.ilkd.key.proof.Goal;
@@ -35,10 +35,10 @@ public class ProveWithKey {
 	private GlobalConditions conds;
 	private Renaming renaming;
 	private String uri;
-	private MethodClass javaClass;
+	private ModelClass javaClass;
 	private IFileUtil fileHandler;
 
-	public ProveWithKey(AbstractStatement statement, JavaVariables vars, GlobalConditions conds, Renaming renaming, String uri, MethodClass javaClass, IFileUtil fileHandler) {
+	public ProveWithKey(AbstractStatement statement, JavaVariables vars, GlobalConditions conds, Renaming renaming, String uri, ModelClass javaClass, IFileUtil fileHandler) {
 		super();
 		this.statement = statement;
 		this.vars = vars;

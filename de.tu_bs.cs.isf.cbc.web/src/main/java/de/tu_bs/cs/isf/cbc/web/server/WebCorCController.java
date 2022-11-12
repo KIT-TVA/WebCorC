@@ -576,9 +576,9 @@ public class WebCorCController {
 	}
 
 	@RequestMapping(value = "/verifyStatement", method = RequestMethod.POST, consumes = "application/json")
-	public String processSingleStatementVerification(@RequestHeader String statementName, @RequestHeader String proofType,
+	public String processSingleStatementVerification(@RequestHeader String statementId, @RequestHeader String proofType,
 			@RequestBody String fileAndContent, HttpSession session) {
-		// TODO Update client-side implementation to ensure that proof type and statement name is sent
+		// TODO Update client-side implementation to ensure that proof type and statement ID is sent
 		String szSessionId = session.getId();
 		JSONObject jObj = new JSONObject(fileAndContent);
 		JSONObject jObjTree = jObj.getJSONObject("content");
@@ -648,7 +648,7 @@ public class WebCorCController {
 		 * is no better way of extracting the formula tree
 		 */
 		AbstractStatement rootStatement = ft.getStatement();
-		AbstractStatement extractedStatement = extractStatement(rootStatement, statementName);
+		AbstractStatement extractedStatement = extractStatement(rootStatement, statementId);
 		VerifyAllStatements.proveStatement(extractedStatement, jvVars, gcConditions, null, null, ProofType.valueOf(proofType));
 		refreshProofState(rootStatement);
 
@@ -710,7 +710,7 @@ public class WebCorCController {
 	}
 
 	private AbstractStatement extractStatement(AbstractStatement ft, String statementName) {
-		if (ft.getName() == statementName)
+		if (ft.getId() == statementName)
 			return ft;
 		if (ft instanceof SmallRepetitionStatement) {
 			return extractStatement(((SmallRepetitionStatement) ft).getLoopStatement(), statementName);

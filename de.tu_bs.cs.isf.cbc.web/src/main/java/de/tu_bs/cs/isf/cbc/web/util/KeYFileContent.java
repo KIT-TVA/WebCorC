@@ -2,11 +2,11 @@ package de.tu_bs.cs.isf.cbc.web.util;
 
 import java.util.List;
 
+import de.tu_bs.cs.isf.cbc.cbcclass.model.cbcclass.ModelClass;
 import de.tu_bs.cs.isf.cbc.cbcmodel.Condition;
 import de.tu_bs.cs.isf.cbc.cbcmodel.GlobalConditions;
 import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariable;
 import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariables;
-import de.tu_bs.cs.isf.cbc.cbcmodel.MethodClass;
 import de.tu_bs.cs.isf.cbc.cbcmodel.Rename;
 import de.tu_bs.cs.isf.cbc.cbcmodel.Renaming;
 import de.tu_bs.cs.isf.cbc.cbcmodel.VariableKind;
@@ -144,10 +144,10 @@ public class KeYFileContent {
 		globalConditions = globalConditions.replace("this.", "self."); //TODO this without dot is not replaced
 	}
 	
-	public void addSelf(MethodClass javaClass) {
+	public void addSelf(ModelClass javaClass) {
 		if(javaClass != null) {
-			self = javaClass.getMethodClass() + " self;";
-			selfConditions = " & self.<created>=TRUE & " + javaClass.getMethodClass() + "::exactInstance(self)=TRUE &  !self = null & self.<inv> ";
+			self = javaClass.getName() + " self;";
+			selfConditions = " & self.<created>=TRUE & " + javaClass.getName() + "::exactInstance(self)=TRUE &  !self = null & self.<inv> ";
 		}
 	}
 	

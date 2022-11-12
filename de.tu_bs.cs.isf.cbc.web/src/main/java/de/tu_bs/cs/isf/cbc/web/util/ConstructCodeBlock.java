@@ -6,12 +6,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedList;
 
+import de.tu_bs.cs.isf.cbc.cbcclass.model.cbcclass.Method;
 import de.tu_bs.cs.isf.cbc.cbcmodel.AbstractStatement;
 import de.tu_bs.cs.isf.cbc.cbcmodel.CbCFormula;
 import de.tu_bs.cs.isf.cbc.cbcmodel.CompositionStatement;
 import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariable;
 import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariables;
-import de.tu_bs.cs.isf.cbc.cbcmodel.MethodSignature;
 import de.tu_bs.cs.isf.cbc.cbcmodel.Rename;
 import de.tu_bs.cs.isf.cbc.cbcmodel.Renaming;
 import de.tu_bs.cs.isf.cbc.cbcmodel.SelectionStatement;
@@ -106,7 +106,7 @@ public class ConstructCodeBlock {
 	}
 	
 	public static StringBuffer editCodeBlockForExport(
-			String methodCode, File javaFile, MethodSignature signature, String vars) throws IOException {
+			Method methodToExport, String methodCode, File javaFile, String vars) throws IOException {
 		
 		StringBuffer newCode = new StringBuffer();
         StringBuffer jmlCode = new StringBuffer();
@@ -134,7 +134,7 @@ public class ConstructCodeBlock {
 		
         while(line != null) {
         	jmlCode = getJmlAnnotations(jmlCode, br);
-        	String s = signature.getMethodSignature();//.replace("static ", "");
+        	String s = methodToExport.getSignature(); //.replace("static ", "");
 //        	s = s.trim().substring(s.indexOf(' ') + 1);
 	        if(line.contains(s)) {//delete old implementation
 				line = br.readLine();
@@ -195,7 +195,7 @@ public class ConstructCodeBlock {
 	}
 	
 	public static String constructCodeBlockForExport(
-			CbCFormula formula, Renaming renaming, LinkedList<String> vars, JavaVariable returnVar, MethodSignature signature) {
+			CbCFormula formula, Renaming renaming, LinkedList<String> vars, JavaVariable returnVar, Method methodToExport) {
 		handleInnerLoops = true;
 		withInvariants = true;
 		
@@ -221,7 +221,7 @@ public class ConstructCodeBlock {
 		code.append("\t/*@\n" + "\t@ normal_behavior\n" //+ "@ requires "
 				+ pre.replaceAll(System.getProperty("line.separator"), "")// + ";\n" //+ "@ ensures "
 				+ post.replaceAll(System.getProperty("line.separator"), "")/* + ";\n"*/ + "\t@ assignable "
-				+ modifiableVariables + ";\n" + "\t@*/\n" + "\tpublic "+ signature.getMethodSignature() 
+				+ modifiableVariables + ";\n" + "\t@*/\n" + "\tpublic "+ methodToExport.getSignature() 
 				+ " {\n");
 
 		positionIndex = 2;//2
