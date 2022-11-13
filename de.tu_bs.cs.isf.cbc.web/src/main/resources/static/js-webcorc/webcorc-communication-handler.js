@@ -15,11 +15,28 @@ $(".context-menu-button-verify").click(function () {
     console.log("verification started ...");
 });
 
+// TODO Try implementing handler functions without code duplication
 $(".context-menu-button-verify-statement").click(function () {
     // verifyWebCorCModel();
-    verifyWebCorCModelStatement(clickedStatementId);
-    console.log("verification of " + clickedStatementId + " started ...");
+    verifyWebCorCModelStatement(clickedStatementId, "FullProof");
+    console.log("verification of " + clickedStatementId + " started: Proof goal FULL ...");
 });
+$(".context-menu-button-verify-precondition").click(function () {
+    // verifyWebCorCModel();
+    verifyWebCorCModelStatement(clickedStatementId, "Precondition");
+    console.log("verification of " + clickedStatementId + " started: Proof goal PRECONDITION ...");
+});
+$(".context-menu-button-verify-postcondition").click(function () {
+    // verifyWebCorCModel();
+    verifyWebCorCModelStatement(clickedStatementId, "Postcondition");
+    console.log("verification of " + clickedStatementId + " started: Proof goal POSTCONDITION ...");
+});
+$(".context-menu-button-verify-variant").click(function () {
+    // verifyWebCorCModel();
+    verifyWebCorCModelStatement(clickedStatementId, "Variant");
+    console.log("verification of " + clickedStatementId + " started: Proof goal VARIANT ...");
+});
+
 
 function saveFileToServer(fullPath, content) {
     let data = {
