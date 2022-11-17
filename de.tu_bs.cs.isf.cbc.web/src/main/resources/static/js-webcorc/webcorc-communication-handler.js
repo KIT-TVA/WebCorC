@@ -277,11 +277,14 @@ function verifyWebCorCModelStatement(fullPath, idClickedStatement, proofType) {
         success: function (data) {
             $(".corc-spinner").css("display", "none")
             //alert(data);
-            console.log(JSON.stringify(data, null, 2));
+            console.log("CorC responded:")
+            console.log(JSON.stringify(data.messages, null, 2));
             updateKnotColors(data);
         },
         error: function (errMsg) {
             $(".corc-spinner").css("display", "none")
+            console.log("CorC responded:")
+            console.log(JSON.stringify(data.messages, null, 2));
             console.log("An Error occurred: ")
             console.log(errMsg);
 

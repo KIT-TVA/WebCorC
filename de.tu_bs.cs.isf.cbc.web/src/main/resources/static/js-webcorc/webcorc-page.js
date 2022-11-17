@@ -268,6 +268,18 @@ resizeInputFields = function () {
     $(this).width(Math.max(140, width + 10));
 };
 
+// Use the built-in console on the page instead of the default JS console
+(function() {
+	// Do not discard default log function
+	var old = console.log;
+	var logger = document.getElementById("corcDiagramConsole");
+	console.log = function(message) {
+		// Simply insert message into the element's innerHTML
+		// This isn't necessarily safe: All messages sent over console.log will be evaluated!
+		logger.innerHTML += message + '<br/>';
+	}
+})();
+
 function createToast(header, message) {
     let newToast = $("#defaultToast").clone();
     $("#toastContainer").append(newToast);

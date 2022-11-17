@@ -1,8 +1,10 @@
 package de.tu_bs.cs.isf.cbc.web.server;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.Writer;
 import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
@@ -578,6 +580,11 @@ public class WebCorCController {
 	@RequestMapping(value = "/verifyStatement", method = RequestMethod.POST, consumes = "application/json")
 	public String processSingleStatementVerification(@RequestHeader String statementId, @RequestHeader String proofType,
 			@RequestBody String fileAndContent, HttpSession session) {
+		// Start buffering stdout, emitted messages will be sent to client
+		ByteArrayOutputStream operationLog =  new ByteArrayOutputStream();
+		PrintStream buffer = new PrintStream(operationLog);
+		PrintStream former = System.out;
+		System.setOut(buffer);
 		// TODO Update client-side implementation to ensure that proof type and statement ID is sent
 		String szSessionId = session.getId();
 		JSONObject jObj = new JSONObject(fileAndContent);
@@ -675,7 +682,10 @@ public class WebCorCController {
 		JSONObject jObjResponse = new JSONObject();
 		jObjResponse.put("sessionId", szSessionId);
 		jObjResponse.put("CorcOutput", jObjTree);
-
+		jObjResponse.put("messages", operationLog.toString());
+		
+		// Switch back to stdout
+		System.setOut(former);
 		return jObjResponse.toString();
 	}
 
