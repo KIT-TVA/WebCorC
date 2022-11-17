@@ -194,6 +194,7 @@ public class JSONParser {
 	private static CbCFormula createFormula(JSONObject jObjInput) {
 		CbCFormula formula = CbcmodelFactory.eINSTANCE.createCbCFormula();
 		formula.setName(jObjInput.getString("name"));
+		// formula.setId(jObjInput.getString("id"));
 		Condition preCondition = CbcmodelFactory.eINSTANCE.createCondition();
 		preCondition.setName(jObjInput.getJSONObject("preCondition").getString("name"));
 		formula.setPreCondition(preCondition);
@@ -285,6 +286,7 @@ public class JSONParser {
 	private static CompositionStatement createComposition(JSONObject jObjInput) {
 		CompositionStatement composition = CbcmodelFactory.eINSTANCE.createCompositionStatement();
 		composition.setName(jObjInput.getString("name"));
+		composition.setId(jObjInput.getString("id"));
 		composition.setProven(Boolean.parseBoolean(jObjInput.getString("proven")));
 
 		AbstractStatement statement1 = CbcmodelFactory.eINSTANCE.createAbstractStatement();
@@ -319,6 +321,7 @@ public class JSONParser {
 	private static SmallRepetitionStatement createRepetition(JSONObject jObjInput) {
 		SmallRepetitionStatement repetitionStatement = CbcmodelFactory.eINSTANCE.createSmallRepetitionStatement();
 		repetitionStatement.setName(jObjInput.getString("name"));
+		repetitionStatement.setId(jObjInput.getString("id"));
 		AbstractStatement statement = CbcmodelFactory.eINSTANCE.createAbstractStatement();
 		statement.setName(jObjInput.getJSONObject("loopStatement").getString("name"));
 		repetitionStatement.setLoopStatement(statement);
@@ -357,7 +360,7 @@ public class JSONParser {
 	private static SelectionStatement createSimpleSelection(JSONObject jObjInput) {
 		SelectionStatement selectionStatement = CbcmodelFactory.eINSTANCE.createSelectionStatement();
 		selectionStatement.setName(jObjInput.getString("name"));
-
+		selectionStatement.setId(jObjInput.getString("id"));
 		JSONArray jArrCommands = jObjInput.getJSONArray("statements");
 		for (int i = 0; i < jArrCommands.length(); i++) {
 			JSONObject jObjCurrent = jArrCommands.getJSONObject(i);
@@ -390,6 +393,7 @@ public class JSONParser {
 	// identical for leaf strong-weak statements
 	public static AbstractStatement createStatement(JSONObject jObjInput) {
 		AbstractStatement statement = CbcmodelFactory.eINSTANCE.createAbstractStatement();
+		statement.setId(jObjInput.getString("id"));
 		if (jObjInput.getString("type").equals("strongWeakStatement")) {
 			statement.setName(";");
 		} else {

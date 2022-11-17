@@ -65,7 +65,7 @@ public class WebCorCController {
 	// claimed again... not the desired behavior
 
 	// continue using this directory path
-	private final String SZ_LOCATION = System.getProperty("java.io.tmpdir") + "WebCorC";
+	private final String SZ_LOCATION = System.getProperty("java.io.tmpdir") + File.separator + "WebCorC";
 	// private final String SZ_LOCATION = "C:\\Users\\m-hor\\Desktop\\WebCorCTemp";
 
 	@GetMapping(value = "/sessionId")
@@ -236,7 +236,7 @@ public class WebCorCController {
 		// check if there is an existing folder named sessionId. If not - create new
 		// "web workspace"
 		JSONObject webDirectory = new JSONObject();
-		if (new File(SZ_LOCATION + "/" + session.getId()).exists()) {
+		if (new File(SZ_LOCATION + File.separator + session.getId()).exists()) {
 			System.out.println("Folder found for SessionId: " + session.getId());
 
 		} else {
@@ -583,7 +583,6 @@ public class WebCorCController {
 		JSONObject jObj = new JSONObject(fileAndContent);
 		JSONObject jObjTree = jObj.getJSONObject("content");
 		jObjTree = jObjTree.getJSONObject("CorcInput");
-		jObjTree.getJSONObject(szSessionId);
 		String pathString = JSONParser.getPathString(jObj, session);
 		String proofFolderPath = SZ_LOCATION + File.separator + pathString + File.separator
 				+ JSONParser.getNameString(jObj).replace(".diagram", "");
@@ -649,8 +648,9 @@ public class WebCorCController {
 		 */
 		AbstractStatement rootStatement = ft.getStatement();
 		AbstractStatement extractedStatement = extractStatement(rootStatement, statementId);
-		VerifyAllStatements.proveStatement(extractedStatement, jvVars, gcConditions, null, null, ProofType.valueOf(proofType));
-		refreshProofState(rootStatement);
+		// URI can't be null in this method call
+		VerifyAllStatements.proveStatement(extractedStatement, jvVars, gcConditions, null, URI.createFileURI(proofFolderPath), ProofType.valueOf(proofType));
+		refreshProofState(extractedStatement);
 
 		// Create new ECore file after evaluating the relevant statement and refreshing the proof state of the diagram
 		szPathName = System.currentTimeMillis() + "_" + jObjTree.getString("name").replace(" ", "")
@@ -703,24 +703,25 @@ public class WebCorCController {
 		} else if (ft instanceof CbCFormula) {
 			CbCFormula cbcf = (CbCFormula) ft;
 			cbcf.setProven(cbcf.getStatement().getRefinement().isProven());
+			return;
 		}
 		EObject parent = ((AbstractStatement) ft).getParent().eContainer();
 		if (parent != null) refreshProofState(parent);
 		return;
 	}
-
-	private AbstractStatement extractStatement(AbstractStatement ft, String statementName) {
-		if (ft.getId() == statementName)
-			return ft;
+	
+	private AbstractStatement extractStatement(AbstractStatement ft, String statementId) {
+		if (ft.getRefinement().getId().equals(statementId))
+			return ft.getRefinement();
 		if (ft instanceof SmallRepetitionStatement) {
-			return extractStatement(((SmallRepetitionStatement) ft).getLoopStatement(), statementName);
+			return extractStatement(((SmallRepetitionStatement) ft).getLoopStatement(), statementId);
 		} else if (ft instanceof CompositionStatement) {
-			return Optional.ofNullable(extractStatement(((CompositionStatement) ft).getFirstStatement().getRefinement(), statementName))
-					.orElse(extractStatement(((CompositionStatement) ft).getSecondStatement().getRefinement(), statementName));
+			return Optional.ofNullable(extractStatement(((CompositionStatement) ft).getFirstStatement().getRefinement(), statementId))
+					.orElse(extractStatement(((CompositionStatement) ft).getSecondStatement().getRefinement(), statementId));
 		} else if (ft instanceof SelectionStatement) {
 			SelectionStatement ss = (SelectionStatement) ft;
 			for (AbstractStatement command : ss.getCommands()) {
-				extractStatement(command, statementName);
+				extractStatement(command, statementId);
 			}
 		} else if (ft instanceof AbstractStatement) {
 			// Do nothing as we have reached a leaf
