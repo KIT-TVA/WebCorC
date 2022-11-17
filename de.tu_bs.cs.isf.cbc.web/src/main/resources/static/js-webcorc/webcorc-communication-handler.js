@@ -18,12 +18,12 @@ $(".context-menu-button-verify").click(function () {
 // TODO Try implementing handler functions without code duplication
 $(".context-menu-button-verify-statement").click(function () {
     // verifyWebCorCModel();
-    verifyWebCorCModelStatement(clickedStatementId, "FullProof");
+    verifyWebCorCModelStatement(getCurrentPathFromCookie(), clickedStatementId, "FullProof");
     console.log("verification of " + clickedStatementId + " started: Proof goal FULL ...");
 });
 $(".context-menu-button-verify-precondition").click(function () {
     // verifyWebCorCModel();
-    verifyWebCorCModelStatement(clickedStatementId, "Precondition");
+    verifyWebCorCModelStatement(getCurrentPathFromCookie(), clickedStatementId, "Precondition");
     console.log("verification of " + clickedStatementId + " started: Proof goal PRECONDITION ...");
 });
 $(".context-menu-button-verify-postcondition").click(function () {
@@ -111,6 +111,10 @@ function createNewDirectoryOnServer(fullPath) {
         async: false
     });
 }
+$(".context-menu-button-verify").click(function () {
+    verifyWebCorCModel(getCurrentPathFromCookie(),{CorcInput: buildWebCorCModel()});
+    console.log("verification started ...");
+});
 
 function exportWorkspaceAsArchive(){
     $.ajax({
@@ -255,15 +259,19 @@ function verifyWebCorCModel(fullPath, content) {
     });
 }
 
-function verifyWebCorCModelStatement(idClickedStatement, proofType) {
+function verifyWebCorCModelStatement(fullPath, idClickedStatement, proofType) {
     let model = buildWebCorCModel();
+    let data = {
+        "path": fullPath,
+        "content": {CorcInput: model}
+    };
     $(".corc-spinner").css("display", "flex")
     $.ajax({
-        headers: {"statement": idClickedStatement, "proofType": proofType},
+        headers: {"statementId": idClickedStatement, "proofType": proofType},
         type: "POST",
         url: "http://" + window.location.host + "/de.tu_bs.cs.isf.cbc.web/verifyStatement",
         // The key needs to match your method's input parameter (case-sensitive).
-        data: JSON.stringify({CorcInput: model}),
+        data: JSON.stringify(data),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (data) {

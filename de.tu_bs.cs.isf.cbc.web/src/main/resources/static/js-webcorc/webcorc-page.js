@@ -4,7 +4,7 @@
 var clickedStatementId = "";
 var activeContextMenuIds = [];
 // var sessionId ="";
-var globalMenuFields ={"entrys": [{"name": "Refresh", "extraClass": ["disabled"]}]};
+var globalMenuFields ={"entries": [{"name": "Refresh", "extraClass": ["disabled"]}]};
 
 // TODO register these listener in a function and call it when needed
 $('#leftSidebar').on('click', function (e){
@@ -17,15 +17,29 @@ $('#leftSidebar').on('click', function (e){
 
 createContextMenu("context-menu-global", globalMenuFields , $("#page-top"));
 
-let menuFields = {"entrys" : []};
-Array.prototype.push.apply(menuFields.entrys, globalMenuFields.entrys);
-menuFields.entrys.push({"name": "Verify All", "extraClass": ["context-menu-button-verify"]});
+let menuFields = {"entries" : []};
+Array.prototype.push.apply(menuFields.entries, globalMenuFields.entries);
+menuFields.entries.push({"name": "Verify All", "extraClass": ["context-menu-button-verify"]});
 createContextMenu("context-menu-default", menuFields, $("#dummyDiagramArea"));
 
-menuFields = {"entrys" : []};
-Array.prototype.push.apply(menuFields.entrys, globalMenuFields.entrys);
-menuFields.entrys.push({"name": "Verify Precondition", "extraClass": ["context-menu-button-verify-statement","disabled"]},{"name": "Verify All", "extraClass":["context-menu-button-verify"]});
+menuFields = {"entries" : []};
+Array.prototype.push.apply(menuFields.entries, globalMenuFields.entries);
+menuFields.entries.push({"name": "Verify Precondition", "extraClass": ["context-menu-button-verify-precondition"]},{"name": "Verify All", "extraClass":["context-menu-button-verify"]});
 createContextMenu("context-menu-selection", menuFields,  $("[id^=selection]"));
+
+menuFields = {"entries" : []};
+Array.prototype.push.apply(menuFields.entries, globalMenuFields.entries);
+menuFields.entries.push({"name": "Verify Statement", "extraClass": ["context-menu-button-verify-statement"]}, {"name": "Verify All", "extraClass": ["context-menu-button-verify"]});
+createContextMenu("context-menu-statement", menuFields, $("[id^=statement]"));
+
+menuFields = {"entries" : []};
+Array.prototype.push.apply(menuFields.entries, globalMenuFields.entries);
+menuFields.entries.push(
+	{"name": "Verify Precondition", "extraClass": ["context-menu-button-verify-precondition"]},
+	{"name": "Verify Postcondition", "extraClass": ["context-menu-button-verify-postcondition"]},
+	{"name": "Verify Variant", "extraClass": ["context-menu-button-verify-variant"]}, 
+	{"name": "Verify All", "extraClass": ["context-menu-button-verify"]});
+createContextMenu("context-menu-repetition", menuFields, $("[id^=repetition]"));
 
 $('body').on('contextmenu', function (e) {
     // right click
@@ -152,7 +166,7 @@ function createContextMenu(menuId, listOfMenuElements, querySelector) {
     contextmenu.classList.add("dropdown-menu");
     contextmenu.classList.add("dropdown-menu-sm");
 
-    listOfMenuElements = listOfMenuElements.entrys;
+    listOfMenuElements = listOfMenuElements.entries;
 
     listOfMenuElements.forEach(element => {
         if (element.name !== undefined) {
