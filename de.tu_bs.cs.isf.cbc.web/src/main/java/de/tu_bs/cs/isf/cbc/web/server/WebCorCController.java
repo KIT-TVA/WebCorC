@@ -655,9 +655,9 @@ public class WebCorCController {
 		 */
 		AbstractStatement rootStatement = ft.getStatement();
 		AbstractStatement extractedStatement = extractStatement(rootStatement, statementId);
-		// URI can't be null in this method call
-		VerifyAllStatements.proveStatement(extractedStatement, jvVars, gcConditions, null, URI.createFileURI(proofFolderPath), ProofType.valueOf(proofType));
-		refreshProofState(extractedStatement);
+		// This method call might look odd, but we are effectively mimicking VerifyAllStatements:40 here
+		extractedStatement.setProven(VerifyAllStatements.proveStatement(extractedStatement.getRefinement(), jvVars, gcConditions, null, URI.createFileURI(proofFolderPath), ProofType.valueOf(proofType)));
+		refreshProofState(extractedStatement.getRefinement());
 
 		// Create new ECore file after evaluating the relevant statement and refreshing the proof state of the diagram
 		szPathName = System.currentTimeMillis() + "_" + jObjTree.getString("name").replace(" ", "")
@@ -722,7 +722,7 @@ public class WebCorCController {
 	
 	private AbstractStatement extractStatement(AbstractStatement ft, String statementId) {
 		if (ft.getRefinement().getId().equals(statementId))
-			return ft.getRefinement();
+			return ft;
 		if (ft instanceof SmallRepetitionStatement) {
 			return extractStatement(((SmallRepetitionStatement) ft).getLoopStatement(), statementId);
 		} else if (ft instanceof CompositionStatement) {
