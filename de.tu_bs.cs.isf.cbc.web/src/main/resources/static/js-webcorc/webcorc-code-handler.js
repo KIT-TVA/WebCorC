@@ -37,20 +37,6 @@ function createCodeMirrorInstance( className = "", content = "class "+className+
 //     $(".corc-code-area").linedtextarea();
 // });
 
-function printConsole(message, console = "corcConsole") {
-    let codeArea = $("#" + console);
-    let previousConsoleMessage = codeArea.html();
-    if (previousConsoleMessage === ""){
-        codeArea.html(message);
-    }
-    else {
-        previousConsoleMessage =previousConsoleMessage.concat("\n=================================================\n"+ message );
-        codeArea.html(previousConsoleMessage);
-    }
-    codeArea.scrollTop(codeArea[0].scrollHeight);
-    // alert("Message printed to console");
-}
-
 function compileCode() {
     console.log("compilation triggered");
     let code = $(".corc-code-area").first()[0].innerText;

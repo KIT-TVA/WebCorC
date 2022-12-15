@@ -3,153 +3,167 @@
  */
 
 function openFile(content, type, fullPath, fileName) {
-    currentlyOpenedFile = fullPath;
-    let dummyEditorId = "";
-    removePreviousCode();
-    removePreviousDiagram()
-    if (type === "java"){
-        dummyEditorId = "dummyCodeEditorDom";
-        $("#"+dummyEditorId).css("display", "flex");
-
-        createCodeMirrorInstance(fileName, content);
-    }
-    else if (type === "diagram"){
-        dummyEditorId = "dummyDiagramEditorDom";
-        $("#"+dummyEditorId).css("display", "flex");
-        createGraph(JSON.parse(content));
-    }
-    refresh();
-    console.log("current File opened: " + currentlyOpenedFile);
+	currentlyOpenedFile = fullPath;
+	let dummyEditorId = "";
+	removePreviousCode();
+	removePreviousDiagram();
+	dummyConsoleId = "dummyCorcConsoleArea";
+	if (type === "java") {
+		dummyEditorId = "dummyCodeEditorDom";
+		$("#" + dummyEditorId).css("display", "flex");
+		createCodeMirrorInstance(fileName, content);
+	}
+	else if (type === "diagram") {
+		dummyEditorId = "dummyDiagramEditorDom";
+		$("#" + dummyEditorId).css("display", "flex");
+		createGraph(JSON.parse(content));
+	}
+	if (type === "diagram") {
+		$('#' + dummyConsoleId).addClass('corc-console-area');
+		$('#' + dummyConsoleId).removeClass('corc-console-area-FULLSIZE');
+	} else if (type === "java") {
+		$('#' + dummyConsoleId).removeClass('corc-console-area');
+		$('#' + dummyConsoleId).addClass('corc-console-area-FULLSIZE');
+	}
+	$("#" + dummyConsoleId).detach().appendTo("#" + dummyEditorId);
+	$("#" + dummyConsoleId).css("display", "flex");
+	// TODO Implement toggleConsole function that switches between flex and none
+	refresh();
+	console.log("current File opened: " + currentlyOpenedFile);
 }
 
 function createNewDiagram(createButton) {
-    createNewFile(createButton, "diagram", "dummyDiagramEditorDom");
-    // TODO: also reset the positions (currently saved ind cookies which will also change)
+	createNewFile(createButton, "diagram", "dummyDiagramEditorDom");
+	// TODO: also reset the positions (currently saved ind cookies which will also change)
 }
 function createNewJavaFile(createButton) {
-    removePreviousCode();
-    createNewFile(createButton, "java", "dummyCodeEditorDom");
+	removePreviousCode();
+	createNewFile(createButton, "java", "dummyCodeEditorDom");
 }
 function createNewFolderFromModal(createButton) {
-    let currentDir = getCurrentDirectoryFromCookie();
-    if (currentDir === false){
-        // TODO: treeview string should be a global static variable
-        currentDir = "treeView";
-    }
-    createFolder(getFileName(createButton), currentDir);
+	let currentDir = getCurrentDirectoryFromCookie();
+	if (currentDir === false) {
+		// TODO: treeview string should be a global static variable
+		currentDir = "treeView";
+	}
+	createFolder(getFileName(createButton), currentDir);
 }
 
 function createNewFile(createButton, type, dummyEditorId) {
 
-    let fileName = getFileName(createButton, type);
+	let fileName = getFileName(createButton, type);
 
 
-    // removePreviousEditor();
+	// removePreviousEditor();
 
-    if (fileNameExists(fileName, type)){
-        alert("file name already exists");
-        // TODO if this is the case, modal should stay opened
-    }
-    else {
-        let fileContent = "class "+fileName+"{\n" +
-            "  public void main(String[] args){\n" +
-            "  }\n" +
-            "}";
-        // let newKnot = $("#"+dummyEditorId).clone(true, true).css("display", "block").prop('id', fileName);
-        // $("#content-wrapper").append(newKnot);
-        $("#"+dummyEditorId).css("display", "flex");
-        refresh();
-        if(dummyEditorId === "dummyDiagramEditorDom"){
-            $("#dummyCodeEditorDom").css("display", "none");
-        }
-        else {
-            $("#dummyDiagramEditorDom").css("display", "none");
-        }
+	if (fileNameExists(fileName, type)) {
+		alert("file name already exists");
+		// TODO if this is the case, modal should stay opened
+	}
+	else {
+		let fileContent = "class " + fileName + "{\n" +
+			"  public void main(String[] args){\n" +
+			"  }\n" +
+			"}";
+		// let newKnot = $("#"+dummyEditorId).clone(true, true).css("display", "block").prop('id', fileName);
+		// $("#content-wrapper").append(newKnot);
+		$("#" + dummyEditorId).css("display", "flex");
+		refresh();
+		if (dummyEditorId === "dummyDiagramEditorDom") {
+			$("#dummyCodeEditorDom").css("display", "none");
+		}
+		else {
+			$("#dummyDiagramEditorDom").css("display", "none");
+		}
 
-        // fileName is also the editor ID
-        if(type === "java"){
-            createCodeMirrorInstance(fileName);
-        }
-        else{
-            let webcorcObject = buildWebCorCModel();
-            fileContent =JSON.stringify(webcorcObject);
-        }
-        // TODO: display it in the tree viewer / display that it is active
+		// fileName is also the editor ID
+		if (type === "java") {
+			createCodeMirrorInstance(fileName);
+		}
+		else {
+			let webcorcObject = buildWebCorCModel();
+			fileContent = JSON.stringify(webcorcObject);
+		}
+		// TODO: display it in the tree viewer / display that it is active
 
-        // TODO: fullPath is empty
-        //let fullPath = getCurrentFilePath();
-        // TODO: important! implement a way to know the parent structure (just treeview as parent or any folders?)
-        let directoryPath = getCurrentDirectoryFromCookie();
-        // let folderId = directoryPath;
-        // if (directoryPath !== "treeView") {
-        //     folderId = directoryPath + "Folder";
-        // }
-        let fullPath = directoryPath+"/" + fileName + "." + type;
+		// TODO: fullPath is empty
+		//let fullPath = getCurrentFilePath();
+		// TODO: important! implement a way to know the parent structure (just treeview as parent or any folders?)
+		let directoryPath = getCurrentDirectoryFromCookie();
+		// let folderId = directoryPath;
+		// if (directoryPath !== "treeView") {
+		//     folderId = directoryPath + "Folder";
+		// }
+		let fullPath = directoryPath + "/" + fileName + "." + type;
 
-        createNewFileOnServer(fullPath, fileContent);
-        addFileToTreeviewer(fileName, type, directoryPath);
-        setCurrentPathToCookie(fullPath);
-    }
+		createNewFileOnServer(fullPath, fileContent);
+		addFileToTreeviewer(fileName, type, directoryPath);
+		setCurrentPathToCookie(fullPath);
+	}
 }
 
 function getFileName(createButton, type) {
-    // TODO: check if file name is ok and check for file endings
-    return createButton.parentElement.previousElementSibling.lastElementChild.firstElementChild.value;
+	// TODO: check if file name is ok and check for file endings
+	return createButton.parentElement.previousElementSibling.lastElementChild.firstElementChild.value;
 }
 
 function fileNameExists(fileName, type) {
-    // TODO: check this
-    return false;
+	// TODO: check this
+	return false;
+}
+
+function hideConsole() {
+	$("#dummyCorcConsoleArea").css("display", "none");
 }
 
 function removePreviousCode() {
-    // saveJavaFile();
-    $("#dummyCorcCodeArea").children().remove();
-    $("#dummyCodeEditorDom").css("display", "none");
+	// saveJavaFile();
+	$("#dummyCorcCodeArea").children().remove();
+	$("#dummyCodeEditorDom").css("display", "none");
 }
 
 function removePreviousDiagram() {
-    deleteAllKnots();
-    // delete conditions
-    clearLists();
-    $("#dummyDiagramEditorDom").css("display", "none");
-    // TODO: deactivate jsPlumb (prevent infinity svg error)
+	deleteAllKnots();
+	// delete conditions
+	clearLists();
+	$("#dummyDiagramEditorDom").css("display", "none");
+	// TODO: deactivate jsPlumb (prevent infinity svg error)
 }
 
 // function initializeJsPlumb(editorId) {
 //
 // }
 
-function saveJavaFile(){
-    let content =  document.querySelector('.CodeMirror').CodeMirror.getValue();
-    let fullPath = getCurrentPathFromCookie();
+function saveJavaFile() {
+	let content = document.querySelector('.CodeMirror').CodeMirror.getValue();
+	let fullPath = getCurrentPathFromCookie();
 
-    saveFileToServer(fullPath, content);
+	saveFileToServer(fullPath, content);
 }
 
 function saveDiagramFile() {
-    let webcorcObject = buildWebCorCModel();
-    let fullPath =getCurrentPathFromCookie();
+	let webcorcObject = buildWebCorCModel();
+	let fullPath = getCurrentPathFromCookie();
 
-    saveFileToServer(fullPath, JSON.stringify(webcorcObject));
+	saveFileToServer(fullPath, JSON.stringify(webcorcObject));
 }
 
 function saveCurrentFile() {
-    // currentlyOpenedFile saves the full path of the current file
+	// currentlyOpenedFile saves the full path of the current file
 }
 
 function deleteCurrentDirectoryElement() {
-    // TODO: implement this function
-    let currentFile = getCurrentPathFromCookie();
-    if (currentFile === "" || currentFile === false){
-        // it is a folder, delete on server and remove from treeview
-        deleteFileOrFolderOnServer(getCurrentDirectoryFromCookie());
-        removeFolderFromTreeview(getCurrentDirectoryFromCookie());
-    }
-    else {
-        deleteFileOrFolderOnServer(currentFile);
-        removeFileFromTreeview(currentFile);
-        // it is a file (same)
-    }
-    setCurrentPathToCookie("treeView");
+	// TODO: implement this function
+	let currentFile = getCurrentPathFromCookie();
+	if (currentFile === "" || currentFile === false) {
+		// it is a folder, delete on server and remove from treeview
+		deleteFileOrFolderOnServer(getCurrentDirectoryFromCookie());
+		removeFolderFromTreeview(getCurrentDirectoryFromCookie());
+	}
+	else {
+		deleteFileOrFolderOnServer(currentFile);
+		removeFileFromTreeview(currentFile);
+		// it is a file (same)
+	}
+	setCurrentPathToCookie("treeView");
 }
