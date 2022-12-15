@@ -277,16 +277,16 @@ function verifyWebCorCModelStatement(fullPath, idClickedStatement, proofType) {
         success: function (data) {
             $(".corc-spinner").css("display", "none")
             //alert(data);
-            console.log("CorC responded:")
-            console.log(JSON.stringify(data.messages, null, 2));
+            printConsole("CorC responded:")
+            printConsole(JSON.stringify(data.messages, null, 2));
             updateKnotColors(data);
         },
         error: function (errMsg) {
             $(".corc-spinner").css("display", "none")
-            console.log("CorC responded:")
-            console.log(JSON.stringify(data.messages, null, 2));
-            console.log("An Error occurred: ")
-            console.log(errMsg);
+            printConsole("CorC responded:")
+            printConsole(JSON.stringify(data.messages, null, 2));
+            printConsole("An Error occurred: ")
+            printConsole(errMsg);
 
             // $("#testToast2").toast("show");
         },

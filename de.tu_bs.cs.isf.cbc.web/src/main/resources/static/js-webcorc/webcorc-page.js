@@ -268,18 +268,6 @@ resizeInputFields = function () {
     $(this).width(Math.max(140, width + 10));
 };
 
-// Use the built-in console on the page instead of the default JS console
-(function() {
-	// Do not discard default log function
-	var old = console.log;
-	var logger = document.getElementById("corcDiagramConsole");
-	console.log = function(message) {
-		// Simply insert message into the element's innerHTML
-		// This isn't necessarily safe: All messages sent over console.log will be evaluated!
-		logger.innerHTML += message + '<br/>';
-	}
-})();
-
 function createToast(header, message) {
     let newToast = $("#defaultToast").clone();
     $("#toastContainer").append(newToast);
@@ -313,7 +301,7 @@ function copyLabel(textInput) {
 
     if (window.getSelection) {
         window.getSelection().removeAllRanges();
-    } else if (document.selection) {
+    } else if (document.selection) {stopResize
         document.selection.empty();
     }
 
@@ -341,13 +329,13 @@ function makeResizableDiv(div, direction, resizerId = "notSet") {
                 // console.log(element.getBoundingClientRect());
                 if (direction === "horizontal") {
                     if (div === ".sidebar-corc-right") {
-                        let diagramConsole = document.getElementById('dummyCorcDiagramConsoleArea');
+                        let diagramConsole = document.getElementById('dummyCorcConsoleArea');
                         let diagramArea = document.getElementById('dummyDiagramArea');
                         let width = 'calc(100vw - ' + e.pageX + 'px';
                         currentResizer.style.left = "-5px";
                         element.style.width = width;
                         if (e.pageX > (0.3 * document.documentElement.clientWidth)) {
-                            diagramConsole.style.paddingRight = 'calc(100vw - ' + e.pageX + 'px + 3px';
+                            diagramConsole.style.marginRight = 'calc(100vw - ' + e.pageX + 'px + 3px';
                             diagramArea.style.marginRight = 'calc(100vw - ' + e.pageX + 'px + 3px';
                         }
 
@@ -390,14 +378,28 @@ function initTriggering() {
     resizer.dispatchEvent(clickEvent);
 }
 
-//left sidebar
+function printConsole(message, console = "corcConsole") {
+    let codeArea = $("#" + console);
+    let previousConsoleMessage = codeArea.html();
+    if (previousConsoleMessage === ""){
+        codeArea.html(message);
+    }
+    else {
+        previousConsoleMessage =previousConsoleMessage.concat("\n=================================================\n"+ message );
+        codeArea.html(previousConsoleMessage);
+    }
+    codeArea.scrollTop(codeArea[0].scrollHeight);
+    // alert("Message printed to console");
+}
+
+// Left sidebar
 makeResizableDiv('.sidebar-corc', 'horizontal');
 initTriggering();
-//right sidebar within diagram editor
+// Right sidebar within diagram editor
 makeResizableDiv('.sidebar-corc-right', 'horizontal');
-//console within code editor
+// Code display within code editor
 makeResizableDiv('.webcorc-resizable-vertical', 'vertical', "codeResizer");
-//console within diagram editor
+// Diagram display within diagram editor
 makeResizableDiv('.corc-diagram-area', 'vertical', "diagramResizer");
-//sidebar with java variables and global conditions
+// Sidebar with java variables and global conditions
 makeResizableDiv('.corc-java-variable-container', 'vertical', "sidebarResizer");
