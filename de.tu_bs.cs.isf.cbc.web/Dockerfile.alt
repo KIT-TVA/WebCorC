@@ -1,0 +1,9 @@
+FROM maven:3-openjdk-18 AS initial
+COPY src /home/webcorc/src
+COPY pom.xml /home/webcorc
+RUN mvn -f /home/webcorc/pom.xml clean package
+# Discard container after WebCorC is pacakged
+FROM openjdk:18-jdk-slim-buster AS run
+COPY --from=initial /home/webcorc/target/de.tu_bs.cs.isf.cbc.web.war /usr/local/lib/webcorc.war
+EXPOSE 8080
+ENTRYPOINT ["java","-jar","/usr/local/lib/webcorc.war"]
