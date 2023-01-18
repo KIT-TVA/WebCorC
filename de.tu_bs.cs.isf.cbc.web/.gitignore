@@ -163,5 +163,7 @@ flycheck_*.el
 # network security
 /network-security.data
 
-
+GPATH
+GTAGS
+GRTAGS
 
