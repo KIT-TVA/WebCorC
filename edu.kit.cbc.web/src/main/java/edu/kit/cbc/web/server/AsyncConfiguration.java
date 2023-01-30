@@ -1,4 +1,4 @@
-package de.tu_bs.cs.isf.cbc.web.server;
+package edu.kit.cbc.web.server;
 
 import java.util.concurrent.Callable;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;

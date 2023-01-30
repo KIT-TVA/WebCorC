@@ -1,4 +1,4 @@
-package de.tu_bs.cs.isf.cbc.web.util;
+package edu.kit.cbc.web.util;
 
 import java.io.File;
 import java.util.ArrayList;

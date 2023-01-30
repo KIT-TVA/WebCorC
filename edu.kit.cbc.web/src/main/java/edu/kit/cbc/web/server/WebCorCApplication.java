@@ -1,4 +1,4 @@
-package de.tu_bs.cs.isf.cbc.web.server;
+package edu.kit.cbc.web.server;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,4 +1,4 @@
-package de.tu_bs.cs.isf.cbc.web.server;
+package edu.kit.cbc.web.server;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -52,13 +52,13 @@ import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariable;
 import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariables;
 import de.tu_bs.cs.isf.cbc.cbcmodel.SelectionStatement;
 import de.tu_bs.cs.isf.cbc.cbcmodel.SmallRepetitionStatement;
-import de.tu_bs.cs.isf.cbc.web.java.compilation.WebCorcCompileJava;
-import de.tu_bs.cs.isf.cbc.web.util.FileUtil;
-import de.tu_bs.cs.isf.cbc.web.util.JSONBuildHelper;
-import de.tu_bs.cs.isf.cbc.web.util.JSONParser;
-import de.tu_bs.cs.isf.cbc.web.util.ProofType;
-import de.tu_bs.cs.isf.cbc.web.util.ProveWithKey;
-import de.tu_bs.cs.isf.cbc.web.util.VerifyAllStatements;
+import edu.kit.cbc.web.java.compilation.WebCorcCompileJava;
+import edu.kit.cbc.web.util.FileUtil;
+import edu.kit.cbc.web.util.JSONBuildHelper;
+import edu.kit.cbc.web.util.JSONParser;
+import edu.kit.cbc.web.util.ProofType;
+import edu.kit.cbc.web.util.ProveWithKey;
+import edu.kit.cbc.web.util.VerifyAllStatements;
 
 @RestController
 public class WebCorCController {
