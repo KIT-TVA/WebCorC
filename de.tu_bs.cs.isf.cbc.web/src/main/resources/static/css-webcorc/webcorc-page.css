@@ -58,6 +58,7 @@
     /*padding-top: 70px;*/
     /*border-right: 2px solid #e5e5e5;*/
     min-width: 200px;
+    height: 100%;
 
     border-radius: 10px;
     margin-top: 70px;
@@ -273,8 +274,10 @@ body{
     height: 40px;
     /*background-color: #be1e3c;*/
     border: none;
+    margin-top: 10px;
+    margin-bottom: 10px;
     /* padding-left: 5px; */
-    margin-left: 10px;
+    /* margin-left: 10px; */
 }
 
 .corc-button:hover{
@@ -496,3 +499,6 @@ body{
     width: 6.5rem!important;
 }}
 
+.sidebar-container {
+    grid: auto / 90% 10%;
+}

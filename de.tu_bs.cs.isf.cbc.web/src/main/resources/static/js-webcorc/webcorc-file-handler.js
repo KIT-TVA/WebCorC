@@ -5,6 +5,7 @@
 function openFile(content, type, fullPath, fileName) {
 	currentlyOpenedFile = fullPath;
 	let dummyEditorId = "";
+	$("#proof-toggle-button").removeAttr("style");
 	removePreviousCode();
 	removePreviousDiagram();
 	dummyConsoleId = "dummyCorcConsoleArea";
@@ -17,6 +18,16 @@ function openFile(content, type, fullPath, fileName) {
 		dummyEditorId = "dummyDiagramEditorDom";
 		$("#" + dummyEditorId).css("display", "flex");
 		createGraph(JSON.parse(content));
+	} else if (type == "proof") {
+		dummyEditorId = "dummyCodeEditorDom";
+		$("#" + dummyEditorId).css("display", "flex");
+		$("#proof-toggle-button").css("background-color", "green");
+		$("#proof-toggle-button").css("color", "white");
+		CodeMirror(document.getElementById("dummyCorcCodeArea"), {
+			value: content,
+			mode: "text/smtlib",
+			lineNumbers: "true"
+		});
 	}
 	if (type === "diagram") {
 		$('#' + dummyConsoleId).addClass('corc-console-area');
@@ -26,7 +37,12 @@ function openFile(content, type, fullPath, fileName) {
 		$('#' + dummyConsoleId).addClass('corc-console-area-FULLSIZE');
 	}
 	$("#" + dummyConsoleId).detach().appendTo("#" + dummyEditorId);
-	$("#" + dummyConsoleId).css("display", "flex");
+	if (type == "proof") {
+		// Hide the console if we are displaying a proof file
+		$("#" + dummyConsoleId).css("display", "none");
+	} else {
+		$("#" + dummyConsoleId).css("display", "flex");
+	}
 	// TODO Implement toggleConsole function that switches between flex and none
 	refresh();
 	console.log("current File opened: " + currentlyOpenedFile);

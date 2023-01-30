@@ -182,54 +182,52 @@
 
 	<!-- Page Wrapper -->
 	<div id="wrapper">
-
+	
 		<!-- Sidebar -->
-		<div class="sidebar-corc navbar-nav  webcorc-resizable-horizontal"
-			id="leftSidebar">
-
-
-			<!-- Heading -->
-			<div class="corc-sidebar-heading">
-				<a class="corc-file-button" href="#" id="createNewFile"
-					data-toggle="modal" data-target="#modal-new-file"> <i
-					class="fas fa-file"></i>
-				</a> <a class="corc-file-button" href="#" id="createNewFolder"
-					data-toggle="modal" data-target="#modal-new-folder"> <i
-					class="fas fa-folder"></i>
-				</a>
-				<!--            <a class="custom-file corc-file-button" href="#">-->
-				<!--                <input type="file" class="custom-file-input" id="importFileSidebar">-->
-				<!--                <label class="corc-file-label" for="importFileSidebar">-->
-				<!--                    <i class="fas fa-upload"></i>-->
-				<!--                </label>-->
-				<!--            </a>-->
-				<!--            <a class="corc-file-button" href="#" id="uploadFileSymbol">-->
-				<!--                <i class="fas fa-upload"></i>-->
-				<!--                &lt;!&ndash;                <input type="file" class="custom-file-input" id="importFileSidebar">&ndash;&gt;-->
-				<!--            </a>-->
-				<!--            <input type="file" class="custom-file-input corc-file-button" id="importFileSidebar">-->
-				<!--            <lable class="corc-file-button" id="importFileSymbol" for="importFileSidebar">-->
-				<!--                <i class="fas fa-upload"></i>-->
-				<!--                &lt;!&ndash;                <input type="file" class="custom-file-input" id="importFileSidebar">&ndash;&gt;-->
-				<!--&lt;!&ndash;                <label for="importFile"></label>&ndash;&gt;-->
-				<!--            </lable>-->
-				<a class="corc-file-button" href="#"
-					id="deleteCurrentDirectoryElement"
-					onclick="deleteCurrentDirectoryElement();"> <i
-					class="fas fa-trash"></i>
-				</a>
+		<div class="sidebar-container">
+			<div class="sidebar-corc navbar-nav webcorc-resizable-horizontal" id="leftSidebar">
+	
+				<!-- Heading -->
+				<div class="corc-sidebar-heading">
+					<a class="corc-file-button" href="#" id="createNewFile" data-toggle="modal"
+						data-target="#modal-new-file"> <i class="fas fa-file"></i>
+					</a> <a class="corc-file-button" href="#" id="createNewFolder" data-toggle="modal"
+						data-target="#modal-new-folder"> <i class="fas fa-folder"></i>
+					</a>
+					<!--            <a class="custom-file corc-file-button" href="#">-->
+					<!--                <input type="file" class="custom-file-input" id="importFileSidebar">-->
+					<!--                <label class="corc-file-label" for="importFileSidebar">-->
+					<!--                    <i class="fas fa-upload"></i>-->
+					<!--                </label>-->
+					<!--            </a>-->
+					<!--            <a class="corc-file-button" href="#" id="uploadFileSymbol">-->
+					<!--                <i class="fas fa-upload"></i>-->
+					<!--                &lt;!&ndash;                <input type="file" class="custom-file-input" id="importFileSidebar">&ndash;&gt;-->
+					<!--            </a>-->
+					<!--            <input type="file" class="custom-file-input corc-file-button" id="importFileSidebar">-->
+					<!--            <lable class="corc-file-button" id="importFileSymbol" for="importFileSidebar">-->
+					<!--                <i class="fas fa-upload"></i>-->
+					<!--                &lt;!&ndash;                <input type="file" class="custom-file-input" id="importFileSidebar">&ndash;&gt;-->
+					<!--&lt;!&ndash;                <label for="importFile"></label>&ndash;&gt;-->
+					<!--            </lable>-->
+					<a class="corc-file-button" href="#" id="deleteCurrentDirectoryElement"
+						onclick="deleteCurrentDirectoryElement();"> <i class="fas fa-trash"></i>
+					</a>
+				</div>
+	
+				<!-- file list -->
+				<!--        <ul>-->
+				<!--            <li>java.java</li>-->
+				<!--            <li style="background-color: #a5a5a5;color: white;width: available">corc.diagram</li>-->
+				<!--        </ul>-->
+				<ul id="treeView"></ul>
+	
+				<div id="webcorcLeftSidebarResizer" class="webcorc-resizer-horizontal"></div>
+	
 			</div>
-
-			<!-- file list -->
-			<!--        <ul>-->
-			<!--            <li>java.java</li>-->
-			<!--            <li style="background-color: #a5a5a5;color: white;width: available">corc.diagram</li>-->
-			<!--        </ul>-->
-			<ul id="treeView"></ul>
-
-			<div id="webcorcLeftSidebarResizer"
-				class="webcorc-resizer-horizontal"></div>
-
+			<div class="corc-button" id="proof-toggle-button" onclick="openProofFile()">
+				Display .proof file
+			</div>
 		</div>
 		<!-- End of Sidebar -->
 

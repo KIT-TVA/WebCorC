@@ -1,5 +1,6 @@
 // TODO: get the current file out of working Object (like workingDirectory)
 var workingDirectory = "";
+var proofFolder = "";
 
 function setListenerToTreeview() {
     // let treeToggler = document.getElementsByClassName("folder");
@@ -151,7 +152,6 @@ function initializeTree(treeObject) {
     let directory = JSON.parse(treeObject).directory;
     // let webDirectory;
     let helperFileFolder;
-    let proofFolder;
     for (let folder in directory) {
         let obj = directory[folder];
         switch (obj.FolderName) {
@@ -217,11 +217,12 @@ function setTreeviewElementOnActive(domElement) {
 }
 
 function deselectTreeviewElements() {
+    // TODO Deselect "view proof file" button as well
     let elements = document.getElementsByClassName("corc-file-clicked");
     Array.prototype.forEach.call(elements, function (el) {
         el.classList.remove("corc-file-clicked");
     });
-
+    
     removePreviousDiagram();
     removePreviousCode();
 }
@@ -247,4 +248,20 @@ function removeFileFromTreeview(path) {
     } else if (path.includes("diagram")) {
         removePreviousDiagram();
     }
+}
+
+function openProofFile() {
+    deselectTreeviewElements();
+
+    let path = "helpers/current.proof"
+    console.log(path);
+    
+    // This is very smelly code but we are basically reproducting the way files in WebDirectory are handled
+    let fileContent = getFile(path.replace("helpers", "ProofData"));
+    if (fileContent == -1) {
+        if (createNewFileOnServer(path, "") == -1) console.log("Can't create proof file...");
+        fileContent = "";
+    }
+    setCurrentPathToCookie(path);
+    openFile(fileContent, "proof", path, "current.proof");
 }
