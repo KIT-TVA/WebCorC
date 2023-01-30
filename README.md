@@ -2,7 +2,7 @@
 
 #### Launch server
 
-Simply run `mvn spring-boot:run`. The web interface can then be accessed under `localhost:8080/de.tu_bs.cs.isf.cbc.web`.
+Simply run `mvn spring-boot:run`. The web interface can then be accessed under `localhost:8080/edu.kit.cbc.web`.
 If you do not have a local Maven installation, use the Maven wrapper (`mvnw`).
 
 ---
@@ -36,5 +36,5 @@ After building the Docker image, run WebCorC with the following command:
 `sudo docker run -p 8080:8080 -d -v /tmp/WebCorC:/tmp/WebCorC webcorc:latest`
 (assuming that the built image is called "webcorc")
 
-Now navigate to `localhost:8080/de.tu_bs.cs.isf.cbc.web`. You might need to disable your firewall.
+Now navigate to `localhost:8080/edu.kit.cbc.web`. You might need to disable your firewall.
 The working directory of the WebCorC instance inside the container can be accessed by the host through the `/tmp/WebCorC` directory.
