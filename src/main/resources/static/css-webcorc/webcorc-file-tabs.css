@@ -77,10 +77,15 @@
     border-radius: 10px;
 }
 
-.corc-file-button{
+.corc-file-button {
     margin: 5px;
     color: white;
     padding: 2px;
+}
+
+.disabled-button {
+    pointer-events: none;
+    color: gray !important;
 }
 
 .corc-file-button:hover{

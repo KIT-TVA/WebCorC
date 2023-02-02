@@ -5,29 +5,35 @@
 function openFile(content, type, fullPath, fileName) {
 	currentlyOpenedFile = fullPath;
 	let dummyEditorId = "";
-	$("#proof-toggle-button").removeAttr("style");
+	$("#helper-toggle-button").removeAttr("style");
 	removePreviousCode();
 	removePreviousDiagram();
 	dummyConsoleId = "dummyCorcConsoleArea";
 	if (type === "java") {
 		dummyEditorId = "dummyCodeEditorDom";
 		$("#" + dummyEditorId).css("display", "flex");
+		$("#codeEditorSaveButton").attr("onclick", "saveJavaFile()");
+		$("#codeEditorCompileButton").removeClass('disabled-button');
 		createCodeMirrorInstance(fileName, content);
 	}
 	else if (type === "diagram") {
 		dummyEditorId = "dummyDiagramEditorDom";
 		$("#" + dummyEditorId).css("display", "flex");
 		createGraph(JSON.parse(content));
-	} else if (type == "proof") {
+	} else if (type == "helper") {
 		dummyEditorId = "dummyCodeEditorDom";
 		$("#" + dummyEditorId).css("display", "flex");
-		$("#proof-toggle-button").css("background-color", "green");
-		$("#proof-toggle-button").css("color", "white");
+		$("#helper-toggle-button").css("background-color", "green");
+		$("#helper-toggle-button").css("color", "white");
+		// Rewire buttons on the editor interface when working with helper files
+		$("#codeEditorSaveButton").attr("onclick", "saveHelperFile()");
+		$("#codeEditorCompileButton").addClass('disabled-button');
 		CodeMirror(document.getElementById("dummyCorcCodeArea"), {
 			value: content,
 			mode: "text/smtlib",
 			lineNumbers: "true"
 		});
+		// TODO Disable the compile button shown in the CodeMirror interface
 	}
 	if (type === "diagram") {
 		$('#' + dummyConsoleId).addClass('corc-console-area');
@@ -37,7 +43,7 @@ function openFile(content, type, fullPath, fileName) {
 		$('#' + dummyConsoleId).addClass('corc-console-area-FULLSIZE');
 	}
 	$("#" + dummyConsoleId).detach().appendTo("#" + dummyEditorId);
-	if (type == "proof") {
+	if (type == "helper") {
 		// Hide the console if we are displaying a proof file
 		$("#" + dummyConsoleId).css("display", "none");
 	} else {
@@ -153,6 +159,14 @@ function removePreviousDiagram() {
 function saveJavaFile() {
 	let content = document.querySelector('.CodeMirror').CodeMirror.getValue();
 	let fullPath = getCurrentPathFromCookie();
+
+	saveFileToServer(fullPath, content);
+}
+
+function saveHelperFile() {
+	let content = document.querySelector('.CodeMirror').CodeMirror.getValue();
+	let fullPath = 'helpers/default.key';
+	// 'helpers' is here shorthand for session ID + HelperFiles
 
 	saveFileToServer(fullPath, content);
 }

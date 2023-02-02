@@ -216,13 +216,13 @@ function setTreeviewElementOnActive(domElement) {
 
 }
 
-function deselectTreeviewElements() {
-    // TODO Deselect "view proof file" button as well
+function deselectTreeviewElements() {    
     let elements = document.getElementsByClassName("corc-file-clicked");
     Array.prototype.forEach.call(elements, function (el) {
         el.classList.remove("corc-file-clicked");
     });
-    
+    // Deselect "Display .key file " button as well    
+    $("#helper-toggle-button").removeAttr("style");
     removePreviousDiagram();
     removePreviousCode();
 }
@@ -250,18 +250,18 @@ function removeFileFromTreeview(path) {
     }
 }
 
-function openProofFile() {
+function openHelperFile() {
     deselectTreeviewElements();
 
-    let path = "helpers/current.proof"
+    let path = "helpers/default.key"
     console.log(path);
     
     // This is very smelly code but we are basically reproducting the way files in WebDirectory are handled
-    let fileContent = getFile(path.replace("helpers", "ProofData"));
+    let fileContent = getFile(path.replace("helpers", "HelperFiles"));
     if (fileContent == -1) {
-        if (createNewFileOnServer(path, "") == -1) console.log("Can't create proof file...");
+        if (createNewFileOnServer(path, "") == -1) console.log("Can't create helper file... Is the WebCorC directory corrupted?");
         fileContent = "";
     }
-    setCurrentPathToCookie(path);
-    openFile(fileContent, "proof", path, "current.proof");
+
+    openFile(fileContent, "helper", path, "default.key");
 }

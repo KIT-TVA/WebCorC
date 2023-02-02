@@ -1,0 +1,25 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-WebCorCApplication<edu.kit.cbc.web>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "edu.kit.cbc.web.server.WebCorCApplication",
+            "projectName": "edu.kit.cbc.web",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=36757 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=edu.kit.cbc.web"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-WebCorcCompileJava<edu.kit.cbc.web>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "edu.kit.cbc.web.java.compilation.WebCorcCompileJava",
+            "projectName": "edu.kit.cbc.web",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

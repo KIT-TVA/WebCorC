@@ -51,7 +51,7 @@ public class JSONParser {
 		// do not care about the name
 		pathParts = Arrays.copyOf(pathParts, pathParts.length - 1);
 		pathString = String.join(File.separator, pathParts);
-		pathString = pathString.replace("helpers", session.getId() + File.separator + "ProofData");
+		pathString = pathString.replace("helpers", session.getId() + File.separator + "HelperFiles");
 		pathString = pathString.replace("treeView", session.getId() + File.separator + "WebDirectory");
 		System.out.println("path: " + pathString);
 //		Path path = Path.of(SZ_LOCATION + File.separator + pathString);
