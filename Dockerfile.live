@@ -1,0 +1,5 @@
+FROM maven:3-openjdk-18 AS initial
+RUN git clone "https://github.com/KIT-TVA/WebCorC.git"
+WORKDIR "/WebCorC"
+EXPOSE 8080
+ENTRYPOINT ["mvn", "spring-boot:run"]
