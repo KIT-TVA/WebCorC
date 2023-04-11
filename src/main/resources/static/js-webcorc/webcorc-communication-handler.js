@@ -46,7 +46,7 @@ function saveFileToServer(fullPath, content) {
 
     $.ajax({
         type: "POST",
-        url: "http://" + window.location.host + "/edu.kit.cbc.web/saveFile",
+        url: "//" + window.location.host + "/edu.kit.cbc.web/saveFile",
         // The key needs to match your method's input parameter (case-sensitive).
         data: JSON.stringify(data),
         contentType: false,
@@ -71,7 +71,7 @@ function createNewFileOnServer(fullPath, content) {
 
     $.ajax({
         type: "POST",
-        url: "http://" + window.location.host + "/edu.kit.cbc.web/createFile",
+        url: "//" + window.location.host + "/edu.kit.cbc.web/createFile",
         // The key needs to match your method's input parameter (case-sensitive).
         data: JSON.stringify(data),
         contentType: false,
@@ -95,7 +95,7 @@ function createNewDirectoryOnServer(fullPath) {
 
     $.ajax({
         type: "POST",
-        url: "http://" + window.location.host + "/edu.kit.cbc.web/createDirectory",
+        url: "//" + window.location.host + "/edu.kit.cbc.web/createDirectory",
         // The key needs to match your method's input parameter (case-sensitive).
         data: JSON.stringify(data),
         contentType: false,
@@ -119,7 +119,7 @@ $(".context-menu-button-verify").click(function () {
 function exportWorkspaceAsArchive(){
     $.ajax({
         type: "GET",
-        url: "http://" + window.location.host + "/edu.kit.cbc.web/getWorkspaceAsArchive",
+        url: "//" + window.location.host + "/edu.kit.cbc.web/getWorkspaceAsArchive",
         contentType: 'application/json',
         xhrFields:{
             responseType: 'blob'
@@ -152,7 +152,7 @@ function uploadWorkspaceAsArchive(zipArchive){
     form_zip_archive_upload.append('file', zipArchive);
     $.ajax({
         type: "POST",
-        url: "http://" + window.location.host + "/edu.kit.cbc.web/uploadWorkspaceAsArchive",
+        url: "//" + window.location.host + "/edu.kit.cbc.web/uploadWorkspaceAsArchive",
         data: form_zip_archive_upload,
         contentType: false,
         dataType: false,
@@ -180,7 +180,7 @@ function deleteFileOrFolderOnServer(fullPath) {
 
     $.ajax({
         type: "POST",
-        url: "http://" + window.location.host + "/edu.kit.cbc.web/deleteFileOrFolder",
+        url: "//" + window.location.host + "/edu.kit.cbc.web/deleteFileOrFolder",
         // The key needs to match your method's input parameter (case-sensitive).
         data: JSON.stringify(data),
         contentType: false,
@@ -201,7 +201,7 @@ function getFile(path) {
     let returnValue = "sync failed";
     $.ajax({
         type: "POST",
-        url: "http://" + window.location.host + "/edu.kit.cbc.web/getFileAtPath",
+        url: "//" + window.location.host + "/edu.kit.cbc.web/getFileAtPath",
         // The key needs to match your method's input parameter (case-sensitive).
         // TODO: check if buidWebCorCModel is complete
         data: path,
@@ -228,7 +228,7 @@ function verifyWebCorCModel(fullPath, content) {
     };
     $.ajax({
         type: "POST",
-        url: "http://" + window.location.host + "/edu.kit.cbc.web/verifyDiagramFile",
+        url: "//" + window.location.host + "/edu.kit.cbc.web/verifyDiagramFile",
         // The key needs to match your method's input parameter (case-sensitive).
         // TODO: check if buidWebCorCModel is complete
         data: JSON.stringify(data),
@@ -269,7 +269,7 @@ function verifyWebCorCModelStatement(fullPath, idClickedStatement, proofType) {
     $.ajax({
         headers: {"statementId": idClickedStatement, "proofType": proofType},
         type: "POST",
-        url: "http://" + window.location.host + "/edu.kit.cbc.web/verifyStatement",
+        url: "//" + window.location.host + "/edu.kit.cbc.web/verifyStatement",
         // The key needs to match your method's input parameter (case-sensitive).
         data: JSON.stringify(data),
         contentType: "application/json; charset=utf-8",
@@ -306,7 +306,7 @@ function sendHelperFile(helperFile) {
     form_data_helper.append('file', helperFile);
     $.ajax({
         type: "POST",
-        url: "http://" + window.location.host + "/edu.kit.cbc.web/helperFileUpload",
+        url: "//" + window.location.host + "/edu.kit.cbc.web/helperFileUpload",
         // The key needs to match your method's input parameter (case-sensitive).
         data: form_data_helper,
         contentType: false,
@@ -334,7 +334,7 @@ function sendJavaFile(javaFile) {
     form_data_java.append('file', javaFile);
     $.ajax({
         type: "POST",
-        url: "http://" + window.location.host + "/edu.kit.cbc.web/javaFileUpload",
+        url: "//" + window.location.host + "/edu.kit.cbc.web/javaFileUpload",
         // The key needs to match your method's input parameter (case-sensitive).
         data: form_data_java,
         contentType: false,
@@ -364,7 +364,7 @@ function uploadFileAtCurrentPath(file) {
     form_data_java.append('pathCurrentDir', getCurrentDirectoryFromCookie());
     $.ajax({
         type: "POST",
-        url: "http://" + window.location.host + "/edu.kit.cbc.web/uploadFileToPath",
+        url: "//" + window.location.host + "/edu.kit.cbc.web/uploadFileToPath",
         data: form_data_java,
         contentType: false,
         dataType: false,
@@ -386,7 +386,7 @@ function sendCodeAsString(javaCode) {
 
     $.ajax({
         type: "POST",
-        url: "http://" + window.location.host + "/edu.kit.cbc.web/javaCodeAsString",
+        url: "//" + window.location.host + "/edu.kit.cbc.web/javaCodeAsString",
         // The key needs to match your method's input parameter (case-sensitive).
         data: javaCode,
         contentType: false,
@@ -416,7 +416,7 @@ function sendCodeAsString(javaCode) {
 function setSessionId() {
     $.ajax({
         type: "GET",
-        url: "http://" + window.location.host + "/edu.kit.cbc.web/sessionId",
+        url: "//" + window.location.host + "/edu.kit.cbc.web/sessionId",
         // The key needs to match your method's input parameter (case-sensitive).
         contentType: false,
         dataType: false,
@@ -443,7 +443,7 @@ function initialize() {
     // no data required
     $.ajax({
         type: "POST",
-        url: "http://" + window.location.host + "/edu.kit.cbc.web/initialize",
+        url: "//" + window.location.host + "/edu.kit.cbc.web/initialize",
         data: false,
         contentType: false,
         dataType: false,
