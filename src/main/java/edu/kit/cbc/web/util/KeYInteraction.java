@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.key_project.util.collection.ImmutableSet;
@@ -13,7 +14,6 @@ import de.uka.ilkd.key.control.KeYEnvironment;
 import de.uka.ilkd.key.java.abstraction.KeYJavaType;
 import de.uka.ilkd.key.logic.op.IObserverFunction;
 import de.uka.ilkd.key.proof.Proof;
-//import de.uka.ilkd.key.proof.Statistics;
 import de.uka.ilkd.key.proof.init.ProofInputException;
 import de.uka.ilkd.key.proof.io.ProblemLoaderException;
 import de.uka.ilkd.key.settings.ChoiceSettings;
@@ -40,7 +40,7 @@ public class KeYInteraction {
 			}
 			// Set Taclet options
 			ChoiceSettings choiceSettings = ProofSettings.DEFAULT_SETTINGS.getChoiceSettings();
-			HashMap<String, String> oldSettings = choiceSettings.getDefaultChoices();
+			Map<String, String> oldSettings = choiceSettings.getDefaultChoices();
 			HashMap<String, String> newSettings = new HashMap<String, String>(oldSettings);
 			newSettings.putAll(MiscTools.getDefaultTacletOptions());
 			newSettings.put("runtimeExceptions", "runtimeExceptions:ban");
@@ -103,7 +103,7 @@ public class KeYInteraction {
 			}
 			// Set Taclet options
 			ChoiceSettings choiceSettings = ProofSettings.DEFAULT_SETTINGS.getChoiceSettings();
-			HashMap<String, String> oldSettings = choiceSettings.getDefaultChoices();
+			Map<String, String> oldSettings = choiceSettings.getDefaultChoices();
 			HashMap<String, String> newSettings = new HashMap<String, String>(oldSettings);
 			newSettings.putAll(MiscTools.getDefaultTacletOptions());
 			newSettings.put("runtimeExceptions", "runtimeExceptions:ban");

@@ -78,9 +78,9 @@
       <version>2.16.0</version>
     </dependency>
     <dependency>
-      <groupId>org.key_project</groupId>
+      <groupId>org.key-project</groupId>
       <artifactId>key.core</artifactId>
-      <version>2.6.3</version>
+      <version>2.12.0</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.emfjson/emfjson-jackson -->
     <dependency>
