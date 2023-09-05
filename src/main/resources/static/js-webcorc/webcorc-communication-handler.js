@@ -78,6 +78,7 @@ function createNewFileOnServer(fullPath, content) {
         dataType: false,
         success: function (data) {
             returnValue = data;
+			initialize();
         },
         error: function (xhr, status, errMsg) {
             console.log("An Error occurred: ")
@@ -187,6 +188,7 @@ function deleteFileOrFolderOnServer(fullPath) {
         dataType: false,
         success: function (data) {
             returnValue = data;
+			initialize();
         },
         error: function (xhr, status, errMsg) {
             console.log("An Error occurred: ")
@@ -371,6 +373,7 @@ function uploadFileAtCurrentPath(file) {
         processData: false,
         success: function (data) {
             console.log(data);
+			initialize();
         },
         error: function (errMsg) {
             console.log("An Error occurred: ");
@@ -450,7 +453,7 @@ function initialize() {
         processData: false,
         success: function (data) {
             console.log(data);
-            initializeTree(data)
+            initializeTree(data);
         },
         error: function (xhr, status, errMsg) {
         }

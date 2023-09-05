@@ -119,7 +119,6 @@ function addFileToTreeviewer(fileName, type, parentFolderId = "treeView") {
 
     fileLi.appendChild(icon);
     fileLi.innerHTML += " " + fileName + "." + type;
-
     // let folderInPath = path.split("/");
     // parentFolder = folderInPath[folderInPath.length-1];
     if (parentFolderId !== "treeView") {
@@ -149,6 +148,7 @@ function createDirectory(directoryObject, parentId = "treeView", path = "/") {
 }
 
 function initializeTree(treeObject) {
+	$('#treeView').empty();
     let directory = JSON.parse(treeObject).directory;
     // let webDirectory;
     let helperFileFolder;
