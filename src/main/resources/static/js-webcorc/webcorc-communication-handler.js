@@ -142,7 +142,7 @@ function exportWorkspaceAsArchive(){
         },
         statusCode: {
             404: function () {
-                // createToast("404: Server connection failed.", "Export Workspace failed");
+                createToast("404: Server connection failed.", "Export Workspace failed");
             }
         }
     });
@@ -278,9 +278,12 @@ function verifyWebCorCModelStatement(fullPath, idClickedStatement, proofType) {
         dataType: "json",
         success: function (data) {
             $(".corc-spinner").css("display", "none")
-            //alert(data);
-            printConsole("CorC responded:")
-            printConsole(JSON.stringify(data.messages, null, 2));
+            if (JSON.stringify(data.messages, null, 2).includes("Proof is closed: true")) {
+				printConsole("CorC responded:\nProof is closed: true");
+			} else {
+				printConsole("CorC responded:\nProof is closed: false");
+			}
+			initialize();
             updateKnotColors(data);
         },
         error: function (errMsg) {
@@ -289,8 +292,6 @@ function verifyWebCorCModelStatement(fullPath, idClickedStatement, proofType) {
             printConsole(JSON.stringify(data.messages, null, 2));
             printConsole("An Error occurred: ")
             printConsole(errMsg);
-
-            // $("#testToast2").toast("show");
         },
         statusCode: {
             404: function () {

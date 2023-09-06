@@ -15,14 +15,14 @@ function openFile(content, type, fullPath, fileName) {
 		$("#codeEditorSaveButton").attr("onclick", "saveJavaFile()");
 		$("#codeEditorCompileButton").removeClass('disabled-button');
 		createCodeMirrorInstance(fileName, content);
-	}
-	else if (type === "diagram") {
+	} else if (type === "diagram") {
 		dummyEditorId = "dummyDiagramEditorDom";
 		$("#" + dummyEditorId).css("display", "flex");
 		createGraph(JSON.parse(content));
-	} else if (type == "helper") {
+	} else if (type == "helper" || type == "key") {
 		dummyEditorId = "dummyCodeEditorDom";
 		$("#" + dummyEditorId).css("display", "flex");
+		$("#" + dummyEditorId).css("align-self", "auto");
 		$("#helper-toggle-button").css("background-color", "green");
 		$("#helper-toggle-button").css("color", "white");
 		// Rewire buttons on the editor interface when working with helper files
@@ -43,7 +43,7 @@ function openFile(content, type, fullPath, fileName) {
 		$('#' + dummyConsoleId).addClass('corc-console-area-FULLSIZE');
 	}
 	$("#" + dummyConsoleId).detach().appendTo("#" + dummyEditorId);
-	if (type == "helper") {
+	if (type == "helper" || type == "key") {
 		// Hide the console if we are displaying a proof file
 		$("#" + dummyConsoleId).css("display", "none");
 	} else {

@@ -169,7 +169,6 @@ function initializeTree(treeObject) {
     console.log("working directory: " + JSON.stringify(workingDirectory));
     console.log("helper: " + JSON.stringify(helperFileFolder));
     console.log("proofs: " + JSON.stringify(proofFolder));
-
     createDirectory(workingDirectory);
     setListenerToTreeview();
 }
@@ -223,8 +222,8 @@ function deselectTreeviewElements() {
     });
     // Deselect "Display .key file " button as well    
     $("#helper-toggle-button").removeAttr("style");
-    removePreviousDiagram();
-    removePreviousCode();
+    //removePreviousDiagram();
+    //removePreviousCode();
 }
 
 function getFolderDomElementByPath(path) {
@@ -251,8 +250,6 @@ function removeFileFromTreeview(path) {
 }
 
 function openHelperFile() {
-    deselectTreeviewElements();
-
     let path = "helpers/default.key"
     console.log(path);
     
@@ -261,7 +258,9 @@ function openHelperFile() {
     if (fileContent == -1) {
         if (createNewFileOnServer(path, "") == -1) console.log("Can't create helper file... Is the WebCorC directory corrupted?");
         fileContent = "";
-    }
-
-    openFile(fileContent, "helper", path, "default.key");
+        document.getElementById("helper-toggle-button").innerText = "Display helper-file";
+    } else {
+    	deselectTreeviewElements();
+    	openFile(fileContent, "helper", path, "default.key");
+	}
 }
