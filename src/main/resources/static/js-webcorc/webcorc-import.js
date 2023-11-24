@@ -2,9 +2,9 @@
  * import management for import graph and helper file(tbd)
  */
 
-$("#importGraph, #importFileSidebar").change(function(){
+$("#importGraph").change(function(){
 
-    var graph = document.getElementById("importFile").files[0];
+    var graph = document.getElementById("importGraph").files[0];
 
     let reader = new FileReader();
     let result = "";
