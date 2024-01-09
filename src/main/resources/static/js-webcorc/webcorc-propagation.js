@@ -10,7 +10,7 @@ document.addEventListener("input", function () {
     clearTimeout(timedPropagation);
 
     timedPropagation = setTimeout(startPropagateConditions, 750);
-    resetAllColors();
+    //resetAllColors();
 });
 
 var startPropagateConditions = function () {

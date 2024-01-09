@@ -29,7 +29,7 @@ var createGraph = function (treeObject) {
     let globalConditions = treeObject.globalConditions;
 
     let rootKnot = document.getElementById("formula");
-
+    
     rootKnot.style.left = treeObject.x;
     rootKnot.style.top = treeObject.y;
 
@@ -40,24 +40,26 @@ var createGraph = function (treeObject) {
     createGlobalConditions(globalConditions);
 
     if(!isEmpty(statement.type)){
-        createAnyStatement(statement,"formula");
+        createAnyStatement(statement,"formula", statement.proven);
     }
     refresh();
 }
 
-function createAnyStatement(statement, parentID) {
+function createAnyStatement(statement, parentID, proven) {
     if(statement.type.startsWith("Abstract")) {
         let createdKnot = createStatementKnot(statement.x, statement.y, parentID);
         $("#"+createdKnot.id+" .statement").val(statement.name);
+        $("#"+createdKnot.id+" .proven").html(proven)
     }
     if(statement.type.startsWith("selection")) {
         let createdKnot = createSelectionStatementKnot(statement.x, statement.y, parentID);
+        $("#"+createdKnot.id+" .proven").html(proven)
         for (let i = 0; i < statement.statements.length; i++){
             if (i >= 1) {
                 addSelection(createdKnot.firstElementChild.children[1]);
             }
             if (statement.statements[i] !== "") {
-                createAnyStatement(statement.statements[i], createdKnot.id);
+                createAnyStatement(statement.statements[i], createdKnot.id, statement.statements[i].proven);
             }
         }
         let guardsHtml = [];
@@ -69,11 +71,12 @@ function createAnyStatement(statement, parentID) {
     if (statement.type.startsWith("composition")){
         let createdKnot = createCompositionStatementKnot(statement.x, statement.y, parentID);
         $("#"+createdKnot.id+" .intermediateCondition").val(statement.intermediateCondition.name);
+        $("#"+createdKnot.id+" .proven").html(proven)
         if (statement.statement1 !== ""){
-            createAnyStatement(statement.statement1, createdKnot.id)
+            createAnyStatement(statement.statement1, createdKnot.id, statement.statement1.proven)
         }
         if (statement.statement2 !== ""){
-            createAnyStatement(statement.statement2, createdKnot.id)
+            createAnyStatement(statement.statement2, createdKnot.id, statement.statement2.proven)
         }
     }
     if(statement.type.startsWith("repetition")){
@@ -81,7 +84,8 @@ function createAnyStatement(statement, parentID) {
         $("#"+createdKnot.id+" .invariant").val(statement.invariantCondition.name);
         $("#"+createdKnot.id+" .guard").val(statement.guardCondition.name);
         $("#"+createdKnot.id+" .variant").val(statement.variant.name);
-        createAnyStatement(statement.loopStatement, createdKnot.id);
+        $("#"+createdKnot.id+" .proven").html(proven)
+        createAnyStatement(statement.loopStatement, createdKnot.id, statement.loopStatement.proven);
     }
 }
 

@@ -126,6 +126,9 @@ createStrongWeakStatement = function () {
 // Clone knot and adding source/target points.
 function createSourceTargetKnot(knotId, prototype, editorId, withSource = true) {
     let newKnot = $("#" + prototype).clone(true, true).css("display", "flex").prop('id', knotId);
+    //TODO: delete knot
+    console.log($("#" + prototype))
+    
     $("#" + editorId).append(newKnot);
     setTargetpoint(knotId);
     if (withSource) addSourcepoint(knotId, 1);

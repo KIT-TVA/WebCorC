@@ -228,6 +228,7 @@ function verifyWebCorCModel(fullPath, content) {
         "path": fullPath,
         "content": content
     };
+            
     $.ajax({
         type: "POST",
         url: "//" + window.location.host + "/edu.kit.cbc.web/verifyDiagramFile",
@@ -241,7 +242,7 @@ function verifyWebCorCModel(fullPath, content) {
             //alert(data);
             console.log(JSON.stringify(data, null, 2));
             // TODO: resolve if its verified or not
-            updateKnotColors(data);
+            updateKnotColors(data, true);
             printConsole(data, "corcDiagramConsole")
         },
         error: function (xhr, status, errMsg) {
@@ -284,7 +285,7 @@ function verifyWebCorCModelStatement(fullPath, idClickedStatement, proofType) {
 				printConsole("CorC responded:\nProof is closed: false");
 			}
 			initialize();
-            updateKnotColors(data);
+            updateKnotColors(data, true);
         },
         error: function (errMsg) {
             $(".corc-spinner").css("display", "none")

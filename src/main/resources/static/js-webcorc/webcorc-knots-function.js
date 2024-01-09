@@ -103,19 +103,26 @@ function getTdElement(element, tdNr){
     return tables[tdNr].firstElementChild.firstElementChild.lastElementChild;
 }
 
-function updateKnotColors(checkedWebCorCModel){
-    let model = checkedWebCorCModel.CorcOutput;
+function updateKnotColors(checkedWebCorCModel, afterVerify){
+	let model;
+	
+	if (afterVerify) {
+		model = checkedWebCorCModel.CorcOutput;
+	} else {
+		model = checkedWebCorCModel;
+	}
+	
     let formulaKnot = $("#formula")
 
-    updateColors(formulaKnot, model.proven)
+    updateColors("formula", model.proven)
 
     if (model.proven === true){
         formulaKnot.children(":first").addClass("knot-header-proven");
-        formulaKnot.children(":first").removeClass("knot-header-proven-false");
-    }
-    else if(model.proven === false){
+        $("#formula" + " .proven").html("true")
+    } else if(model.proven === false){
         formulaKnot.children(":first").addClass("knot-header-proven-false");
         formulaKnot.children(":first").removeClass("knot-header-proven");
+        $("#formula" + " .proven").html("false")
     }
 
     updateChildColors(model.statement);
@@ -125,53 +132,50 @@ function updateChildColors(statement) {
     let statementType = statement.type;
     // statement without child
     if (statementType.startsWith("Abstract") ){
-        updateColors($("#" + statement.id), statement.proven);
+        updateColors(statement.id, statement.proven);
     }
     //statement with two children
     else if (statementType.startsWith("composition")){
-        updateColors($("#" + statement.id), statement.proven);
+        updateColors(statement.id, statement.proven);
         updateChildColors(statement.statement1);
         updateChildColors(statement.statement2);
     }
     // statement with one or more children
     else if (statementType.startsWith("selection")){
-        updateColors($("#" + statement.id), statement.proven);
+        updateColors(statement.id, statement.proven);
         for (let i = 0; i < statement.statements.length; i++) {
             updateChildColors(statement.statements[i]);
         }
     }
     else if (statementType.startsWith("repetition")){
-        updateColors($("#" + statement.id), statement.proven);
+        updateColors(statement.id, statement.proven);
         updateChildColors(statement.loopStatement);
     }
     // statements with one child
     else{
-        updateColors($("#" + statement.id), statement.proven);
+        updateColors(statement.id, statement.proven);
         updateChildColors(statement.statement);
     }
 }
 
-function updateColors(knot, isProven) {
-    if (isProven === true){
-        knot.children(":first").addClass("knot-header-proven");
-        knot.children(":first").removeClass("knot-header-proven-false");
-    }
-    else if(isProven === false){
-        knot.children(":first").addClass("knot-header-proven-false");
-        knot.children(":first").removeClass("knot-header-proven");
-    }
-    else {
-        knot.children(":first").removeClass("knot-header-proven");
-        knot.children(":first").removeClass("knot-header-proven-false");
+function updateColors(statementId, isProven) {
+    if (isProven === true || isProven == "true"){
+        $("#" + statementId).children(":first").addClass("knot-header-proven");
+        $("#" + statementId + " .proven").html("true")
+    } else if(isProven === false || isProven == "false"){
+        $("#" + statementId).children(":first").removeClass("knot-header-proven");
+        $("#" + statementId + " .proven").html("false")
+    } else {
+        $("#" + statementId).children(":first").removeClass("knot-header-proven");
+        $("#" + statementId + " .proven").html("")
     }
 }
 
 function resetAllColors() {
     for( var i = 0; i < allAddedKnotIds.length; i++){
-        $("#" + allAddedKnotIds[i]).children(":first").removeClass("knot-header-proven-false");
         $("#" + allAddedKnotIds[i]).children(":first").removeClass("knot-header-proven");
-        $("#formula").children(":first").removeClass("knot-header-proven-false");
         $("#formula").children(":first").removeClass("knot-header-proven");
+        
     }
 }
 

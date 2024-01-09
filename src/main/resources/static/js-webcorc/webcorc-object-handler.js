@@ -13,6 +13,7 @@
  function buildWebCorCModel() {
     let rootKnot = document.getElementById("formula");
     let returnObject = Object.assign(buildFormula(rootKnot), buildJavaVariables(), buildGlobalConditions());
+    
     return returnObject;
 }
 
@@ -111,7 +112,11 @@ function buildFormula(htmlTag) {
     builtObject.id = htmlTag.id;
     builtObject.preCondition = buildCondition($("#"+htmlTag.id+" .precondition").val());
     builtObject.postCondition = buildCondition($("#"+htmlTag.id+" .postcondition").val());
-    builtObject.proven = "";
+    if ($("#"+htmlTag.id+" .proven").html() != "value") {
+		builtObject.proven = $("#"+htmlTag.id+" .proven").html();
+	} else {
+		builtObject.proven = "";
+	}
     builtObject.comment = "";
     builtObject.compositionTechnique = "CONTRACT_OVERRIDING";
     builtObject.className = "";
@@ -132,7 +137,11 @@ function buildStatement(htmlTag){
     builtObject.type = "AbstractStatement";
     builtObject.name = $("#"+htmlTag.id+" .statement").val();
     builtObject.id = htmlTag.id;
-    builtObject.proven = "";
+    if ($("#"+htmlTag.id+" .proven").html() != "value") {
+		builtObject.proven = $("#"+htmlTag.id+" .proven").html();
+	} else {
+		builtObject.proven = "";
+	}
     builtObject.comment = "";
     //builtObject.statementCondition = buildCondition($("#"+htmlTag.id+" .statement").html());
     builtObject.preCondition = buildCondition($("#"+htmlTag.id+" .precondition").html());
@@ -151,7 +160,11 @@ function buildCompositionStatement(htmlTag) {
     builtObject.type = "compositionStatement"
     builtObject.name = "compositionStatement";
     builtObject.id = htmlTag.id;
-    builtObject.proven = "";
+    if ($("#"+htmlTag.id+" .proven").html() != "value") {
+		builtObject.proven = $("#"+htmlTag.id+" .proven").html();
+	} else {
+		builtObject.proven = "";
+	}
     builtObject.comment = "";
     builtObject.preCondition = buildCondition($("#"+htmlTag.id+" .precondition").html());
     builtObject.postCondition = buildCondition($("#"+htmlTag.id+" .postcondition").html());
@@ -177,7 +190,11 @@ function buildRepetitionStatement(htmlTag, hiddenPreCond, hiddenPostCond) {
     builtObject.postProven = "";
     builtObject.preProven = "";
     builtObject.variantProven = "";
-    builtObject.proven = "";
+    if ($("#"+htmlTag.id+" .proven").html() != "value") {
+		builtObject.proven = $("#"+htmlTag.id+" .proven").html();
+	} else {
+		builtObject.proven = "";
+	}
     builtObject.comment = "";
     builtObject.preCondition = buildCondition(hiddenPreCond);
     builtObject.postCondition = buildCondition(hiddenPostCond);
@@ -212,7 +229,11 @@ function buildSelectionStatement(htmlTag, hiddenPreCond) {
     builtObject.type = "selectionStatement";
     builtObject.name = "selectionStatement";
     builtObject.id = htmlTag.id;
-    builtObject.proven = "";
+    if ($("#"+htmlTag.id+" .proven").html() != "value") {
+		builtObject.proven = $("#"+htmlTag.id+" .proven").html();
+	} else {
+		builtObject.proven = "";
+	}
     builtObject.preProven = "";
     builtObject.comment = "";
     builtObject.preCondition = buildCondition(hiddenPreCond);
@@ -232,7 +253,11 @@ function buildStrongWeakStatement(htmlTag) {
     builtObject.type = "strongWeakStatement";
     builtObject.name = $("#"+htmlTag.id+" .statement").val();
     builtObject.id = htmlTag.id;
-    builtObject.proven = "";
+    if ($("#"+htmlTag.id+" .proven").html() != "value") {
+		builtObject.proven = $("#"+htmlTag.id+" .proven").html();
+	} else {
+		builtObject.proven = "";
+	}
     builtObject.comment = "";
     builtObject.preCondition = buildCondition($("#"+htmlTag.id+" .precondition").val());
     builtObject.postCondition = buildCondition($("#"+htmlTag.id+" .postcondition").val());

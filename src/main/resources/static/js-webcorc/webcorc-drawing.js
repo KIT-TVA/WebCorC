@@ -30,7 +30,7 @@ let updateConnections = function (conn, remove) {
     console.log(s);
 
     startPropagateConditions();
-    resetAllColors();
+    //resetAllColors();
 };
 
 jsPlumb.bind("ready", function () {

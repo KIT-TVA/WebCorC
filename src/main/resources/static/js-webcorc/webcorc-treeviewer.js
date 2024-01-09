@@ -173,7 +173,7 @@ function initializeTree(treeObject) {
     setListenerToTreeview();
 }
 
-function fileClicked(domElement, type, fileName) {
+function fileClicked(domElement, type, fileName) { 
     setTreeviewElementOnActive(domElement);
 
     let fullPath = domElement.id;

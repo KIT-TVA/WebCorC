@@ -19,6 +19,14 @@ function openFile(content, type, fullPath, fileName) {
 		dummyEditorId = "dummyDiagramEditorDom";
 		$("#" + dummyEditorId).css("display", "flex");
 		createGraph(JSON.parse(content));
+		//the following steps are only required to update the colors
+	    let rootKnot = document.getElementById("formula");
+	    let returnObject = Object.assign(buildFormula(rootKnot), buildJavaVariables(), buildGlobalConditions());
+	    returnObject.proven = JSON.parse(content).proven;
+	    let data = {
+	        "content": {CorcOutput: returnObject}
+    	};
+    	updateKnotColors(returnObject, false);
 	} else if (type == "helper" || type == "key") {
 		dummyEditorId = "dummyCodeEditorDom";
 		$("#" + dummyEditorId).css("display", "flex");
