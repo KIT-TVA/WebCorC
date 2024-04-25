@@ -147,21 +147,25 @@ public class VerifyAllStatements {
 
 	private static boolean proveAbstractStatement(AbstractStatement statement, JavaVariables vars,
 			GlobalConditions conds, Renaming renaming, URI uri) {
-		if (!statement.isProven()) {
-			boolean prove = false;
-			ProveWithKey prover = new ProveWithKey(statement, vars, conds, renaming, uri.toString(), null,
-					new FileUtil(uri.toString()));
-			prove = prover.proveStatementWithKey(false, false, 0);
-			if (prove) {
-				statement.setProven(true);
-			} else {
-				statement.setProven(false);
-			}
-			return prove;
+		boolean prove = false;
+		ProveWithKey prover = new ProveWithKey(statement, vars, conds, renaming, uri.toString(), null,
+				new FileUtil(uri.toString()));
+		prove = prover.proveStatementWithKey(false, false, 0);
+		if (prove) {
+			statement.setProven(true);
 		} else {
-			System.out.println("Abstract statement: " + statement.getName() + " already true");
-			return true;
+			statement.setProven(false);
 		}
+		return prove;
+		/*
+		 * if (!statement.isProven()) { boolean prove = false; ProveWithKey prover = new
+		 * ProveWithKey(statement, vars, conds, renaming, uri.toString(), null, new
+		 * FileUtil(uri.toString())); prove = prover.proveStatementWithKey(false, false,
+		 * 0); if (prove) { statement.setProven(true); } else {
+		 * statement.setProven(false); } return prove; } else {
+		 * System.out.println("Abstract statement: " + statement.getName() +
+		 * " already true"); return true; }
+		 */
 	}
 
 	public static boolean proveCompositionStatement(AbstractStatement statement, JavaVariables vars,

@@ -12,6 +12,8 @@
 // TODO: remove the -1 thing
  function buildWebCorCModel() {
     let rootKnot = document.getElementById("formula");
+    //TODO: delete log
+    console.log(rootKnot);
     let returnObject = Object.assign(buildFormula(rootKnot), buildJavaVariables(), buildGlobalConditions());
     
     return returnObject;
@@ -46,6 +48,14 @@ function buildGlobalConditions() {
     return builtObject;
 }
 
+function buildGlobalConditionsNewDiagram() {
+	let buildObject = {};
+	let conditionsJSON = [];
+	buildObject.globalConditions = conditionsJSON;
+	
+	return buildObject;
+}
+
 function buildJavaVariables() {
     let builtObject = {};
     let variablesDOM = $(".javaVariable");
@@ -60,6 +70,14 @@ function buildJavaVariables() {
 
     builtObject.javaVariables = variablesJSON;
     return builtObject;
+}
+
+function buildJavaVariablesNewDiagram() {
+	let buildObject = {};
+	let variablesJSON = [];
+	buildObject.javaVariables = variablesJSON;
+	
+	return buildObject; 
 }
 
 function buildAnyStatement(htmlTag){
@@ -129,6 +147,26 @@ function buildFormula(htmlTag) {
     //     return -1;
     // }
     return builtObject;
+}
+
+function buildFormulaNewDiagram(htmlTag) {
+	let buildObject = {};
+	
+	buildObject.type = "CBCFormula";
+	buildObject.name = "WebCorc File";
+	buildObject.id = htmlTag.id;
+	buildObject.preCondition = "";
+    buildObject.postCondition = "";
+    buildObject.proven = "";
+    buildObject.comment = "";
+    buildObject.compositionTechnique = "CONTRACT_OVERRIDING";
+    buildObject.className = "";
+    buildObject.methodName = "";
+    buildObject.x = "";
+    buildObject.y = "";
+    buildObject.statement = "";
+    
+    return buildObject;
 }
 
 function buildStatement(htmlTag){

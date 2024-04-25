@@ -20,7 +20,7 @@ function openFile(content, type, fullPath, fileName) {
 		$("#" + dummyEditorId).css("display", "flex");
 		createGraph(JSON.parse(content));
 		//the following steps are only required to update the colors
-	    let rootKnot = document.getElementById("formula");
+		let rootKnot = document.getElementById("formula");
 	    let returnObject = Object.assign(buildFormula(rootKnot), buildJavaVariables(), buildGlobalConditions());
 	    returnObject.proven = JSON.parse(content).proven;
 	    let data = {
@@ -111,7 +111,12 @@ function createNewFile(createButton, type, dummyEditorId) {
 			createCodeMirrorInstance(fileName);
 		}
 		else {
-			let webcorcObject = buildWebCorCModel();
+			//TODO: delete log
+			let rootKnot = document.getElementById("formula");
+			let webcorcObject = Object.assign(buildFormulaNewDiagram(rootKnot), buildJavaVariablesNewDiagram(), buildGlobalConditionsNewDiagram());
+			
+			//let webcorcObject = buildWebCorCModel();
+			
 			fileContent = JSON.stringify(webcorcObject);
 		}
 		// TODO: display it in the tree viewer / display that it is active
@@ -129,6 +134,7 @@ function createNewFile(createButton, type, dummyEditorId) {
 		createNewFileOnServer(fullPath, fileContent);
 		addFileToTreeviewer(fileName, type, directoryPath);
 		setCurrentPathToCookie(fullPath);
+		openFile(fileContent, type, fullPath, fileName)
 	}
 }
 

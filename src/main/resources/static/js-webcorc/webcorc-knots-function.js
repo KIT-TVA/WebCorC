@@ -124,8 +124,10 @@ function updateKnotColors(checkedWebCorCModel, afterVerify){
         formulaKnot.children(":first").removeClass("knot-header-proven");
         $("#formula" + " .proven").html("false")
     }
-
-    updateChildColors(model.statement);
+    
+    if (model.statement) {
+		updateChildColors(model.statement);
+	}
 }
 
 function updateChildColors(statement) {
