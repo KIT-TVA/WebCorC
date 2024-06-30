@@ -1,0 +1,10 @@
+description: Directory 
+allOf:
+  - $ref: './inode.yml'
+  - type: object
+    properties:
+      content:
+        type: array
+        items:
+          type: string 
+          format: urn

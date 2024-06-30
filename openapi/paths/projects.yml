@@ -1,0 +1,70 @@
+get:
+  summary: Get all Projects 
+  operationId: readProjects
+  description: Read all Projects
+  tags: 
+    - ProjectManagement
+  responses:
+    '200':
+      description: Sucessfull Read of Project Meta Data 
+      content: 
+        application/json:
+          schema:
+            type: array
+            items: 
+              $ref: '../schema/project/read.yml'
+    '500': 
+      description: Generic Server Error
+      content: 
+        application/problem+json:
+          schema:
+            $ref: '../schema/problem.yml'
+    '503': 
+      description: Service Unavailable
+      content: 
+        application/problem+json:
+          schema:
+            $ref: '../schema/problem.yml' 
+
+
+post:
+  summary: Create new Project
+  operationId: createProject
+  description: Create a new Project
+  tags:
+    - ProjectManagement
+  requestBody:
+    description: 'Give Project a name and optionally protect the project by a password. For public Project: Leave Password empty'
+    required: true
+    content:
+      application/json:
+        schema: 
+          $ref: '../schema/project/create.yml'
+
+  responses: 
+    '201':
+      description: Sucessfull creation of Project 
+      content: 
+        application/json:
+          schema:
+            $ref: '../schema/project/read.yml'
+    '400':
+      description: Bad Payload
+      content:
+        application/problem+json:
+          schema: 
+            $ref: '../schema/problem.yml'
+    '500':
+      description: Generic Server Error
+      content: 
+        application/problem+json:
+          schema:
+            $ref: '../schema/problem.yml'
+    '503': 
+      description: Service Unavailable 
+      content: 
+        application/problem+json:
+          schema:
+            $ref: '../schema/problem.yml'
+
+  

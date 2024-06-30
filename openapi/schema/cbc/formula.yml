@@ -1,0 +1,46 @@
+type: object
+description: CBCFormula
+properties:
+  type: 
+    type: string
+    enum:
+      - CBCFormula
+
+  name:
+    type: string
+  
+  proven:
+    type: boolean
+
+  comment:
+    type: string 
+  
+  compostionTechnique:
+    type: string
+    enum:
+      - CONTRACT_OVERRIDING
+
+  className:
+    type: string 
+
+  methodeName: 
+    type: string 
+
+  javaVariables:
+    type: array
+    items:  
+      type: string
+
+  globalConditions:
+    type: array
+    items: 
+      type: string
+
+  preCondition:
+    type: string 
+
+  postCondition:
+    type: string
+
+  statement:
+    $ref: './statement.yml' 

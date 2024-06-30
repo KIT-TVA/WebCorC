@@ -1,0 +1,6 @@
+oneOf: 
+  - $ref: './diagramm.yml'
+  - $ref: './directory.yml'
+  - $ref: './key.yml'
+discriminator:
+  propertyName: fileType

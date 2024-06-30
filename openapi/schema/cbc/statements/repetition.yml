@@ -1,0 +1,37 @@
+description: Repetition Statement
+allOf:
+  - $ref: './abstract.yml'
+  - type: object
+    properties:
+      postProven:
+        type: boolean
+
+      preProven:
+        type: boolean
+
+      variantProven:
+        type: boolean
+
+      invariantCondition:
+        $ref: '../condition.yml' 
+
+      guardCondition:
+        $ref: '../condition.yml'
+
+      statements: 
+        type: array 
+        items: 
+          $ref: '../_statement.yml'
+
+      variant: 
+        type: string 
+
+      loopStatement:
+        $ref: '../_statement.yml'
+
+    required: 
+        - postProven
+        - preProven
+        - variantProven
+        - invariantCondition
+        - guardCondition

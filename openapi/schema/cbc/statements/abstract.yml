@@ -1,0 +1,34 @@
+type: object
+description: AbstractStatement
+discriminator:
+    propertyName: statementType
+properties:
+  name: 
+    type: string 
+  
+  id: 
+    type: number
+    format: int64
+
+  proven:
+    type: boolean
+
+  comment: 
+    type: string
+
+  preCondition:
+    $ref: '../condition.yml' 
+
+  postCondition:
+    $ref: '../condition.yml'
+
+  position:
+    type: object
+    properties:
+      xinPx: 
+        type: number 
+        format: int64
+
+      yinPx:
+        type: number 
+        format: int64

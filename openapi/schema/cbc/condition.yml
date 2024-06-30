@@ -1,0 +1,12 @@
+type: object 
+description: Condition 
+properties:
+  content: 
+    type: string 
+
+  originID: 
+    type: number
+    format: int64
+
+  title:
+    type: string 

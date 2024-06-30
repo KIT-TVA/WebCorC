@@ -1,0 +1,4 @@
+description: Diagramm file 
+allOf:
+  - $ref: './inode.yml'
+  - $ref: '../cbc/formula.yml'

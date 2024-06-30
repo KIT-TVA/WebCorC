@@ -1,0 +1,142 @@
+parameters:
+  - in: path
+    required: true 
+    name: id
+    description: id of project
+get: 
+  summary: Get Project by id 
+  operationId: readProjectById
+  description: Get Information about Project by id.
+  tags: 
+    - ProjectManagement
+  responses:
+    '200': 
+      description: 'Successfull read of project by id'
+      content: 
+        application/json:
+          schema:
+            $ref: '../schema/project/read.yml'
+    '401':
+      description: 'Project is protected, no Credentials found'
+      content: 
+        application/problem+json:
+          schema:
+            $ref: '../schema/problem.yml'
+    '403':
+      description: 'Project is protected, wrong authorization'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '../schema/problem.yml'
+    '404':
+      description: 'Project by id not found'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '../schema/problem.yml'
+    '500': 
+      description: Generic Server Error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '../schema/problem.yml'
+    '503': 
+      description: Service Unavailable
+      content: 
+        application/problem+json:
+          schema:
+            $ref: '../schema/problem.yml'
+
+put:
+  summary: Update Project
+  operationId: updateProjectById
+  description: Update Project by its id
+  tags:
+    - ProjectManagement
+  
+  requestBody:
+    description: 'Representation of updated Project'
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../schema/project/update.yml'
+
+  responses:
+    '200': 
+      description: 'Successfull update of project by id'
+      content: 
+        application/json:
+          schema:
+            $ref: '../schema/project/read.yml'
+    '401':
+      description: 'Project is protected, no Credentials found'
+      content: 
+        application/problem+json:
+          schema:
+            $ref: '../schema/problem.yml'
+    '403':
+      description: 'Project is protected, wrong authorization'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '../schema/problem.yml'
+    '404':
+      description: 'Project by id not found'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '../schema/problem.yml'
+    '500': 
+      description: Generic Server Error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '../schema/problem.yml'
+    '503': 
+      description: Service Unavailable
+      content: 
+        application/problem+json:
+          schema:
+            $ref: '../schema/problem.yml'
+
+delete:
+  summary: Delete Project
+  operationId: deleteProjectById
+  description: Delete Project By Id 
+  tags:
+    - ProjectManagement
+  
+  responses:
+    '204': 
+      description: 'Successfull deletion of project'
+    '401':
+      description: 'Project is protected, no Credentials found'
+      content: 
+        application/problem+json:
+          schema:
+            $ref: '../schema/problem.yml'
+    '403':
+      description: 'Project is protected, wrong authorization'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '../schema/problem.yml'
+    '404':
+      description: 'Project by id not found'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '../schema/problem.yml'
+    '500': 
+      description: Generic Server Error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '../schema/problem.yml'
+    '503': 
+      description: Service Unavailable
+      content: 
+        application/problem+json:
+          schema:
+            $ref: '../schema/problem.yml'

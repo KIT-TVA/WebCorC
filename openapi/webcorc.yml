@@ -1,0 +1,38 @@
+openapi: '3.0.2'
+info:
+  title: Webcorc
+  version: '1.0'
+servers:
+  - url: https://api.server.test/v1
+paths:
+  /projects:
+    $ref: './paths/projects.yml'
+  
+  /projects/{id}:
+    $ref: './paths/project.yml'
+
+  /projects/{id}/files:
+    $ref: './paths/projectFiles.yml'
+
+  /projects/{id}/files/{urn}:
+    $ref: './paths/projectFile.yml'
+
+  /editor/export:
+    post: 
+      tags:
+        - Editor
+      responses:
+        '200':
+          description: Include Zip file
+  
+  /editor/generate: 
+    post: 
+      tags:
+        - Editor
+      responses:
+        '200':
+          description: Include Zip file of Java Code
+
+  /editor/verify:
+     $ref: './paths/editor.yml'
+        

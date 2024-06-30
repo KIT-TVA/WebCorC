@@ -1,0 +1,116 @@
+parameters:
+  - in: path 
+    name: id 
+    required: true
+
+
+get: 
+  summary: Get File / Directory Structure 
+  operationId: getFileTreeByProjectId
+  description: Create new File / Directory
+  tags:
+    - ProjectFileManagement
+  requestBody:
+    '200': 
+      description: Successfull read of file tree 
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schema/file/directory.yml'
+
+    '401':  
+      description: Project is protected, no Credentials found 
+      content:
+        application/problem+json:
+          schema:
+            $ref: '../schema/problem.yml'
+
+    '403': 
+      description: Project is protected, wrong authorization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '../schema/problem.yml'
+
+
+    '404': 
+      description: Project by Id or file urn not found 
+      required: true
+      content:
+        application/problem+json: 
+          schema:
+            $ref: '../schema/problem.yml'
+
+    '500':
+      description: Generic Server Error 
+      content:
+        application/problem+json:
+          schema:
+            $ref: '../schema/problem.yml'
+
+    '503':
+      description: Service Unavailable
+      content:
+        application/problem+json:
+          schema:
+            $ref: '../schema/problem.yml'
+
+post: 
+  summary: Create File / Directory
+  operationId: createFileorDirectory
+  description: Create new File / Directory
+  tags:
+    - ProjectFileManagement
+  requestBody:
+    '201':
+      description: Successfull creation of file 
+      required: true 
+      content:
+        application/json:
+          schema:
+            $ref: '../schema/file/filecontent.yml'
+
+    '400': 
+      description: Malformed requestBody
+      content:
+        application/problem+json:
+          schema:
+            $ref: '../schema/problem.yml' 
+
+    '401':  
+      description: Project is protected, no Credentials found 
+      content:
+        application/problem+json:
+          schema:
+            $ref: '../schema/problem.yml'
+
+    '403': 
+      description: Project is protected, wrong authorization
+      content:
+        application/problem+json:
+          schema:
+            $ref: '../schema/problem.yml'
+
+
+    '404': 
+      description: Project by Id or file urn not found 
+      required: true
+      content:
+        application/problem+json: 
+          schema:
+            $ref: '../schema/problem.yml'
+
+    '500':
+      description: Generic Server Error 
+      content:
+        application/problem+json:
+          schema:
+            $ref: '../schema/problem.yml'
+
+    '503':
+      description: Service Unavailable
+      content:
+        application/problem+json:
+          schema:
+            $ref: '../schema/problem.yml'

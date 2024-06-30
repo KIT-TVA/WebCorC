@@ -1,0 +1,19 @@
+description: Selection Statement 
+allOf:
+  - $ref: './abstract.yml'
+  - type: object 
+    properties:
+      preProven:
+        type: boolean 
+
+
+      guards: 
+        type: array
+        items: 
+          $ref: '../condition.yml'
+
+      statements: 
+        type: array 
+        items: 
+          $ref: '../_statement.yml'
+

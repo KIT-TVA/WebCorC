@@ -1,0 +1,13 @@
+description: Compostion Statement 
+allOf:
+ - $ref: './abstract.yml'
+ - type: object
+   properties:
+    intermediateCondition:
+      $ref: '../condition.yml'
+
+    leftStatement:
+      $ref: '../_statement.yml'
+
+    rightStatement:
+      $ref: '../_statement.yml'

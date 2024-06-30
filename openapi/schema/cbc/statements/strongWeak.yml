@@ -1,0 +1,8 @@
+description: StrongWeak Statement
+allOf:
+  - $ref: './abstract.yml'
+  - type: object
+    properties:
+      statement:
+        type: object
+        $ref: '../_statement.yml'
