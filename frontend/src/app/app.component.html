@@ -1,0 +1,13 @@
+<mat-toolbar color="primary">
+  <h1>QBC EDITOR</h1>
+  <span class="spacer"></span>
+  <mat-form-field appearance="fill" style="margin-top: 20px">
+    <input matInput [(ngModel)]="treeService.title" placeholder="Quantum">
+  </mat-form-field>
+  <span class="spacer"></span>
+  <button mat-raised-button (click)="export()" style="margin-right: 10px" [disabled]="!treeService.rootNode">Export</button>
+  <button mat-raised-button (click)="openGenerateCodeDialog()" style="margin-right: 10px" [disabled]="!treeService.rootNode">Generate Code</button>
+  <button mat-raised-button (click)="verify()" [disabled]="!treeService.rootNode">Verify</button>
+</mat-toolbar>
+
+<router-outlet></router-outlet>

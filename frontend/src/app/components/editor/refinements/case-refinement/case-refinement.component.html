@@ -1,0 +1,50 @@
+<refinement-base [refinement]="this">
+  <div style="display: block">
+    <div style="display: flex">
+      <div style="padding-left: 5px">
+        <p>Variable</p>
+        <form [formGroup]="measuredRegisterGroup">
+          <mat-form-field appearance="fill" [style.width]="'100px'">
+            <mat-label></mat-label>
+            <input matInput formControlName="measuredVariables">
+          </mat-form-field>
+        </form>
+      </div>
+      <div style="padding-left: 10px; padding-right: 75px">
+        <p>Measurement</p>
+        <mat-form-field appearance="fill"
+                        [style.width]="'100px'">
+          <input matInput [(ngModel)]="measurement.name" [disabled]="true">
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div>
+      <div style="display: flex; width: 360px" *ngFor="let c of cases" gtBorder="t">
+        <div style="padding-left: 5px; display: flex; vertical-align: center; align-items: center">
+          <p style="background-color: gray; color: white; padding: 5px; border-radius: 5px">{{c.outcome}}</p>
+        </div>
+
+        <div style="padding-left: 10px">
+          <condition-editor [condition]="c.precondition"></condition-editor>
+        </div>
+
+        <refinement-widget  *ngIf="!c.bodyRefinement"
+                            text="Body"
+                            icon="add"
+                            (click)="chooseRefinement(c)">
+        </refinement-widget>
+        <refinement-link  *ngIf="c.bodyRefinement && c.bodyRefinementRef"
+                          [linkedRefinement]="c.bodyRefinementRef"
+                          [onSubRefinementDragMove]="c.bodyRefinement.onDragMoveEmitter"
+                          [onSubRefinementDragEnd]="c.bodyRefinement.onDragEndEmitter"
+                          [onOriginRefinementDragMove]="onDragMoveEmitter"
+                          [onOriginRefinementDragEnd]="onDragEndEmitter"
+                          [scrollNotifier]="c.bodyRefinement.getScrollNotifier()"
+                          [style.margin-top]="'auto'"></refinement-link>
+      </div>
+    </div>
+  </div>
+</refinement-base>
+
+<ng-template #subComponentSpawn></ng-template>

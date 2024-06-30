@@ -1,0 +1,82 @@
+<div class="refinementBox" cdkDrag cdkDragBoundary="#editorContainer" (cdkDragMoved)="onDragMoved($event)"
+  (cdkDragEnded)="refinement.onDragEndEmitter.next($event)" #refinementBox>
+
+  <div class="refinementBoxTitle" cdkDragHandle #boxTitle>
+    <p>{{refinement.getTitle()}} #{{refinement.id}}</p>
+    <mat-icon [style.cursor]="'pointer'" (click)="deleteRefinement()">delete</mat-icon>
+  </div>
+
+  <div *ngIf="verificationResult && verificationResult.errors.length > 0">
+    <mat-list style="border-bottom: 1px solid rgb(173, 173, 173)">
+      <mat-list-item>
+        <mat-icon matListItemIcon style="color: rgb(201,73,73)">error</mat-icon>
+        <div>
+          Verification failed. <label style="text-decoration: underline; cursor: pointer"
+                                      (click)="openVerificationResultDialog()">See why</label>
+        </div>
+      </mat-list-item>
+    </mat-list>
+  </div>
+  <div *ngIf="verificationResult && verificationResult.correctnessCondition && verificationResult.correctnessCondition !== 'true'">
+    <mat-list style="border-bottom: 1px solid rgba(255,184,23,0.97)">
+      <mat-list-item>
+        <mat-icon matListItemIcon style="color: rgba(255,184,23,0.97)">warning</mat-icon>
+        <div>
+          Verified under circumstances. <label style="text-decoration: underline; cursor: pointer"
+                                      (click)="openVerificationResultDialog()">See conditions</label>
+        </div>
+      </mat-list-item>
+    </mat-list>
+  </div>
+  <div *ngIf="verificationResult && verificationResult.errors.length === 0 && verificationResult.prover[refinement.id] &&
+            (!verificationResult.correctnessCondition || verificationResult.correctnessCondition === 'true')">
+    <mat-list style="border-bottom: 1px solid rgb(46,171,63)">
+      <mat-list-item>
+        <mat-icon matListItemIcon style="color: rgb(46,171,63)">verified_user</mat-icon>
+        <div>
+          Verified with {{verificationResult.prover[refinement.id]}}
+        </div>
+      </mat-list-item>
+    </mat-list>
+  </div>
+
+  <div style="display: flex">
+    <div gtBorder="r" #preconditionDiv style="width: 50px; min-height: 140px">
+      <mat-drawer-container class="example-container" autosize>
+        <mat-drawer #preconditionDrawer class="example-sidenav" mode="side">
+          <condition-editor [condition]="refinement.precondition"
+                            [editable]="refinement.isPreconditionEditable()"
+                            (conditionEditingFinished)="onConditionEdited(true)"></condition-editor>
+        </mat-drawer>
+
+        <div class="example-sidenav-content">
+          <button type="button" mat-button (click)="toggleConditionEditorView(false)" class="verticalButton bottomLeft">
+            Precondition
+            <mat-icon>{{preconditionDrawer.opened ? "keyboard_arrow_up" : "keyboard_arrow_down"}}</mat-icon>
+          </button>
+        </div>
+      </mat-drawer-container>
+    </div>
+
+    <div style="display: flex; align-items: center">
+      <ng-content></ng-content>
+    </div>
+
+    <div gtBorder="l" #postconditionDiv style="width: 50px">
+      <mat-drawer-container class="example-container" autosize>
+        <mat-drawer #postconditionDrawer class="example-sidenav" mode="side" position="end">
+          <condition-editor [condition]="refinement.postcondition"
+                            [editable]="refinement.isPostConditionEditable()"
+                            (conditionEditingFinished)="onConditionEdited(false)"></condition-editor>
+        </mat-drawer>
+
+        <div class="example-sidenav-content">
+          <button type="button" mat-button (click)="toggleConditionEditorView(true)" class="verticalButton bottomRight">
+            Postcondition
+            <mat-icon>{{postconditionDrawer.opened ? "keyboard_arrow_up" : "keyboard_arrow_down"}}</mat-icon>
+          </button>
+        </div>
+      </mat-drawer-container>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,19 @@
+<refinement-base [refinement]="this">
+  <form [formGroup]="declaredRegisterGroup">
+    <mat-form-field (focusout)="unitOperationEditingFinished()" appearance="fill"
+                    [style.width]="'100px'">
+      <input matInput formControlName="declaredVariables">
+    </mat-form-field>
+  </form>
+  <label style="margin-top: -15px">:=</label>
+  <mat-form-field (focusout)="unitOperationEditingFinished()" appearance="fill"
+    [style.padding-right]="'0px'" [matMenuTriggerFor]="menu">
+    <input matInput [(ngModel)]="unitOperation.content" #input>
+    <mat-menu #menu="matMenu">
+      <button mat-button (click)="insertSymbol('⊗')">⊗</button>
+      <button mat-button (click)="insertSymbol('†')">†</button>
+      <button mat-button (click)="insertSymbol('√')">√</button>
+    </mat-menu>
+  </mat-form-field>
+  <label style="margin-top: -15px; margin-right: 15px">({{declaredRegister.print()}})</label>
+</refinement-base>

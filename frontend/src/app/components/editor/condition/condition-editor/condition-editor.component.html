@@ -1,0 +1,13 @@
+<div>
+  <p>{{condition.title}}</p>
+  <form *ngIf="conditionGroup" [formGroup]="conditionGroup">
+    <mat-form-field (focusout)="conditionEditingFinished.emit()" appearance="fill" [matMenuTriggerFor]="menu">
+      <input matInput placeholder="Type here" formControlName="condition" #input>
+      <mat-menu #menu="matMenu">
+        <button mat-button (click)="insertSymbol('⊗')">⊗</button>
+        <button mat-button (click)="insertSymbol('†')">†</button>
+        <button mat-button (click)="insertSymbol('√')">√</button>
+      </mat-menu>
+    </mat-form-field>
+  </form>
+</div>

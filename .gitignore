@@ -115,7 +115,6 @@ replay_pid*
 ### https://raw.github.com/github/gitignore/4488915eec0b3a45b5c63ead28f286819c0917de/Global/VisualStudioCode.gitignore
 
 .vscode/*
-!.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
@@ -127,4 +126,7 @@ replay_pid*
 # Built Visual Studio Code Extensions
 *.vsix
 
+# Frontend files
+frontend/node_modules
+frontend/package-lock.json
 

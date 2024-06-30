@@ -1,0 +1,9 @@
+<refinement-base [refinement]="this">
+  <form [formGroup]="initVariablesFormGroup">
+    <mat-form-field (focusout)="initializationEditingFinished()" appearance="fill"
+                    [style.width]="'100px'">
+      <input matInput formControlName="initializedVariables">
+    </mat-form-field>
+  </form>
+  <label style="margin-right: 10px; margin-top: -15px">:=|0></label>
+</refinement-base>

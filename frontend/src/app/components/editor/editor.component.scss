@@ -1,0 +1,31 @@
+.sideMenu {
+  position: absolute;
+  top: 74px;
+  right: 15px;
+  width: 450px;
+  z-index: 1;
+}
+
+#editorContainer {
+  width: 100%;
+  height: calc(100% - 64px);
+  overflow: scroll;
+}
+
+#editorWidthController {
+  height: 0;
+}
+
+#editorHeightController {
+  width: 0;
+  float: left;
+}
+
+#controlsBar {
+  padding: 10px 0 10px 10px;
+  border-bottom: 1px solid black;
+}
+
+td {
+  padding: 5px 5px
+}

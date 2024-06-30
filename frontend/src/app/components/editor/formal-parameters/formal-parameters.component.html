@@ -1,0 +1,25 @@
+<mat-list role="list">
+  <mat-list-item role="listitem" *ngFor="let fp of treeService.formalParameters">{{fp.display()}}</mat-list-item>
+</mat-list>
+<p *ngIf="treeService.formalParameters.length === 0">No formal parameters yet</p>
+
+<mat-divider></mat-divider>
+<br>
+
+<form [formGroup]="addFormalParameterGroup">
+  <mat-form-field [style.width]="'100px'">
+    <mat-label>Name</mat-label>
+    <input matInput placeholder="x" formControlName="name">
+  </mat-form-field>
+  <mat-form-field [style.width]="'150px'">
+    <mat-label>Values</mat-label>
+    <input matInput formControlName="values">
+    <mat-hint>Set: 0,1,2.5</mat-hint>
+  </mat-form-field>
+
+  <button mat-raised-button (click)="addFormalParameter()"
+          [disabled]="!addFormalParameterGroup.valid ||
+                      treeService.hasFormalParameterWithName(addFormalParameterGroup.controls.name.value)">
+    Add
+  </button>
+</form>
