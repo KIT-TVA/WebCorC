@@ -1,0 +1,20 @@
+<form [formGroup]="conditions">
+    <ng-container formArrayName="items" *ngFor="let variableForm of items.controls; let i = index">
+        <ng-container [formGroupName]="i">
+          <mat-form-field [style.width]="'100%'">
+            <mat-label>Variable</mat-label>
+            <input matInput formControlName="name">
+            <button matSuffix mat-icon-button aria-label="Remove" (click)="removeCondition(i)" >
+              <mat-icon>remove</mat-icon>
+            </button>
+          </mat-form-field>
+      </ng-container>
+    </ng-container>
+    <mat-form-field [style.width]="'100%'">
+      <mat-label>Add Condition</mat-label>
+      <input matInput formControlName="newCondition" >
+        <button matSuffix mat-icon-button aria-label="Add" (click)="addCondition()" (keypress.enter)="addCondition()">
+          <mat-icon>add</mat-icon>
+        </button>
+    </mat-form-field>
+  </form>

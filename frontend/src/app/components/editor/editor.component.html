@@ -1,50 +1,17 @@
 <div class="sideMenu">
   <mat-accordion multi="">
     <mat-expansion-panel>
-      <mat-expansion-panel-header>
+      <mat-expansion-panel-header expanded="true">
         <mat-panel-title>
-          Formal parameters
-          <mat-icon style="color: #ababab; margin-left: 5px"
-            matTooltip="Formal Parameters can be used to abbreviate multiple program specifications">
-            info
-          </mat-icon>
+          Global Conditions
         </mat-panel-title>
       </mat-expansion-panel-header>
-      <formal-parameters [treeService]="treeService"></formal-parameters>
-    </mat-expansion-panel>
-    <mat-expansion-panel>
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          Palette
-        </mat-panel-title>
-      </mat-expansion-panel-header>
-      <table>
-        <tr *ngFor="let predefinedSymbol of preDefinedSymbols()">
-          <td>{{predefinedSymbol.symbol}}</td>
-          <td>{{predefinedSymbol.description}}</td>
-        </tr>
-      </table>
-    </mat-expansion-panel>
-    <mat-expansion-panel>
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          Macros
-          <mat-icon style="color: #ababab; margin-left: 5px"
-                    matTooltip="Macros are shortcuts for expressions">
-            info
-          </mat-icon>
-        </mat-panel-title>
-      </mat-expansion-panel-header>
-      <app-macros></app-macros>
+      <app-global-conditions></app-global-conditions>
     </mat-expansion-panel>
     <mat-expansion-panel expanded="true">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          Variables
-          <mat-icon style="color: #ababab; margin-left: 5px"
-                    matTooltip="Variables can be qubits (size=1), of any size or symbolic. The position of variables is important and must be taken into account when specifying conditions.">
-            info
-          </mat-icon>
+          Java Variables 
         </mat-panel-title>
       </mat-expansion-panel-header>
       <app-variables></app-variables>

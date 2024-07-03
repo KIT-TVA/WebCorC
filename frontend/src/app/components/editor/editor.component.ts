@@ -23,11 +23,12 @@ import {MacrosComponent} from "./macros/macros.component";
 import {Macro} from "../../types/macro";
 import {CaseRefinementComponent} from "./refinements/case-refinement/case-refinement.component";
 import {Condition} from "../../types/condition/condition";
+import { GlobalConditionsComponent } from './global-conditions/global-conditions.component';
 
 @Component({
   selector: 'app-editor',
   standalone: true,
-  imports: [CommonModule, RefinementWidgetComponent, MatButtonModule, AddRefinementWidgetComponent, MatIconModule, MatExpansionModule, FormalParametersComponent, VariablesComponent, MatTooltipModule, MatMenuModule, MacrosComponent],
+  imports: [CommonModule, RefinementWidgetComponent, MatButtonModule, AddRefinementWidgetComponent, MatIconModule, MatExpansionModule, FormalParametersComponent, VariablesComponent, MatTooltipModule, MatMenuModule, MacrosComponent, GlobalConditionsComponent],
   templateUrl: './editor.component.html',
   styleUrl: './editor.component.scss'
 })

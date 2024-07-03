@@ -1,6 +1,6 @@
-import {Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {TreeService} from "../../../services/tree/tree.service";
+import { TreeService } from '../../../services/tree/tree.service';
 import {MatInputModule} from "@angular/material/input";
 import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
@@ -10,46 +10,43 @@ import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatListModule} from "@angular/material/list";
 
 @Component({
-  selector: 'app-variables',
+  selector: 'app-global-conditions',
   standalone: true,
   imports: [CommonModule, FormsModule, MatButtonModule, MatDividerModule, MatFormFieldModule, MatInputModule, MatListModule, ReactiveFormsModule, MatIconModule],
-  templateUrl: './variables.component.html',
-  styleUrl: './variables.component.scss'
+  templateUrl: './global-conditions.component.html',
+  styleUrl: './global-conditions.component.scss'
 })
-export class VariablesComponent implements OnInit {
+export class GlobalConditionsComponent implements OnInit  {
 
-  variables: FormGroup = this._fb.group({
-    newVariable: new FormControl("", [Validators.required]),
+  conditions : FormGroup = this._fb.group({
+    newCondition: new FormControl("", [Validators.required]),
     items: this._fb.array([])
-  }) 
+  })
 
-  constructor(private _fb: FormBuilder,  public treeService: TreeService) {}
+  constructor(private _fb: FormBuilder, public treeService: TreeService) {}
+
 
   ngOnInit(): void {
-   
+    
   }
 
-  addVariable() : void {
 
-    const value : string = this.variables.controls['newVariable'].value;
+  addCondition() : void {
+    
+    const value : string = this.conditions.controls['newCondition'].value;
 
-    if (!value) {
-      return
-    }
-
-    const variable = this._fb.group({
+    const condition = this._fb.group({
       name: new FormControl(value, [Validators.required])
     })
 
-    this.items.push(variable)
+    this.items.push(condition)
   }
 
-  removeVariable(index : number) : void {
+  removeCondition(index : number) : void {
     this.items.removeAt(index)
   }
 
-
   get items() : FormArray {
-    return this.variables.controls["items"] as FormArray
+    return this.conditions.controls["items"] as FormArray
   }
 }
