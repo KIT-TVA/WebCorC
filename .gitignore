@@ -129,4 +129,4 @@ replay_pid*
 # Frontend files
 frontend/node_modules
 frontend/package-lock.json
-
+frontend/.angular

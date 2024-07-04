@@ -34,7 +34,7 @@ properties:
   globalConditions:
     type: array
     items: 
-      type: string
+      $ref: './condition.yml'
 
   preCondition:
     type: string 
