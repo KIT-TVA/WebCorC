@@ -19,7 +19,7 @@ import {MatListModule} from "@angular/material/list";
 export class GlobalConditionsComponent implements OnInit  {
 
   conditions : FormGroup = this._fb.group({
-    newCondition: new FormControl("", [Validators.required]),
+    newCondition: new FormControl("", []),
     items: this._fb.array([])
   })
 
@@ -33,13 +33,18 @@ export class GlobalConditionsComponent implements OnInit  {
 
   addCondition() : void {
     
-    const value : string = this.conditions.controls['newCondition'].value;
+    const value : string = this.conditions.controls['newCondition'].value
+
+    if (!value) {
+      return
+    }
 
     const condition = this._fb.group({
       name: new FormControl(value, [Validators.required])
     })
 
     this.items.push(condition)
+    this.conditions.controls['newCondition'].reset()
   }
 
   removeCondition(index : number) : void {

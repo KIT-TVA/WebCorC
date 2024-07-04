@@ -1,4 +1,4 @@
-import {Component, OnInit } from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {TreeService} from "../../../services/tree/tree.service";
 import {MatInputModule} from "@angular/material/input";
@@ -19,7 +19,7 @@ import {MatListModule} from "@angular/material/list";
 export class VariablesComponent implements OnInit {
 
   variables: FormGroup = this._fb.group({
-    newVariable: new FormControl("", [Validators.required]),
+    newVariable: new FormControl("", []),
     items: this._fb.array([])
   }) 
 
@@ -30,7 +30,6 @@ export class VariablesComponent implements OnInit {
   }
 
   addVariable() : void {
-
     const value : string = this.variables.controls['newVariable'].value;
 
     if (!value) {
@@ -42,6 +41,7 @@ export class VariablesComponent implements OnInit {
     })
 
     this.items.push(variable)
+    this.variables.controls['newVariable'].reset()
   }
 
   removeVariable(index : number) : void {
