@@ -2,7 +2,7 @@
     <ng-container formArrayName="items" *ngFor="let variableForm of items.controls; let i = index">
         <ng-container [formGroupName]="i">
           <mat-form-field [style.width]="'100%'">
-            <mat-label>Variable</mat-label>
+            <mat-label>Condition</mat-label>
             <input matInput formControlName="name">
             <button matSuffix mat-icon-button aria-label="Remove" (click)="removeCondition(i)" (keydown.enter)="$event.preventDefault()">
               <mat-icon>remove</mat-icon>

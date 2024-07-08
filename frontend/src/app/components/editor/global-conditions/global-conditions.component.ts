@@ -33,9 +33,14 @@ export class GlobalConditionsComponent implements OnInit  {
 
   addCondition() : void {
     
-    const value : string = this.conditions.controls['newCondition'].value
+    const value : string = this.conditions.controls['newCondition'].value.trim()
 
     if (!value) {
+      return
+    }
+
+    if (!this.treeService.addGlobalCondition(value)) {
+      this.conditions.controls['newCondition'].reset()
       return
     }
 
@@ -48,6 +53,7 @@ export class GlobalConditionsComponent implements OnInit  {
   }
 
   removeCondition(index : number) : void {
+    this.treeService.removeGlobalCondition(this.items.at(index).value.name)
     this.items.removeAt(index)
   }
 

@@ -67,7 +67,6 @@ export class RefinementComponent implements AfterViewInit {
   deleteRefinement(): void {
     this.refinement.removeVariableUsages();
     if (this.treeService.rootNode === this.refinement) {
-      this.treeService.removeVariables(this.treeService.variables.map(v => v.name));
       this.treeService.removeMacros();
       this.treeService.removeFormalParameters();
     }

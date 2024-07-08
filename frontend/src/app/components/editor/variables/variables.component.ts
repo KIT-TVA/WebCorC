@@ -30,9 +30,14 @@ export class VariablesComponent implements OnInit {
   }
 
   addVariable() : void {
-    const value : string = this.variables.controls['newVariable'].value;
+    const value : string = this.variables.controls['newVariable'].value
 
     if (!value) {
+      return
+    }
+
+    if (!this.treeService.addVariable(value)) {
+      this.variables.controls['newVariable'].reset()
       return
     }
 
@@ -45,6 +50,7 @@ export class VariablesComponent implements OnInit {
   }
 
   removeVariable(index : number) : void {
+    this.treeService.removeVariables([this.items.at(index).value.name])
     this.items.removeAt(index)
   }
 

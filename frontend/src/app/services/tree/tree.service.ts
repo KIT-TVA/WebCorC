@@ -11,6 +11,7 @@ import {RequestError, VerificationResult} from "../../types/net/verification-net
 import {environment} from "../../../environments/environment";
 import {QbCVariable} from "../../translation/variables";
 import {Macro} from "../../types/macro";
+import { JavaVariable } from './JavaVariable';
 
 @Injectable({
   providedIn: 'root'
@@ -50,7 +51,8 @@ export class TreeService {
   private readonly _verificationResultNotifier: Subject<VerificationResult>;
   private readonly _variableSizeChangeNotifier: Subject<void>;
 
-  private _variables: QbCVariable[] = [];
+  private _variables : JavaVariable[] = [];
+  private _globalConditions : string[] = []; 
   variablesChangedNotifier: Subject<void> = new Subject<void>();
 
   constructor() {
@@ -66,7 +68,7 @@ export class TreeService {
       body: JSON.stringify({
         rootRefinement: refinement.export(),
         formalParameters: this.formalParameters.map(fp => fp.export()),
-        variables: this._variables.map(variable => variable.export()),
+        variables: this._variables,
         macros: this._macros.map(macro => macro.export())
       }),
       headers: [
@@ -90,7 +92,7 @@ export class TreeService {
         language,
         rootRefinement: this.rootNode.export(),
         formalParameters: this.formalParameters.map(fp => fp.export()),
-        variables: this._variables.map(v => v.export()),
+        variables: this._variables,
         macros: this._macros.map(macro => macro.export()),
         options
       }),
@@ -170,61 +172,51 @@ export class TreeService {
     return this.rootNode === refinement;
   }
 
-  public addVariable(name: string): void {
-    const existingVariable = this._variables.find(variable => variable.name === name);
-    if (existingVariable) {
-      existingVariable.indicateUsage();
-    } else {
-      this._variables.push(new QbCVariable(name));
+  public addVariable(name : string) : boolean {
+    let sizeBeforeAdd = this._variables.length;
+    const newVariable = new JavaVariable(name);
+  
+    let isDuplicate : boolean = false
+    this._variables.forEach(val => {if (val.equalName(newVariable)){ isDuplicate = true }})
+
+    if (!isDuplicate) {
+      this._variables.push(newVariable)
     }
+
+    return this._variables.length != sizeBeforeAdd
   }
 
-  public removeVariables(names: string[]): void {
-    this._variables = this._variables.filter(variable => {
-      if (names.includes(variable.name)) {
-        return !variable.removeUsage();
-      } else {
-        return true;
-      }
-    });
+  public removeVariables(names: string[]) : void {
+    const variablesToBeRemoved : string[] = []
+
+    names.forEach(name => variablesToBeRemoved.push(name.split(' ')[1]))
+
+    this._variables = this._variables.filter(val => !variablesToBeRemoved.includes(val.name))
   }
 
-  public findVariable(varName: string): QbCVariable {
-    return this._variables.filter(v => v.name === varName)[0];
+  public findVariable(name: string) : string {
+    return name
   }
 
-  public moveVariable(variable: QbCVariable, up: boolean): void {
-    const idxVar = this._variables.indexOf(variable);
-    // up refers to a move closer to 0
-    if (up) {
-      if (idxVar !== 0) {
-        const otherVar = this._variables[idxVar-1];
-        this._variables.splice(idxVar-1, 1, variable);
-        this._variables.splice(idxVar, 1, otherVar);
-      }
-    } else {
-      if (idxVar !== this._variables.length-1) {
-        const otherVar = this._variables[idxVar+1];
-        this._variables[idxVar+1] = variable;
-        this._variables[idxVar] = otherVar;
-      }
+  public addGlobalCondition(name : string) : boolean {
+    let sizeBeforeAdd = this._globalConditions.length;
+    
+    let isDuplicate : boolean = false
+    this._globalConditions.forEach(val => { if (val == name) { isDuplicate = true }})
+    
+    if (!isDuplicate) {
+      this._globalConditions.push(name)
     }
-    this.variablesChangedNotifier.next();
+
+    return this._globalConditions.length != sizeBeforeAdd
   }
 
-  get variables(): QbCVariable[] {
-    return this._variables;
-  }
+  public removeGlobalCondition(name : string) : void {
+    this._globalConditions = this._globalConditions.filter(val => val !== name)
+  } 
 
-  public moveVariableByNameTo(varName: string, idx: number): void {
-    const variable = this._variables.find(v => v.name===varName);
-    if (!variable) {
-      return;
-    }
-    const curIdx = this._variables.indexOf(variable);
-    for (let i=0; i<Math.abs(idx-curIdx); i++) {
-      this.moveVariable(variable, idx < curIdx);
-    }
+  public moveVariableByNameTo(name : string, index : number) {
+
   }
 
   public changedVariableSize(): void {

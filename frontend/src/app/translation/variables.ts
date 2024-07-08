@@ -34,15 +34,7 @@ export class QbCRegister {
   }
 
   getHilbertSpace(treeService: TreeService): number {
-    return this._names.map(v => treeService.findVariable(v))
-      .map(v => v.getHilbertSpaceDimension())
-      .reduce((acc, cur) => {
-        if (isNaN(acc) || isNaN(cur)) {
-          return NaN;
-        } else {
-          return acc * cur;
-        }
-      });
+    return 0
   }
 
   get names(): string[] {
