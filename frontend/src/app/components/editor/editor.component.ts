@@ -24,6 +24,7 @@ import {Macro} from "../../types/macro";
 import {CaseRefinementComponent} from "./refinements/case-refinement/case-refinement.component";
 import {Condition} from "../../types/condition/condition";
 import { GlobalConditionsComponent } from './global-conditions/global-conditions.component';
+import { SimpleStatementComponent } from './refinements/simple-statement/simple-statement.component';
 
 @Component({
   selector: 'app-editor',
@@ -32,7 +33,7 @@ import { GlobalConditionsComponent } from './global-conditions/global-conditions
   templateUrl: './editor.component.html',
   styleUrl: './editor.component.scss'
 })
-export class EditorComponent {
+export class EditorComponent implements AfterViewInit {
   @ViewChild("examplesSpawn", {read: ViewContainerRef, static: false}) examplesSpawn!: ViewContainerRef;
   @ViewChild(NgComponentOutlet, {static: false}) rootNodeOutlet!: NgComponentOutlet;
 
@@ -46,6 +47,11 @@ export class EditorComponent {
         Refinement.resetIDs();
       }
     })
+  }
+
+  
+  ngAfterViewInit(): void {
+    this.rootNode = SimpleStatementComponent
   }
 
   addRootRefinement(type: Type<Refinement>): void {
