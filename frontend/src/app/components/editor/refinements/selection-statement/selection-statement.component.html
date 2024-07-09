@@ -1,0 +1,38 @@
+<refinement-base [refinement]="this">
+    <div class="statements">
+        <div class="first-row">
+            <div>
+                <button type="button" mat-icon-button (click)="addSelection()">
+                    <mat-icon>add</mat-icon>
+                </button>
+                <button type="button" mat-icon-button (click)="removeSelection()" aria-label="Add"> <mat-icon>remove</mat-icon> </button>
+            </div>
+        </div>
+
+        <div *ngFor="let statement of statements; let i = index" class="statement-container">
+            <div class="guard">
+                <condition-editor [condition]="getGuardByIndex(i)" ></condition-editor>
+            </div>
+            <div class="statement">
+                <refinement-widget *ngIf="!getStatementByIndex(i)"
+                                   text="Statement"
+                                   icon="add"
+                                   (click)="chooseRefinement(i)">
+
+                </refinement-widget>
+                <refinement-link *ngIf="getStatementElementsRefByIndex(i) && getStatementByIndex(i)"
+                                 [linkedRefinement]="getStatementElementsRefByIndex(i)"
+                                 [onSubRefinementDragMove]="getStatementByIndex(i).onDragMoveEmitter"
+                                 [onSubRefinementDragEnd]="getStatementByIndex(i).onDragEndEmitter"
+                                 [onOriginRefinementDragMove]="onDragMoveEmitter"
+                                 [onOriginRefinementDragEnd]="onDragEndEmitter"
+                                 [scrollNotifier]="getStatementByIndex(i).getScrollNotifier()"
+                                 ></refinement-link>
+            </div>
+        </div>
+
+    </div>
+  </refinement-base>
+  
+  <div style="height: 30px; width: 100%"></div>
+  <ng-template #subComponentSpawn></ng-template>

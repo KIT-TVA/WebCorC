@@ -1,4 +1,4 @@
-import {Component, ElementRef, ViewChild, ViewContainerRef} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, ViewChild, ViewContainerRef} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {RefinementComponent} from "../refinement/refinement.component";
 import {Refinement} from "../../../../types/refinement";
@@ -41,6 +41,7 @@ export class SimpleStatementComponent extends Refinement {
         this._statementElementRef!.nativeElement!.remove();
       }
     })
+
   }
 
   override getTitle(): string {
@@ -49,14 +50,11 @@ export class SimpleStatementComponent extends Refinement {
 
 
   chooseRefinement() : void {
-
     if (!this.isRoot()) {
       return
-    }
-    
+    } 
 
     const dialogRef = this.dialog.open(ChooseRefinementComponent);
-
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {
         return 

@@ -1,0 +1,28 @@
+$refinementBoxAccentColor: rgb(87, 87, 87);
+.statements {
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+
+    .first-row {
+        display: grid;
+        place-items: center;
+    }
+
+    .statement-container {
+        display: flex;
+        flex-direction: row;
+        border-top: 1px solid $refinementBoxAccentColor;
+
+        .guard {
+            flex-grow: 3;
+        }
+
+        .statement {
+            flex-grow: 1;
+            width: 100px;
+            display: grid;
+            place-items: center;
+        }
+    }
+}

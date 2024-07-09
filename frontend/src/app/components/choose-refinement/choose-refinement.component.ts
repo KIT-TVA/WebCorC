@@ -19,6 +19,7 @@ import {SwRefinementComponent} from "../editor/refinements/sw-refinement/sw-refi
 import {CaseRefinementComponent} from "../editor/refinements/case-refinement/case-refinement.component";
 import {RepeatRefinementComponent} from "../editor/refinements/repeat-refinement/repeat-refinement.component";
 import { SimpleStatementComponent } from '../editor/refinements/simple-statement/simple-statement.component';
+import { SelectionStatementComponent } from '../editor/refinements/selection-statement/selection-statement.component';
 
 @Component({
   selector: 'app-choose-refinement',
@@ -37,7 +38,8 @@ export class ChooseRefinementComponent {
     {name: "sw", icon: "flip_to_front", component: SwRefinementComponent},
     {name: "case", icon: "vertical_split", component: CaseRefinementComponent},
     {name: "repeat", icon: "autorenew", component: RepeatRefinementComponent},
-    {name: "statement", icon: "trending_flat", component: SimpleStatementComponent}
+    {name: "Statement", icon: "trending_flat", component: SimpleStatementComponent},
+    {name: "Selection", icon: "vertical_split", component: SelectionStatementComponent}
   ];
 
   constructor(public dialogRef: MatDialogRef<ChooseRefinementComponent>) {}
