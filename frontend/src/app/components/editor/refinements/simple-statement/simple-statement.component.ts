@@ -41,7 +41,6 @@ export class SimpleStatementComponent extends Refinement {
         this._statementElementRef!.nativeElement!.remove();
       }
     })
-
   }
 
   override getTitle(): string {

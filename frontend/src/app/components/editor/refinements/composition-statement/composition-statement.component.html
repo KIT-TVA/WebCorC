@@ -1,0 +1,39 @@
+
+<refinement-base [refinement]="this">
+    <refinement-widget *ngIf="!leftStatement"
+                        text="Left"
+                        icon="add"
+                        (click)="chooseRefinement('left')"
+    >
+    </refinement-widget>
+    <refinement-link *ngIf="leftStatementRef && leftStatement"  
+                        [linkedRefinement]="leftStatementRef"
+                        [onSubRefinementDragMove]="leftStatement.onDragMoveEmitter"
+                        [onSubRefinementDragEnd]="leftStatement.onDragEndEmitter"
+                        [onOriginRefinementDragMove]="onDragMoveEmitter"
+                        [onOriginRefinementDragEnd]="onDragEndEmitter"
+                        [scrollNotifier]="leftStatement.getScrollNotifier()"
+                        [style.margin-top]="'auto'">
+    </refinement-link>
+
+    <condition-editor [condition]="intermediateCondition" ></condition-editor>
+
+    <refinement-widget *ngIf="!rightStatement"
+                        text="Right"
+                        icon="add"
+                        (click)="chooseRefinement('right')">
+    </refinement-widget>
+    <refinement-link *ngIf="rightStatementRef && rightStatement"
+                     [linkedRefinement]="rightStatementRef"
+                     [onSubRefinementDragMove]="rightStatement.onDragMoveEmitter"
+                     [onSubRefinementDragEnd]="rightStatement.onDragEndEmitter"
+                     [onOriginRefinementDragMove]="onDragMoveEmitter"
+                     [onOriginRefinementDragEnd]="onDragEndEmitter"
+                     [scrollNotifier]="rightStatement.getScrollNotifier()"
+                     [style.margin-top]="'auto'">
+    </refinement-link>
+
+  </refinement-base>
+  
+  <div style="height: 30px; width: 100%"></div>
+  <ng-template #subComponentSpawn></ng-template>

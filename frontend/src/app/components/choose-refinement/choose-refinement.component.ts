@@ -20,6 +20,7 @@ import {CaseRefinementComponent} from "../editor/refinements/case-refinement/cas
 import {RepeatRefinementComponent} from "../editor/refinements/repeat-refinement/repeat-refinement.component";
 import { SimpleStatementComponent } from '../editor/refinements/simple-statement/simple-statement.component';
 import { SelectionStatementComponent } from '../editor/refinements/selection-statement/selection-statement.component';
+import { CompositionStatementComponent } from '../editor/refinements/composition-statement/composition-statement.component';
 
 @Component({
   selector: 'app-choose-refinement',
@@ -39,7 +40,8 @@ export class ChooseRefinementComponent {
     {name: "case", icon: "vertical_split", component: CaseRefinementComponent},
     {name: "repeat", icon: "autorenew", component: RepeatRefinementComponent},
     {name: "Statement", icon: "trending_flat", component: SimpleStatementComponent},
-    {name: "Selection", icon: "vertical_split", component: SelectionStatementComponent}
+    {name: "Selection", icon: "vertical_split", component: SelectionStatementComponent},
+    {name: "Composition", icon: "more_horiz", component: CompositionStatementComponent}
   ];
 
   constructor(public dialogRef: MatDialogRef<ChooseRefinementComponent>) {}
