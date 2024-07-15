@@ -44,9 +44,11 @@
     <div gtBorder="r" #preconditionDiv style="width: 50px; min-height: 140px">
       <mat-drawer-container class="example-container" autosize>
         <mat-drawer #preconditionDrawer class="example-sidenav" mode="side">
-          <condition-editor [condition]="refinement.precondition"
+          <div class="conditionParent" > 
+            <condition-editor [condition]="refinement.precondition"
                             [editable]="refinement.isPreconditionEditable()"
                             (conditionEditingFinished)="onConditionEdited(true)"></condition-editor>
+          </div>
         </mat-drawer>
 
         <div class="example-sidenav-content">
@@ -65,9 +67,12 @@
     <div gtBorder="l" #postconditionDiv style="width: 50px">
       <mat-drawer-container class="example-container" autosize>
         <mat-drawer #postconditionDrawer class="example-sidenav" mode="side" position="end">
-          <condition-editor [condition]="refinement.postcondition"
+          <div class="conditionParent">
+            <condition-editor [condition]="refinement.postcondition"
                             [editable]="refinement.isPostConditionEditable()"
                             (conditionEditingFinished)="onConditionEdited(false)"></condition-editor>
+          </div>
+          
         </mat-drawer>
 
         <div class="example-sidenav-content">

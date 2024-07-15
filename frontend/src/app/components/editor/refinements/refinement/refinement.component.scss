@@ -45,3 +45,10 @@ $refinementBoxAccentColor: rgb(87, 87, 87);
 .bottomLeft {
   transform: rotate(90deg);
 }
+
+.conditionParent  {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
