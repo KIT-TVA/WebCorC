@@ -17,78 +17,69 @@ import {MatIconModule} from "@angular/material/icon";
 import {LinkComponent} from "../link/link.component";
 
 @Component({
-  selector: 'app-repetition-statement',
+  selector: 'app-strong-weak-statement',
   standalone: true,
   imports: [CommonModule, RefinementComponent, MatGridListModule, GridTileBorderDirective,
     RefinementWidgetComponent, ConditionEditorComponent, FormsModule, MatFormFieldModule, MatInputModule, MatIconModule, LinkComponent],
-  templateUrl: './repetition-statement.component.html',
-  styleUrl: './repetition-statement.component.scss'
+  templateUrl: './strong-weak-statement.component.html',
+  styleUrl: './strong-weak-statement.component.scss'
 })
-export class RepetitionStatementComponent extends Refinement {
-  private _invariantCondition : Condition;
-  private _guardCondition : Condition;
-  private _variantCondition : Condition;
-
-  private _loopStatement : Refinement | undefined;
-  private _loopStatementRef : ElementRef | undefined;
+export class StrongWeakStatementComponent extends Refinement {
+  private _weakPreCondition : Condition;
+  private _strongPostCondition : Condition;
+  
+  private _statement : Refinement | undefined;
+  private _statementRef : ElementRef | undefined;
 
   @ViewChild("subComponentSpawn", {read: ViewContainerRef}) componentSpawn!: ViewContainerRef;
 
   constructor(treeService : TreeService, private dialog : MatDialog) {
     super(treeService);
-    this._invariantCondition = new Condition(this.id, "Invariant");
-    this._variantCondition = new Condition(this.id, "Variant");
-    this._guardCondition = new Condition(this.id, "Guard");
-    
-    treeService.deletionNotifier.subscribe(refinement => {
-      if (refinement === this._loopStatement) {
-        this._loopStatement = undefined;
-        this._loopStatementRef!.nativeElement!.remove()
-      }
-    } )
-  }
+    this._weakPreCondition = new Condition(this.id, "Weak precondition");
+    this._strongPostCondition = new Condition(this.id, "Strong postcondition");
 
+    treeService.deletionNotifier.subscribe(refinement => {
+      if (refinement === this._statement) {
+        this._statement = undefined;
+        this._statementRef!.nativeElement!.remove();
+      }
+    })
+  }
+  
   override getTitle(): string {
-    return "Repetition";
+    return "Strong-Weak"
   }
 
   chooseRefinement() {
     const dialogRef = this.dialog.open(ChooseRefinementComponent);
-    
+
     dialogRef.afterClosed().subscribe(result => {
-      if (!result) {
-        return
-      }
+      if (!result) { return }
 
       const componentRef = this.componentSpawn.createComponent(result);
       const createdSubComponent = componentRef.instance as Refinement;
 
-      this._loopStatementRef = componentRef.location;
-      this._loopStatement = createdSubComponent;
+      this._statementRef = componentRef.location;
+      this._statement = createdSubComponent;
     })
   }
 
-
-  get loopStatement() : Refinement | undefined {
-    return this._loopStatement;
+  get statement() : Refinement | undefined {
+    return this._statement
   }
 
-  get loopStatementRef() : ElementRef | undefined {
-    return this._loopStatementRef;
+  get statementRef() : ElementRef | undefined {
+    return this._statementRef
   }
 
-  get invariantCondition() : Condition {
-    return this._invariantCondition;
+  get weakPreCondition() : Condition {
+    return this._weakPreCondition
   }
 
-  get variantCondition() : Condition {
-    return this._variantCondition;
+  get strongPostCondition() : Condition {
+    return this._strongPostCondition;
   }
 
-  get guardCondition() : Condition {
-    return this._guardCondition;
-  }
- 
 
 
 }

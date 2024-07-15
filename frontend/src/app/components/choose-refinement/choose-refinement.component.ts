@@ -9,18 +9,12 @@ import {
 } from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
 import {RefinementWidgetComponent} from "../../widgets/refinement-widget/refinement-widget.component";
-import {InitRefinementComponent} from "../editor/refinements/init-refinement/init-refinement.component";
-import {UnitRefinementComponent} from "../editor/refinements/unit-refinement/unit-refinement.component";
 import {Refinement} from "../../types/refinement";
-import {SkipRefinementComponent} from "../editor/refinements/skip-refinement/skip-refinement.component";
-import {SeqRefinementComponent} from "../editor/refinements/seq-refinement/seq-refinement.component";
-import {WhileRefinementComponent} from "../editor/refinements/while-refinement/while-refinement.component";
-import {SwRefinementComponent} from "../editor/refinements/sw-refinement/sw-refinement.component";
-import {CaseRefinementComponent} from "../editor/refinements/case-refinement/case-refinement.component";
-import {RepeatRefinementComponent} from "../editor/refinements/repeat-refinement/repeat-refinement.component";
 import { SimpleStatementComponent } from '../editor/refinements/simple-statement/simple-statement.component';
 import { SelectionStatementComponent } from '../editor/refinements/selection-statement/selection-statement.component';
 import { CompositionStatementComponent } from '../editor/refinements/composition-statement/composition-statement.component';
+import { RepetitionStatementComponent } from '../editor/refinements/repetition-statement/repetition-statement.component';
+import { StrongWeakStatementComponent } from '../editor/refinements/strong-weak-statement/strong-weak-statement.component';
 
 @Component({
   selector: 'app-choose-refinement',
@@ -31,17 +25,11 @@ import { CompositionStatementComponent } from '../editor/refinements/composition
 })
 export class ChooseRefinementComponent {
   readonly REFINEMENT_WIDGETS: {name: string, icon: string, component: Type<Refinement>}[] = [
-    {name: "init", icon: "trending_flat", component: InitRefinementComponent},
-    {name: "unit", icon: "swap_calls", component: UnitRefinementComponent},
-    {name: "skip", icon: "clear_all", component: SkipRefinementComponent},
-    {name: "seq", icon: "more_horiz", component: SeqRefinementComponent},
-    {name: "while", icon: "repeat", component: WhileRefinementComponent},
-    {name: "sw", icon: "flip_to_front", component: SwRefinementComponent},
-    {name: "case", icon: "vertical_split", component: CaseRefinementComponent},
-    {name: "repeat", icon: "autorenew", component: RepeatRefinementComponent},
     {name: "Statement", icon: "trending_flat", component: SimpleStatementComponent},
     {name: "Selection", icon: "vertical_split", component: SelectionStatementComponent},
-    {name: "Composition", icon: "more_horiz", component: CompositionStatementComponent}
+    {name: "Composition", icon: "account_tree", component: CompositionStatementComponent},
+    {name: "Repetition", icon: "autorenew", component: RepetitionStatementComponent},
+    {name: "Strong-Weak", icon: "priority_high", component: StrongWeakStatementComponent}
   ];
 
   constructor(public dialogRef: MatDialogRef<ChooseRefinementComponent>) {}

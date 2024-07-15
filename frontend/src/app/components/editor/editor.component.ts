@@ -40,13 +40,6 @@ export class EditorComponent implements AfterViewInit {
   rootNode: Type<Refinement> | undefined;
 
   constructor(public treeService: TreeService) {
-    treeService.deletionNotifier.subscribe(refinement => {
-      if (treeService.isRootNode(refinement)) {
-        this.rootNode = undefined;
-        this.treeService.rootNode = undefined;
-        Refinement.resetIDs();
-      }
-    })
   }
 
   

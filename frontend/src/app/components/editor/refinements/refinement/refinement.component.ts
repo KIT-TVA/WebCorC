@@ -156,4 +156,8 @@ export class RefinementComponent implements AfterViewInit {
   openVerificationResultDialog(): void {
     this.dialog.open(VerificationResultComponent, {data: {result: this.verificationResult, refinementId: this.refinement.id}});
   }
+
+  isRoot() : boolean {
+    return this.treeService.isRootNode(this.refinement)
+  }
 }

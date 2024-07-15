@@ -3,7 +3,7 @@
 
   <div class="refinementBoxTitle" cdkDragHandle #boxTitle>
     <p>{{refinement.getTitle()}} #{{refinement.id}}</p>
-    <mat-icon [style.cursor]="'pointer'" (click)="deleteRefinement()">delete</mat-icon>
+    <mat-icon *ngIf="!isRoot()" [style.cursor]="'pointer'" (click)="deleteRefinement()">delete</mat-icon>
   </div>
 
   <div *ngIf="verificationResult && verificationResult.errors.length > 0">
