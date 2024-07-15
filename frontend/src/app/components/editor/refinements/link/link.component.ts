@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import {MatIcon, MatIconModule} from "@angular/material/icon";
 import {CdkDragEnd} from "@angular/cdk/drag-drop";
 import {ReplaySubject} from "rxjs";
+import { TreeService } from '../../../../services/tree/tree.service';
 
 @Component({
   selector: 'refinement-link',
@@ -31,6 +32,9 @@ export class LinkComponent implements AfterViewInit, OnDestroy {
 
   private lineContainerDOM!: HTMLDivElement;
 
+  constructor(private treeService : TreeService) {}
+
+
   ngAfterViewInit(): void {
     this.createLineDOM();
 
@@ -38,6 +42,7 @@ export class LinkComponent implements AfterViewInit, OnDestroy {
     this.onSubRefinementDragMove.subscribe(() => this.drawLine());
 
     this.scrollNotifier.subscribe(() => this.drawLine());
+    this.treeService.deletionNotifier.subscribe(() => this.redrawBackground())
 
     this.drawLine();
   }
@@ -78,7 +83,7 @@ export class LinkComponent implements AfterViewInit, OnDestroy {
     const iconCenterY = iconBoundaries.y + iconBoundaries.height/2;
     if (linkLine) {
       const svgWidth = Math.max(1, Math.abs(refinementCenterX-iconCenterX));
-      const svgHeight = Math.max(1, Math.abs(refinementBoundaries.y-iconCenterY));
+      const svgHeight = Math.max(1, Math.abs(refinementBoundaries.y - iconCenterY));
       this.lineContainerDOM!.style.top = Math.min(refinementBoundaries.y, iconCenterY) + "px";
       this.lineContainerDOM!.style.left = Math.min(refinementCenterX, iconCenterX) + "px";
       this.lineContainerDOM!.style.width = svgWidth + "px";
@@ -97,5 +102,14 @@ export class LinkComponent implements AfterViewInit, OnDestroy {
         linkLine.setAttribute("y2", svgHeight.toString());
       }
     }
+  }
+
+  redrawBackground() : void {
+    this.lineContainerDOM.childNodes.forEach((child) => {
+      console.log(child)
+      this.lineContainerDOM.removeChild(child)
+    });
+    this.createLineDOM()
+    this.drawLine()
   }
 }

@@ -64,6 +64,7 @@ export class SimpleStatementComponent extends Refinement {
 
       this._statement = createdSubComponent;
       this._statementElementRef = componentRef.location;
+      setTimeout(() => super.onDragMoveEmitter.next(), 1)
     })
   }
 

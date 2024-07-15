@@ -43,9 +43,11 @@ export class CompositionStatementComponent extends Refinement {
       if (this._leftStatement === refinement) {
         this._leftStatement = undefined;
         this._leftStatementRef!.nativeElement!.remove();
+        this._leftStatementRef = undefined;
       } else if (this._rightStatement === refinement) {
         this._rightStatement = undefined;
         this._rightStatementRef!.nativeElement!.remove();
+        this._rightStatementRef = undefined;
       }
     })
   }

@@ -29,7 +29,7 @@ export class SelectionStatementComponent extends Refinement {
   private _statements : (Refinement | undefined )[]
   private _guards : Condition[]
 
-  private _statementsElementRefs : ElementRef[]
+  private _statementsElementRefs : (ElementRef | undefined )[]
 
   @ViewChild("subComponentSpawn", {read: ViewContainerRef}) componentSpawn!: ViewContainerRef;
   
@@ -44,6 +44,7 @@ export class SelectionStatementComponent extends Refinement {
         return
       }
       this._statementsElementRefs[indexOfStatement]!.nativeElement!.remove()
+      this._statementsElementRefs[indexOfStatement] = undefined
 
       for (let i = 0; i < this._statements.length; i++) {
         if (this._statements[i] === refinement) {
@@ -67,27 +68,42 @@ export class SelectionStatementComponent extends Refinement {
 
       const componentRef = this.componentSpawn.createComponent(result);
       const createdSubComponent = componentRef.instance as Refinement;
-      this._guards[index] = new Condition(this.id, 'guard #' + (index + 1));
+      this._guards[index] = new Condition(this.id, 'guard #' + (index));
       this._statements[index] = createdSubComponent;
       this._statementsElementRefs[index] = componentRef.location;
+      this._statementsElementRefs[index]!.nativeElement!.style.left = "1000px"
+
+      setTimeout(() => super.onDragMoveEmitter.next(), 5)
     })
   }
 
   addSelection() : void {
     this._guards.push(new Condition(this.id, "guard #" + (this._statements.length), ""))
     this._statements.push(undefined)
+    this._statementsElementRefs.push(undefined)
+    setTimeout(() => super.onDragMoveEmitter.next(), 5)
   }
 
   removeSelection() : void {
+    console.log('triggered remove Selection')
     if (this._statements.length <= 1) {
       return
     }
     this._guards.pop()
     this._statements.pop()
-    if (this._statementsElementRefs.length <= 1) {
-      return
+
+    console.log(this._statements.length)
+    console.log(this._statementsElementRefs.length)
+
+    if (this._statementsElementRefs.length >= this._statements.length) {
+      if (this._statementsElementRefs[this._statementsElementRefs.length - 1]) {
+        this._statementsElementRefs[this._statementsElementRefs.length - 1]!.nativeElement!.remove()
+        this._statementsElementRefs[this._statementsElementRefs.length - 1] = undefined
+      }
+      this._statementsElementRefs.pop()
+      console.log(this._statementsElementRefs)
     }
-    this._statementsElementRefs[this._statementsElementRefs.length - 1]!.nativeElement!.remove()
+    setTimeout(() => super.onDragMoveEmitter.next(), 5)
   }
 
   get statements() {
