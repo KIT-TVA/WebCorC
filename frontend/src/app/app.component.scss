@@ -8,3 +8,7 @@ mat-toolbar > h1 {
 .spacer {
   flex: 1 1 auto;
 }
+
+.editorWindow {
+  height: calc(100% - 64px);
+}

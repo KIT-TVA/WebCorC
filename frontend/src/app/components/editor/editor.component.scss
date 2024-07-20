@@ -1,6 +1,6 @@
 .sideMenu {
   position: absolute;
-  top: 74px;
+  top: 15px;
   right: 15px;
   width: 450px;
   z-index: 1;
@@ -8,7 +8,7 @@
 
 #editorContainer {
   width: 100%;
-  height: calc(100% - 64px);
+  height: 100%;
   overflow: scroll;
 }
 

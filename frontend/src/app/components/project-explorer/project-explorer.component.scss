@@ -1,0 +1,39 @@
+.actions {
+    display: flex;
+    place-content: center;
+}
+
+.drawer-content {
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 10px)
+}
+
+.project-actions {
+    display: flex;
+    place-content: center;
+    
+    border-top: 1px solid #575757;
+    border-bottom: 1px solid #575757;
+    background-color: #575757;
+
+    button {
+        color: white;
+    }
+
+    :nth-last-child(2) {
+        margin-left: auto;
+    }
+}
+
+.node-actions {
+    position: relative;
+    right: 0px;
+    top: 0px;
+    margin-left: auto;
+}
+
+.project-header {
+    display: flex;
+    padding-left: 15px;
+}

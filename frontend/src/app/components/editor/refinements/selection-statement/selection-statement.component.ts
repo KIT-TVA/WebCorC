@@ -85,7 +85,6 @@ export class SelectionStatementComponent extends Refinement {
   }
 
   removeSelection() : void {
-    console.log('triggered remove Selection')
     if (this._statements.length <= 1) {
       return
     }

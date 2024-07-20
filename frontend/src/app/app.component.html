@@ -1,13 +1,20 @@
-<mat-toolbar color="primary">
-  <h1>QBC EDITOR</h1>
+<mat-toolbar color="primary" class="toolbar">
+  <button mat-icon-button (click)="drawer.toggle()" > <mat-icon>menu</mat-icon> </button> 
+  <h1>CbC EDITOR</h1>
   <span class="spacer"></span>
   <mat-form-field appearance="fill" style="margin-top: 20px">
-    <input matInput [(ngModel)]="treeService.title" placeholder="Quantum">
+    <input matInput [(ngModel)]="treeService.title" placeholder="Projectname">
   </mat-form-field>
   <span class="spacer"></span>
-  <button mat-raised-button (click)="export()" style="margin-right: 10px" [disabled]="!treeService.rootNode">Export</button>
-  <button mat-raised-button (click)="openGenerateCodeDialog()" style="margin-right: 10px" [disabled]="!treeService.rootNode">Generate Code</button>
-  <button mat-raised-button (click)="verify()" [disabled]="!treeService.rootNode">Verify</button>
+  <button mat-raised-button style="margin-right: 10px;"> <mat-icon> share </mat-icon> Share </button>
+  <button mat-raised-button (click)="openGenerateCodeDialog()" style="margin-right: 10px" [disabled]="!treeService.rootNode"> <mat-icon> code </mat-icon> Generate Code</button>
+  <button mat-raised-button (click)="verify()" [disabled]="!treeService.rootNode"> <mat-icon> check_circle</mat-icon> Verify</button>
 </mat-toolbar>
-
-<router-outlet></router-outlet>
+<mat-drawer-container class="editorWindow">
+  <mat-drawer #drawer mode="over" [style.max-width]="'50%'" [style.min-width]="'20%'" >
+    <app-project-explorer></app-project-explorer>
+  </mat-drawer>
+  <mat-drawer-content class="editor">
+    <router-outlet></router-outlet> 
+  </mat-drawer-content>
+</mat-drawer-container>

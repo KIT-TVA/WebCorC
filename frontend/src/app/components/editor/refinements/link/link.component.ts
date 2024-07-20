@@ -80,7 +80,7 @@ export class LinkComponent implements AfterViewInit, OnDestroy {
 
     const refinementCenterX = refinementBoundaries.x + refinementBoundaries.width/2;
     const iconCenterX = iconBoundaries.x + iconBoundaries.width/2;
-    const iconCenterY = iconBoundaries.y + iconBoundaries.height/2;
+    const iconCenterY = iconBoundaries.y + iconBoundaries.height/2 - 64;
     if (linkLine) {
       const svgWidth = Math.max(1, Math.abs(refinementCenterX-iconCenterX));
       const svgHeight = Math.max(1, Math.abs(refinementBoundaries.y - iconCenterY));

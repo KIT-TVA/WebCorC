@@ -1,0 +1,44 @@
+<div class="drawer-content">
+    <div class="project-actions">
+        <button mat-button> <mat-icon> save </mat-icon> Save </button>
+        <button mat-button> <mat-icon> publish</mat-icon> Import </button>
+        <button mat-button> <mat-icon> download </mat-icon> Export </button>
+    </div>
+    <div class="project-header">
+        <h4> Projektname </h4>
+        <div class="node-actions" >
+            <button mat-icon-button (click)="addElement(root)"> <mat-icon [style.color]="'green'"> add</mat-icon> </button>
+        </div>
+    </div>
+    <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+
+        <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
+            <button mat-icon-button> <mat-icon> description </mat-icon> </button>
+            {{ node.name }}
+            <div class="node-actions">
+                <button mat-icon-button (click)="deleteElement(node)"><mat-icon [style.color]="'red'"> delete </mat-icon></button>
+            </div>
+        </mat-tree-node>
+
+        <mat-tree-node *matTreeNodeDef="let node; when: isTypeLessAndHasNoName" matTreeNodePadding>
+            <mat-form-field [style.width]="'370px'" [style.margin-left]="'5px'" [style.margin-right]="'5px'">
+                <mat-label>New Element</mat-label>
+                <input matInput #newElement [style.width]="'100%'">
+                <button matSuffix mat-icon-button aria-label="File"      (click)="addFile(node, newElement.value)"  > <mat-icon> note_add          </mat-icon> </button>
+                <button matSuffix mat-icon-button aria-label="Directory" (click)="addFolder(node, newElement.value)"> <mat-icon> create_new_folder </mat-icon> </button>
+            </mat-form-field>
+        </mat-tree-node>
+
+        <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
+            <button  mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle' + node.name" >
+                <mat-icon class="mat-icon-rtl-mirror"> {{treeControl.isExpanded(node) ? 'folder_open' : 'folder'}} 
+                </mat-icon>
+            </button>
+            {{ node.name }}
+            <div class="node-actions">
+                <button mat-icon-button (click)="addElement(node)"> <mat-icon [style.color]="'green'"> add</mat-icon> </button>
+                <button mat-icon-button (click)="deleteElement(node)"><mat-icon [style.color]="'red'"> delete </mat-icon></button>
+            </div>
+        </mat-tree-node>
+    </mat-tree>
+</div>
