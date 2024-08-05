@@ -13,17 +13,17 @@ import {VerificationResultComponent} from "./dialogs/verification-result.compone
 import {CodegenComponent} from "./dialogs/codegen.component";
 import { ProjectExplorerComponent } from "./components/project-explorer/project-explorer.component";
 import { MatIconModule } from '@angular/material/icon';
+import { NuMonacoEditorModule } from '@ng-util/monaco-editor';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, MatToolbarModule, MatSidenavModule, FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, ProjectExplorerComponent, MatIconModule],
+  imports: [CommonModule, RouterOutlet, MatToolbarModule, MatSidenavModule, FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, ProjectExplorerComponent, MatIconModule, NuMonacoEditorModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  constructor(public treeService: TreeService, private dialog: MatDialog) {
-  }
+  constructor(public treeService: TreeService, private dialog: MatDialog) {}
 
   verify(): void {
     if (this.treeService.rootNode) {
