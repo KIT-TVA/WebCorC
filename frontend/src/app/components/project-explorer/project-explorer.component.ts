@@ -12,6 +12,7 @@ import { BehaviorSubject } from 'rxjs';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { fakeProjectElementName } from '../../services/project/fake-element';
 import { MatInputModule } from '@angular/material/input';
+import { Router } from '@angular/router';
 
 class FlatNode {
   expandable: boolean;
@@ -54,7 +55,7 @@ export class ProjectExplorerComponent {
 
   private dataChangeSubject : BehaviorSubject<ProjectElement[]> = new BehaviorSubject<ProjectElement[]>([]);
 
-  constructor(private projectService : ProjectService) {
+  constructor(private projectService : ProjectService, private router : Router) {
     this.dataSource.data = this.projectService.root.content;
 
     this.projectService.dataChange.subscribe((data) => {
@@ -72,24 +73,46 @@ export class ProjectExplorerComponent {
     this.treeControl.expand(node)
   }
 
-  addFile(node : FlatNode, name : string) {
+  addFile(node : FlatNode, name : string, type : string) {
     
     if (!name) {
       return;
     }
 
-    this.projectService.addFile(node.path, name)
+    this.projectService.addFile(node.path, name, type)
     this.treeControl.expand(node)
   }
 
   deleteElement(node : FlatNode) {
-    console.log(node)
     this.projectService.deleteElement(node.path, node.name)
   }
 
   addElement(node : FlatNode) {
     this.projectService.addElement(node.path)
     this.treeControl.expand(node)
+  }
+
+  navigate(node : FlatNode) {
+    let element = this.nodeToElementMap.get(node) as ProjectFile
+    if (!element) {
+      return
+    }
+ 
+    if (element.type == "java" || element.type == "key") {
+      this.router.navigate(
+        ['file/editor'],
+        { queryParams: { urn: element.path } }
+      )
+    }
+
+    if (element.type == "diagramm") {
+      this.router.navigate(
+        [''],
+        { queryParams: { urn: element.path } }
+      )
+    }
+
+    
   }
 
   hasChild = (_: number, node: FlatNode) => node.expandable;

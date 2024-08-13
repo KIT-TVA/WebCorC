@@ -14,7 +14,7 @@
 
         <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
             <button mat-icon-button> <mat-icon> description </mat-icon> </button>
-            {{ node.name }}
+            <button mat-button (click)="navigate(node)" > {{ node.name }} </button>
             <div class="node-actions">
                 <button mat-icon-button (click)="deleteElement(node)"><mat-icon [style.color]="'red'"> delete </mat-icon></button>
             </div>
@@ -24,7 +24,8 @@
             <mat-form-field [style.width]="'370px'" [style.margin-left]="'5px'" [style.margin-right]="'5px'">
                 <mat-label>New Element</mat-label>
                 <input matInput #newElement [style.width]="'100%'">
-                <button matSuffix mat-icon-button aria-label="File"      (click)="addFile(node, newElement.value)"  > <mat-icon> note_add          </mat-icon> </button>
+                <button matSuffix mat-icon-button aria-label="File"      (click)="addFile(node, newElement.value, 'diagramm')"  > <mat-icon> note_add      </mat-icon> </button>
+                <button matSuffix mat-icon-button aria-label="File"      (click)="addFile(node, newElement.value, 'java')"  > <mat-icon> code              </mat-icon> </button>
                 <button matSuffix mat-icon-button aria-label="Directory" (click)="addFolder(node, newElement.value)"> <mat-icon> create_new_folder </mat-icon> </button>
             </mat-form-field>
         </mat-tree-node>

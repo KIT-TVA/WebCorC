@@ -50,7 +50,7 @@ export class ProjectService {
     return dir;
   }
 
-  public addFile(parentPath : string, name : string) : ProjectDirectory { 
+  public addFile(parentPath : string, name : string, type: string) : ProjectDirectory { 
     const parentDir = this.findByPath(parentPath);
     if (!parentDir) {
       throw new Error("Parent dir of new file not found")
@@ -60,7 +60,7 @@ export class ProjectService {
 
     dir.removeElement(fakeProjectElementName)
 
-    const newFile = new ProjectFile(parentPath, name)
+    const newFile = new ProjectFile(parentPath, name, type)
     if (!dir.addElement(newFile)) {
       throw new Error("Could not add file, maybe you tried to create a duplicate?")
     }
