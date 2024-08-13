@@ -6,5 +6,15 @@ allOf:
       content:
         type: array
         items:
-          type: string 
-          format: urn
+          descriminator:
+              propertyName: inodeType
+              mapping:
+                directory: './directory.yml'
+                file: './file.yml'
+          anyOf:
+            - $ref: './directory.yml'
+            - $ref: './file.yml'
+          
+          
+
+            

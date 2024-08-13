@@ -2,4 +2,9 @@ type: object
 properties:
   urn:
     type: string 
-    format: urn 
+    format: urn
+
+  inodeType: 
+    type: string
+    
+   

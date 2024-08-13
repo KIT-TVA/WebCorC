@@ -1,0 +1,13 @@
+description: File
+allOf: 
+  - $ref: './inode.yml'
+  - type: object
+    properties:
+      type: 
+        type: string
+        enum:
+          - key
+          - prove
+          - java
+          - cbc
+          

@@ -39,3 +39,5 @@ paths:
   /editor/verify:
      $ref: './paths/editor.yml'
         
+  /editor/jobs/{id}:
+    $ref: './paths/editor/jobs.yml'
