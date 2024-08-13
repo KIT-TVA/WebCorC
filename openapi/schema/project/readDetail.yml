@@ -2,7 +2,7 @@ type: object
 properties:
   id:
     type: integer
-    format: 64
+    format: int64
   name:
     type: string
 

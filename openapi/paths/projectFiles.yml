@@ -1,6 +1,9 @@
 parameters:
   - in: path 
-    name: id 
+    name: id
+    schema: 
+      type: number
+      format: int64
     required: true
 
 
@@ -10,10 +13,9 @@ get:
   description: Create new File / Directory
   tags:
     - ProjectFileManagement
-  requestBody:
+  responses:
     '200': 
       description: Successfull read of file tree 
-      required: true
       content:
         application/json:
           schema:
@@ -36,7 +38,6 @@ get:
 
     '404': 
       description: Project by Id or file urn not found 
-      required: true
       content:
         application/problem+json: 
           schema:
@@ -62,10 +63,9 @@ post:
   description: Create new File / Directory
   tags:
     - ProjectFileManagement
-  requestBody:
+  responses:
     '201':
       description: Successfull creation of file 
-      required: true 
       content:
         application/json:
           schema:
@@ -95,7 +95,6 @@ post:
 
     '404': 
       description: Project by Id or file urn not found 
-      required: true
       content:
         application/problem+json: 
           schema:

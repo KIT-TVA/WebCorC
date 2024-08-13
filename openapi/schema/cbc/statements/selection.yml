@@ -17,3 +17,5 @@ allOf:
         items: 
           $ref: '../_statement.yml'
 
+required:
+  - statementType

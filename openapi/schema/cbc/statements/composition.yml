@@ -3,11 +3,14 @@ allOf:
  - $ref: './abstract.yml'
  - type: object
    properties:
-    intermediateCondition:
-      $ref: '../condition.yml'
+      intermediateCondition:
+        $ref: '../condition.yml'
 
-    leftStatement:
-      $ref: '../_statement.yml'
+      leftStatement:
+        $ref: '../statement.yml'
 
-    rightStatement:
-      $ref: '../_statement.yml'
+      rightStatement:
+        $ref: '../statement.yml'
+
+required:
+  - statementType

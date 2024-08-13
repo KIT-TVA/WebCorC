@@ -21,13 +21,13 @@ allOf:
       statements: 
         type: array 
         items: 
-          $ref: '../_statement.yml'
+          $ref: '../statement.yml'
 
       variant: 
         type: string 
 
       loopStatement:
-        $ref: '../_statement.yml'
+        $ref: '../statement.yml'
 
     required: 
         - postProven
@@ -35,3 +35,5 @@ allOf:
         - variantProven
         - invariantCondition
         - guardCondition
+required:
+  - statementType

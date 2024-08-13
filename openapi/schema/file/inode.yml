@@ -1,6 +1,4 @@
 type: object
-descriminator:
-  propertyName: fileType 
 properties:
   urn:
     type: string 

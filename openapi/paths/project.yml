@@ -2,6 +2,9 @@ parameters:
   - in: path
     required: true 
     name: id
+    schema:
+      type: number
+      format: int64
     description: id of project
 get: 
   summary: Get Project by id 

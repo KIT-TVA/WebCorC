@@ -1,11 +1,16 @@
 parameters:
   - in: path
-    name: id 
+    name: id
+    schema: 
+      type: number
+      format: int64 
     required: true 
 
   - in: path 
     name: urn 
-    required: true 
+    schema: 
+      type: string
+    required: true
     
 
 get: 
@@ -17,7 +22,6 @@ get:
   responses: 
     '200': 
       description: Successfull Read of Project File / Directory content
-      required: true 
       content: 
         application/json:
           schema:
@@ -40,7 +44,6 @@ get:
 
     '404': 
       description: Project by Id or file urn not found 
-      required: true
       content:
         application/problem+json: 
           schema:
@@ -62,30 +65,27 @@ get:
 
 put:
   summary: Update File Content
-  operationId: updateProjectById
+  operationId: updateProjectFileByURN
   description: Update file content
   tags:
     - ProjectFileManagement
   responses:
     '200':
       description: Successfull update of file content 
-      required: true 
       content: 
         application/json:
           schema:
             $ref: '../schema/file/filecontent.yml'
 
     '401':
-      description: Project is protected, Credentials not found 
-      required: true 
+      description: Project is protected, Credentials not found  
       content:
         application/problem+json:
           schema:
             $ref: '../schema/problem.yml'
 
     '403': 
-      description: Project is protected, wron authorization
-      required: true 
+      description: Project is protected, wron authorization 
       content:
         application/problem+json:
           schema:
@@ -93,7 +93,6 @@ put:
 
     '404': 
       description: Project by id or file by urn not found.
-      required: true 
       content:
         application/problem+json:
           schema:
@@ -124,8 +123,7 @@ delete:
       description: Successfull deletion of file 
       
     '401':
-      description: Project is protected, Credentials not found 
-      required: true 
+      description: Project is protected, Credentials not found  
       content:
         application/problem+json:
           schema:
@@ -133,7 +131,6 @@ delete:
 
     '403': 
       description: Project is protected, wron authorization
-      required: true 
       content:
         application/problem+json:
           schema:
@@ -141,7 +138,6 @@ delete:
 
     '404': 
       description: Project by id or file by urn not found.
-      required: true 
       content:
         application/problem+json:
           schema:

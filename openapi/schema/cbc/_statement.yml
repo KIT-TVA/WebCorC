@@ -1,8 +1,14 @@
+discriminator:
+  propertyName: statementType
+  mapping:
+    compositon: './statements/composition.yml'
+    repetition: './statements/repetition.yml'
+    selection: './statements/selection.yml'
+    simple: './statements/simple.yml'
+    strongWeak: './statements/strongWeak.yml'
 oneOf:
+  - $ref: './statements/simple.yml'
   - $ref: './statements/composition.yml'
   - $ref: './statements/repetition.yml'
   - $ref: './statements/selection.yml'
-  - $ref: './statements/simple.yml'
   - $ref: './statements/strongWeak.yml'
-discriminator:
-    propertyName: statementType

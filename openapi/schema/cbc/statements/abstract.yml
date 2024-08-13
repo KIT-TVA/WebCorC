@@ -1,9 +1,10 @@
 type: object
 description: AbstractStatement
-discriminator:
-    propertyName: statementType
 properties:
   name: 
+    type: string
+
+  statementType:
     type: string 
   
   id: 
@@ -32,3 +33,6 @@ properties:
       yinPx:
         type: number 
         format: int64
+
+required:
+  - statementType

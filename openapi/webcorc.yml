@@ -18,7 +18,9 @@ paths:
     $ref: './paths/projectFile.yml'
 
   /editor/export:
-    post: 
+    post:
+      operationId: exportWorkspace
+      summary: Export current Workspace
       tags:
         - Editor
       responses:
@@ -27,6 +29,7 @@ paths:
   
   /editor/generate: 
     post: 
+      operationId: generateJavaCode
       tags:
         - Editor
       responses:
