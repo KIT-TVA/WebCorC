@@ -1,20 +1,11 @@
-description: Directory 
+description: Directory
 allOf:
-  - $ref: './inode.yml'
+  - $ref: "./inode.yml"
   - type: object
     properties:
       content:
         type: array
         items:
-          descriminator:
-              propertyName: inodeType
-              mapping:
-                directory: './directory.yml'
-                file: './file.yml'
           anyOf:
-            - $ref: './directory.yml'
-            - $ref: './file.yml'
-          
-          
-
-            
+            - $ref: "./directory.yml"
+            - $ref: "./file.yml"

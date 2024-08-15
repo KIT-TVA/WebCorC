@@ -2,8 +2,8 @@ parameters:
   - in: path
     name: id
     schema: 
-      type: number
-      format: int64 
+      type: string
+      format: uuid 
     required: true 
 
   - in: path 
@@ -26,22 +26,6 @@ get:
         application/json:
           schema:
             $ref: '../schema/file/filecontent.yml'
-
-    '401':  
-      description: Project is protected, no Credentials found 
-      content:
-        application/problem+json:
-          schema:
-            $ref: '../schema/problem.yml'
-
-    '403': 
-      description: Project is protected, wrong authorization
-      content:
-        application/problem+json:
-          schema:
-            $ref: '../schema/problem.yml'
-
-
     '404': 
       description: Project by Id or file urn not found 
       content:
@@ -84,21 +68,6 @@ post:
           schema:
             $ref: '../schema/problem.yml' 
 
-    '401':  
-      description: Project is protected, no Credentials found 
-      content:
-        application/problem+json:
-          schema:
-            $ref: '../schema/problem.yml'
-
-    '403': 
-      description: Project is protected, wrong authorization
-      content:
-        application/problem+json:
-          schema:
-            $ref: '../schema/problem.yml'
-
-
     '404': 
       description: Project by Id or file urn not found 
       content:
@@ -134,20 +103,6 @@ put:
           schema:
             $ref: '../schema/file/filecontent.yml'
 
-    '401':
-      description: Project is protected, Credentials not found  
-      content:
-        application/problem+json:
-          schema:
-            $ref: '../schema/problem.yml'
-
-    '403': 
-      description: Project is protected, wron authorization 
-      content:
-        application/problem+json:
-          schema:
-            $ref: '../schema/problem.yml'
-
     '404': 
       description: Project by id or file by urn not found.
       content:
@@ -178,20 +133,6 @@ delete:
   responses:
     '204':
       description: Successfull deletion of file 
-      
-    '401':
-      description: Project is protected, Credentials not found  
-      content:
-        application/problem+json:
-          schema:
-            $ref: '../schema/problem.yml'
-
-    '403': 
-      description: Project is protected, wron authorization
-      content:
-        application/problem+json:
-          schema:
-            $ref: '../schema/problem.yml'
 
     '404': 
       description: Project by id or file by urn not found.

@@ -3,8 +3,8 @@ parameters:
     required: true 
     name: id
     schema:
-      type: number
-      format: int64
+      type: string
+      format: uuid
     description: id of project
 get: 
   summary: Get Project by id 
@@ -19,18 +19,6 @@ get:
         application/json:
           schema:
             $ref: '../schema/project/read.yml'
-    '401':
-      description: 'Project is protected, no Credentials found'
-      content: 
-        application/problem+json:
-          schema:
-            $ref: '../schema/problem.yml'
-    '403':
-      description: 'Project is protected, wrong authorization'
-      content:
-        application/problem+json:
-          schema:
-            $ref: '../schema/problem.yml'
     '404':
       description: 'Project by id not found'
       content:
@@ -72,18 +60,6 @@ put:
         application/json:
           schema:
             $ref: '../schema/project/read.yml'
-    '401':
-      description: 'Project is protected, no Credentials found'
-      content: 
-        application/problem+json:
-          schema:
-            $ref: '../schema/problem.yml'
-    '403':
-      description: 'Project is protected, wrong authorization'
-      content:
-        application/problem+json:
-          schema:
-            $ref: '../schema/problem.yml'
     '404':
       description: 'Project by id not found'
       content:
@@ -113,18 +89,6 @@ delete:
   responses:
     '204': 
       description: 'Successfull deletion of project'
-    '401':
-      description: 'Project is protected, no Credentials found'
-      content: 
-        application/problem+json:
-          schema:
-            $ref: '../schema/problem.yml'
-    '403':
-      description: 'Project is protected, wrong authorization'
-      content:
-        application/problem+json:
-          schema:
-            $ref: '../schema/problem.yml'
     '404':
       description: 'Project by id not found'
       content:

@@ -8,7 +8,7 @@ properties:
     type: string 
   
   id: 
-    type: number
+    type: integer
     format: int64
 
   proven:
@@ -27,11 +27,11 @@ properties:
     type: object
     properties:
       xinPx: 
-        type: number 
+        type: integer 
         format: int64
 
       yinPx:
-        type: number 
+        type: integer 
         format: int64
 
 required:

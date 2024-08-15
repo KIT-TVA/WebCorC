@@ -5,7 +5,7 @@ properties:
     type: string 
 
   originID: 
-    type: number
+    type: integer
     format: int64
 
   title:
