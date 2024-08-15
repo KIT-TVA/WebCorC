@@ -1,0 +1,8 @@
+applicationName: webcorc
+build: gradle
+controllerPackage: edu.kit.cbc.web.controller
+hideGenerationTimestamp: true
+invokerPackage: edu.kit.cbc.web
+micronautVersion: 4.5.1
+modelPackage: edu.kit.cbc.web.model
+serializationLibrary: micronaut_serde_jackson
