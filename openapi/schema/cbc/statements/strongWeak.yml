@@ -4,7 +4,6 @@ allOf:
   - type: object
     properties:
       statement:
-        type: object
         $ref: '../statement.yml'
 required:
   - statementType
