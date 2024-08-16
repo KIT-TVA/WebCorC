@@ -10,4 +10,7 @@ allOf:
           - prove
           - java
           - diagram
+
+required:
+  - type
           

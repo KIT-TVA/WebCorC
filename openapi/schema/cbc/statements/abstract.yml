@@ -24,15 +24,15 @@ properties:
     $ref: '../condition.yml'
 
   position:
-    type: object
-    properties:
-      xinPx: 
-        type: integer 
-        format: int64
-
-      yinPx:
-        type: integer 
-        format: int64
+    $ref: '../position.yml'
 
 required:
+  - name
+  - id
   - statementType
+  - proven
+  - comment
+  - preCondition
+  - postCondition
+  - position
+

@@ -9,3 +9,5 @@ allOf:
           anyOf:
             - $ref: "./directory.yml"
             - $ref: "./file.yml"
+required:
+  - content

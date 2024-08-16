@@ -12,3 +12,9 @@ properties:
 
   files:
     $ref: '../file/directory.yml'
+
+required:
+  - id
+  - name
+  - dateCreated
+  - files

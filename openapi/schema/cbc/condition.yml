@@ -10,3 +10,8 @@ properties:
 
   title:
     type: string 
+
+required:
+  - content
+  - originID
+  - title

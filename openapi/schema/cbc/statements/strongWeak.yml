@@ -7,3 +7,4 @@ allOf:
         $ref: '../statement.yml'
 required:
   - statementType
+  - statement

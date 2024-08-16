@@ -13,3 +13,9 @@ properties:
     type: array
     items: 
       $ref: '../file/read.yml'
+
+required:
+  - id
+  - name 
+  - dateCreated
+  - fileTree

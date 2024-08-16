@@ -7,4 +7,6 @@ properties:
   inodeType: 
     type: string
     
-   
+required:
+  - urn
+  - inodeType

@@ -28,12 +28,13 @@ allOf:
 
       loopStatement:
         $ref: '../statement.yml'
-
-    required: 
-        - postProven
-        - preProven
-        - variantProven
-        - invariantCondition
-        - guardCondition
 required:
   - statementType
+  - postProven
+  - preProven
+  - variantProven
+  - invariantCondition
+  - guardCondition
+  - statements
+  - variant
+  - loopStatement
