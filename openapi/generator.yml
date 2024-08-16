@@ -6,3 +6,8 @@ invokerPackage: edu.kit.cbc.web
 micronautVersion: 4.5.1
 modelPackage: edu.kit.cbc.web.model
 serializationLibrary: micronaut_serde_jackson
+generateConstructorWithAllArgs: true
+legacyDiscriminatorBehavior: false
+serializableModel: true 
+useJakartaEe: true
+useOptional: true

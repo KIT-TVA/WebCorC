@@ -1,0 +1,768 @@
+openapi: 3.0.2
+info:
+  title: Webcorc
+  version: '1.0'
+servers:
+  - url: https://api.server.test/v1
+paths:
+  /projects:
+    post:
+      summary: Create new Project
+      operationId: createProject
+      description: Create a new Project
+      tags:
+        - ProjectManagement
+      requestBody:
+        description: Give Project a name
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/create'
+      responses:
+        '201':
+          description: Sucessfull creation of Project
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/read'
+        '400':
+          description: Bad Payload
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+        '500':
+          description: Generic Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+        '503':
+          description: Service Unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+  /projects/{id}:
+    parameters:
+      - in: path
+        required: true
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: id of project
+    get:
+      summary: Get Project by id
+      operationId: readProjectById
+      description: Get Information about Project by id.
+      tags:
+        - ProjectManagement
+      responses:
+        '200':
+          description: Successfull read of project by id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/read'
+        '404':
+          description: Project by id not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+        '500':
+          description: Generic Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+        '503':
+          description: Service Unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+    put:
+      summary: Update Project
+      operationId: updateProjectById
+      description: Update Project by its id
+      tags:
+        - ProjectManagement
+      requestBody:
+        description: Representation of updated Project
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/update'
+      responses:
+        '200':
+          description: Successfull update of project by id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/read'
+        '404':
+          description: Project by id not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+        '500':
+          description: Generic Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+        '503':
+          description: Service Unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+    delete:
+      summary: Delete Project
+      operationId: deleteProjectById
+      description: Delete Project By Id
+      tags:
+        - ProjectManagement
+      responses:
+        '204':
+          description: Successfull deletion of project
+        '404':
+          description: Project by id not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+        '500':
+          description: Generic Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+        '503':
+          description: Service Unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+  /projects/{id}/files:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+    get:
+      summary: Get File / Directory Structure (optional??)
+      operationId: getFileTreeByProjectId
+      description: Create new File / Directory
+      tags:
+        - ProjectFileManagement
+      responses:
+        '200':
+          description: Successfull read of file tree
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/directory'
+        '404':
+          description: Project by Id or file urn not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+        '500':
+          description: Generic Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+        '503':
+          description: Service Unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+  /projects/{id}/files/{urn}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: path
+        name: urn
+        schema:
+          type: string
+        required: true
+    get:
+      summary: Get Directory or file contents
+      operationId: readFileContentByURN
+      description: Read all Project Files
+      tags:
+        - ProjectFileManagement
+      responses:
+        '200':
+          description: Successfull Read of Project File / Directory content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/filecontent'
+        '404':
+          description: Project by Id or file urn not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+        '500':
+          description: Generic Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+        '503':
+          description: Service Unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+    post:
+      summary: Create File / Directory
+      operationId: createFileorDirectory
+      description: Create new File / Directory
+      tags:
+        - ProjectFileManagement
+      responses:
+        '201':
+          description: Successfull creation of file
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/filecontent'
+        '400':
+          description: Malformed requestBody
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+        '404':
+          description: Project by Id or file urn not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+        '500':
+          description: Generic Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+        '503':
+          description: Service Unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+    put:
+      summary: Update File Content
+      operationId: updateProjectFileByURN
+      description: Update file content
+      tags:
+        - ProjectFileManagement
+      responses:
+        '200':
+          description: Successfull update of file content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/filecontent'
+        '404':
+          description: Project by id or file by urn not found.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+        '500':
+          description: Generic Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+        '503':
+          description: Service Unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+    delete:
+      summary: Delete File
+      operationId: deleteFileByURN
+      description: Delete File
+      tags:
+        - ProjectFileManagement
+      responses:
+        '204':
+          description: Successfull deletion of file
+        '404':
+          description: Project by id or file by urn not found.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+        '500':
+          description: Generic Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+        '503':
+          description: Service Unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+  /editor/export:
+    post:
+      operationId: exportWorkspace
+      summary: Export current Workspace
+      tags:
+        - Editor
+      responses:
+        '200':
+          description: Include Zip file
+  /editor/generate:
+    post:
+      operationId: generateJavaCode
+      tags:
+        - Editor
+      responses:
+        '200':
+          description: Include Zip file of Java Code
+  /editor/verify:
+    post:
+      summary: Verify Formula
+      operationId: verifyFormula
+      description: Verify Formula
+      tags:
+        - Editor
+      requestBody:
+        description: Formula to verify
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/formula'
+      responses:
+        '202':
+          description: Verification Job accepted
+          headers:
+            Location:
+              schema:
+                type: string
+                format: url
+              description: Representation of Job Status
+        '400':
+          description: Malformed Request Body
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+        '500':
+          description: Generic Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+        '503':
+          description: Service Unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+  /editor/jobs/{id}:
+    parameters:
+      - in: path
+        required: true
+        name: id
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: Get Job Status Over Websocket
+      operationId: readJobStatusByUUID
+      description: Get Job Status
+      tags:
+        - Editor
+      responses:
+        '200':
+          description: Webhook opened
+        '404':
+          description: Job by id not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+        '500':
+          description: Generic Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+        '503':
+          description: Service Unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+components:
+  schemas:
+    create:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
+    inode:
+      type: object
+      properties:
+        urn:
+          type: string
+          format: urn
+        inodeType:
+          type: string
+      required:
+        - urn
+        - inodeType
+    directory:
+      description: Directory
+      allOf:
+        - $ref: '#/components/schemas/inode'
+        - type: object
+          properties:
+            content:
+              type: array
+              items:
+                anyOf:
+                  - $ref: '#/components/schemas/directory'
+                  - $ref: '#/components/schemas/file'
+      required:
+        - content
+    file:
+      description: File
+      allOf:
+        - $ref: '#/components/schemas/inode'
+        - type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - key
+                - prove
+                - java
+                - diagram
+      required:
+        - type
+    read:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        dateCreated:
+          type: string
+        files:
+          $ref: '#/components/schemas/directory'
+      required:
+        - id
+        - name
+        - dateCreated
+        - files
+    problem:
+      type: object
+      properties:
+        type:
+          type: string
+          format: uri
+          description: |
+            An absolute URI that identifies the problem type.  When dereferenced,
+            it SHOULD provide human-readable documentation for the problem type
+            (e.g., using HTML).
+          default: about:blank
+          example: https://zalando.github.io/problem/constraint-violation
+        title:
+          type: string
+          description: |
+            A short, summary of the problem type. Written in english and readable
+            for engineers (usually not suited for non technical stakeholders and
+            not localized); example: Service Unavailable
+        status:
+          type: integer
+          format: int32
+          description: |
+            The HTTP status code generated by the origin server for this occurrence
+            of the problem.
+          minimum: 100
+          maximum: 600
+          exclusiveMaximum: true
+          example: 503
+        detail:
+          type: string
+          description: |
+            A human readable explanation specific to this occurrence of the
+            problem.
+          example: Connection to database timed out
+        instance:
+          type: string
+          format: uri
+          description: |
+            An absolute URI that identifies the specific occurrence of the problem.
+            It may or may not yield further information if dereferenced.
+      required:
+        - type
+        - title
+        - status
+        - detail
+        - instance
+    update:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
+    condition:
+      type: object
+      description: Condition
+      properties:
+        content:
+          type: string
+        originID:
+          type: integer
+          format: int64
+        title:
+          type: string
+      required:
+        - content
+        - originID
+        - title
+    position:
+      type: object
+      properties:
+        xinPx:
+          type: integer
+          format: int64
+        yinPx:
+          type: integer
+          format: int64
+    abstract:
+      type: object
+      description: AbstractStatement
+      properties:
+        name:
+          type: string
+        statementType:
+          type: string
+        id:
+          type: integer
+          format: int64
+        proven:
+          type: boolean
+        comment:
+          type: string
+        preCondition:
+          $ref: '#/components/schemas/condition'
+        postCondition:
+          $ref: '#/components/schemas/condition'
+        position:
+          $ref: '#/components/schemas/position'
+      required:
+        - name
+        - id
+        - statementType
+        - proven
+        - comment
+        - preCondition
+        - postCondition
+        - position
+    simple:
+      description: Simple Statement
+      allOf:
+        - $ref: '#/components/schemas/abstract'
+      required:
+        - statementType
+    statement:
+      discriminator:
+        propertyName: statementType
+        mapping:
+          simple: '#/components/schemas/simple'
+          compositon: '#/components/schemas/composition'
+          repetition: '#/components/schemas/repetition'
+          selection: '#/components/schemas/selection'
+          strongWeak: '#/components/schemas/strongWeak'
+      oneOf:
+        - $ref: '#/components/schemas/composition'
+        - $ref: '#/components/schemas/repetition'
+        - $ref: '#/components/schemas/selection'
+        - $ref: '#/components/schemas/simple'
+        - $ref: '#/components/schemas/strongWeak'
+    composition:
+      description: Compostion Statement
+      allOf:
+        - $ref: '#/components/schemas/abstract'
+        - type: object
+          properties:
+            intermediateCondition:
+              $ref: '#/components/schemas/condition'
+            leftStatement:
+              $ref: '#/components/schemas/statement'
+            rightStatement:
+              $ref: '#/components/schemas/statement'
+      required:
+        - statementType
+        - intermediateCondition
+        - leftStatement
+        - rightStatement
+    repetition:
+      description: Repetition Statement
+      allOf:
+        - $ref: '#/components/schemas/abstract'
+        - type: object
+          properties:
+            postProven:
+              type: boolean
+            preProven:
+              type: boolean
+            variantProven:
+              type: boolean
+            invariantCondition:
+              $ref: '#/components/schemas/condition'
+            guardCondition:
+              $ref: '#/components/schemas/condition'
+            statements:
+              type: array
+              items:
+                $ref: '#/components/schemas/statement'
+            variant:
+              type: string
+            loopStatement:
+              $ref: '#/components/schemas/statement'
+      required:
+        - statementType
+        - postProven
+        - preProven
+        - variantProven
+        - invariantCondition
+        - guardCondition
+        - statements
+        - variant
+        - loopStatement
+    selection:
+      description: Selection Statement
+      allOf:
+        - $ref: '#/components/schemas/abstract'
+        - type: object
+          properties:
+            preProven:
+              type: boolean
+            guards:
+              type: array
+              items:
+                $ref: '#/components/schemas/condition'
+            statements:
+              type: array
+              items:
+                $ref: '#/components/schemas/statement'
+      required:
+        - statementType
+        - preProven
+        - guar
+    strongWeak:
+      description: StrongWeak Statement
+      allOf:
+        - $ref: '#/components/schemas/abstract'
+        - type: object
+          properties:
+            statement:
+              $ref: '#/components/schemas/statement'
+      required:
+        - statementType
+        - statement
+    formula:
+      type: object
+      description: CBCFormula
+      properties:
+        type:
+          type: string
+          enum:
+            - CBCFormula
+        name:
+          type: string
+        proven:
+          type: boolean
+        comment:
+          type: string
+        compostionTechnique:
+          type: string
+          enum:
+            - CONTRACT_OVERRIDING
+        className:
+          type: string
+        methodeName:
+          type: string
+        javaVariables:
+          type: array
+          items:
+            type: string
+        globalConditions:
+          type: array
+          items:
+            $ref: '#/components/schemas/condition'
+        preCondition:
+          type: string
+        postCondition:
+          type: string
+        statement:
+          $ref: '#/components/schemas/statement'
+      required:
+        - type
+        - name
+        - proven
+        - comment
+        - compostionTechnique
+        - className
+        - methodeName
+        - javaVariables
+        - globalConditions
+        - preCondition
+        - postCondition
+        - statement
+    diagramm:
+      description: Diagramm file
+      allOf:
+        - $ref: '#/components/schemas/inode'
+        - $ref: '#/components/schemas/formula'
+    key:
+      description: Key File
+      allOf:
+        - $ref: '#/components/schemas/inode'
+        - type: object
+          properties:
+            content:
+              type: string
+      required:
+        - content
+    filecontent:
+      oneOf:
+        - $ref: '#/components/schemas/diagramm'
+        - $ref: '#/components/schemas/directory'
+        - $ref: '#/components/schemas/key'
+      discriminator:
+        propertyName: fileType
