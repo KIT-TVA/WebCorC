@@ -1,7 +1,12 @@
 type: object
-descriminator:
-  propertyName: fileType 
 properties:
   urn:
     type: string 
-    format: urn 
+    format: urn
+
+  inodeType: 
+    type: string
+    
+required:
+  - urn
+  - inodeType

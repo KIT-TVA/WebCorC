@@ -1,13 +1,14 @@
 type: object
 description: AbstractStatement
-discriminator:
-    propertyName: statementType
 properties:
   name: 
+    type: string
+
+  statementType:
     type: string 
   
   id: 
-    type: number
+    type: integer
     format: int64
 
   proven:
@@ -23,12 +24,15 @@ properties:
     $ref: '../condition.yml'
 
   position:
-    type: object
-    properties:
-      xinPx: 
-        type: number 
-        format: int64
+    $ref: '../position.yml'
 
-      yinPx:
-        type: number 
-        format: int64
+required:
+  - name
+  - id
+  - statementType
+  - proven
+  - comment
+  - preCondition
+  - postCondition
+  - position
+

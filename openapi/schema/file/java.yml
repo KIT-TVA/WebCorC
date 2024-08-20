@@ -1,10 +1,10 @@
-description: Key File 
-allOf:
+description: Java File
+allOf: 
   - $ref: './inode.yml'
   - type: object 
     properties:
-      content:
-        type: string 
-        
+      content: 
+        type: string
+
 required:
   - content

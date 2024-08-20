@@ -43,4 +43,18 @@ properties:
     type: string
 
   statement:
-    $ref: './statement.yml' 
+    $ref: './statement.yml'
+
+required:
+  - type
+  - name 
+  - proven
+  - comment
+  - compostionTechnique
+  - className
+  - methodeName
+  - javaVariables
+  - globalConditions
+  - preCondition
+  - postCondition
+  - statement
