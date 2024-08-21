@@ -1,24 +1,64 @@
 package edu.kit.cbc.Controllers;
 
+import java.time.ZonedDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
+import java.util.List;
 
+import edu.kit.cbc.Models.CreateProjectDto;
+import edu.kit.cbc.Models.DirectoryDto;
+import edu.kit.cbc.Models.FileDto;
+import edu.kit.cbc.Models.FileType;
+import edu.kit.cbc.Models.ReadProjectDto;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Delete;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Produces;
 import io.micronaut.http.annotation.Put;
+import io.micronaut.http.annotation.QueryValue;
 
 @Controller("/projects")
 public class ProjectManagementController {
     @Post
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public HttpResponse<String> createProject() {
-        return HttpResponse.serverError(String.format("NOT IMPLEMENTED %s", UUID.randomUUID().toString()));
+    public HttpResponse<ReadProjectDto> createProject(@Body CreateProjectDto project) {
+        //TODO: Input validation
+        return HttpResponse.ok(
+            new ReadProjectDto(
+                UUID.randomUUID(),
+                project.name(),
+                ZonedDateTime
+                    .now(ZoneOffset.UTC)
+                    .format(DateTimeFormatter.ISO_INSTANT),
+                new DirectoryDto(
+                    "/",
+                    "directory",
+                    List.of(
+                        new FileDto("diag.diag", FileType.DIAGRAM),
+                        new DirectoryDto(
+                            "/aisdbns/",
+                            "directory",
+                            List.of(
+                                new FileDto("somefile1", FileType.DIAGRAM),
+                                new DirectoryDto(
+                                    "/aisdbns/",
+                                    "difub",
+                                    List.of()),
+                                new FileDto("somefile2", FileType.JAVA),
+                                new FileDto("somefile3", FileType.PROVE)
+                            )
+                        )
+                    )
+                )
+            )
+        );
     }
 
     @Get(uri = "/{id}")
@@ -29,8 +69,37 @@ public class ProjectManagementController {
 
     @Put(uri = "/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public HttpResponse<String> modifyProject(long id) {
-        return HttpResponse.serverError(String.format("NOT IMPLEMENTED %d", id));
+    public HttpResponse<ReadProjectDto> modifyProject(@QueryValue String id, @Body CreateProjectDto project) {
+        //TODO: Input validation
+        return HttpResponse.ok(
+            new ReadProjectDto(
+                UUID.fromString(id),
+                project.name(),
+                ZonedDateTime
+                    .now(ZoneOffset.UTC)
+                    .format(DateTimeFormatter.ISO_INSTANT),
+                new DirectoryDto(
+                    "/",
+                    "directory",
+                    List.of(
+                        new FileDto("diag.diag", FileType.DIAGRAM),
+                        new DirectoryDto(
+                            "/aisdbns/",
+                            "directory",
+                            List.of(
+                                new FileDto("somefile1", FileType.DIAGRAM),
+                                new DirectoryDto(
+                                    "/aisdbns/",
+                                    "difub",
+                                    List.of()),
+                                new FileDto("somefile2", FileType.JAVA),
+                                new FileDto("somefile3", FileType.PROVE)
+                            )
+                        )
+                    )
+                )
+            )
+        );
     }
 
     @Delete(uri = "/{id}")
