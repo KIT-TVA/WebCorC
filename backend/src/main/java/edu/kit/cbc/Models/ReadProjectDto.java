@@ -1,8 +1,10 @@
 package edu.kit.cbc.Models;
 
-import java.util.UUID;
-
+import io.micronaut.data.annotation.GeneratedValue;
+import io.micronaut.data.annotation.Id;
+import io.micronaut.data.annotation.MappedEntity;
 import io.micronaut.serde.annotation.Serdeable;
 
 @Serdeable
-public record ReadProjectDto (UUID id, String name, String dateCreated, DirectoryDto files) { }
+@MappedEntity
+public record ReadProjectDto (@Id @GeneratedValue(GeneratedValue.Type.AUTO) Long id, String name, String dateCreated, DirectoryDto files) { }

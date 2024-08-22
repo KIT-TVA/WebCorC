@@ -32,7 +32,7 @@ public class ProjectManagementController {
         //TODO: Input validation
         return HttpResponse.ok(
             new ReadProjectDto(
-                UUID.randomUUID(),
+                2134L,
                 project.name(),
                 ZonedDateTime
                     .now(ZoneOffset.UTC)
@@ -70,7 +70,7 @@ public class ProjectManagementController {
         //TODO: Input validation
         return HttpResponse.ok(
             new ReadProjectDto(
-                UUID.fromString(id),
+                213512L,
                 project.name(),
                 ZonedDateTime
                     .now(ZoneOffset.UTC)
