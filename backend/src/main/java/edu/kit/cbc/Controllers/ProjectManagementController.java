@@ -39,20 +39,17 @@ public class ProjectManagementController {
                     .format(DateTimeFormatter.ISO_INSTANT),
                 new DirectoryDto(
                     "/",
-                    "directory",
                     List.of(
-                        new FileDto("diag.diag", FileType.DIAGRAM),
+                        new FileDto("diag.diag", FileType.diagram),
                         new DirectoryDto(
                             "/aisdbns/",
-                            "directory",
                             List.of(
-                                new FileDto("somefile1", FileType.DIAGRAM),
+                                new FileDto("somefile1", FileType.diagram),
                                 new DirectoryDto(
                                     "/aisdbns/",
-                                    "difub",
                                     List.of()),
-                                new FileDto("somefile2", FileType.JAVA),
-                                new FileDto("somefile3", FileType.PROVE)
+                                new FileDto("somefile2", FileType.java),
+                                new FileDto("somefile3", FileType.prove)
                             )
                         )
                     )
@@ -80,20 +77,17 @@ public class ProjectManagementController {
                     .format(DateTimeFormatter.ISO_INSTANT),
                 new DirectoryDto(
                     "/",
-                    "directory",
                     List.of(
-                        new FileDto("diag.diag", FileType.DIAGRAM),
+                        new FileDto("diag.diag", FileType.diagram),
                         new DirectoryDto(
                             "/aisdbns/",
-                            "directory",
                             List.of(
-                                new FileDto("somefile1", FileType.DIAGRAM),
+                                new FileDto("somefile1", FileType.diagram),
                                 new DirectoryDto(
                                     "/aisdbns/",
-                                    "difub",
                                     List.of()),
-                                new FileDto("somefile2", FileType.JAVA),
-                                new FileDto("somefile3", FileType.PROVE)
+                                new FileDto("somefile2", FileType.java),
+                                new FileDto("somefile3", FileType.prove)
                             )
                         )
                     )
