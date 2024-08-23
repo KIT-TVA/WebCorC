@@ -9,7 +9,7 @@ post:
     content: 
       application/json:
         schema:
-          $ref: '../schema/cbc/formula.yml'
+          $ref: '../../schema/cbc/formula.yml'
 
 
   responses:
@@ -27,18 +27,18 @@ post:
       content:
         application/problem+json:
           schema: 
-            $ref: '../schema/problem.yml'
+            $ref: '../../schema/problem.yml'
 
     '500': 
       description: Generic Server Error 
       content: 
         application/problem+json:
           schema:
-            $ref: '../schema/problem.yml'
+            $ref: '../../schema/problem.yml'
 
     '503': 
       description: Service Unavailable 
       content: 
         application/problem+json:
           schema: 
-            $ref: '../schema/problem.yml'
+            $ref: '../../schema/problem.yml'

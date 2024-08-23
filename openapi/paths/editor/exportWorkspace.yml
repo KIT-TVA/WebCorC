@@ -1,0 +1,27 @@
+post: 
+  operationId: exportWorkspace
+  summary: Export whole workspace as zip file 
+  tags: 
+    - Editor
+  
+  responses:
+    '200': 
+      description: successful export of workspace as zip file
+      content:
+        application/zip:
+          schema:
+            type: string
+            format: binary
+    '500': 
+      description: Generic Server Error 
+      content: 
+        application/problem+json:
+          schema:
+            $ref: '../../schema/problem.yml'
+
+    '503': 
+      description: Service Unavailable 
+      content: 
+        application/problem+json:
+          schema: 
+            $ref: '../../schema/problem.yml'

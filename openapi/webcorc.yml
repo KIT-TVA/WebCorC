@@ -17,27 +17,17 @@ paths:
   /projects/{id}/files/{urn}:
     $ref: './paths/projectFile.yml'
 
-  /editor/export:
-    post:
-      operationId: exportWorkspace
-      summary: Export current Workspace
-      tags:
-        - Editor
-      responses:
-        '200':
-          description: Include Zip file
+  /editor/graph/export:
+    $ref: './paths/editor/exportGraph.yml'
+
+  /editor/workspace/export:
+    $ref: './paths/editor/exportWorkspace.yml'
   
   /editor/generate: 
-    post: 
-      operationId: generateJavaCode
-      tags:
-        - Editor
-      responses:
-        '200':
-          description: Include Zip file of Java Code
+    $ref: './paths/editor/generate.yml'
 
   /editor/verify:
-     $ref: './paths/editor.yml'
+     $ref: './paths/editor/verify.yml'
         
   /editor/jobs/{id}:
     $ref: './paths/editor/jobs.yml'
