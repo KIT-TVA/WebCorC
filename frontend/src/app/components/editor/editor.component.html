@@ -23,14 +23,6 @@
      style="display: flex; align-items: center; vertical-align: center; justify-content: center">
   <add-refinement-widget (onRefinementSelected)="addRootRefinement($event)"
                          text="Add root refinement"></add-refinement-widget>
-
-  <refinement-widget text="Load example program" icon="class" [matMenuTriggerFor]="menu"></refinement-widget>
-  <mat-menu #menu="matMenu">
-    <button mat-menu-item (click)="loadExample('cointoss')">Coin toss</button>
-    <button mat-menu-item (click)="loadExample('tosstillzero')">Toss till 0</button>
-    <button mat-menu-item (click)="loadExample('teleportation')">Teleportation</button>
-    <button mat-menu-item (click)="loadExample('ECNOTalgorithm')">E-CNOT Algorithm</button>
-  </mat-menu>
 </div>
 
 <div *ngIf="rootNode" id="editorContainer" (scroll)="onEditorContainerScrolled()">

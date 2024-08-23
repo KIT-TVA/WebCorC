@@ -100,15 +100,13 @@ export class ProjectExplorerComponent {
  
     if (element.type == "java" || element.type == "key") {
       this.router.navigate(
-        ['file/editor'],
-        { queryParams: { urn: element.path } }
+        ['editor/file/', element.path],
       )
     }
 
     if (element.type == "diagramm") {
       this.router.navigate(
-        [''],
-        { queryParams: { urn: element.path } }
+        ['editor/diagramm/', element.path],
       )
     }
 

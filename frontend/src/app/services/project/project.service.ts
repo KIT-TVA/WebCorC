@@ -9,7 +9,7 @@ import { FakeProjectElement, fakeProjectElementName } from './fake-element';
   providedIn: 'root'
 })
 export class ProjectService {
-  private _rootDir = new ProjectDirectory("/","root")
+  private _rootDir = new ProjectDirectory("","/")
   private _dataChange = new BehaviorSubject<ProjectElement[]>(this._rootDir.content)
 
   constructor() {
@@ -90,11 +90,7 @@ export class ProjectService {
       parentDirPath = parentDirPath.slice(0, parentDirPath.length - 1)
     }
 
-    console.log(parentDirPath)
-
     const parentDir = this.findByPath(parentDirPath)
-
-    console.log(parentDir)
 
     if (!parentDir) {
       throw new Error("Parent dir of element to delete not found")
@@ -104,6 +100,15 @@ export class ProjectService {
     dir.removeElement(name);
     this._dataChange.next(this._rootDir.content)
   }
+
+  public syncFileContent(urn : string, content : string) {
+
+  }
+
+  public getFileContent(urn : string) : string  {
+    return '' 
+  }
+
 
   get root() { 
     return this._rootDir
