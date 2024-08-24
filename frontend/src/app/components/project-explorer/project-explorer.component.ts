@@ -6,7 +6,7 @@ import {MatTreeFlatDataSource, MatTreeFlattener, MatTreeModule} from '@angular/m
 import { ProjectService } from '../../services/project/project.service';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { ProjectElement } from '../../services/project/project-element';
-import { ProjectFile } from '../../services/project/project-file';
+import { CodeFile, DiagrammFile } from '../../services/project/project-files';
 import { ProjectDirectory } from '../../services/project/project-directory';
 import { BehaviorSubject } from 'rxjs';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -92,25 +92,23 @@ export class ProjectExplorerComponent {
     this.treeControl.expand(node)
   }
 
-  navigate(node : FlatNode) {
-    let element = this.nodeToElementMap.get(node) as ProjectFile
+  public navigate(node : FlatNode) {
+    let element = this.nodeToElementMap.get(node) 
     if (!element) {
       return
     }
  
-    if (element.type == "java" || element.type == "key") {
+    if (element instanceof CodeFile) {
       this.router.navigate(
         ['editor/file/', element.path],
       )
     }
 
-    if (element.type == "diagramm") {
+    if (element instanceof DiagrammFile) {
       this.router.navigate(
         ['editor/diagramm/', element.path],
       )
     }
-
-    
   }
 
   hasChild = (_: number, node: FlatNode) => node.expandable;

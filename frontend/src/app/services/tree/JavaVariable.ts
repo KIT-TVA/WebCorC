@@ -11,4 +11,8 @@ export class JavaVariable {
     equalName(variable : JavaVariable) : boolean {
         return this.name == variable.name
     }
+
+    public toString() {
+        return this.type + ' ' + this.name
+    }
 }

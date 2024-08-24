@@ -12,15 +12,15 @@ import {QbCConstant} from "../../translation/constants";
 import {VariablesComponent} from "./variables/variables.component";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {MatMenuModule} from "@angular/material/menu";
-import {MacrosComponent} from "./macros/macros.component";
 import { GlobalConditionsComponent } from './global-conditions/global-conditions.component';
 import { SimpleStatementComponent } from './refinements/simple-statement/simple-statement.component';
 import { ProjectService } from '../../services/project/project.service';
+import { CBCFormula } from '../../services/project/CBCFormula';
 
 @Component({
   selector: 'app-editor',
   standalone: true,
-  imports: [CommonModule, RefinementWidgetComponent, MatButtonModule, AddRefinementWidgetComponent, MatIconModule, MatExpansionModule, FormalParametersComponent, VariablesComponent, MatTooltipModule, MatMenuModule, MacrosComponent, GlobalConditionsComponent],
+  imports: [CommonModule, RefinementWidgetComponent, MatButtonModule, AddRefinementWidgetComponent, MatIconModule, MatExpansionModule, FormalParametersComponent, VariablesComponent, MatTooltipModule, MatMenuModule, GlobalConditionsComponent],
   templateUrl: './editor.component.html',
   styleUrl: './editor.component.scss'
 })
@@ -32,22 +32,61 @@ export class EditorComponent implements AfterViewInit {
 
   private _urn : string = ''
 
-  constructor(public treeService: TreeService, private projectService : ProjectService) {}
+  constructor(public treeService: TreeService, private projectService : ProjectService) {
+
+    this.treeService.deletionNotifier.subscribe((refinement) => {
+      if (treeService.isRootNode(refinement)) {
+        this.rootNode = undefined
+        Refinement.resetIDs()
+      }
+    })
+  }
 
 
   @Input()
   set urn(uniformRessourceName : string) {
-    // prevent reloading the same context
 
+    console.log(uniformRessourceName)
+    console.log(this._urn)
+    // prevent reloading the same context
     if (uniformRessourceName == this._urn) {
       return
     }
+
+    let formula = new CBCFormula()
+
+    if (this.treeService.rootNode) {
+      formula.statement = this.treeService.rootNode
+      formula.javaVariables = this.treeService.variables
+    }
+    
+    if (this._urn !== '' && this.treeService.rootNode) {
+      // save the current state outside of the component
+      this.projectService.syncFileContent(this._urn, formula)
+      this.treeService.deletionNotifier.next(this.treeService.rootNode)
+    }
+    
+   
+
+    // load the diagramm of the file into the component
+    let newFormula = this.projectService.getFileContent(uniformRessourceName) as CBCFormula
+    if (newFormula.statement) {
+
+      this.rootNode = SimpleStatementComponent
+      this.treeService.rootNode = newFormula.statement
+
+      // traverse cbc formula statement tree and create components similar to loadingExample from qbc-Frontend
+
+    } else {
+      this.rootNode = SimpleStatementComponent
+    }
+
+    this._urn = uniformRessourceName
 
   }
 
   
   ngAfterViewInit(): void {
-    Refinement.resetIDs()
     this.rootNode = SimpleStatementComponent
   }
 

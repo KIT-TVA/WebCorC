@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
 import { ProjectDirectory } from './project-directory';
-import { ProjectFile } from './project-file';
+import { CodeFile, DiagrammFile } from './project-files';
 import { ProjectElement } from './project-element';
 import { BehaviorSubject } from 'rxjs';
 import { FakeProjectElement, fakeProjectElementName } from './fake-element';
+import { CBCFormula } from './CBCFormula';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProjectService {
-  private _rootDir = new ProjectDirectory("","/")
+  private _rootDir = new ProjectDirectory("/","root")
   private _dataChange = new BehaviorSubject<ProjectElement[]>(this._rootDir.content)
 
   constructor() {
@@ -60,7 +61,14 @@ export class ProjectService {
 
     dir.removeElement(fakeProjectElementName)
 
-    const newFile = new ProjectFile(parentPath, name, type)
+    let newFile = null 
+
+    switch (type) {
+      case "java" : newFile = new CodeFile(parentPath, name, type); break;
+      case "diagramm" : newFile = new DiagrammFile(parentPath, name, type); break;
+      default: throw new Error("Could not add file, unknown type")
+    }
+    
     if (!dir.addElement(newFile)) {
       throw new Error("Could not add file, maybe you tried to create a duplicate?")
     }
@@ -101,12 +109,22 @@ export class ProjectService {
     this._dataChange.next(this._rootDir.content)
   }
 
-  public syncFileContent(urn : string, content : string) {
+  public syncFileContent(urn : string, content : string | CBCFormula) {
+    const file = this.findByPath(urn)
+    if (!file) {
+      throw new Error("File not found")
+    }
 
+    file.content = content
   }
 
-  public getFileContent(urn : string) : string  {
-    return '' 
+  public getFileContent(urn : string) : string | CBCFormula  {
+    const file = this.findByPath(urn)
+    if (!file) {
+      throw new Error("File not found")
+    }
+
+    return (file  as CodeFile | DiagrammFile).content
   }
 
 

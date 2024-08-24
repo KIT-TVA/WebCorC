@@ -33,17 +33,25 @@ export class FileEditorComponent {
 
   @Input()
   set urn(uniformRessourceName: string) {
+    console.log(uniformRessourceName)
+    console.log(this._urn)
     // prevent reloading the same context
     if (uniformRessourceName == this._urn) {
       return
     }
 
-    // save the current code 
+    if (this._urn == '') {
+      this._urn = uniformRessourceName
+      return
+    }
+
+    // save the current code outside of the component
     this.projectService.syncFileContent(this._urn, this.code)
 
-    let newCode =  this.projectService.getFileContent(uniformRessourceName)
+    // load the code of the file into the component
+    let newCode =  this.projectService.getFileContent(uniformRessourceName) as string
     if (newCode) {
-      this.code = newCode
+      this.code = newCode 
     } else {
       this.code = ""
     }

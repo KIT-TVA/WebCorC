@@ -9,7 +9,6 @@ import {TerminalSymbol} from "../../translation/terminal-symbols";
 import {QubitTokenFactory} from "../../translation/qubit";
 import {RequestError, VerificationResult} from "../../types/net/verification-net-types";
 import {environment} from "../../../environments/environment";
-import {QbCVariable} from "../../translation/variables";
 import {Macro} from "../../types/macro";
 import { JavaVariable } from './JavaVariable';
 
@@ -243,8 +242,10 @@ export class TreeService {
     return this._formalParameters;
   }
 
-  get macros(): Macro[] {
-    return this._macros;
+  get variables() : string[] {
+    let variablesArray : string[] = []
+    this._variables.forEach((javaVariable) => variablesArray.push(javaVariable.toString()))
+    return variablesArray;
   }
 
   get tokenFactories(): QbCTokenFactory[] {
