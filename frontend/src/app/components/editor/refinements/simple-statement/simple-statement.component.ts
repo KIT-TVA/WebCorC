@@ -77,6 +77,10 @@ export class SimpleStatementComponent extends Refinement {
     return this._statement
   }
 
+  set statement(statement : Refinement | undefined) {
+    this._statement = statement
+  }
+
   get statementElementRef() {
     return this._statementElementRef
   }

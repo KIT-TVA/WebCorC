@@ -1,5 +1,6 @@
 import { Condition } from "../../types/condition/condition";
 import { Refinement } from "../../types/refinement";
+import { Statement } from "../../types/statements/statement";
 
 export class CBCFormula {
 
@@ -16,6 +17,6 @@ export class CBCFormula {
         public globalConditions : Condition[]  = [],
         public preCondition : Condition = new Condition(1),
         public postCondition : Condition = new Condition(1),
-        public statement : Refinement | null = null 
+        public statement : Statement | null = null
     ) {}
 }

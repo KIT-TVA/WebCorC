@@ -16,9 +16,9 @@ import {ChooseRefinementComponent} from "../../../choose-refinement/choose-refin
 import {MatIconModule} from "@angular/material/icon";
 import {LinkComponent} from "../link/link.component";
 import { MatButtonModule } from '@angular/material/button';
+import { Statement } from '../../../../types/statements/statement';
 import { SelectionStatement } from '../../../../types/statements/selection-statement';
 import { Position } from '../../../../types/position';
-import { Statement } from '../../../../types/statements/statement';
 
 @Component({
   selector: 'app-selection-statement',
@@ -94,9 +94,6 @@ export class SelectionStatementComponent extends Refinement {
     this._guards.pop()
     this._statements.pop()
 
-    console.log(this._statements.length)
-    console.log(this._statementsElementRefs.length)
-
     if (this._statementsElementRefs.length >= this._statements.length) {
       if (this._statementsElementRefs[this._statementsElementRefs.length - 1]) {
         this._statementsElementRefs[this._statementsElementRefs.length - 1]!.nativeElement!.remove()
@@ -110,6 +107,14 @@ export class SelectionStatementComponent extends Refinement {
 
   get statements() {
     return this._statements
+  }
+
+  set guards(guards : Condition[]) {
+    this._guards = guards
+  }
+
+  importSelection(selection : Refinement | undefined) {
+    this._statements.push(selection)
   }
 
   getStatementByIndex(index : number) : Refinement {

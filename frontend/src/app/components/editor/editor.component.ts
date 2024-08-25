@@ -16,6 +16,8 @@ import { GlobalConditionsComponent } from './global-conditions/global-conditions
 import { SimpleStatementComponent } from './refinements/simple-statement/simple-statement.component';
 import { ProjectService } from '../../services/project/project.service';
 import { CBCFormula } from '../../services/project/CBCFormula';
+import { Statement } from '../../types/statements/statement';
+import { SimpleStatement } from '../../types/statements/simple-statement';
 
 @Component({
   selector: 'app-editor',
@@ -55,7 +57,7 @@ export class EditorComponent implements AfterViewInit {
     let formula = new CBCFormula()
 
     if (this.treeService.rootNode) {
-      formula.statement = this.treeService.rootNode
+      formula.statement = this.treeService.rootNode.export()
       formula.javaVariables = this.treeService.variables
     }
     
@@ -70,19 +72,17 @@ export class EditorComponent implements AfterViewInit {
     // load the diagramm of the file into the component
     let newFormula = this.projectService.getFileContent(uniformRessourceName) as CBCFormula
     this.rootNode = SimpleStatementComponent
-    if (newFormula.statement) {
+    if (newFormula.statement && this.treeService.rootNode) {
 
-      console.log("trying to load the newFormula")
-      console.log(newFormula.statement)
-
-      this.treeService.rootNode = newFormula.statement
+      this.treeService.rootNode.precondition = newFormula.statement.preCondition;
+      this.treeService.rootNode.postcondition = newFormula.statement.postCondition;
+      (this.treeService.rootNode as SimpleStatementComponent).statement = (newFormula.statement as SimpleStatement).statement?.toComponent(this.examplesSpawn) 
 
       // traverse cbc formula statement tree and create components similar to loadingExample from qbc-Frontend
 
     } else {}
 
     this._urn = uniformRessourceName
-
   }
 
   
