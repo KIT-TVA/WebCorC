@@ -168,7 +168,7 @@ export class TreeService {
   }
 
   public isRootNode(refinement: Refinement): boolean {
-    return this.rootNode === refinement;
+    return refinement.id == 1;
   }
 
   public addVariable(name : string) : boolean {

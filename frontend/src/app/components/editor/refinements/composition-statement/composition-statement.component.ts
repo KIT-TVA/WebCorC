@@ -15,6 +15,9 @@ import {MatDialog} from "@angular/material/dialog";
 import {ChooseRefinementComponent} from "../../../choose-refinement/choose-refinement.component";
 import {MatIconModule} from "@angular/material/icon";
 import {LinkComponent} from "../link/link.component";
+import { Statement } from '../../../../types/statements/statement';
+import { CompositionStatement } from '../../../../types/statements/compositon-statement';
+import { Position } from '../../../../types/position';
 
 
 @Component({
@@ -99,4 +102,18 @@ export class CompositionStatementComponent extends Refinement {
     return this._intermediateCondition
   }
  
+
+  override export() : Statement | undefined {
+    return new CompositionStatement(
+      this.getTitle(),
+      this.id,
+      false, "",
+      this.precondition,
+      this.postcondition,
+      new Position(0,0),
+      this.intermediateCondition,
+      this.leftStatement?.export(),
+      this.rightStatement?.export()
+    )
+  }
 }

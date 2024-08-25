@@ -21,6 +21,7 @@ import {VerificationErrorListComponent} from "../../../verification-error-list.c
 import {MatListModule} from "@angular/material/list";
 import {MatDialog} from "@angular/material/dialog";
 import {VerificationResultComponent} from "../../../../dialogs/verification-result.component";
+import { Statement } from '../../../../types/statements/statement';
 
 /**
  * Component to present refinements.
@@ -160,4 +161,8 @@ export class RefinementComponent implements AfterViewInit {
   isRoot() : boolean {
     return this.treeService.isRootNode(this.refinement)
   }
+
+  export() : Statement | undefined {
+    return 
+  } 
 }

@@ -15,6 +15,8 @@ import {MatDialog} from "@angular/material/dialog";
 import {ChooseRefinementComponent} from "../../../choose-refinement/choose-refinement.component";
 import {MatIconModule} from "@angular/material/icon";
 import {LinkComponent} from "../link/link.component";
+import { RepetitionStatement } from '../../../../types/statements/repetition-statement';
+import { Position } from '../../../../types/position';
 
 @Component({
   selector: 'app-repetition-statement',
@@ -88,7 +90,23 @@ export class RepetitionStatementComponent extends Refinement {
   get guardCondition() : Condition {
     return this._guardCondition;
   }
- 
 
-
+  override export() {
+    return new RepetitionStatement(
+      this.getTitle(),
+      this.id,
+      false,
+      "",
+      this.precondition,
+      this.postcondition,
+      new Position(0, 0),
+      false,
+      false,
+      false,
+      this.invariantCondition,
+      this.variantCondition,
+      this.guardCondition,
+      this.loopStatement?.export()
+    )
+  }
 }

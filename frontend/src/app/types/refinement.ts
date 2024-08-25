@@ -28,8 +28,8 @@ export abstract class Refinement {
     this._onDragEndEmitter = new ReplaySubject<CdkDragEnd>();
   }
 
-  public static resetIDs(): void {
-    this.NEXT_ID = 1;
+  public static resetIDs(next: number = 1): void {
+    this.NEXT_ID = next;
   }
 
   isConditionEditable(condition: Condition): boolean {

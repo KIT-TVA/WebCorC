@@ -37,6 +37,7 @@ export class EditorComponent implements AfterViewInit {
     this.treeService.deletionNotifier.subscribe((refinement) => {
       if (treeService.isRootNode(refinement)) {
         this.rootNode = undefined
+        this.treeService.rootNode = undefined
         Refinement.resetIDs()
       }
     })
@@ -45,14 +46,12 @@ export class EditorComponent implements AfterViewInit {
 
   @Input()
   set urn(uniformRessourceName : string) {
-
-    console.log(uniformRessourceName)
-    console.log(this._urn)
     // prevent reloading the same context
     if (uniformRessourceName == this._urn) {
       return
     }
 
+    console.log("create new formula")
     let formula = new CBCFormula()
 
     if (this.treeService.rootNode) {
@@ -70,16 +69,17 @@ export class EditorComponent implements AfterViewInit {
 
     // load the diagramm of the file into the component
     let newFormula = this.projectService.getFileContent(uniformRessourceName) as CBCFormula
+    this.rootNode = SimpleStatementComponent
     if (newFormula.statement) {
 
-      this.rootNode = SimpleStatementComponent
+      console.log("trying to load the newFormula")
+      console.log(newFormula.statement)
+
       this.treeService.rootNode = newFormula.statement
 
       // traverse cbc formula statement tree and create components similar to loadingExample from qbc-Frontend
 
-    } else {
-      this.rootNode = SimpleStatementComponent
-    }
+    } else {}
 
     this._urn = uniformRessourceName
 
@@ -87,7 +87,7 @@ export class EditorComponent implements AfterViewInit {
 
   
   ngAfterViewInit(): void {
-    this.rootNode = SimpleStatementComponent
+    
   }
 
   addRootRefinement(type: Type<Refinement>): void {

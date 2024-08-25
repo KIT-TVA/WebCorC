@@ -15,6 +15,8 @@ import {MatDialog} from "@angular/material/dialog";
 import {ChooseRefinementComponent} from "../../../choose-refinement/choose-refinement.component";
 import {MatIconModule} from "@angular/material/icon";
 import {LinkComponent} from "../link/link.component";
+import { SimpleStatement } from '../../../../types/statements/simple-statement';
+import { Position } from '../../../../types/position';
 
 @Component({
   selector: 'app-simple-statement',
@@ -85,6 +87,19 @@ export class SimpleStatementComponent extends Refinement {
 
   get condition() : Condition {
     return this._condition
+  }
+
+  override export() {
+    return new SimpleStatement(
+      this.getTitle(),
+      this.id,
+      false, 
+      "",
+      this.precondition,
+      this.postcondition,
+      new Position(0,0),
+      this.statement?.export()
+    )
   }
 
 }
