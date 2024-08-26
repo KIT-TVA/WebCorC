@@ -7,4 +7,4 @@ import io.micronaut.serde.annotation.Serdeable;
 
 @Serdeable
 @MappedEntity
-public record ReadProjectDto (@Id @GeneratedValue(GeneratedValue.Type.AUTO) Long id, String name, String dateCreated, DirectoryDto files) { }
+public record ReadProjectDto (@Id @GeneratedValue(GeneratedValue.Type.AUTO) String id, String name, String dateCreated, DirectoryDto files) { }

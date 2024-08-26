@@ -20,6 +20,7 @@
     <micronaut.aot.enabled>false</micronaut.aot.enabled>
     <micronaut.aot.packageName>edu.kit.cbc.aot.generated</micronaut.aot.packageName>
     <micronaut.runtime>netty</micronaut.runtime>
+    <micronaut.test.resources.enabled>true</micronaut.test.resources.enabled>
     <exec.mainClass>edu.kit.cbc.Application</exec.mainClass>
   </properties>
 
@@ -68,17 +69,7 @@
     </dependency>
     <dependency>
       <groupId>io.micronaut.data</groupId>
-      <artifactId>micronaut-data-jdbc</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.micronaut.flyway</groupId>
-      <artifactId>micronaut-flyway</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.micronaut.sql</groupId>
-      <artifactId>micronaut-jdbc-hikari</artifactId>
+      <artifactId>micronaut-data-mongodb</artifactId>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -92,13 +83,8 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>org.flywaydb</groupId>
-      <artifactId>flyway-mysql</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mariadb.jdbc</groupId>
-      <artifactId>mariadb-java-client</artifactId>
+      <groupId>org.mongodb</groupId>
+      <artifactId>mongodb-driver-sync</artifactId>
       <scope>runtime</scope>
     </dependency>
     <dependency>
@@ -136,6 +122,17 @@
             <path>
               <groupId>io.micronaut.data</groupId>
               <artifactId>micronaut-data-processor</artifactId>
+              <version>${micronaut.data.version}</version>
+              <exclusions>
+                <exclusion>
+                  <groupId>io.micronaut</groupId>
+                  <artifactId>micronaut-inject</artifactId>
+                </exclusion>
+              </exclusions>
+            </path>
+            <path>
+              <groupId>io.micronaut.data</groupId>
+              <artifactId>micronaut-data-document-processor</artifactId>
               <version>${micronaut.data.version}</version>
               <exclusions>
                 <exclusion>

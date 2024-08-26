@@ -12,16 +12,11 @@
 - [Micronaut Test Resources documentation](https://micronaut-projects.github.io/micronaut-test-resources/latest/guide/)
 
 
-## Feature flyway documentation
+## Feature data-mongodb documentation
 
-- [Micronaut Flyway Database Migration documentation](https://micronaut-projects.github.io/micronaut-flyway/latest/guide/index.html)
+- [Micronaut Data MongoDB documentation](https://micronaut-projects.github.io/micronaut-data/latest/guide/#mongo)
 
-- [https://flywaydb.org/](https://flywaydb.org/)
-
-
-## Feature data-jdbc documentation
-
-- [Micronaut Data JDBC documentation](https://micronaut-projects.github.io/micronaut-data/latest/guide/index.html#jdbc)
+- [https://docs.mongodb.com](https://docs.mongodb.com)
 
 
 ## Feature micronaut-aot documentation
@@ -37,11 +32,6 @@
 ## Feature serialization-jackson documentation
 
 - [Micronaut Serialization Jackson Core documentation](https://micronaut-projects.github.io/micronaut-serialization/latest/guide/)
-
-
-## Feature jdbc-hikari documentation
-
-- [Micronaut Hikari JDBC Connection Pool documentation](https://micronaut-projects.github.io/micronaut-sql/latest/guide/index.html#jdbc)
 
 
 ## Feature validation documentation
