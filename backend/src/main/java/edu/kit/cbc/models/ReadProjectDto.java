@@ -1,4 +1,4 @@
-package edu.kit.cbc.Models;
+package edu.kit.cbc.models;
 
 import io.micronaut.data.annotation.GeneratedValue;
 import io.micronaut.data.annotation.Id;

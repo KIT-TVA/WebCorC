@@ -1,4 +1,4 @@
-package edu.kit.cbc.Models;
+package edu.kit.cbc.models;
 
 import java.util.List;
 import java.lang.IllegalArgumentException;

@@ -1,4 +1,4 @@
-package edu.kit.cbc.Controllers;
+package edu.kit.cbc.controllers;
 
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;

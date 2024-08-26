@@ -1,4 +1,4 @@
-package edu.kit.cbc.Models;
+package edu.kit.cbc.models;
 
 public enum FileType {
     key,

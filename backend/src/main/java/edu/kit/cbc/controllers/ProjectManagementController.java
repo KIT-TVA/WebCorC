@@ -1,4 +1,4 @@
-package edu.kit.cbc.Controllers;
+package edu.kit.cbc.controllers;
 
 import java.time.ZonedDateTime;
 import java.time.ZoneOffset;
@@ -6,11 +6,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 import java.util.List;
 
-import edu.kit.cbc.Models.CreateProjectDto;
-import edu.kit.cbc.Models.DirectoryDto;
-import edu.kit.cbc.Models.FileDto;
-import edu.kit.cbc.Models.FileType;
-import edu.kit.cbc.Models.ReadProjectDto;
+import edu.kit.cbc.models.CreateProjectDto;
+import edu.kit.cbc.models.DirectoryDto;
+import edu.kit.cbc.models.FileDto;
+import edu.kit.cbc.models.FileType;
+import edu.kit.cbc.models.ReadProjectDto;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;

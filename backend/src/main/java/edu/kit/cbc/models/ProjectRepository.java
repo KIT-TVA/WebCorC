@@ -1,4 +1,4 @@
-package edu.kit.cbc.Models;
+package edu.kit.cbc.models;
 
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;
