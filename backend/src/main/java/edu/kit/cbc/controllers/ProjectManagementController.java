@@ -3,7 +3,6 @@ package edu.kit.cbc.controllers;
 import java.time.ZonedDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.UUID;
 import java.util.List;
 
 import edu.kit.cbc.models.CreateProjectDto;
@@ -22,14 +21,14 @@ import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Produces;
 import io.micronaut.http.annotation.Put;
 import io.micronaut.http.annotation.QueryValue;
+import jakarta.validation.Valid;
 
 @Controller("/projects")
 public class ProjectManagementController {
     @Post
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public HttpResponse<ReadProjectDto> createProject(@Body CreateProjectDto project) {
-        //TODO: Input validation
+    public HttpResponse<ReadProjectDto> createProject(@Body @Valid CreateProjectDto project) {
         return HttpResponse.ok(
             new ReadProjectDto(
                 2134L,
@@ -66,8 +65,8 @@ public class ProjectManagementController {
 
     @Put(uri = "/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public HttpResponse<ReadProjectDto> modifyProject(@QueryValue String id, @Body CreateProjectDto project) {
-        //TODO: Input validation
+    @Consumes(MediaType.APPLICATION_JSON)
+    public HttpResponse<ReadProjectDto> modifyProject(@QueryValue String id, @Body @Valid CreateProjectDto project) {
         return HttpResponse.ok(
             new ReadProjectDto(
                 213512L,
