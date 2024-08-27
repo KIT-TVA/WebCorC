@@ -85,6 +85,10 @@ export class SimpleStatementComponent extends Refinement {
     return this._statementElementRef
   }
 
+  set statementElementRef(ref : ElementRef<any> | undefined) {
+    this._statementElementRef = ref
+  }
+
   public isRoot() : boolean {
     return this.treeService.isRootNode(this);
   }

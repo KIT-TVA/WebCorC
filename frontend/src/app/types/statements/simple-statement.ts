@@ -1,5 +1,5 @@
 
-import { ViewContainerRef } from "@angular/core";
+import { ComponentRef, ViewContainerRef } from "@angular/core";
 import { Postcondition } from "../condition/postcondition";
 import { Precondition } from "../condition/precondition";
 import { Position } from "../position";
@@ -23,11 +23,24 @@ export class SimpleStatement extends Statement {
         super(name, "simple", id, proven, comment, preCondition, postCondition, position)
     }
 
-    public override toComponent(spawn : ViewContainerRef): Refinement {
+    public override toComponent(spawn : ViewContainerRef): [ refinement : Refinement, ref : ComponentRef<Refinement>] {
+        console.log("simple statement to component")
         const statementRef = spawn.createComponent(SimpleStatementComponent)
         const statement = statementRef.instance as SimpleStatementComponent
         statement.precondition = this.preCondition
         statement.postcondition = this.postCondition
-        return statement
+
+        if (this.statement) {
+
+            console.log("Root Statement")
+
+            const child = this.statement.toComponent(spawn)
+
+            console.log(child)
+            
+            statement.statement = child?.[0]
+            statement.statementElementRef = child?.[1].location
+        }
+        return [statement, statementRef]
     }
 }

@@ -1,4 +1,4 @@
-import { ViewContainerRef } from "@angular/core";
+import { ComponentRef, ViewContainerRef } from "@angular/core";
 import { Condition } from "../condition/condition";
 import { Postcondition } from "../condition/postcondition";
 import { Precondition } from "../condition/precondition";
@@ -24,7 +24,7 @@ export class SelectionStatement extends Statement {
         super(name, "selection", id, proven, comment, preCondition, postCondition, position)
     }
 
-    public override toComponent(spawn: ViewContainerRef): Refinement | undefined {
+    public override toComponent(spawn: ViewContainerRef): [ refinement : Refinement, ref : ComponentRef<Refinement>] {
         const statementRef = spawn.createComponent(SelectionStatementComponent)
         const statement = statementRef.instance as SelectionStatementComponent
         statement.precondition = this.preCondition
@@ -34,9 +34,9 @@ export class SelectionStatement extends Statement {
 
         // Todo : Import the childs correctly and link them 
         for (const child of this.statements) {
-            statement.importSelection(child.toComponent(spawn))   
+            
         }
 
-        return statement
+        return [statement, statementRef]
     }
 }

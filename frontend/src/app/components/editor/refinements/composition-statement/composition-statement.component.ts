@@ -86,21 +86,41 @@ export class CompositionStatementComponent extends Refinement {
     return this._leftStatement
   }
 
+  set leftStatement(statement : Refinement | undefined) {
+    this._leftStatement = this.leftStatement
+  }
+
   get leftStatementRef() : ElementRef | undefined {
     return this._leftStatementRef
   }
+
+  set leftStatementRef(ref : ElementRef | undefined) {
+    this._leftStatementRef = ref
+  } 
 
   get rightStatement() : Refinement | undefined {
     return this._rightStatement
   }
 
+  set rightStatement(statement : Refinement | undefined) {
+    this._rightStatement = statement
+  } 
+
   get rightStatementRef() : ElementRef | undefined {
     return this._rightStatementRef
+  }
+
+  set rightStatementRef(ref : ElementRef | undefined) {
+    this._rightStatementRef = ref
   }
 
   get intermediateCondition() : Condition {
     return this._intermediateCondition
   }
+  
+  set intermediateCondition(condition : Condition) {
+    this._intermediateCondition = condition
+  } 
  
 
   override export() : Statement | undefined {

@@ -18,6 +18,7 @@ import { ProjectService } from '../../services/project/project.service';
 import { CBCFormula } from '../../services/project/CBCFormula';
 import { Statement } from '../../types/statements/statement';
 import { SimpleStatement } from '../../types/statements/simple-statement';
+import { Condition } from '../../types/condition/condition';
 
 @Component({
   selector: 'app-editor',
@@ -30,19 +31,11 @@ export class EditorComponent implements AfterViewInit {
   @ViewChild("examplesSpawn", {read: ViewContainerRef, static: false}) examplesSpawn!: ViewContainerRef;
   @ViewChild(NgComponentOutlet, {static: false}) rootNodeOutlet!: NgComponentOutlet;
 
-  rootNode: Type<Refinement> | undefined;
+  rootNode: Type<SimpleStatementComponent> | undefined
 
   private _urn : string = ''
 
   constructor(public treeService: TreeService, private projectService : ProjectService) {
-
-    this.treeService.deletionNotifier.subscribe((refinement) => {
-      if (treeService.isRootNode(refinement)) {
-        this.rootNode = undefined
-        this.treeService.rootNode = undefined
-        Refinement.resetIDs()
-      }
-    })
   }
 
 
@@ -53,34 +46,72 @@ export class EditorComponent implements AfterViewInit {
       return
     }
 
-    console.log("create new formula")
     let formula = new CBCFormula()
-
     if (this.treeService.rootNode) {
       formula.statement = this.treeService.rootNode.export()
       formula.javaVariables = this.treeService.variables
     }
-    
+
     if (this._urn !== '' && this.treeService.rootNode) {
       // save the current state outside of the component
       this.projectService.syncFileContent(this._urn, formula)
-      this.treeService.deletionNotifier.next(this.treeService.rootNode)
     }
-    
-   
+
+
+    let child : Refinement | undefined
+
+    if (this.treeService.rootNode) {
+      child = (this.treeService.rootNode as SimpleStatementComponent).statement
+    }
+
+    if (this.treeService.rootNode && child) {
+      console.log("delete")
+
+      this.rootNode = SimpleStatementComponent
+
+      this.treeService.rootNode = undefined
+
+      const rootRef = this.rootNodeOutlet['_componentRef'].instance as SimpleStatementComponent
+
+      if (rootRef.statement) {
+        this.treeService.deletionNotifier.next(rootRef.statement)
+      }
+      
+
+      this.examplesSpawn.clear()
+
+      Refinement.resetIDs(2)
+    }
 
     // load the diagramm of the file into the component
     let newFormula = this.projectService.getFileContent(uniformRessourceName) as CBCFormula
-    this.rootNode = SimpleStatementComponent
-    if (newFormula.statement && this.treeService.rootNode) {
+    console.log(newFormula)
+    if (newFormula.statement) {
+      
+      const root =  this.rootNodeOutlet['_componentRef'].instance as SimpleStatementComponent
 
-      this.treeService.rootNode.precondition = newFormula.statement.preCondition;
-      this.treeService.rootNode.postcondition = newFormula.statement.postCondition;
-      (this.treeService.rootNode as SimpleStatementComponent).statement = (newFormula.statement as SimpleStatement).statement?.toComponent(this.examplesSpawn) 
+      root.precondition = newFormula.statement.preCondition
+      root.postcondition = newFormula.statement.postCondition
 
+      const child = (newFormula.statement as SimpleStatement).statement?.toComponent(this.examplesSpawn)
+
+      console.log("child")
+      console.log(child)
+
+
+      if (child) {
+        root.statement = child?.[0]
+        root.statementElementRef = child?.[1].location
+      }
+
+      
+      
       // traverse cbc formula statement tree and create components similar to loadingExample from qbc-Frontend
 
-    } else {}
+    } else {
+      console.log("create new formula")
+      this.rootNode = SimpleStatementComponent
+    }
 
     this._urn = uniformRessourceName
   }
@@ -90,7 +121,7 @@ export class EditorComponent implements AfterViewInit {
     
   }
 
-  addRootRefinement(type: Type<Refinement>): void {
+  addRootRefinement(type: Type<SimpleStatementComponent>): void {
     this.rootNode = type;
   }
 

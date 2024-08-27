@@ -19,12 +19,6 @@
   </mat-accordion>
 </div>
 
-<div *ngIf="!rootNode"
-     style="display: flex; align-items: center; vertical-align: center; justify-content: center">
-  <add-refinement-widget (onRefinementSelected)="addRootRefinement($event)"
-                         text="Add root refinement"></add-refinement-widget>
-</div>
-
 <div *ngIf="rootNode" id="editorContainer" (scroll)="onEditorContainerScrolled()">
   <!-- Control elements for the scrollWidth and scrollHeight of the editor container -->
   <div id="editorWidthController"></div>

@@ -1,4 +1,4 @@
-import { ViewContainerRef } from "@angular/core";
+import { ComponentRef, ViewContainerRef } from "@angular/core";
 import { Postcondition } from "../condition/postcondition";
 import { Precondition } from "../condition/precondition";
 import { Position } from "../position";
@@ -18,7 +18,8 @@ export class Statement {
     ) {}
 
 
-    public toComponent(spawn : ViewContainerRef) : Refinement | undefined {
+    public toComponent(spawn : ViewContainerRef) : [ refinement : Refinement, ref : ComponentRef<Refinement>] | undefined {
+        console.log("undefined Component")
         return
     }
 }
