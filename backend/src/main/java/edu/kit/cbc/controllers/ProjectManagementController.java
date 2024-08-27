@@ -1,14 +1,6 @@
 package edu.kit.cbc.controllers;
 
-import java.time.ZonedDateTime;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-
 import edu.kit.cbc.models.CreateProjectDto;
-import edu.kit.cbc.models.DirectoryDto;
-import edu.kit.cbc.models.FileDto;
-import edu.kit.cbc.models.FileType;
 import edu.kit.cbc.models.ReadProjectDto;
 import edu.kit.cbc.models.ProjectService;
 import io.micronaut.http.HttpResponse;
@@ -41,25 +33,13 @@ public class ProjectManagementController {
     @Consumes(MediaType.APPLICATION_JSON)
     public HttpResponse<ReadProjectDto> createProject(@Body @Valid CreateProjectDto project) {
         return HttpResponse.ok(
-            projectService.save(
-                new ReadProjectDto(
-                    null,
-                    project.name(),
-                    ZonedDateTime
-                        .now(ZoneOffset.UTC)
-                        .format(DateTimeFormatter.ISO_INSTANT),
-                    new DirectoryDto(
-                        "/",
-                        List.of()
-                    )
-                )
-            )
+            projectService.create(project)
         );
     }
 
     @Get(uri = "/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public HttpResponse<ReadProjectDto> getProject(String id) {
+    public HttpResponse<ReadProjectDto> getProject(@QueryValue String id) {
         return HttpResponse.ok(projectService.findById(id));
     }
 
@@ -67,37 +47,14 @@ public class ProjectManagementController {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public HttpResponse<ReadProjectDto> modifyProject(@QueryValue String id, @Body @Valid CreateProjectDto project) {
-        return HttpResponse.ok(
-            new ReadProjectDto(
-                "213512L",
-                project.name(),
-                ZonedDateTime
-                    .now(ZoneOffset.UTC)
-                    .format(DateTimeFormatter.ISO_INSTANT),
-                new DirectoryDto(
-                    "/",
-                    List.of(
-                        new FileDto("diag.diag", FileType.diagram),
-                        new DirectoryDto(
-                            "/aisdbns/",
-                            List.of(
-                                new FileDto("somefile1", FileType.diagram),
-                                new DirectoryDto(
-                                    "/aisdbns/",
-                                    List.of()),
-                                new FileDto("somefile2", FileType.java),
-                                new FileDto("somefile3", FileType.prove)
-                            )
-                        )
-                    )
-                )
-            )
-        );
+        return HttpResponse.ok(projectService.updateById(id, project));
     }
 
     @Delete(uri = "/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public HttpResponse<String> deleteProject(long id) {
-        return HttpResponse.serverError(String.format("NOT IMPLEMENTED %d", id));
+    public HttpResponse<String> deleteProject(@QueryValue String id) {
+        projectService.deleteById(id);
+        //TODO: add generic non-error response format 
+        return HttpResponse.ok(String.format("%s has been deleted", id));
     }
 }

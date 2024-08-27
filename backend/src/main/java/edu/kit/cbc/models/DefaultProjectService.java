@@ -1,5 +1,10 @@
 package edu.kit.cbc.models;
 
+import java.util.List;
+import java.time.ZonedDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+
 import jakarta.inject.Singleton;
 import jakarta.validation.constraints.NotBlank;
 
@@ -11,11 +16,39 @@ class DefaultProjectService implements ProjectService {
         this.projectRepository = projectRepository;
     }
 
-    public ReadProjectDto save(ReadProjectDto project) {
-        return projectRepository.save(project);
+    public ReadProjectDto create(CreateProjectDto project) {
+        return projectRepository.save(
+            new ReadProjectDto(
+                null,
+                project.name(),
+                ZonedDateTime
+                    .now(ZoneOffset.UTC)
+                    .format(DateTimeFormatter.ISO_INSTANT),
+                new DirectoryDto(
+                    "/",
+                    List.of()
+                )
+            )
+        );
+    }
+
+    public ReadProjectDto updateById(@NotBlank String id, CreateProjectDto project) {
+        ReadProjectDto tmp = findById(id);
+        return projectRepository.update(
+            new ReadProjectDto(
+                tmp.id(),
+                project.name(),
+                tmp.dateCreated(),
+                tmp.files()
+            )
+        );
     }
 
     public ReadProjectDto findById(@NotBlank String id) {
         return projectRepository.findById(id).orElseThrow();
+    }
+
+    public void deleteById(@NotBlank String id) {
+        projectRepository.deleteById(id);
     }
 }
