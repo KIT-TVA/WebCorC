@@ -59,8 +59,8 @@ public class ProjectManagementController {
 
     @Get(uri = "/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public HttpResponse<String> getProject(long id) {
-        return HttpResponse.serverError(String.format("NOT IMPLEMENTED %d", id));
+    public HttpResponse<ReadProjectDto> getProject(String id) {
+        return HttpResponse.ok(projectService.findById(id));
     }
 
     @Put(uri = "/{id}")

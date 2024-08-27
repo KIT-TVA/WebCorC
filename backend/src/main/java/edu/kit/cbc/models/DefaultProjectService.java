@@ -1,6 +1,7 @@
 package edu.kit.cbc.models;
 
 import jakarta.inject.Singleton;
+import jakarta.validation.constraints.NotBlank;
 
 @Singleton
 class DefaultProjectService implements ProjectService {
@@ -12,5 +13,9 @@ class DefaultProjectService implements ProjectService {
 
     public ReadProjectDto save(ReadProjectDto project) {
         return projectRepository.save(project);
+    }
+
+    public ReadProjectDto findById(@NotBlank String id) {
+        return projectRepository.findById(id).orElseThrow();
     }
 }
