@@ -1,8 +1,8 @@
 package edu.kit.cbc.models;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.Objects;
 
 import io.micronaut.context.annotation.Primary;
@@ -24,7 +24,7 @@ public class FileDirectoryDtoSerde implements Serde<FileDirectoryDto> {
             String urn = "";
             InodeType inodeType = null;
             FileType fileType = null;
-            List<FileDirectoryDto> content = null;
+            Set<FileDirectoryDto> content = null;
             while (key != null) {
                 switch (key) {
                     case "urn":
@@ -37,7 +37,7 @@ public class FileDirectoryDtoSerde implements Serde<FileDirectoryDto> {
                         fileType = FileType.valueOf(innerDecoder.decodeString());
                         break;
                     case "content":
-                        content = new ArrayList<FileDirectoryDto>();
+                        content = new HashSet<FileDirectoryDto>();
                         Decoder wart = innerDecoder.decodeArray();
                         while (wart.hasNextArrayValue()) {
                             content.add(deserialize(wart, context, type));
