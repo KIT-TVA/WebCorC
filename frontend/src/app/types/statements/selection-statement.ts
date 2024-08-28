@@ -34,7 +34,11 @@ export class SelectionStatement extends Statement {
 
         // Todo : Import the childs correctly and link them 
         for (const child of this.statements) {
-            
+            const childElement = child.toComponent(spawn)
+
+            statement.importSelectionStatement(childElement?.[0])
+            statement.importSelectionStatementRef(childElement?.[1].location)
+        
         }
 
         return [statement, statementRef]

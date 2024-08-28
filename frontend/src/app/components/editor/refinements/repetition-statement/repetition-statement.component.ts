@@ -75,20 +75,40 @@ export class RepetitionStatementComponent extends Refinement {
     return this._loopStatement;
   }
 
+  set loopStatement(statement : Refinement | undefined) {
+    this._loopStatement = statement
+  } 
+
   get loopStatementRef() : ElementRef | undefined {
     return this._loopStatementRef;
   }
 
+  set loopStatementRef(ref : ElementRef | undefined) {
+    this._loopStatementRef = ref
+  } 
+
   get invariantCondition() : Condition {
     return this._invariantCondition;
+  }
+
+  set invariantCondition(condition : Condition) {
+    this._invariantCondition = condition
   }
 
   get variantCondition() : Condition {
     return this._variantCondition;
   }
 
+  set variantCondition(condition : Condition) {
+    this._variantCondition = condition
+  }
+
   get guardCondition() : Condition {
     return this._guardCondition;
+  }
+
+  set guardCondition(condition : Condition) {
+    this._guardCondition = condition
   }
 
   override export() {

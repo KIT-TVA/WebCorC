@@ -70,9 +70,18 @@ export class StrongWeakStatementComponent extends Refinement {
     return this._statement
   }
 
+  set statement(statement : Refinement | undefined) {
+    this._statement = statement
+  }
+
   get statementRef() : ElementRef | undefined {
     return this._statementRef
   }
+
+  set statementRef(ref : ElementRef | undefined) {
+    this._statementRef = ref
+  }
+
 
   get weakPreCondition() : Condition {
     return this._weakPreCondition

@@ -24,20 +24,13 @@ export class SimpleStatement extends Statement {
     }
 
     public override toComponent(spawn : ViewContainerRef): [ refinement : Refinement, ref : ComponentRef<Refinement>] {
-        console.log("simple statement to component")
         const statementRef = spawn.createComponent(SimpleStatementComponent)
         const statement = statementRef.instance as SimpleStatementComponent
         statement.precondition = this.preCondition
         statement.postcondition = this.postCondition
 
         if (this.statement) {
-
-            console.log("Root Statement")
-
             const child = this.statement.toComponent(spawn)
-
-            console.log(child)
-            
             statement.statement = child?.[0]
             statement.statementElementRef = child?.[1].location
         }

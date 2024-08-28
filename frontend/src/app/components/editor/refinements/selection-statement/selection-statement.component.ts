@@ -113,8 +113,12 @@ export class SelectionStatementComponent extends Refinement {
     this._guards = guards
   }
 
-  importSelection(selection : Refinement | undefined) {
+  importSelectionStatement(selection : Refinement | undefined) {
     this._statements.push(selection)
+  }
+
+  importSelectionStatementRef(ref : ElementRef | undefined) {
+    this._statementsElementRefs.push(ref)
   }
 
   getStatementByIndex(index : number) : Refinement {
