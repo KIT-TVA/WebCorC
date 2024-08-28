@@ -16,7 +16,7 @@ export class StrongWeakStatement extends Statement {
         preCondition : Precondition,
         postCondition : Postcondition,
         position : Position,
-        public statement : Statement
+        public statement : Statement | undefined 
 
     ) {
         super(name, "strongWeak", id, proven, comment, preCondition, postCondition, position)
@@ -29,11 +29,13 @@ export class StrongWeakStatement extends Statement {
         statement.precondition = this.preCondition
         statement.postcondition = this.postCondition
 
-        const child = this.statement.toComponent(spawn)
+        if (this.statement) {
+            const child = this.statement.toComponent(spawn)
 
-        if (child) {
-            statement.statement = child?.[0]
-            statement.statementRef = child?.[1].location
+            if (child) {
+                statement.statement = child?.[0]
+                statement.statementRef = child?.[1].location
+            }
         }
 
         return [statement, statementRef]

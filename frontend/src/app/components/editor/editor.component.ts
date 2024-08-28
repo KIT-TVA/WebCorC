@@ -60,7 +60,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       child = (this.treeService.rootNode as SimpleStatementComponent).statement
     }
 
-    Refinement.resetIDs()
+    Refinement.resetIDs(1)
 
     this.rootNode = SimpleStatementComponent
 
@@ -68,7 +68,6 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     if (child) {
       this.treeService.deletionNotifier.next(child)
       this.examplesSpawn.clear()
-      Refinement.resetIDs(2)
     }
 
     if (this._viewInit) {
@@ -103,6 +102,8 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
 
   private loadFileContent() : void {
     // load the diagramm of the file into the component
+
+    Refinement.resetIDs(2)
 
     let newFormula = this.projectService.getFileContent(this._urn) as CBCFormula
     if (newFormula.statement) {

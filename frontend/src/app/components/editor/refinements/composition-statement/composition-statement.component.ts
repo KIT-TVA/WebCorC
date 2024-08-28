@@ -87,7 +87,7 @@ export class CompositionStatementComponent extends Refinement {
   }
 
   set leftStatement(statement : Refinement | undefined) {
-    this._leftStatement = this.leftStatement
+    this._leftStatement = statement
   }
 
   get leftStatementRef() : ElementRef | undefined {

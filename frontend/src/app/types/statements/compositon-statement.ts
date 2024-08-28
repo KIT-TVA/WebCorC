@@ -26,7 +26,6 @@ export class CompositionStatement extends Statement {
     }
 
     public override toComponent(spawn: ViewContainerRef): [ refinement : Refinement, ref : ComponentRef<Refinement>] {
-        console.log("Composition Statement to Component")
         const statementRef = spawn.createComponent(CompositionStatementComponent)
         const statement = statementRef.instance as CompositionStatementComponent
         statement.precondition = this.preCondition
@@ -36,10 +35,16 @@ export class CompositionStatement extends Statement {
         
         if (this.leftStatement) {
             const left = this.leftStatement.toComponent(spawn)
+
+            console.log("left", left)
+
             if (left) {
                 statement.leftStatement = left?.[0]
                 statement.leftStatementRef = left?.[1].location
             }
+
+            console.log("leftStatement", statement.leftStatement)
+            console.log("leftStatementRef", statement.leftStatementRef)
         }
 
         if (this.rightStatement) {
