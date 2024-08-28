@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NuMonacoEditorModule } from '@ng-util/monaco-editor';
 import { FormsModule } from '@angular/forms';
@@ -15,14 +15,16 @@ import { ProjectService } from '../../services/project/project.service';
   templateUrl: './file-editor.component.html',
   styleUrl: './file-editor.component.scss'
 })
-export class FileEditorComponent {
+export class FileEditorComponent implements AfterViewInit,OnDestroy {
 
   private _urn : string = ''
+  private _viewInit : boolean = false
   
   public code : string = '';
 
 
   constructor(private projectService : ProjectService) {}
+  
 
 
   editorOptions =  {
@@ -33,8 +35,6 @@ export class FileEditorComponent {
 
   @Input()
   set urn(uniformRessourceName: string) {
-    console.log(uniformRessourceName)
-    console.log(this._urn)
     // prevent reloading the same context
     if (uniformRessourceName == this._urn) {
       return
@@ -44,9 +44,12 @@ export class FileEditorComponent {
       this._urn = uniformRessourceName
       return
     }
-
-    // save the current code outside of the component
-    this.projectService.syncFileContent(this._urn, this.code)
+    
+    if (this.code !== '') {
+      // save the current code outside of the component
+      this.projectService.syncFileContent(this._urn, this.code)
+    }
+    
 
     // load the code of the file into the component
     let newCode =  this.projectService.getFileContent(uniformRessourceName) as string
@@ -61,5 +64,26 @@ export class FileEditorComponent {
     this._urn = uniformRessourceName
   }
 
+  public ngAfterViewInit(): void {
+    
+    let newCode =  this.projectService.getFileContent(this._urn) as string
+    if (newCode) {
+      this.code = newCode 
+    } else {
+      this.code = ""
+    }
 
+    this._viewInit = true
+  
+  }
+
+
+  public ngOnDestroy(): void {
+
+    console.log(this.code)
+
+    this.projectService.syncFileContent(this._urn, this.code)
+
+    this._viewInit = false
+  }
 }
