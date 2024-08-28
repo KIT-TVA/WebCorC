@@ -53,6 +53,7 @@ public class ProjectManagementController {
     @Delete(uri = "/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public HttpResponse<String> deleteProject(@QueryValue String id) {
+        //TODO: delete individual project files as well
         projectService.deleteById(id);
         //TODO: add generic non-error response format 
         return HttpResponse.ok(String.format("%s has been deleted", id));
