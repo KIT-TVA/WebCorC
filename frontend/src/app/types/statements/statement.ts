@@ -19,7 +19,6 @@ export class Statement {
 
 
     public toComponent(spawn : ViewContainerRef) : [ refinement : Refinement, ref : ComponentRef<Refinement>] | undefined {
-        console.log("undefined Component")
         return
     }
 }

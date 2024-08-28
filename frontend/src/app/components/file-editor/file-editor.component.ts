@@ -22,10 +22,7 @@ export class FileEditorComponent implements AfterViewInit,OnDestroy {
   
   public code : string = '';
 
-
   constructor(private projectService : ProjectService) {}
-  
-
 
   editorOptions =  {
       theme: 'vs',
@@ -50,40 +47,29 @@ export class FileEditorComponent implements AfterViewInit,OnDestroy {
       this.projectService.syncFileContent(this._urn, this.code)
     }
     
-
-    // load the code of the file into the component
-    let newCode =  this.projectService.getFileContent(uniformRessourceName) as string
-    if (newCode) {
-      this.code = newCode 
-    } else {
-      this.code = ""
-    }
-
     // finally override the old urn 
 
     this._urn = uniformRessourceName
+    this.loadContentFromFile()
   }
 
   public ngAfterViewInit(): void {
-    
+    this.loadContentFromFile()
+    this._viewInit = true
+  
+  }
+
+  public ngOnDestroy(): void {
+    this.projectService.syncFileContent(this._urn, this.code)
+    this._viewInit = false
+  }
+
+  private loadContentFromFile() {
     let newCode =  this.projectService.getFileContent(this._urn) as string
     if (newCode) {
       this.code = newCode 
     } else {
       this.code = ""
     }
-
-    this._viewInit = true
-  
-  }
-
-
-  public ngOnDestroy(): void {
-
-    console.log(this.code)
-
-    this.projectService.syncFileContent(this._urn, this.code)
-
-    this._viewInit = false
   }
 }

@@ -43,18 +43,14 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   @Input()
   set urn(uniformRessourceName : string) {
 
-    console.log("Recieved urn: ", uniformRessourceName)
-
     // prevent reloading the same context
     if (uniformRessourceName == this._urn) {
       return
     }
 
-    
     if (this._viewInit) {
       this.saveContentToFile()
     }
-    
     
     this._urn = uniformRessourceName
 
@@ -75,11 +71,6 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       Refinement.resetIDs(2)
     }
 
-
-    
-
-    console.log('view init :', this._viewInit)
-
     if (this._viewInit) {
       this.loadFileContent()
     }
@@ -87,20 +78,13 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
 
   
   public ngAfterViewInit(): void {
-
-    console.log("graph editor created")
     this._viewInit = true
     setTimeout(() => this.loadFileContent(), 10)
-    console.log('view init :', this._viewInit)
   }
 
   public ngOnDestroy(): void {
-
-    console.log("graph editor destroyed")
-   
     this.saveContentToFile()
     this._viewInit = false
-    console.log('view init :', this._viewInit)
   }
 
   private saveContentToFile() : void {
