@@ -98,17 +98,22 @@ export class SimpleStatementComponent extends Refinement {
   }
 
   set condition(content : string) {
-    this._condition = new Condition(this.id, "Statement", content)
+    this._condition.content = content
   }
 
   override export() {
+
+    console.log("precondition: ", this.precondition)
+    console.log("postcondition: ", this.postcondition)
+
+
     return new SimpleStatement(
       this._condition.content,
       this.id,
       false, 
       "",
-      this.precondition,
-      this.postcondition,
+      new Condition(this.precondition.originId, this.precondition.title, this.precondition.content),
+      new Condition(this.postcondition.originId, this.postcondition.title, this.postcondition.content),
       new Position(0,0),
       this.statement?.export()
     )

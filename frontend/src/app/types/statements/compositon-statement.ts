@@ -36,15 +36,10 @@ export class CompositionStatement extends Statement {
         if (this.leftStatement) {
             const left = this.leftStatement.toComponent(spawn)
 
-            console.log("left", left)
-
             if (left) {
                 statement.leftStatement = left?.[0]
                 statement.leftStatementRef = left?.[1].location
             }
-
-            console.log("leftStatement", statement.leftStatement)
-            console.log("leftStatementRef", statement.leftStatementRef)
         }
 
         if (this.rightStatement) {

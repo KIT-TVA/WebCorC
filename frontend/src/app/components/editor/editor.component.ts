@@ -17,6 +17,9 @@ import { SimpleStatementComponent } from './refinements/simple-statement/simple-
 import { ProjectService } from '../../services/project/project.service';
 import { CBCFormula } from '../../services/project/CBCFormula';
 import { SimpleStatement } from '../../types/statements/simple-statement';
+import { Condition } from '../../types/condition/condition';
+import { Precondition } from '../../types/condition/precondition';
+import { Postcondition } from '../../types/condition/postcondition';
 
 @Component({
   selector: 'app-editor',
@@ -90,7 +93,12 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     // create a new Formula to save 
     let formula = new CBCFormula()
     if (this.treeService.rootNode) {
-      formula.statement = this.treeService.rootNode.export()
+
+      const rootNode = (this.treeService.rootNode as SimpleStatementComponent).export()
+      formula.statement = rootNode
+
+      console.log(rootNode.preCondition)
+
       formula.javaVariables = this.treeService.variables
     }
 
@@ -111,9 +119,11 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       const root =  this.rootNodeOutlet['_componentRef'].instance as SimpleStatementComponent
       root.statementElementRef = undefined
 
-      root.precondition = newFormula.statement.preCondition
-      root.postcondition = newFormula.statement.postCondition
+      console.log(newFormula.preCondition.content)
+      console.log(newFormula.postCondition.content)
 
+      root.precondition.content = newFormula.statement.preCondition.content
+      root.postcondition.content = newFormula.statement.postCondition.content
       
 
       const newChild = (newFormula.statement as SimpleStatement).statement?.toComponent(this.examplesSpawn)
@@ -129,6 +139,9 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
 
     } else {
       this.rootNode = SimpleStatementComponent
+      const root =  this.rootNodeOutlet['_componentRef'].instance as SimpleStatementComponent
+      root.precondition.content = ""
+      root.postcondition.content = ""
     }
   }
 
