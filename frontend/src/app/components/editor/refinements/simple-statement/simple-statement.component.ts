@@ -97,9 +97,13 @@ export class SimpleStatementComponent extends Refinement {
     return this._condition
   }
 
+  set condition(content : string) {
+    this._condition = new Condition(this.id, "Statement", content)
+  }
+
   override export() {
     return new SimpleStatement(
-      this.getTitle(),
+      this._condition.content,
       this.id,
       false, 
       "",

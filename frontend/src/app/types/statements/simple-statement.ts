@@ -28,6 +28,7 @@ export class SimpleStatement extends Statement {
         const statement = statementRef.instance as SimpleStatementComponent
         statement.precondition = this.preCondition
         statement.postcondition = this.postCondition
+        statement.condition = this.name
 
         if (this.statement) {
             const child = this.statement.toComponent(spawn)
