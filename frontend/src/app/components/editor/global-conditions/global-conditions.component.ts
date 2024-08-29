@@ -8,6 +8,7 @@ import {FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFor
 import {MatDividerModule} from "@angular/material/divider";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatListModule} from "@angular/material/list";
+import { Condition } from '../../../types/condition/condition';
 
 @Component({
   selector: 'app-global-conditions',
@@ -55,6 +56,26 @@ export class GlobalConditionsComponent implements OnInit  {
   removeCondition(index : number) : void {
     this.treeService.removeGlobalCondition(this.items.at(index).value.name)
     this.items.removeAt(index)
+  }
+
+  removeAllConditions() {
+    for (let i = 0; i < this.items.length; i++) {
+      this.treeService.removeGlobalCondition(this.items.at(i).value.name)
+    }
+
+    this.items.clear()
+    this.conditions.controls['newCondition'].reset()
+  }
+
+  importConditions(conditions: Condition[]) {
+    for (const condition of conditions) {
+      const conditionControl = this._fb.group({
+        name : new FormControl(condition.content, [Validators.required])
+      })
+
+      this.items.push(conditionControl)
+      this.treeService.addGlobalCondition(condition.content)
+    }
   }
 
   get items() : FormArray {

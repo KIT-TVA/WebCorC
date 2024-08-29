@@ -11,6 +11,7 @@ import {RequestError, VerificationResult} from "../../types/net/verification-net
 import {environment} from "../../../environments/environment";
 import {Macro} from "../../types/macro";
 import { JavaVariable } from './JavaVariable';
+import { Condition } from '../../types/condition/condition';
 
 @Injectable({
   providedIn: 'root'
@@ -246,6 +247,12 @@ export class TreeService {
     let variablesArray : string[] = []
     this._variables.forEach((javaVariable) => variablesArray.push(javaVariable.toString()))
     return variablesArray;
+  }
+
+  get conditions() : Condition[] {
+    let conditionsArray : Condition[] = []
+    this._globalConditions.forEach((condition) => conditionsArray.push(new Condition(0, "globalCondition", condition)))
+    return conditionsArray
   }
 
   get tokenFactories(): QbCTokenFactory[] {

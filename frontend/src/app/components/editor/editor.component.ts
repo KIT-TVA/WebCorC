@@ -29,9 +29,10 @@ import { Postcondition } from '../../types/condition/postcondition';
   styleUrl: './editor.component.scss'
 })
 export class EditorComponent implements AfterViewInit, OnDestroy {
-  @ViewChild("examplesSpawn", {read: ViewContainerRef, static: false}) examplesSpawn!: ViewContainerRef;
-  @ViewChild(NgComponentOutlet, {static: false}) rootNodeOutlet!: NgComponentOutlet;
-  @ViewChild("variables") variables! : VariablesComponent;
+  @ViewChild("examplesSpawn", {read: ViewContainerRef, static: false}) examplesSpawn!: ViewContainerRef
+  @ViewChild(NgComponentOutlet, {static: false}) rootNodeOutlet!: NgComponentOutlet
+  @ViewChild("variables") variables! : VariablesComponent
+  @ViewChild("conditions") conditions! : GlobalConditionsComponent
 
   rootNode: Type<SimpleStatementComponent> | undefined
 
@@ -97,10 +98,8 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
 
       const rootNode = (this.treeService.rootNode as SimpleStatementComponent).export()
       formula.statement = rootNode
-
-      console.log(rootNode.preCondition)
-
       formula.javaVariables = this.treeService.variables
+      formula.globalConditions = this.treeService.conditions
     }
 
     if (this._urn !== '' && this.treeService.rootNode) {
@@ -109,6 +108,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     }
 
     this.variables.removeAllVariables()
+    this.conditions.removeAllConditions()
   }
 
   private loadFileContent() : void {
@@ -133,6 +133,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       setTimeout(() => root.onDragMoveEmitter.next(), 5)
 
       this.variables.importVariables(newFormula.javaVariables)
+      this.conditions.importConditions(newFormula.globalConditions)
 
     } else {
       this.rootNode = SimpleStatementComponent

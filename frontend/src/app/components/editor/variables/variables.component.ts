@@ -61,6 +61,7 @@ export class VariablesComponent implements OnInit {
     }
 
     this.items.clear()
+    this.variables.controls['newVariable'].reset()
   }
 
   importVariables(variables : string[]) {
