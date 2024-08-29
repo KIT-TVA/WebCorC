@@ -54,6 +54,26 @@ export class VariablesComponent implements OnInit {
     this.items.removeAt(index)
   }
 
+  removeAllVariables() : void {
+
+    for (let i = 0; i < this.items.length; i++) {
+      this.treeService.removeVariables([this.items.at(i).value.name])
+    }
+
+    this.items.clear()
+  }
+
+  importVariables(variables : string[]) {
+    for (const variable of variables) {
+      const variableControl = this._fb.group({
+        name: new FormControl(variable, [Validators.required])
+      })
+
+      this.items.push(variableControl)
+      this.treeService.addVariable(variable)
+    }
+  }
+
 
   get items() : FormArray {
     return this.variables.controls["items"] as FormArray

@@ -31,6 +31,7 @@ import { Postcondition } from '../../types/condition/postcondition';
 export class EditorComponent implements AfterViewInit, OnDestroy {
   @ViewChild("examplesSpawn", {read: ViewContainerRef, static: false}) examplesSpawn!: ViewContainerRef;
   @ViewChild(NgComponentOutlet, {static: false}) rootNodeOutlet!: NgComponentOutlet;
+  @ViewChild("variables") variables! : VariablesComponent;
 
   rootNode: Type<SimpleStatementComponent> | undefined
 
@@ -106,6 +107,8 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       // save the current state outside of the component
       this.projectService.syncFileContent(this._urn, formula)
     }
+
+    this.variables.removeAllVariables()
   }
 
   private loadFileContent() : void {
@@ -115,17 +118,11 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
 
     let newFormula = this.projectService.getFileContent(this._urn) as CBCFormula
     if (newFormula.statement) {
-      
-      const root =  this.rootNodeOutlet['_componentRef'].instance as SimpleStatementComponent
+      const root = this.rootNodeOutlet['_componentRef'].instance as SimpleStatementComponent
       root.statementElementRef = undefined
-
-      console.log(newFormula.preCondition.content)
-      console.log(newFormula.postCondition.content)
-
       root.precondition.content = newFormula.statement.preCondition.content
       root.postcondition.content = newFormula.statement.postCondition.content
       
-
       const newChild = (newFormula.statement as SimpleStatement).statement?.toComponent(this.examplesSpawn)
 
       if (newChild) {
@@ -135,7 +132,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
 
       setTimeout(() => root.onDragMoveEmitter.next(), 5)
 
-      // traverse cbc formula statement tree and create components similar to loadingExample from qbc-Frontend
+      this.variables.importVariables(newFormula.javaVariables)
 
     } else {
       this.rootNode = SimpleStatementComponent
