@@ -1,0 +1,20 @@
+micronaut:
+  application.name: webcorc-backend
+  object-storage:
+    aws:
+      default:
+        bucket: webcorc-projectfiles
+  server:
+    multipart:
+      enabled: true
+      max-file-size: 1000000
+  http.client.max-content-length: 1000000
+
+aws:
+  accessKeyId: root
+  secretKey: rootpwwp
+  region: 'eu-west-1'
+  s3:
+    enabled: true
+    path-style-access-enabled: true
+  services.s3.endpoint-override: 'http://localhost:9000'
