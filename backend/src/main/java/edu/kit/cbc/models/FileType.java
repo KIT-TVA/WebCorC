@@ -4,5 +4,6 @@ public enum FileType {
     key,
     prove,
     java,
-    diagram;
+    diagram,
+    other;
 }

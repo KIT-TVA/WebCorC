@@ -2,9 +2,12 @@ package edu.kit.cbc.controllers;
 
 import java.util.Optional;
 import java.net.URI;
+import java.util.NoSuchElementException;
 
 import edu.kit.cbc.models.DirectoryDto;
 import edu.kit.cbc.models.ProjectService;
+import edu.kit.cbc.models.ReadProjectDto;
+import edu.kit.cbc.models.Problem;
 import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -35,8 +38,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 @Controller("/projects/{id}/files")
 @ExecuteOn(TaskExecutors.BLOCKING)
 public class ProjectFileManagementController {
-
-    //TODO: create bucket if missing
+    private static final String pathFormat = "%s/files/%s";
 
     private final ProjectService projectService;
     private final AwsS3Operations objectStorage;
@@ -56,7 +58,7 @@ public class ProjectFileManagementController {
 
     @Get(uri = "/{urn:.*}")
     public Optional<HttpResponse<StreamedFile>> getFile(@PathVariable String id, @PathVariable URI urn) {
-        String path = id + "/files/" + urn;
+        String path = String.format(pathFormat, id, urn);
         return objectStorage.retrieve(path)
             .map(ProjectFileManagementController::buildStreamedFile);
     }
@@ -77,16 +79,25 @@ public class ProjectFileManagementController {
     public HttpResponse<?> uploadFile(
             CompletedFileUpload fileUpload,
             @PathVariable String id,
-            @PathVariable String urn,
+            @PathVariable URI urn,
             HttpRequest<?> request) {
-        //TODO: adjust file list of project accordingly
-        String path = id + "/files/" + urn;
+        String path = String.format(pathFormat, id, urn);
+
+        ReadProjectDto project;
+        try {
+            project = projectService.findById(id);
+        } catch (NoSuchElementException e) {
+            return HttpResponse.notFound(new Problem("about:blank", "Not found", 404, String.format("project with id %s was not found", id), "about:blank"));
+        }
 
         UploadRequest objectStorageUpload = UploadRequest.fromCompletedFileUpload(fileUpload, path);
         UploadResponse<PutObjectResponse> response = objectStorage.upload(objectStorageUpload, builder -> {
             builder.acl(ObjectCannedACL.PUBLIC_READ);
         });
 
+        //TODO: Move adding/removing logic to projectServive
+        project.files().addFilePath(urn);
+        projectService.updateById(id, project);
 
         return HttpResponse
             .created(UriBuilder.of(httpHostResolver.resolve(request))
@@ -104,7 +115,16 @@ public class ProjectFileManagementController {
 
     @Delete(uri = "/{urn:.*}")
     @Produces(MediaType.APPLICATION_JSON)
-    public HttpResponse<String> deleteFileOrDirectory(@PathVariable String id, @PathVariable String urn) {
-        return HttpResponse.serverError(String.format("NOT IMPLEMENTED %s %s", id, urn));
+    public HttpResponse<?> deleteFileOrDirectory(@PathVariable String id, @PathVariable URI urn) {
+        String path = String.format(pathFormat, id, urn);
+        //TODO: should project existence be checked first?
+        objectStorage.delete(path);
+
+        //TODO: Move adding/removing logic to projectServive
+        ReadProjectDto project = projectService.findById(id);
+        project.files().removeFilePath(urn);
+        projectService.updateById(id, project);
+
+        return HttpResponse.ok("file deleted");
     }
 }

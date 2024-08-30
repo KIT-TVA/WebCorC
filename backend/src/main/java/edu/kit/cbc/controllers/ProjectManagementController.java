@@ -14,6 +14,7 @@ import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Produces;
 import io.micronaut.http.annotation.Put;
 import io.micronaut.http.annotation.QueryValue;
+import io.micronaut.objectstorage.aws.AwsS3Operations;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import jakarta.validation.Valid;
@@ -23,9 +24,11 @@ import jakarta.validation.Valid;
 public class ProjectManagementController {
 
     private final ProjectService projectService;
+    private final AwsS3Operations objectStorage;
 
-    ProjectManagementController(ProjectService projectService) {
+    ProjectManagementController(ProjectService projectService, AwsS3Operations objectStorage) {
         this.projectService = projectService;
+        this.objectStorage = objectStorage;
     }
 
     @Post

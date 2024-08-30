@@ -25,25 +25,15 @@ class DefaultProjectService implements ProjectService {
                     .now(ZoneOffset.UTC)
                     .format(DateTimeFormatter.ISO_INSTANT),
                 new DirectoryDto(
-                    "" /*root element*/,
-                    //TODO: entries for development purposes
-                    Set.of(
-                        new FileDto("diag.diag", FileType.diagram),
-                        new FileDto("java.java", FileType.java),
-                        new FileDto("key.key", FileType.key),
-                        new FileDto("prove.prove", FileType.prove),
-                        new DirectoryDto("somedir/", Set.of()),
-                        new DirectoryDto("somedir2/", Set.of(
-                                new FileDto("java.java", FileType.java),
-                                new FileDto("key.key", FileType.key),
-                                new FileDto("prove.prove", FileType.prove)
-                            )
-                        ),
-                        new DirectoryDto("somedir3/", Set.of())
-                    )
+                    "",
+                    Set.of()
                 )
             )
         );
+    }
+
+    public ReadProjectDto updateById(@NotBlank String id, ReadProjectDto project) {
+        return projectRepository.update(project);
     }
 
     public ReadProjectDto updateById(@NotBlank String id, CreateProjectDto project) {
