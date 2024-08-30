@@ -5,6 +5,7 @@ import java.net.URI;
 
 import edu.kit.cbc.models.DirectoryDto;
 import edu.kit.cbc.models.ProjectService;
+import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -64,7 +65,8 @@ public class ProjectFileManagementController {
         GetObjectResponse nativeEntry = entry.getNativeEntry();
         MediaType mediaType = MediaType.of(nativeEntry.contentType());
         StreamedFile file = new StreamedFile(entry.getInputStream(), mediaType).attach(entry.getKey());
-        MutableHttpResponse<Object> httpResponse = HttpResponse.ok();
+        MutableHttpResponse<Object> httpResponse = HttpResponse.ok()
+            .header(HttpHeaders.ETAG, nativeEntry.eTag());
         file.process(httpResponse);
         return httpResponse.body(file);
     }
@@ -72,7 +74,7 @@ public class ProjectFileManagementController {
     @Post(uri = "/{urn:.*}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public HttpResponse<String> uploadFile(
+    public HttpResponse<?> uploadFile(
             CompletedFileUpload fileUpload,
             @PathVariable String id,
             @PathVariable String urn,
@@ -86,12 +88,12 @@ public class ProjectFileManagementController {
         });
 
 
-        return HttpResponse.created(
-            UriBuilder.of(httpHostResolver.resolve(request))
-                .path("projects")
-                .path(path)
-                .build()
-        );
+        return HttpResponse
+            .created(UriBuilder.of(httpHostResolver.resolve(request))
+                    .path("projects")
+                    .path(path)
+                    .build())
+            .header(HttpHeaders.ETAG, response.getETag());
     }
 
     @Put(uri = "/{urn:.*}")
