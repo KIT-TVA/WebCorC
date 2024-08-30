@@ -9,6 +9,7 @@
   <button mat-raised-button style="margin-right: 10px;"> <mat-icon> share </mat-icon> Share </button>
   <button mat-raised-button (click)="openGenerateCodeDialog()" style="margin-right: 10px" [disabled]="!treeService.rootNode"> <mat-icon> code </mat-icon> Generate Code</button>
   <button mat-raised-button (click)="verify()" [disabled]="!treeService.rootNode"> <mat-icon> check_circle</mat-icon> Verify</button>
+  <button mat-icon-button style="margin-left: 10px;"> <mat-icon>terminal</mat-icon> </button>
 </mat-toolbar>
 <mat-drawer-container class="editorWindow">
   <mat-drawer #drawer mode="over" [style.max-width]="'50%'" [style.min-width]="'20%'" >

@@ -1,0 +1,56 @@
+.background {
+    height: 100%;
+    width: 100%;
+
+    .actions {
+        width: 50%;
+        display: grid;
+        place-items: center;
+
+
+        .buttons {
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            background-color: #ededed;
+        }
+    }
+
+    .info {
+        width: 50%;
+        position: absolute;
+        top: 0;
+        right: 0;
+        display: grid;
+        place-items: center;
+        align-items: start; 
+
+        .logo {
+            height: 250px;
+        }
+
+        .footer {
+            width: 100%;
+            left: 0;
+        }
+
+        .institutes {
+            border-radius: 5px;
+            border: #dcdcdc 2px solid;
+            background-color: #ededed;
+            display: flex;
+            flex-direction: column;
+            margin-top: auto; 
+
+            .tva {
+               margin: 5px;
+               height: 80px; 
+            }
+
+            .isf {
+                margin: 5px;
+                height: 85px;
+            }
+        }
+    }
+}

@@ -1,1 +1,106 @@
-<p>landing-page works!</p>
+<div class="background">
+    <div class="actions" >
+        <div style="height: 150px;">
+
+        </div>
+        <div class="buttons" >
+            <button mat-button > <mat-icon> publish </mat-icon> Import </button>
+            <button mat-button > <mat-icon> open_in_new </mat-icon> Open Project </button>
+        </div>
+        <div>
+
+        </div>
+    </div>
+    <div class="info" >
+        <h1> About </h1>
+        <img class="logo" src="assets/corc-logo-color.svg" >
+        <p> <b>Projektzeitraum</b>: Dezember 2017 - offen  </p>
+        <p>
+            Correctness-by-Construction (CbC) is an approach to
+            incrementally create correct programs. CbC starts with an
+            abstract Hoare triple &#x007B;P&#x007D; S &#x007B;Q&#x007D; consisting of a precondition P,
+            an abstract statement S, and a postcondition Q. Hoare triples
+            represent total correctness assertions that valuate only to true
+            if, beginning from the precondition, the postcondition is met
+            after executing the eventually defined concrete program. With
+            CbC, the Hoare triple is successively refined using a set of
+            refinement rules to a concrete implementation, which satisfies
+            the specification. The correctness is guaranteed because every
+            refinement rule is proven sound and preserves the correctness of
+            the program. CbC is implemted in the tool CorC. CorC is a
+            graphical and textual IDE to construct algorithms following the
+            Correctness-by-Construction approach. It supports CbC developers
+            to refine a program by a sequence of refinement steps and to
+            verify the correctness of these refinement steps using a theorem
+            prover.
+
+            <br>
+            <br>
+            <b>Information Flow Control-by-Construction</b>
+            <br>
+            <br>
+
+            Besides of verifying the functional correctness, refinements
+            rules can also be utilized to ensure security of programs. An
+            information flow policy defines how information may flow in a
+            program (e.g., a flow from public to secret data is allowed, but
+            the other way is prohibited). The extension of CbC to ensure
+            security is called Information Flow Control-by-Construction
+            (IFbC). Programs are constructed incrementally using refinement
+            rules to follow an information flow policy. In every refinement
+            step, security and functional correctness of the program is
+            guaranteed, such that insecure programs are prohibited by
+            construction. The information flow policy can be specified in
+            any bounded upper semi-lattice (i.e., security levels are
+            arranged in a partially ordered set representing the allowed
+            direction of information flow). IFbC is implemented in an
+            extension of CorC. 
+
+            <br>
+            <br>
+            <b>Correctness-by-Construction for Software Product Lines</b>
+            <br>
+            <br>
+
+            Software product lines provide
+            systematic reuse of software and other artifacts paired with
+            variability mechanisms in the code to implement whole product
+            families rather than single software products. The commonalities
+            and differences of the single variants are communicated as
+            features, whose relationships are often modelled in feature
+            models. Guaranteeing the correctness of a product line is
+            especially challenging because of the amount of possible
+            variants resulting from the number of feature configurations and
+            the variable code structures. To create a correct product line
+            using CbC, we therefore extended the original CbC approach with
+            a new refinement rule for a variability mechanism in the
+            statements of the Hoare triple and combined it with contract
+            composition for variability in the pre- and postcondition. We
+            call this extension variational Correctness-by-Construction.
+            VarCorC uses FeatureIDE and variational CbC to support the
+            development of correct-by-construction software product lines. 
+        
+        </p>
+
+        <p class="footer">
+            <b>Github</b>:<a href="https://github.com/KIT-TVA/CorC"> Corc </a> <br>
+            <b>Github</b>:<a href="https://github.com/KIT-TVA/WebCorC"> WebCorc </a> <br>
+            <br>
+            <b>Employees involved: </b> 
+                <a href="https://tva.kastel.kit.edu/team_bordis.php" target="_blank" rel="noopener noreferrer">Tabea Bordis</a>,
+                <a href="https://tva.kastel.kit.edu/team_kodetzki.php" target="_blank" rel="noopener noreferrer">Maximilian Kodetzki</a>,
+                <a href="https://tva.kastel.kit.edu/team_runge.php" target="_blank" rel="noopener noreferrer">Tobias Runge</a>,
+                <a href="https://tva.kastel.kit.edu/team_schaefer.php" target="_blank" rel="noopener noreferrer">Ina Schaefer</a>
+
+            <br>
+            <br>
+            <a href="https://www.kit.edu/datenschutz.php" >Privacy Information</a>
+        </p>
+
+        <div class="institutes">
+            <img class="tva" src="assets/tva-logo-banner-english-color.svg" >
+            <img class="isf" src="assets/isf-logo-color-schrift.png" >
+        </div>
+    </div>
+
+</div>

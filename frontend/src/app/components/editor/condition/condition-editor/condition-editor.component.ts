@@ -44,9 +44,7 @@ export class ConditionEditorComponent implements OnInit {
 
     // Listen for updates from other input forms for this condition
     this.condition.contentChangeObservable.subscribe(value => {
-      console.log(value)
       if (value !== this.conditionGroup!.get("condition")!.value) {
-        console.log(value)
         this.conditionGroup!.get("condition")!.setValue(value);
       }
     });

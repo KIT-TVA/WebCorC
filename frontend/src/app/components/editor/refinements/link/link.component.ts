@@ -106,7 +106,6 @@ export class LinkComponent implements AfterViewInit, OnDestroy {
 
   redrawBackground() : void {
     this.lineContainerDOM.childNodes.forEach((child) => {
-      console.log(child)
       this.lineContainerDOM.removeChild(child)
     });
     this.createLineDOM()
