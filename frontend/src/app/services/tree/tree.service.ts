@@ -1,12 +1,6 @@
 import { Injectable } from '@angular/core';
 import {Refinement} from "../../types/refinement";
 import {ReplaySubject, Subject} from "rxjs";
-import {FormalParameter} from "../../types/formal-parameter";
-import {QbCConstant} from "../../translation/constants";
-import {QbCTokenFactory} from "../../translation/qbc-token";
-import {ValueTokenFactory} from "../../translation/value";
-import {TerminalSymbol} from "../../translation/terminal-symbols";
-import {QubitTokenFactory} from "../../translation/qubit";
 import {RequestError, VerificationResult} from "../../types/net/verification-net-types";
 import {environment} from "../../../environments/environment";
 import {Macro} from "../../types/macro";
@@ -22,31 +16,7 @@ export class TreeService {
 
   private _title: string = "";
   private _rootNode: Refinement | undefined;
-  private readonly _formalParameters: FormalParameter[] = [];
   private readonly _macros: Macro[] = [];
-  private readonly _tokenFactories: QbCTokenFactory[] = [
-    new QbCConstant("H", "Hadamard"),
-    new QbCConstant("X", "NOT/Pauli-X"),
-    new QbCConstant("Y", "Pauli-Y"),
-    new QbCConstant("Z", "Pauli-Z"),
-    new QbCConstant("I", "Identity"),
-    new QbCConstant("S", "Phase"),
-    new QbCConstant("T", "pi/8"),
-    new QbCConstant("CNOT", "Controlled NOT"),
-    new QbCConstant("SWAP", "Swap"),
-    new QubitTokenFactory(),
-    new ValueTokenFactory(),
-    new TerminalSymbol(TerminalSymbol.END_OF_TOKENS),
-    new TerminalSymbol(TerminalSymbol.PARAN_OPEN),
-    new TerminalSymbol(TerminalSymbol.PARAN_CLOSE),
-    new TerminalSymbol(TerminalSymbol.CROSS_PRODUCT),
-    new TerminalSymbol(TerminalSymbol.PLUS),
-    new TerminalSymbol(TerminalSymbol.MINUS),
-    new TerminalSymbol(TerminalSymbol.SLASH),
-    new TerminalSymbol(TerminalSymbol.POW),
-    new TerminalSymbol(TerminalSymbol.CURLY_OPEN),
-    new TerminalSymbol(TerminalSymbol.CURLY_CLOSE),
-  ];
 
   private readonly _verificationResultNotifier: Subject<VerificationResult>;
   private readonly _variableSizeChangeNotifier: Subject<void>;
@@ -62,55 +32,11 @@ export class TreeService {
     this._variableSizeChangeNotifier = new Subject();
   }
 
-  public verify(refinement: Refinement): Promise<VerificationResult | RequestError> {
-    return fetch(environment.apiUrl + "/verify", {
-      method: "POST",
-      body: JSON.stringify({
-        rootRefinement: refinement.export(),
-        formalParameters: this.formalParameters.map(fp => fp.export()),
-        variables: this._variables,
-        macros: this._macros.map(macro => macro.export())
-      }),
-      headers: [
-        ["Content-Type", "application/json"]
-      ]
-    }).catch(err => err)
-      .then(res => res.json()).then((verificationResult: VerificationResult) => {
-      this.verificationResultNotifier.next(verificationResult);
-      return verificationResult;
-    });
+  public verify(refinement: Refinement): void {
+    
   }
 
   public generateCode(language: string, options: any): void {
-    if (!this.rootNode) {
-      return;
-    }
-
-    fetch(environment.apiUrl + "/codegen", {
-      method: "POST",
-      body: JSON.stringify({
-        language,
-        rootRefinement: this.rootNode.export(),
-        formalParameters: this.formalParameters.map(fp => fp.export()),
-        variables: this._variables,
-        macros: this._macros.map(macro => macro.export()),
-        options
-      }),
-      headers: [
-        ["Content-Type", "application/json"]
-      ]
-    }).then(resp => resp.blob())
-      .then(blob => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        if (language === "qiskit") {
-          a.download = "program.py";
-        } else {
-          a.download = "prog";
-        }
-        a.click();
-      }).catch(err => console.log(err));
   }
 
   public downloadJSON(): void {
@@ -132,32 +58,12 @@ export class TreeService {
     this._scrollNotifier.next();
   }
 
-  public addFormalParameter(parameter: FormalParameter): void {
-    this._formalParameters.push(parameter);
-  }
-
-  public removeFormalParameter(parameter: FormalParameter): void {
-    this._formalParameters.splice(this._formalParameters.indexOf(parameter), 1);
-  }
-
   public addMacro(macro: Macro): void {
     this._macros.push(macro);
   }
 
   public removeMacros(): void {
     this._macros.splice(0, this._macros.length);
-  }
-
-  public hasFormalParameterWithName(name: string | null): boolean {
-    if (!name) {
-      return false;
-    }
-
-    return this._formalParameters.map(fp => fp.name).includes(name);
-  }
-
-  public removeFormalParameters(): void {
-    this._formalParameters.splice(0, this._formalParameters.length);
   }
 
   public hasMacroWithName(name: string | null): boolean {
@@ -239,10 +145,6 @@ export class TreeService {
     return this._scrollNotifier;
   }
 
-  get formalParameters(): FormalParameter[] {
-    return this._formalParameters;
-  }
-
   get variables() : string[] {
     let variablesArray : string[] = []
     this._variables.forEach((javaVariable) => variablesArray.push(javaVariable.toString()))
@@ -253,10 +155,6 @@ export class TreeService {
     let conditionsArray : Condition[] = []
     this._globalConditions.forEach((condition) => conditionsArray.push(new Condition(0, "globalCondition", condition)))
     return conditionsArray
-  }
-
-  get tokenFactories(): QbCTokenFactory[] {
-    return this._tokenFactories;
   }
 
   get verificationResultNotifier(): Subject<VerificationResult> {

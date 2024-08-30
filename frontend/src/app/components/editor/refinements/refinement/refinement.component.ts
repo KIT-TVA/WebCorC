@@ -9,9 +9,8 @@ import {ConditionEditorComponent} from "../../condition/condition-editor/conditi
 import {GridTileHeaderDirective} from "../../../../directives/grid-tile-header.directive";
 import {GridTileBorderDirective} from "../../../../directives/grid-tile-border.directive";
 import {CdkDrag, CdkDragHandle, CdkDragMove} from "@angular/cdk/drag-drop";
-import {QbCLexer} from "../../../../translation/qbc-lexer";
+
 import {TreeService} from "../../../../services/tree/tree.service";
-import {QbCPredicateParser} from "../../../../translation/qbc-predicate-parser";
 import {MatIconModule} from "@angular/material/icon";
 import {MatDrawer, MatSidenavModule} from "@angular/material/sidenav";
 import {MatButtonModule} from "@angular/material/button";
@@ -69,7 +68,6 @@ export class RefinementComponent implements AfterViewInit {
     this.refinement.removeVariableUsages();
     if (this.treeService.rootNode === this.refinement) {
       this.treeService.removeMacros();
-      this.treeService.removeFormalParameters();
     }
     this.treeService.deletionNotifier.next(this.refinement);
   }

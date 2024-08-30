@@ -26,12 +26,6 @@ export class AppComponent {
   constructor(public treeService: TreeService, private dialog: MatDialog) {}
 
   verify(): void {
-    if (this.treeService.rootNode) {
-      const verificationResult = this.treeService.verify(this.treeService.rootNode!);
-      verificationResult.then(result => {
-        this.dialog.open(VerificationResultComponent, {data: {result}});
-      });
-    }
   }
 
   openGenerateCodeDialog(): void {

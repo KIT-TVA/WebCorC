@@ -7,8 +7,6 @@ import {AddRefinementWidgetComponent} from "../../widgets/add-refinement-widget/
 import {TreeService} from "../../services/tree/tree.service";
 import {MatIconModule} from "@angular/material/icon";
 import {MatExpansionModule} from "@angular/material/expansion";
-import {FormalParametersComponent} from "./formal-parameters/formal-parameters.component";
-import {QbCConstant} from "../../translation/constants";
 import {VariablesComponent} from "./variables/variables.component";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {MatMenuModule} from "@angular/material/menu";
@@ -24,7 +22,7 @@ import { Postcondition } from '../../types/condition/postcondition';
 @Component({
   selector: 'app-editor',
   standalone: true,
-  imports: [CommonModule, RefinementWidgetComponent, MatButtonModule, AddRefinementWidgetComponent, MatIconModule, MatExpansionModule, FormalParametersComponent, VariablesComponent, MatTooltipModule, MatMenuModule, GlobalConditionsComponent],
+  imports: [CommonModule, RefinementWidgetComponent, MatButtonModule, AddRefinementWidgetComponent, MatIconModule, MatExpansionModule, VariablesComponent, MatTooltipModule, MatMenuModule, GlobalConditionsComponent],
   templateUrl: './editor.component.html',
   styleUrl: './editor.component.scss'
 })
@@ -149,20 +147,5 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
 
   onEditorContainerScrolled(): void {
     this.treeService.onEditorContainerScrolled();
-  }
-
-  preDefinedSymbols(): {symbol: string, description: string}[] {
-    const predefined = [
-      {symbol: "†", description: "Adjoint (conjugate transpose)"},
-      {symbol: "⊗", description: "Tensor product"},
-      {symbol: "√", description: "Square root"},
-    ];
-    predefined.push(...this.treeService.tokenFactories.filter(tf => tf instanceof QbCConstant).map(tf => {
-      if (tf instanceof QbCConstant) {
-        return {symbol: tf.name, description: tf.description};
-      }
-      return {symbol: "", description: ""};
-    }));
-    return predefined;
   }
 }
