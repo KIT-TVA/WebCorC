@@ -27,9 +27,7 @@ export class ConditionEditorComponent implements OnInit {
 
   conditionGroup: FormGroup | undefined;
 
-  constructor(private fb: FormBuilder) {
-
-  }
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit() {
     // Set up form group on init, since here the @Inputs available
@@ -45,8 +43,10 @@ export class ConditionEditorComponent implements OnInit {
     this.conditionGroup.valueChanges.subscribe(value => this.condition.content = value.condition);
 
     // Listen for updates from other input forms for this condition
-    this.condition.contentChangeEmitter.subscribe(value => {
+    this.condition.contentChangeObservable.subscribe(value => {
+      console.log(value)
       if (value !== this.conditionGroup!.get("condition")!.value) {
+        console.log(value)
         this.conditionGroup!.get("condition")!.setValue(value);
       }
     });

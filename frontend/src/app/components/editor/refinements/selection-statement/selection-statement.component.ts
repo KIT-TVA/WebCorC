@@ -55,6 +55,22 @@ export class SelectionStatementComponent extends Refinement {
         }
       }
     })
+
+    super.precondition.contentChangeObservable.subscribe(content => {
+      for (let i = 0; i < this._statements.length; i++) {
+        if (this._statements[i]) { 
+          this._statements[i]!.precondition.content = "(" + super.precondition.content + ") & (" + this._guards[i].content + ")"
+        }
+      }
+    })
+
+    super.postcondition.contentChangeObservable.subscribe(content => {
+      for (let i = 0; i < this._statements.length; i++) {
+        if (this._statements[i]) { 
+          this._statements[i]!.postcondition.content = super.postcondition.content
+        }
+      }
+    })
   }
 
   
@@ -71,10 +87,17 @@ export class SelectionStatementComponent extends Refinement {
 
       const componentRef = this.componentSpawn.createComponent(result);
       const createdSubComponent = componentRef.instance as Refinement;
-      this._guards[index] = new Condition(this.id, 'guard #' + (index));
       this._statements[index] = createdSubComponent;
       this._statementsElementRefs[index] = componentRef.location;
       this._statementsElementRefs[index]!.nativeElement!.style.left = "1000px"
+
+      this._statements[index]!.precondition.content = "(" + super.precondition.content + ") & (" + this._guards[index].content + ")"
+      this._statements[index]!.postcondition.content = super.postcondition.content
+
+      this._guards[index].contentChangeObservable.subscribe(content => {
+        this._statements[index]!.precondition.content = "(" + super.precondition.content + ") & (" + this._guards[index].content + ")"
+        this._statements[index]!.postcondition.content = super.postcondition.content
+      })
 
       setTimeout(() => super.onDragMoveEmitter.next(), 5)
     })
@@ -100,7 +123,6 @@ export class SelectionStatementComponent extends Refinement {
         this._statementsElementRefs[this._statementsElementRefs.length - 1] = undefined
       }
       this._statementsElementRefs.pop()
-      console.log(this._statementsElementRefs)
     }
     setTimeout(() => super.onDragMoveEmitter.next(), 5)
   }
@@ -124,6 +146,12 @@ export class SelectionStatementComponent extends Refinement {
     this._guards.push(new Condition(this.id, "guard #" + (this._statements.length), ""))
     this._statements.push(selection)
     this._statementsElementRefs.push(ref)
+
+    let indexSelection = this._guards.length - 1
+    this._guards[indexSelection].contentChangeObservable.subscribe(content => {
+      this._statements[indexSelection]!.precondition.content = "(" + super.precondition.content + ") & (" + this._guards[indexSelection].content + ")"
+      this._statements[indexSelection]!.postcondition.content = super.postcondition.content
+    })
     
   }
 

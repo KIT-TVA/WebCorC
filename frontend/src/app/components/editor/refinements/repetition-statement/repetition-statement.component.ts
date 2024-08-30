@@ -47,7 +47,29 @@ export class RepetitionStatementComponent extends Refinement {
         this._loopStatement = undefined;
         this._loopStatementRef!.nativeElement!.remove()
       }
-    } )
+    })
+
+    this._invariantCondition.contentChangeObservable.subscribe(content => {
+      super.precondition.content = "((" + this._invariantCondition.content + ") & (" + this._guardCondition.content + "))"
+      super.postcondition.content = "(" + this._invariantCondition.content + ")"
+
+      if (this._loopStatement) {
+        this._loopStatement.precondition.content = super.precondition.content
+      }
+
+      if (this._loopStatement) {
+        this._loopStatement.postcondition.content = super.postcondition.content
+      }
+    })
+
+
+    this._guardCondition.contentChangeObservable.subscribe(content => {
+      super.precondition.content = "((" + this._invariantCondition.content + ") & (" + this._guardCondition.content + "))"
+      
+      if (this._loopStatement) {
+        this._loopStatement.precondition.content = super.precondition.content
+      }
+    })
   }
 
   override getTitle(): string {

@@ -53,6 +53,31 @@ export class CompositionStatementComponent extends Refinement {
         this._rightStatementRef = undefined;
       }
     })
+
+    super.precondition.contentChangeObservable.subscribe(content => {
+      if (!this._leftStatement) { return }
+        
+            
+      this._leftStatement.precondition.content = content
+    })
+
+    super.postcondition.contentChangeObservable.subscribe(content => {
+      if (!this._rightStatement) { return }
+
+      this._rightStatement.postcondition.content = content
+    })
+
+    this._intermediateCondition.contentChangeObservable.subscribe(content => {
+      if (this._leftStatement) {
+        this._leftStatement.postcondition.content = content
+      }
+
+      if (this._rightStatement) {
+        this._rightStatement.precondition.content = content
+      }
+      
+    })
+
   }
   
   override getTitle(): string {
@@ -74,9 +99,13 @@ export class CompositionStatementComponent extends Refinement {
       if (side === "left") {
         this._leftStatementRef = componentRef.location;
         this._leftStatement = createdSubComponent;
+        this._leftStatement.precondition.content = this.precondition.content
+        this._leftStatement.postcondition.content = this._intermediateCondition.content
       } else {
         this._rightStatementRef = componentRef.location;
         this._rightStatement = createdSubComponent;
+        this._rightStatement.precondition.content = this._intermediateCondition.content
+        this._rightStatement.postcondition.content = this.postcondition.content
       }
 
     })

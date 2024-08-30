@@ -2,7 +2,7 @@
   <p>{{condition.title}}</p>
   <form *ngIf="conditionGroup" [formGroup]="conditionGroup">
     <mat-form-field (focusout)="conditionEditingFinished.emit()" appearance="fill">
-      <input matInput placeholder="Type here" formControlName="condition" #input>
+      <input matInput placeholder="Type here" formControlName="condition" #input >
     </mat-form-field>
   </form>
 </div>

@@ -46,6 +46,18 @@ export class StrongWeakStatementComponent extends Refinement {
         this._statementRef!.nativeElement!.remove();
       }
     })
+
+    this._weakPreCondition.contentChangeObservable.subscribe(content => {
+      if (!this._statement) { return }
+
+      this._statement.precondition.content = this._weakPreCondition.content
+    })
+
+    this._strongPostCondition.contentChangeObservable.subscribe(content => {
+      if (!this._statement) { return }
+
+      this._statement.postcondition.content = this._strongPostCondition.content
+    })
   }
   
   override getTitle(): string {

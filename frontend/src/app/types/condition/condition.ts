@@ -1,9 +1,9 @@
-import {ReplaySubject} from "rxjs";
+import {Observable, ReplaySubject, debounceTime, distinctUntilChanged, distinctUntilKeyChanged} from "rxjs";
 
 export class Condition {
   protected readonly _title: string;
   private _content: string;
-  private _contentChangeEmitter: ReplaySubject<String>;
+  private _contentChangeEmitter: ReplaySubject<string>;
 
   // The refinement this condition is initiated.
   // 0 for side condition.
@@ -32,12 +32,12 @@ export class Condition {
     return this._originId;
   }
 
-  get contentChangeEmitter(): ReplaySubject<String> {
-    return this._contentChangeEmitter;
+  get contentChangeObservable(): Observable<string> {
+    return this._contentChangeEmitter.pipe(debounceTime(100), distinctUntilChanged());
   }
 
   set content(value: string) {
-    this._content = value;
-    this.contentChangeEmitter.next(this.content);
+    this._content = value.trim();
+    this._contentChangeEmitter.next(this._content)
   }
 }

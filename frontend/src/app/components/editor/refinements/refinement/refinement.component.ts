@@ -101,11 +101,6 @@ export class RefinementComponent implements AfterViewInit {
   }
 
   onConditionEdited(editedPrecondition: boolean): void {
-    const lexer = new QbCLexer(this.treeService.tokenFactories, this.treeService.formalParameters);
-    const result = lexer.lex(editedPrecondition ? this.refinement.precondition.content : this.refinement.postcondition.content);
-    const parser = new QbCPredicateParser(result);
-    console.log(result)
-    console.log(parser.parsePredicate());
   }
 
   toggleConditionEditorView(postcondition: boolean): void {

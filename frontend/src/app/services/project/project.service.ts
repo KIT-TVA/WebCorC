@@ -116,8 +116,6 @@ export class ProjectService {
     }
 
     file.content = content
-
-    console.log(file.content)
   }
 
   public getFileContent(urn : string) : string | CBCFormula  {

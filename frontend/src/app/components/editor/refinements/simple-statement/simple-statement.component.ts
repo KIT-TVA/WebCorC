@@ -17,6 +17,7 @@ import {MatIconModule} from "@angular/material/icon";
 import {LinkComponent} from "../link/link.component";
 import { SimpleStatement } from '../../../../types/statements/simple-statement';
 import { Position } from '../../../../types/position';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'app-simple-statement',
@@ -43,6 +44,18 @@ export class SimpleStatementComponent extends Refinement {
         this._statementElementRef!.nativeElement!.remove();
       }
     })
+
+    super.precondition.contentChangeObservable.subscribe(content => {
+      if (!this._statement) { return }
+              
+      this._statement.precondition.content = content
+    })
+
+    super.postcondition.contentChangeObservable.subscribe(content => {
+      if (!this._statement) { return }
+
+      this._statement.postcondition.content = content
+    })
   }
 
   override getTitle(): string {
@@ -66,6 +79,8 @@ export class SimpleStatementComponent extends Refinement {
 
       this._statement = createdSubComponent;
       this._statementElementRef = componentRef.location;
+      this._statement.precondition.content = this.precondition.content
+      this._statement.postcondition.content = this.postcondition.content
       setTimeout(() => super.onDragMoveEmitter.next(), 1)
     })
   }
@@ -103,17 +118,13 @@ export class SimpleStatementComponent extends Refinement {
 
   override export() {
 
-    console.log("precondition: ", this.precondition)
-    console.log("postcondition: ", this.postcondition)
-
-
     return new SimpleStatement(
       this._condition.content,
       this.id,
       false, 
       "",
       new Condition(this.precondition.originId, this.precondition.title, this.precondition.content),
-      new Condition(this.postcondition.originId, this.postcondition.title, this.postcondition.content),
+      new Condition(this.postcondition.originId, this.postcondition.title, this.postcondition .content),
       new Position(0,0),
       this.statement?.export()
     )
