@@ -89,6 +89,8 @@ export class RepetitionStatementComponent extends Refinement {
 
       this._loopStatementRef = componentRef.location;
       this._loopStatement = createdSubComponent;
+      this._loopStatement.precondition.content = super.precondition.content
+      this._loopStatement.postcondition.content = super.postcondition.content
     })
   }
 

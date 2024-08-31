@@ -70,11 +70,13 @@ export class StrongWeakStatementComponent extends Refinement {
     dialogRef.afterClosed().subscribe(result => {
       if (!result) { return }
 
-      const componentRef = this.componentSpawn.createComponent(result);
-      const createdSubComponent = componentRef.instance as Refinement;
+      const componentRef = this.componentSpawn.createComponent(result)
+      const createdSubComponent = componentRef.instance as Refinement
 
       this._statementRef = componentRef.location;
       this._statement = createdSubComponent;
+      this._statement.precondition.content = this.weakPreCondition.content
+      this._statement.postcondition.content = this.strongPostCondition.content
     })
   }
 
