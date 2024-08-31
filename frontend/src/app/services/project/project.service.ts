@@ -10,7 +10,7 @@ import { CBCFormula } from './CBCFormula';
   providedIn: 'root'
 })
 export class ProjectService {
-  private _rootDir = new ProjectDirectory("/","root")
+  private _rootDir = new ProjectDirectory("","")
   private _dataChange = new BehaviorSubject<ProjectElement[]>(this._rootDir.content)
 
   constructor() {
@@ -98,6 +98,8 @@ export class ProjectService {
       parentDirPath = parentDirPath.slice(0, parentDirPath.length - 1)
     }
 
+    console.log(parentDirPath)
+
     const parentDir = this.findByPath(parentDirPath)
 
     if (!parentDir) {
@@ -134,6 +136,10 @@ export class ProjectService {
 
   get dataChange() {
     return this._dataChange
+  }
+
+  get isEmpty() : boolean {
+    return this._rootDir.content.length == 0
   }
 
 

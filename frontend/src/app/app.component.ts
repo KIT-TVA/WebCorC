@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import {MatToolbarModule} from "@angular/material/toolbar";
@@ -9,21 +9,23 @@ import {MatInputModule} from "@angular/material/input";
 import {TreeService} from "./services/tree/tree.service";
 import {MatButtonModule} from "@angular/material/button";
 import {MatDialog} from "@angular/material/dialog";
-import {VerificationResultComponent} from "./dialogs/verification-result.component";
 import {CodegenComponent} from "./dialogs/codegen.component";
 import { ProjectExplorerComponent } from "./components/project-explorer/project-explorer.component";
 import { MatIconModule } from '@angular/material/icon';
 import { NuMonacoEditorModule } from '@ng-util/monaco-editor';
+import { ConsoleComponent } from './components/console/console.component';
+import { ProjectService } from './services/project/project.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, MatToolbarModule, MatSidenavModule, FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, ProjectExplorerComponent, MatIconModule, NuMonacoEditorModule],
+  imports: [CommonModule, RouterOutlet, MatToolbarModule, MatSidenavModule, FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, ProjectExplorerComponent, MatIconModule, NuMonacoEditorModule, ConsoleComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  constructor(public treeService: TreeService, private dialog: MatDialog) {}
+
+  constructor(public treeService: TreeService, private dialog: MatDialog, private projectService : ProjectService) {}
 
   verify(): void {
   }
@@ -36,8 +38,17 @@ export class AppComponent {
     this.treeService.downloadJSON();
   }
 
+  openConsole(): void {
+    //this._bottomSheet.open(ConsoleComponent)
+  }
+
   @HostListener('window:beforeunload', ['$event'])
   onClose($event : any) {
+    if (!this.projectService.isEmpty) {
+      return
+    }
+    
+
     if (confirm('Are you sure to want to leave this editor')) {
       return true 
     }

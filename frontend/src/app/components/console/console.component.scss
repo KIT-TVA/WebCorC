@@ -1,0 +1,56 @@
+
+.consoleContainer {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+
+    .actions {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+
+        h3 {
+            align-self: center;
+            margin-left: 10px;
+        }
+
+        button {
+            align-self: center;
+            margin-left: auto;
+            color: red;
+        }
+    }
+
+    .form {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        border: none;
+        resize: none;
+        flex-grow: 1;
+
+        .field {
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            border: none;
+            height: 100%;
+
+
+            textarea {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+                border: none;
+                resize: none;
+            }
+        }
+
+        
+    }
+
+    
+}
+

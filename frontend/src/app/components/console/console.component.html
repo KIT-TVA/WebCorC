@@ -1,0 +1,12 @@
+<div class="consoleContainer" >
+    <div class="actions">
+        <h3> Console </h3>
+        <button mat-icon-button (click)="clear()" > <mat-icon> delete </mat-icon> </button>
+    </div>
+    <form [formGroup]="console" (keydown.enter)="$event.preventDefault()" class="form">
+        <mat-form-field class="field">
+            <textarea matInput formControlName="content" readonly="true"></textarea>
+        </mat-form-field>
+    </form>
+    
+</div>
