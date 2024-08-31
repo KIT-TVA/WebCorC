@@ -38,13 +38,9 @@ export class AppComponent {
     this.treeService.downloadJSON();
   }
 
-  openConsole(): void {
-    //this._bottomSheet.open(ConsoleComponent)
-  }
-
   @HostListener('window:beforeunload', ['$event'])
   onClose($event : any) {
-    if (!this.projectService.isEmpty) {
+    if (this.projectService.isEmpty) {
       return
     }
     
