@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import {MatToolbarModule} from "@angular/material/toolbar";
@@ -34,5 +34,14 @@ export class AppComponent {
 
   export(): void {
     this.treeService.downloadJSON();
+  }
+
+  @HostListener('window:beforeunload', ['$event'])
+  onClose($event : any) {
+    if (confirm('Are you sure to want to leave this editor')) {
+      return true 
+    }
+
+    return false 
   }
 }
