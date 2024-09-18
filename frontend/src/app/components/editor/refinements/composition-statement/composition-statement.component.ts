@@ -56,8 +56,8 @@ export class CompositionStatementComponent extends Refinement {
 
     super.precondition.contentChangeObservable.subscribe(content => {
       if (!this._leftStatement) { return }
-        
-            
+
+
       this._leftStatement.precondition.content = content
     })
 

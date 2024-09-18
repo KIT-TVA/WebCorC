@@ -47,7 +47,7 @@ export class SimpleStatementComponent extends Refinement {
 
     super.precondition.contentChangeObservable.subscribe(content => {
       if (!this._statement) { return }
-              
+
       this._statement.precondition.content = content
     })
 
@@ -118,13 +118,26 @@ export class SimpleStatementComponent extends Refinement {
 
   override export() {
 
+    if (this.isRoot()) {
+      return new SimpleStatement(
+        this._condition.content,
+        this.id,
+        false, 
+        "",
+        new Condition(this.precondition.originId, this.precondition.title, this.precondition.content),
+        new Condition(this.postcondition.originId, this.postcondition.title, this.postcondition.content),
+        new Position(0,0),
+        this.statement?.export()
+      )
+    }
+    
     return new SimpleStatement(
       this._condition.content,
       this.id,
       false, 
       "",
-      new Condition(this.precondition.originId, this.precondition.title, this.precondition.content),
-      new Condition(this.postcondition.originId, this.postcondition.title, this.postcondition .content),
+      super.precondition,
+      super.postcondition,
       new Position(0,0),
       this.statement?.export()
     )
