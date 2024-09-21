@@ -1,0 +1,10 @@
+description: Java File
+allOf: 
+  - $ref: './inode.yml'
+  - type: object 
+    properties:
+      content: 
+        type: string
+
+required:
+  - content

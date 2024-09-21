@@ -5,8 +5,13 @@ properties:
     type: string 
 
   originID: 
-    type: number
+    type: integer
     format: int64
 
   title:
     type: string 
+
+required:
+  - content
+  - originID
+  - title

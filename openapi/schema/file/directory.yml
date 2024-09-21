@@ -1,10 +1,13 @@
-description: Directory 
+description: Directory
 allOf:
-  - $ref: './inode.yml'
+  - $ref: "./inode.yml"
   - type: object
     properties:
       content:
         type: array
         items:
-          type: string 
-          format: urn
+          anyOf:
+            - $ref: "./directory.yml"
+            - $ref: "./file.yml"
+required:
+  - content

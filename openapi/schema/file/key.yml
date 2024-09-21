@@ -6,3 +6,5 @@ allOf:
       content:
         type: string 
         
+required:
+  - content

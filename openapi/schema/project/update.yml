@@ -3,8 +3,5 @@ properties:
   name:
     type: string
 
-  protected:
-    type: boolean
-
-  password: 
-    type: string
+required:
+  - name

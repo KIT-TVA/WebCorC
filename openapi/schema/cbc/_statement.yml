@@ -1,8 +1,0 @@
-oneOf:
-  - $ref: './statements/composition.yml'
-  - $ref: './statements/repetition.yml'
-  - $ref: './statements/selection.yml'
-  - $ref: './statements/simple.yml'
-  - $ref: './statements/strongWeak.yml'
-discriminator:
-    propertyName: statementType

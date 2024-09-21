@@ -6,7 +6,6 @@ allOf:
       preProven:
         type: boolean 
 
-
       guards: 
         type: array
         items: 
@@ -15,5 +14,9 @@ allOf:
       statements: 
         type: array 
         items: 
-          $ref: '../_statement.yml'
+          $ref: '../statement.yml'
 
+required:
+  - statementType
+  - preProven
+  - guar

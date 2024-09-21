@@ -1,0 +1,9 @@
+type: object
+properties:
+  xinPx: 
+    type: integer 
+    format: int64
+
+  yinPx:
+      type: integer 
+      format: int64
