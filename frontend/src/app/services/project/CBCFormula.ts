@@ -1,9 +1,11 @@
 import { Condition } from "../../types/condition/condition";
-import { Refinement } from "../../types/refinement";
 import { Statement } from "../../types/statements/statement";
 
+/**
+ * The representation of the data in the graphical editor in a json object.
+ * Used for saving state and communicate with the backend.
+ */
 export class CBCFormula {
-
 
     constructor(
         public type : string = "CBCFormula",  

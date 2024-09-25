@@ -1,5 +1,9 @@
 import { CBCFormula } from "./CBCFormula";
 
+
+/**
+ * Interface to implement for a Element in the Filetree of a project
+ */
 export interface IProjectElement {
     delete() : void
     get name() : string
@@ -9,6 +13,9 @@ export interface IProjectElement {
     
 }
 
+/**
+ * Default implementation of @see IProjectElement
+ */
 export class ProjectElement implements IProjectElement {
 
     constructor(private _path : string, private _name : string) {}

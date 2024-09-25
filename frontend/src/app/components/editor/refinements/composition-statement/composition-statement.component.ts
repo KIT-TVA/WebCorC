@@ -17,8 +17,6 @@ import {MatIconModule} from "@angular/material/icon";
 import {LinkComponent} from "../link/link.component";
 import { Statement } from '../../../../types/statements/statement';
 import { CompositionStatement } from '../../../../types/statements/compositon-statement';
-import { Position } from '../../../../types/position';
-
 
 @Component({
   selector: 'app-composition-statement',

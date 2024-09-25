@@ -6,7 +6,7 @@ import {MatTreeFlatDataSource, MatTreeFlattener, MatTreeModule} from '@angular/m
 import { ProjectService } from '../../services/project/project.service';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { ProjectElement } from '../../services/project/project-element';
-import { CodeFile, DiagrammFile } from '../../services/project/project-files';
+import { CodeFile, DiagramFile } from '../../services/project/project-files';
 import { ProjectDirectory } from '../../services/project/project-directory';
 import { BehaviorSubject } from 'rxjs';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -27,7 +27,10 @@ class FlatNode {
     this.expandable = node instanceof ProjectDirectory
   }
 }
-
+/**
+ * Component for the file management and navigating between the files,
+ * Primarly interacts with the @see ProjectService, in which the state is stored
+ */
 @Component({
   selector: 'app-project-explorer',
   standalone: true,
@@ -88,7 +91,7 @@ export class ProjectExplorerComponent {
   }
 
   addElement(node : FlatNode) {
-    this.projectService.addElement(node.path)
+    this.projectService.addFakeElement(node.path)
     this.treeControl.expand(node)
   }
 
@@ -104,9 +107,9 @@ export class ProjectExplorerComponent {
       )
     }
 
-    if (element instanceof DiagrammFile) {
+    if (element instanceof DiagramFile) {
       this.router.navigate(
-        ['editor/diagramm/', element.path],
+        ['editor/diagram/', element.path],
       )
     }
   }

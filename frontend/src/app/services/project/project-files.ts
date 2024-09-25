@@ -1,6 +1,10 @@
 import { CBCFormula } from "./CBCFormula";
 import { ProjectElement } from "./project-element";
 
+/**
+ * Represents the files edited in the @see FileEditorComponent, which is text based
+ * 
+ */
 export class CodeFile extends ProjectElement {
 
     constructor(_parentpath : string, name : string, public type : string = "java", private _content : string = "") {
@@ -16,10 +20,13 @@ export class CodeFile extends ProjectElement {
     }
 }
 
-export class DiagrammFile extends ProjectElement {
+/**
+ * Represents the files edited in the @see EditorComponent, which is graph based
+ */
+export class DiagramFile extends ProjectElement {
 
 
-    constructor(private _parentpath : string, name : string, public type : string = "diagramm", private _content : CBCFormula = new CBCFormula() ) {
+    constructor(private _parentpath : string, name : string, public type : string = "diagram", private _content : CBCFormula = new CBCFormula() ) {
         super(_parentpath + name + "." + type, name + "." + type)
     }
 

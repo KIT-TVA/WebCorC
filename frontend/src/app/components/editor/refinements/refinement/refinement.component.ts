@@ -72,9 +72,6 @@ export class RefinementComponent implements AfterViewInit {
 
   deleteRefinement(): void {
     this.refinement.removeVariableUsages();
-    if (this.treeService.rootNode === this.refinement) {
-      this.treeService.removeMacros();
-    }
     this.treeService.deletionNotifier.next(this.refinement);
   }
 

@@ -110,7 +110,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   }
 
   private loadFileContent() : void {
-    // load the diagramm of the file into the component
+    // load the diagram of the file into the component
 
     Refinement.resetIDs(2)
 

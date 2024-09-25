@@ -15,7 +15,9 @@ import { SelectionStatementComponent } from '../editor/refinements/selection-sta
 import { CompositionStatementComponent } from '../editor/refinements/composition-statement/composition-statement.component';
 import { RepetitionStatementComponent } from '../editor/refinements/repetition-statement/repetition-statement.component';
 import { StrongWeakStatementComponent } from '../editor/refinements/strong-weak-statement/strong-weak-statement.component';
-
+/**
+ * Dialog for adding the refinements as a child of the element which opened this dialog
+ */
 @Component({
   selector: 'app-choose-refinement',
   standalone: true,

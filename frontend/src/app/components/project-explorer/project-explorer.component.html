@@ -24,7 +24,7 @@
             <mat-form-field [style.width]="'370px'" [style.margin-left]="'5px'" [style.margin-right]="'5px'">
                 <mat-label>New Element</mat-label>
                 <input matInput #newElement [style.width]="'100%'">
-                <button matSuffix mat-icon-button aria-label="File"      (click)="addFile(node, newElement.value, 'diagramm')"  > <mat-icon> note_add      </mat-icon> </button>
+                <button matSuffix mat-icon-button aria-label="File"      (click)="addFile(node, newElement.value, 'diagram')"  > <mat-icon> note_add      </mat-icon> </button>
                 <button matSuffix mat-icon-button aria-label="File"      (click)="addFile(node, newElement.value, 'java')"  > <mat-icon> code              </mat-icon> </button>
                 <button matSuffix mat-icon-button aria-label="Directory" (click)="addFolder(node, newElement.value)"> <mat-icon> create_new_folder </mat-icon> </button>
             </mat-form-field>

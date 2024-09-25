@@ -4,6 +4,9 @@ import { NuMonacoEditorModule } from '@ng-util/monaco-editor';
 import { FormsModule } from '@angular/forms';
 import { ProjectService } from '../../services/project/project.service';
 
+/**
+ * Simple wrapper around the nu-monaco text editor, which saves and loads the file content from the @see ProjectService
+ */
 @Component({
   selector: 'app-file-editor',
   standalone: true,
@@ -30,6 +33,10 @@ export class FileEditorComponent implements AfterViewInit,OnDestroy {
       scrollBeyondLastLine: false,
   }
 
+  /**
+   * Allows with the configuration of the app paths in @see app.routes.ts to inject path variables from the url
+   * to this component 
+   */
   @Input()
   set urn(uniformRessourceName: string) {
     // prevent reloading the same context

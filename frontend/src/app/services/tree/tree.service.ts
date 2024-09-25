@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import {Refinement} from "../../types/refinement";
 import {ReplaySubject, Subject} from "rxjs";
-import {RequestError, VerificationResult} from "../../types/net/verification-net-types";
-import {environment} from "../../../environments/environment";
-import {Macro} from "../../types/macro";
+import {VerificationResult} from "../../types/net/verification-net-types";
 import { JavaVariable } from './JavaVariable';
 import { Condition } from '../../types/condition/condition';
 
+/**
+ * Service for the context of the tree in the graphical editor.
+ * The context includes the global conditions and the variables
+ */
 @Injectable({
   providedIn: 'root'
 })
@@ -16,7 +18,6 @@ export class TreeService {
 
   private _title: string = "";
   private _rootNode: Refinement | undefined;
-  private readonly _macros: Macro[] = [];
 
   private readonly _verificationResultNotifier: Subject<VerificationResult>;
   private readonly _variableSizeChangeNotifier: Subject<void>;
@@ -33,10 +34,11 @@ export class TreeService {
   }
 
   public verify(refinement: Refinement): void {
-    
+    // TODO: HTTP Rwquest to backend with cbc formula to /verify
   }
 
   public generateCode(language: string, options: any): void {
+    // TODO: HTTP Request to backend with cbc /generate
   }
 
   public downloadJSON(): void {
@@ -58,26 +60,16 @@ export class TreeService {
     this._scrollNotifier.next();
   }
 
-  public addMacro(macro: Macro): void {
-    this._macros.push(macro);
-  }
-
-  public removeMacros(): void {
-    this._macros.splice(0, this._macros.length);
-  }
-
-  public hasMacroWithName(name: string | null): boolean {
-    if (!name) {
-      return false;
-    }
-
-    return this._macros.map(macro => macro.name).includes(name);
-  }
-
   public isRootNode(refinement: Refinement): boolean {
     return refinement.id == 1;
   }
 
+  /**
+   * Add a variable to the formula
+   * Checks for duplicates
+   * @param name the name of the variable
+   * @returns true, if added sucessful, else false
+   */
   public addVariable(name : string) : boolean {
     let sizeBeforeAdd = this._variables.length;
     const newVariable = new JavaVariable(name);
@@ -92,6 +84,10 @@ export class TreeService {
     return this._variables.length != sizeBeforeAdd
   }
 
+  /**
+   * Remove a variable by name from the variables of the context
+   * @param names 
+   */
   public removeVariables(names: string[]) : void {
     const variablesToBeRemoved : string[] = []
 
@@ -104,6 +100,12 @@ export class TreeService {
     return name
   }
 
+  /**
+   * Add a global condition to the context,
+   * checks for duplicates
+   * @param name the string representation of the condition
+   * @returns true, if added else false
+   */
   public addGlobalCondition(name : string) : boolean {
     let sizeBeforeAdd = this._globalConditions.length;
     
@@ -117,6 +119,10 @@ export class TreeService {
     return this._globalConditions.length != sizeBeforeAdd
   }
 
+  /**
+   * Remove a global condition
+   * @param name The string representation of the condition to remove
+   */
   public removeGlobalCondition(name : string) : void {
     this._globalConditions = this._globalConditions.filter(val => val !== name)
   } 

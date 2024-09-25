@@ -7,6 +7,10 @@ import { MatInputModule } from '@angular/material/input';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ConsoleService } from '../../services/console/console.service';
 
+
+/**
+ * Currently very minimal textarea for showing the logs of the verification or generation services
+ */
 @Component({
   selector: 'app-console',
   standalone: true,

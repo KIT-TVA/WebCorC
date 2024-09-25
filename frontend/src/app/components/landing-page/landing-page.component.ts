@@ -3,8 +3,14 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute } from '@angular/router';
-import { ProjectService } from '../services/project/project.service';
+import { ProjectService } from '../../services/project/project.service';
 
+/**
+ * Landingpage infront of the editors to prevent file not found errors,
+ * this component is mounted at the root / of the url path and so the default page for users
+ * to see.
+ * Todo: Allow Passing a known projectId to this component via queryparameters to allow easy shareable links for projects
+ */
 @Component({
   selector: 'app-landing-page',
   standalone: true,
