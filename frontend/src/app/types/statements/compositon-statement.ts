@@ -31,6 +31,7 @@ export class CompositionStatement extends Statement {
         statement.precondition = this.preCondition
         statement.postcondition = this.postCondition
         statement.intermediateCondition = this.intermediateCondition
+        statement.position = this.position
 
         
         if (this.leftStatement) {

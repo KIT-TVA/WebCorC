@@ -16,8 +16,6 @@ import {ChooseRefinementComponent} from "../../../choose-refinement/choose-refin
 import {MatIconModule} from "@angular/material/icon";
 import {LinkComponent} from "../link/link.component";
 import { SimpleStatement } from '../../../../types/statements/simple-statement';
-import { Position } from '../../../../types/position';
-import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'app-simple-statement',
@@ -126,7 +124,7 @@ export class SimpleStatementComponent extends Refinement {
         "",
         new Condition(this.precondition.originId, this.precondition.title, this.precondition.content),
         new Condition(this.postcondition.originId, this.postcondition.title, this.postcondition.content),
-        new Position(0,0),
+        super.position,
         this.statement?.export()
       )
     }
@@ -138,7 +136,7 @@ export class SimpleStatementComponent extends Refinement {
       "",
       super.precondition,
       super.postcondition,
-      new Position(0,0),
+      super.position,
       this.statement?.export()
     )
   }

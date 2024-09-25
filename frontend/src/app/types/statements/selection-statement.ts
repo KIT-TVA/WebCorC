@@ -31,6 +31,7 @@ export class SelectionStatement extends Statement {
         statement.postcondition = this.postCondition
 
         statement.guards = this.guards
+        statement.position = this.position
 
         // Todo : Import the childs correctly and link them 
         for (const child of this.statements) {

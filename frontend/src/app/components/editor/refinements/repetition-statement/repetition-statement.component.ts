@@ -16,7 +16,6 @@ import {ChooseRefinementComponent} from "../../../choose-refinement/choose-refin
 import {MatIconModule} from "@angular/material/icon";
 import {LinkComponent} from "../link/link.component";
 import { RepetitionStatement } from '../../../../types/statements/repetition-statement';
-import { Position } from '../../../../types/position';
 
 @Component({
   selector: 'app-repetition-statement',
@@ -143,7 +142,7 @@ export class RepetitionStatementComponent extends Refinement {
       "",
       this.precondition,
       this.postcondition,
-      new Position(0, 0),
+      super.position,
       false,
       false,
       false,

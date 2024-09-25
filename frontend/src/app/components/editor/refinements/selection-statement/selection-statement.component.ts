@@ -18,7 +18,6 @@ import {LinkComponent} from "../link/link.component";
 import { MatButtonModule } from '@angular/material/button';
 import { Statement } from '../../../../types/statements/statement';
 import { SelectionStatement } from '../../../../types/statements/selection-statement';
-import { Position } from '../../../../types/position';
 
 @Component({
   selector: 'app-selection-statement',
@@ -183,7 +182,7 @@ export class SelectionStatementComponent extends Refinement {
       "",
       this.precondition,
       this.postcondition,
-      new Position(0,0),
+      super.position,
       false,
       this._guards,
       statements

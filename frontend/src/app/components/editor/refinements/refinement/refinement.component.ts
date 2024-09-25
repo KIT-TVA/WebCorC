@@ -8,7 +8,7 @@ import {FormsModule} from "@angular/forms";
 import {ConditionEditorComponent} from "../../condition/condition-editor/condition-editor.component";
 import {GridTileHeaderDirective} from "../../../../directives/grid-tile-header.directive";
 import {GridTileBorderDirective} from "../../../../directives/grid-tile-border.directive";
-import {CdkDrag, CdkDragHandle, CdkDragMove} from "@angular/cdk/drag-drop";
+import {CdkDrag, CdkDragEnd, CdkDragHandle, CdkDragMove, Point} from "@angular/cdk/drag-drop";
 
 import {TreeService} from "../../../../services/tree/tree.service";
 import {MatIconModule} from "@angular/material/icon";
@@ -21,6 +21,7 @@ import {MatListModule} from "@angular/material/list";
 import {MatDialog} from "@angular/material/dialog";
 import {VerificationResultComponent} from "../../../../dialogs/verification-result.component";
 import { Statement } from '../../../../types/statements/statement';
+import { Position } from '../../../../types/position';
 
 /**
  * Component to present refinements.
@@ -49,10 +50,15 @@ export class RefinementComponent implements AfterViewInit {
 
   verificationResult: VerificationResult | undefined;
 
+  dragPosition : Point = {x:0, y: 50}
+
   constructor(private treeService: TreeService, private dialog: MatDialog) {
   }
 
   ngAfterViewInit(): void {
+
+    this.dragPosition = {x : this.refinement.position.xinPx, y: this.refinement.position.yinPx}
+
     if (this.refinement.isPreconditionEditable()) {
       this.toggleConditionEditorView(false);
     }
@@ -153,6 +159,11 @@ export class RefinementComponent implements AfterViewInit {
 
   isRoot() : boolean {
     return this.treeService.isRootNode(this.refinement)
+  }
+
+  onDragEnded($event : CdkDragEnd) {
+    this.refinement.onDragEndEmitter.next($event)
+    this.refinement.position = new Position($event.source.getFreeDragPosition().x, $event.source.getFreeDragPosition().y)
   }
 
   export() : Statement | undefined {

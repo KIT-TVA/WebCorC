@@ -28,6 +28,7 @@ export class StrongWeakStatement extends Statement {
 
         statement.precondition = this.preCondition
         statement.postcondition = this.postCondition
+        statement.position = this.position
 
         if (this.statement) {
             const child = this.statement.toComponent(spawn)

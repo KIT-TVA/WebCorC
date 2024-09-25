@@ -1,5 +1,5 @@
-<div class="refinementBox" cdkDrag cdkDragBoundary="#editorContainer" (cdkDragMoved)="onDragMoved($event)"
-  (cdkDragEnded)="refinement.onDragEndEmitter.next($event)" #refinementBox>
+<div class="refinementBox" cdkDrag cdkDragBoundary="#editorContainer" (cdkDragMoved)="onDragMoved($event)" [cdkDragFreeDragPosition]="dragPosition"
+  (cdkDragEnded)="onDragEnded($event)" #refinementBox>
 
   <div class="refinementBoxTitle" cdkDragHandle #boxTitle>
     <p>{{refinement.getTitle()}} #{{refinement.id}}</p>

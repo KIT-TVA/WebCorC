@@ -39,6 +39,7 @@ export class RepetitionStatement extends Statement {
         statement.invariantCondition = this.invariantCondition
         statement.variantCondition = this.variantCondition
         statement.guardCondition = this.guardCondition
+        statement.position = this.position
 
         
         if (this.loopStatement) {

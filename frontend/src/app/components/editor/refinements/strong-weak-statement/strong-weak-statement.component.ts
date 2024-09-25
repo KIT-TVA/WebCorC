@@ -16,7 +16,6 @@ import {ChooseRefinementComponent} from "../../../choose-refinement/choose-refin
 import {MatIconModule} from "@angular/material/icon";
 import {LinkComponent} from "../link/link.component";
 import { StrongWeakStatement } from '../../../../types/statements/strong-weak-statement';
-import { Position } from '../../../../types/position';
 
 @Component({
   selector: 'app-strong-weak-statement',
@@ -113,7 +112,7 @@ export class StrongWeakStatementComponent extends Refinement {
       "",
       this.precondition,
       this.postcondition,
-      new Position(0,0),
+      super.position,
       this.statement?.export()
     )
   }

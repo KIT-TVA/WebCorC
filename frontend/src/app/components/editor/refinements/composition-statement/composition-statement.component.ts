@@ -159,7 +159,7 @@ export class CompositionStatementComponent extends Refinement {
       false, "",
       this.precondition,
       this.postcondition,
-      new Position(0,0),
+      this.position,
       this.intermediateCondition,
       this.leftStatement?.export(),
       this.rightStatement?.export()

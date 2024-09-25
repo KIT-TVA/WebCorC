@@ -4,6 +4,7 @@ import {CdkDragEnd} from "@angular/cdk/drag-drop";
 import {ReplaySubject} from "rxjs";
 import {Precondition} from "./condition/precondition";
 import {Postcondition} from "./condition/postcondition";
+import { Position } from "./position";
 
 export abstract class Refinement {
   private static NEXT_ID: number = 1;
@@ -14,6 +15,7 @@ export abstract class Refinement {
 
   private _onDragMoveEmitter: ReplaySubject<void>;
   private _onDragEndEmitter: ReplaySubject<CdkDragEnd>;
+  private _position: Position = new Position(0,0);
 
   protected constructor(protected treeService: TreeService) {
     this._id = Refinement.NEXT_ID++;
@@ -74,6 +76,14 @@ export abstract class Refinement {
 
   set postcondition(value: Condition) {
     this._postcondition = value;
+  }
+
+  set position(position : Position) {
+    this._position = position
+  }
+
+  get position() : Position {
+    return this._position
   }
 
   abstract getTitle(): string;
