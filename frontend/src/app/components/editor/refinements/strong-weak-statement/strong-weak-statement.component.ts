@@ -76,6 +76,8 @@ export class StrongWeakStatementComponent extends Refinement {
       this._statement = createdSubComponent;
       this._statement.precondition.content = this.weakPreCondition.content
       this._statement.postcondition.content = this.strongPostCondition.content
+
+      this.treeService.redrawNotifier.next()
     })
   }
 

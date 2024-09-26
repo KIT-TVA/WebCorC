@@ -13,7 +13,7 @@ import { Condition } from '../../types/condition/condition';
   providedIn: 'root'
 })
 export class TreeService {
-  private readonly _scrollNotifier: ReplaySubject<void>;
+  private readonly _redrawNotifier: ReplaySubject<void>;
   private readonly _deletionNotifier: ReplaySubject<Refinement>;
 
   private _title: string = "";
@@ -27,7 +27,7 @@ export class TreeService {
   variablesChangedNotifier: Subject<void> = new Subject<void>();
 
   constructor() {
-    this._scrollNotifier = new ReplaySubject();
+    this._redrawNotifier = new ReplaySubject();
     this._deletionNotifier = new ReplaySubject();
     this._verificationResultNotifier = new Subject<VerificationResult>();
     this._variableSizeChangeNotifier = new Subject();
@@ -57,7 +57,7 @@ export class TreeService {
   }
 
   public onEditorContainerScrolled(): void {
-    this._scrollNotifier.next();
+    this._redrawNotifier.next();
   }
 
   public isRootNode(refinement: Refinement): boolean {
@@ -147,8 +147,8 @@ export class TreeService {
     return this._rootNode;
   }
 
-  get scrollNotifier(): ReplaySubject<void> {
-    return this._scrollNotifier;
+  get redrawNotifier(): ReplaySubject<void> {
+    return this._redrawNotifier;
   }
 
   get variables() : string[] {

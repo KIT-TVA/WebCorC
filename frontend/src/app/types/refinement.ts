@@ -47,8 +47,8 @@ export abstract class Refinement {
     return this.isConditionEditable(this._postcondition);
   }
 
-  getScrollNotifier(): ReplaySubject<void> {
-    return this.treeService.scrollNotifier;
+  getRedrawNotifier(): ReplaySubject<void> {
+    return this.treeService.redrawNotifier;
   }
 
   get id(): number {
@@ -105,7 +105,7 @@ export abstract class Refinement {
     this._onDragMoveEmitter.next()
   }
 
-
+  
 
   getBoxRowHeight(): string {
     return "120px";

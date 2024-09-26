@@ -85,7 +85,7 @@ export class SimpleStatementComponent extends Refinement {
       this._statementElementRef = componentRef.location;
       this._statement.precondition.content = this.precondition.content
       this._statement.postcondition.content = this.postcondition.content
-      setTimeout(() => super.refreshLinkState(), 1)
+      this.treeService.redrawNotifier.next()
     })
   }
 

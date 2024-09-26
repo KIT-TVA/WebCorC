@@ -121,7 +121,7 @@ export class SelectionStatementComponent extends Refinement {
       })
 
       // Todo: Find better way to refresh the links between the statements
-      super.refreshLinkState()
+      setTimeout(() => this.treeService.redrawNotifier.next(), 5)
     })
   }
 
@@ -133,7 +133,7 @@ export class SelectionStatementComponent extends Refinement {
     this._guards.push(new Condition(this.id, "guard #" + (this._statements.length), ""))
     this._statements.push(undefined)
     this._statementsElementRefs.push(undefined)
-    super.refreshLinkState()
+    this.treeService.redrawNotifier.next()
   }
 
   /**
@@ -156,7 +156,7 @@ export class SelectionStatementComponent extends Refinement {
       }
       this._statementsElementRefs.pop()
     }
-    setTimeout(() => super.refreshLinkState(), 5)
+    setTimeout(() => this.refreshLinkState(), 5)
   }
 
   get statements() {

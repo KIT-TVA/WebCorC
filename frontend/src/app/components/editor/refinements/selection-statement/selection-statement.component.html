@@ -26,7 +26,7 @@
                                  [onSubRefinementDragEnd]="getStatementByIndex(i).onDragEndEmitter"
                                  [onOriginRefinementDragMove]="onDragMoveEmitter"
                                  [onOriginRefinementDragEnd]="onDragEndEmitter"
-                                 [scrollNotifier]="getStatementByIndex(i).getScrollNotifier()"
+                                 [scrollNotifier]="getStatementByIndex(i).getRedrawNotifier()"
                                  ></refinement-link>
             </div>
         </div>

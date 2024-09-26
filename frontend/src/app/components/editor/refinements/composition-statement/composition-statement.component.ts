@@ -123,6 +123,7 @@ export class CompositionStatementComponent extends Refinement {
         this._rightStatement.postcondition.content = this.postcondition.content
       }
 
+      this.treeService.redrawNotifier.next()
     })
   }
 

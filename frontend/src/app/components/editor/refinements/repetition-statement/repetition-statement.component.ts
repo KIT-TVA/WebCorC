@@ -109,6 +109,8 @@ export class RepetitionStatementComponent extends Refinement {
       this._loopStatement = createdSubComponent;
       this._loopStatement.precondition.content = super.precondition.content
       this._loopStatement.postcondition.content = super.postcondition.content
+
+      this.treeService.redrawNotifier.next()
     })
   }
 
