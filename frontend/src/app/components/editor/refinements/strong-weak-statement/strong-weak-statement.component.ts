@@ -116,4 +116,10 @@ export class StrongWeakStatementComponent extends Refinement {
       this.statement?.export()
     )
   }
+
+  override refreshLinkState(): void {
+    super.refreshLinkState()
+    if (!this._statement) return
+    this.statement?.refreshLinkState()
+  }
 }

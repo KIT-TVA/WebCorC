@@ -4,7 +4,7 @@ import { FileEditorComponent } from './components/file-editor/file-editor.compon
 import { LandingPageComponent } from './components/landing-page/landing-page.component';
 
 /**
- * Mapping from path to component
+ * Mapping from path to components to fill the page excluding the top bar
  */
 export const routes: Routes = [
   {path: "", component: LandingPageComponent},

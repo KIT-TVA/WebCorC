@@ -43,6 +43,10 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   
 
 
+  /**
+   * Input for the urn of the file to edit
+   * @param uniformRessourceName The path variable of the file to edit
+   */
   @Input()
   set urn(uniformRessourceName : string) {
 
@@ -81,6 +85,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   
   public ngAfterViewInit(): void {
     this._viewInit = true
+    // workaround to ensure proper loading of file content on switch between files
     setTimeout(() => this.loadFileContent(), 10)
   }
 
@@ -115,6 +120,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     Refinement.resetIDs(2)
 
     let newFormula = this.projectService.getFileContent(this._urn) as CBCFormula
+    // if the file is not empty load content
     if (newFormula.statement) {
       const root = this.rootNodeOutlet['_componentRef'].instance as SimpleStatementComponent
       root.statementElementRef = undefined
@@ -128,12 +134,13 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
         root.statementElementRef = newChild?.[1].location
       }
 
-      setTimeout(() => root.onDragMoveEmitter.next(), 5)
+      setTimeout(() => root.refreshLinkState(), 5)
 
       this.variables.importVariables(newFormula.javaVariables)
       this.conditions.importConditions(newFormula.globalConditions)
 
     } else {
+      // file is empty, reset rootNode to default values
       this.rootNode = SimpleStatementComponent
       const root =  this.rootNodeOutlet['_componentRef'].instance as SimpleStatementComponent
       root.precondition.content = ""

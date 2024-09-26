@@ -10,6 +10,12 @@ import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatListModule} from "@angular/material/list";
 import { Condition } from '../../../types/condition/condition';
 
+/**
+ * Component for the user to manage the global conditions in a cbc formula
+ * Uses @see TreeService for saving the global conditions
+ * Uses Angular Reactive Forms to dynamically show the inputs
+ * @link https://angular.dev/guide/forms/reactive-forms
+ */
 @Component({
   selector: 'app-global-conditions',
   standalone: true,
@@ -17,8 +23,11 @@ import { Condition } from '../../../types/condition/condition';
   templateUrl: './global-conditions.component.html',
   styleUrl: './global-conditions.component.scss'
 })
-export class GlobalConditionsComponent implements OnInit  {
+export class GlobalConditionsComponent {
 
+  /**
+   * Form template 
+   */
   conditions : FormGroup = this._fb.group({
     newCondition: new FormControl("", []),
     items: this._fb.array([])
@@ -26,12 +35,10 @@ export class GlobalConditionsComponent implements OnInit  {
 
   constructor(private _fb: FormBuilder, public treeService: TreeService) {}
 
-
-  ngOnInit(): void {
-    
-  }
-
-
+  /**
+   * Saves the content of the input with the id newCondition to the @see TreeService
+   * And adds a new item to the form with the content of the new created condition 
+   */
   addCondition() : void {
     
     const value : string = this.conditions.controls['newCondition'].value.trim()
@@ -45,6 +52,8 @@ export class GlobalConditionsComponent implements OnInit  {
       return
     }
 
+    // create a new formcontrol based on the value 
+    // [Validators.required] is used to ensure visual feedback for a empty input to the user
     const condition = this._fb.group({
       name: new FormControl(value, [Validators.required])
     })
@@ -53,11 +62,18 @@ export class GlobalConditionsComponent implements OnInit  {
     this.conditions.controls['newCondition'].reset()
   }
 
+  /**
+   * Removes the condition at the index of the items array and syncs the changes to the @see TreeService
+   * @param index The index of the condition to remove
+   */
   removeCondition(index : number) : void {
     this.treeService.removeGlobalCondition(this.items.at(index).value.name)
     this.items.removeAt(index)
   }
 
+  /**
+   * Remove all conditions from the form and @see TreeService
+   */
   removeAllConditions() {
     for (let i = 0; i < this.items.length; i++) {
       this.treeService.removeGlobalCondition(this.items.at(i).value.name)
@@ -67,6 +83,11 @@ export class GlobalConditionsComponent implements OnInit  {
     this.conditions.controls['newCondition'].reset()
   }
 
+
+  /**
+   * Import Condtions from the file state found in @see ProjectService
+   * @param conditions The condtions to import
+   */  
   importConditions(conditions: Condition[]) {
     for (const condition of conditions) {
       const conditionControl = this._fb.group({

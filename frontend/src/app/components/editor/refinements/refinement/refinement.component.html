@@ -46,8 +46,7 @@
         <mat-drawer #preconditionDrawer class="example-sidenav" mode="side">
           <div class="conditionParent" > 
             <condition-editor [condition]="refinement.precondition"
-                            [editable]="refinement.isPreconditionEditable()"
-                            (conditionEditingFinished)="onConditionEdited(true)"></condition-editor>
+                            [editable]="refinement.isPreconditionEditable()"></condition-editor>
           </div>
         </mat-drawer>
 
@@ -69,8 +68,7 @@
         <mat-drawer #postconditionDrawer class="example-sidenav" mode="side" position="end">
           <div class="conditionParent">
             <condition-editor [condition]="refinement.postcondition"
-                            [editable]="refinement.isPostConditionEditable()"
-                            (conditionEditingFinished)="onConditionEdited(false)"></condition-editor>
+                              [editable]="refinement.isPostConditionEditable()"></condition-editor>
           </div>
           
         </mat-drawer>

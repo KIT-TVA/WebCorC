@@ -17,6 +17,12 @@ import {MatIconModule} from "@angular/material/icon";
 import {LinkComponent} from "../link/link.component";
 import { SimpleStatement } from '../../../../types/statements/simple-statement';
 
+/**
+ * Component representing a simple statement in the grahical editor.
+ * The Root statement is also a simple statement, with one child element
+ * @see EditorComponent
+ * @see SimpleStatement
+ */
 @Component({
   selector: 'app-simple-statement',
   standalone: true,
@@ -79,7 +85,7 @@ export class SimpleStatementComponent extends Refinement {
       this._statementElementRef = componentRef.location;
       this._statement.precondition.content = this.precondition.content
       this._statement.postcondition.content = this.postcondition.content
-      setTimeout(() => super.onDragMoveEmitter.next(), 1)
+      setTimeout(() => super.refreshLinkState(), 1)
     })
   }
 
@@ -114,8 +120,13 @@ export class SimpleStatementComponent extends Refinement {
     this._condition.content = content
   }
 
+  /**
+   * 
+   * @returns New Instance of SimpleStatement with the state of the component
+   */
   override export() {
 
+    // workaround to ensure the root statement is unique for every cbc formula file  
     if (this.isRoot()) {
       return new SimpleStatement(
         this._condition.content,
@@ -139,6 +150,14 @@ export class SimpleStatementComponent extends Refinement {
       super.position,
       this.statement?.export()
     )
+  }
+
+  override refreshLinkState(): void {
+    super.refreshLinkState()
+
+    if (this._statement) {
+      this._statement.refreshLinkState()
+    }
   }
 
 }

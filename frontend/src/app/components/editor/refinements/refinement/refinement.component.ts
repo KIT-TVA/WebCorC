@@ -50,13 +50,15 @@ export class RefinementComponent implements AfterViewInit {
 
   verificationResult: VerificationResult | undefined;
 
-  dragPosition : Point = {x:0, y: 50}
+  // position of the element in the drag and drop area
+  dragPosition : Point = {x:0, y: 0}
 
   constructor(private treeService: TreeService, private dialog: MatDialog) {
   }
 
   ngAfterViewInit(): void {
 
+    // set the position to the saved position in the file
     this.dragPosition = {x : this.refinement.position.xinPx, y: this.refinement.position.yinPx}
 
     if (this.refinement.isPreconditionEditable()) {
@@ -80,6 +82,10 @@ export class RefinementComponent implements AfterViewInit {
     this.expandEditorContainer(move);
   }
 
+  refreshLinkState() : void {
+    this.refinement.onDragMoveEmitter.next()
+  }
+
   /**
    * Expands the editor container, when a refinement box is dragged to the editor containers right or bottom border.
    * @param move event fired through a users drag.
@@ -101,9 +107,6 @@ export class RefinementComponent implements AfterViewInit {
     }
   }
 
-  onConditionEdited(editedPrecondition: boolean): void {
-  }
-
   toggleConditionEditorView(postcondition: boolean): void {
     let drawer = this.preconditionDrawer;
     let editorRef = this.preconditionDivRef;
@@ -123,6 +126,7 @@ export class RefinementComponent implements AfterViewInit {
     }
   }
 
+  // Todo: Rewrite for new backend
   onVerified(verificationResult: VerificationResult): void {
     if (!verificationResult.errors) {
       return;
@@ -154,16 +158,21 @@ export class RefinementComponent implements AfterViewInit {
     this.dialog.open(VerificationResultComponent, {data: {result: this.verificationResult, refinementId: this.refinement.id}});
   }
 
+  /**
+   * Used to make the root statement not deleteable by the user
+   * @returns true, if the statement is the root statement, else false
+   */
   isRoot() : boolean {
     return this.treeService.isRootNode(this.refinement)
   }
 
+  /**
+   * Emit the new posiition of the statement to the background #
+   * and sync the position to the internal state for saving the state
+   * @param $event The event, which triggered the function call
+   */
   onDragEnded($event : CdkDragEnd) {
     this.refinement.onDragEndEmitter.next($event)
     this.refinement.position = new Position($event.source.getFreeDragPosition().x, $event.source.getFreeDragPosition().y)
   }
-
-  export() : Statement | undefined {
-    return 
-  } 
 }

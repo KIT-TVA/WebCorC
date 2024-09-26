@@ -18,6 +18,11 @@ import {LinkComponent} from "../link/link.component";
 import { Statement } from '../../../../types/statements/statement';
 import { CompositionStatement } from '../../../../types/statements/compositon-statement';
 
+/**
+ * Composition statement in the graphical editor.
+ * The compositon statement propagates the precondition to the left statement and the postcondition to the right statement.
+ * The intermediate condition is the post condition of the left statement and the precondition of the right statement. 
+ */
 @Component({
   selector: 'app-composition-statement',
   standalone: true,
@@ -31,15 +36,20 @@ export class CompositionStatementComponent extends Refinement {
   private _rightStatement : Refinement | undefined;
   private _intermediateCondition : Condition;
 
+  /**
+   * Native HTML Elements of the statements, used for visual deletion of the child elements
+   */
   private _leftStatementRef : ElementRef | undefined;
   private _rightStatementRef : ElementRef | undefined;
-  
+
+  // Element used to spawn the child statements in
   @ViewChild("subComponentSpawn", {read: ViewContainerRef}) componentSpawn!: ViewContainerRef;
 
   constructor(treeService : TreeService, private dialog : MatDialog) {
     super(treeService);
     this._intermediateCondition = new Condition(this.id, "Intermediate Cond.")
 
+    // Allow deletion of the child elements
     treeService.deletionNotifier.subscribe(refinement => {
       if (this._leftStatement === refinement) {
         this._leftStatement = undefined;
@@ -52,6 +62,7 @@ export class CompositionStatementComponent extends Refinement {
       }
     })
 
+    // Propagate the changes from the precondition to the left statement
     super.precondition.contentChangeObservable.subscribe(content => {
       if (!this._leftStatement) { return }
 
@@ -59,12 +70,14 @@ export class CompositionStatementComponent extends Refinement {
       this._leftStatement.precondition.content = content
     })
 
+    // Propagate the changes from the post condition to the right statement
     super.postcondition.contentChangeObservable.subscribe(content => {
       if (!this._rightStatement) { return }
 
       this._rightStatement.postcondition.content = content
     })
 
+    // Propagate the changes from the intermediate condition to the pre- and postcondition
     this._intermediateCondition.contentChangeObservable.subscribe(content => {
       if (this._leftStatement) {
         this._leftStatement.postcondition.content = content
@@ -82,7 +95,11 @@ export class CompositionStatementComponent extends Refinement {
     return "Composition"
   }
 
-
+  /**
+   * Add the child statements chosen by the user in @see ChooseRefinementComponent .
+   * The new child statement then get created in component
+   * @param side hardcoded string from the template to identify which button got used
+   */
   chooseRefinement(side : "left" | "right") : void {
     const dialogRef = this.dialog.open(ChooseRefinementComponent);
 
@@ -107,6 +124,18 @@ export class CompositionStatementComponent extends Refinement {
       }
 
     })
+  }
+
+  override refreshLinkState(): void {
+    super.refreshLinkState()
+    
+    if (this.leftStatement) {
+      this.leftStatement.refreshLinkState()
+    }
+
+    if (this.rightStatement) {
+      this.rightStatement.refreshLinkState()
+    }
   }
 
   get leftStatement() : Refinement | undefined  {
@@ -149,12 +178,18 @@ export class CompositionStatementComponent extends Refinement {
     this._intermediateCondition = condition
   } 
  
-
+  /**
+   * Converts this component to the data only CompositionStatment @see CompositionStatement
+   * @returns a new Instance of CompositionStatment
+   */
   override export() : Statement | undefined {
     return new CompositionStatement(
       this.getTitle(),
       this.id,
-      false, "",
+      // Todo: Save Statement Proven State 
+      false,
+      // Todo: Implement annotation feature or drop comment attribute 
+      "",
       this.precondition,
       this.postcondition,
       this.position,

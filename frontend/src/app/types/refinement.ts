@@ -5,6 +5,7 @@ import {ReplaySubject} from "rxjs";
 import {Precondition} from "./condition/precondition";
 import {Postcondition} from "./condition/postcondition";
 import { Position } from "./position";
+import { Statement } from "@angular/compiler";
 
 export abstract class Refinement {
   private static NEXT_ID: number = 1;
@@ -89,23 +90,22 @@ export abstract class Refinement {
   abstract getTitle(): string;
 
   /**
+   * Creates a new Instance of a data only class for persisting the state
+   * of the refinement without the subjects 
+  */
+  abstract export(): any
+
+  /**
    * Removes variable usages of this refinement on deletion.
    */
   removeVariableUsages(): void {}
 
-  /**
-   * Generates the JSON object containing this refinement object.
-   * Every refinement contains the pre- and postcondition. However, some add further
-   * attributes.
-   */
-  export(): any {
-    return {
-      refinementType: this.getTitle(),
-      id: this.id,
-      precondition: this.precondition.export(),
-      postcondition: this.postcondition.export()
-    };
+
+  refreshLinkState() : void {
+    this._onDragMoveEmitter.next()
   }
+
+
 
   getBoxRowHeight(): string {
     return "120px";
