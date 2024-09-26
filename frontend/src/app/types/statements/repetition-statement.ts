@@ -24,7 +24,7 @@ export class RepetitionStatement extends Statement {
         public invariantCondition : Condition,
         public variantCondition : Condition,
         public guardCondition : Condition,
-        public loopStatement : Statement
+        public loopStatement : Statement | undefined
 
     ) {
         super(name, "repetition", id, proven, comment, preCondition, postCondition, position)

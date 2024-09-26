@@ -5,7 +5,7 @@ import {ReplaySubject} from "rxjs";
 import {Precondition} from "./condition/precondition";
 import {Postcondition} from "./condition/postcondition";
 import { Position } from "./position";
-import { Statement } from "@angular/compiler";
+import { Statement } from "./statements/statement";
 
 export abstract class Refinement {
   private static NEXT_ID: number = 1;
@@ -93,7 +93,7 @@ export abstract class Refinement {
    * Creates a new Instance of a data only class for persisting the state
    * of the refinement without the subjects 
   */
-  abstract export(): any
+  abstract export(): Statement | undefined
 
   /**
    * Removes variable usages of this refinement on deletion.

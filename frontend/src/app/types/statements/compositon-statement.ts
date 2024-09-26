@@ -19,8 +19,8 @@ export class CompositionStatement extends Statement {
         postCondition : Postcondition,
         position : Position,
         public intermediateCondition : Condition,
-        public leftStatement : Statement,
-        public rightStatement : Statement,
+        public leftStatement : Statement | undefined,
+        public rightStatement : Statement | undefined,
     ) {
         super(name, "composition" ,id, proven, comment, preCondition, postCondition, position)
     }

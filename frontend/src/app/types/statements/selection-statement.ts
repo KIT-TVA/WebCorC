@@ -19,7 +19,7 @@ export class SelectionStatement extends Statement {
         position : Position,
         public preProven : boolean,
         public guards : Condition[],
-        public statements : Statement[]
+        public statements : (Statement | undefined)[]
     ) {
         super(name, "selection", id, proven, comment, preCondition, postCondition, position)
     }

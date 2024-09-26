@@ -210,7 +210,7 @@ export class SelectionStatementComponent extends Refinement {
    */
   override export() {
 
-    const statements : Statement[] = []
+    const statements : (Statement | undefined)[] = []
     for (const statement of this._statements) {
       if (statement) {
         statements.push(statement.export())
