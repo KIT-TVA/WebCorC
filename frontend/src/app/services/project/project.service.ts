@@ -28,14 +28,22 @@ export class ProjectService {
    * @returns The @see ProjectElement identified by the path, if no matching @see ProjectElement is found null
    */
   public findByPath(path : string, directory : ProjectDirectory = this._rootDir) : ProjectElement | null {
+
+    console.log(path)
     if (directory.path === path) {
       return directory
     }
 
     for (const child of directory.content) {
+
       if (child.path === path) { return child; }
-      if (child instanceof ProjectDirectory && path.includes(child.name) ) {
-        return this.findByPath(path, child);
+
+      if (child instanceof ProjectDirectory) {
+        let relativePath = path.replace(child.path, '')
+
+        if (relativePath.length < path.length && relativePath.length > 0) {
+          return this.findByPath(path, child);
+        }
       }
     }
 
