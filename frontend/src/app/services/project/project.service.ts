@@ -25,11 +25,10 @@ export class ProjectService {
    * Search for a element of the project by its path recursiv
    * @param path The path of the element to retrieve
    * @param directory The directory to search for, default: root 
-   * @returns The @see ProjectElement identified by the path, if no matching @see ProjectElement is found null
+   * @returns The file identified by the given path, if no matching file is found null
+   * @see ProjectElement
    */
   public findByPath(path : string, directory : ProjectDirectory = this._rootDir) : ProjectElement | null {
-
-    console.log(path)
     if (directory.path === path) {
       return directory
     }

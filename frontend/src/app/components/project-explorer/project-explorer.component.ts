@@ -51,12 +51,14 @@ export class ProjectExplorerComponent {
 
   private elementToNodeMap : Map<ProjectElement, FlatNode> = new Map<ProjectElement, FlatNode>();
   private nodeToElementMap : Map<FlatNode, ProjectElement> = new Map<FlatNode, ProjectElement>();
-  private treeFlattener = new MatTreeFlattener(this._transformer, node => node.level, node => node.expandable, node => (node as ProjectDirectory).content)
+  private _treeFlatener = new MatTreeFlattener(this._transformer, node => node.level, node => node.expandable, node => (node as ProjectDirectory).content)
 
-  treeControl = new FlatTreeControl<FlatNode> ( node => node.level, node => node.expandable)
-  dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener)
+  private _treeControl = new FlatTreeControl<FlatNode>(node => node.level, node => node.expandable);
 
-  private dataChangeSubject : BehaviorSubject<ProjectElement[]> = new BehaviorSubject<ProjectElement[]>([]);
+  private _dataSource = new MatTreeFlatDataSource(this.treeControl, this._treeFlatener
+
+  );
+
 
   constructor(private projectService : ProjectService, private router : Router) {
     this.dataSource.data = this.projectService.root.content;
@@ -66,7 +68,7 @@ export class ProjectExplorerComponent {
     })
   }
 
-  addFolder(node : FlatNode, name : string) {
+  public addFolder(node : FlatNode, name : string) {
 
     if (!name) {
       return;
@@ -76,7 +78,7 @@ export class ProjectExplorerComponent {
     this.treeControl.expand(node)
   }
 
-  addFile(node : FlatNode, name : string, type : string) {
+  public addFile(node : FlatNode, name : string, type : string) {
     
     if (!name) {
       return;
@@ -86,11 +88,11 @@ export class ProjectExplorerComponent {
     this.treeControl.expand(node)
   }
 
-  deleteElement(node : FlatNode) {
+  public deleteElement(node : FlatNode) {
     this.projectService.deleteElement(node.path, node.name)
   }
 
-  addElement(node : FlatNode) {
+  public addElement(node : FlatNode) {
     this.projectService.addFakeElement(node.path)
     this.treeControl.expand(node)
   }
@@ -120,6 +122,22 @@ export class ProjectExplorerComponent {
 
   get root() {
     return new FlatNode(this.projectService.root, -1)
+  }
+
+  public get treeControl() {
+    return this._treeControl;
+  }
+
+  public set treeControl(value) {
+    this._treeControl = value;
+  }
+
+  public get dataSource() {
+    return this._dataSource;
+  }
+
+  public set dataSource(value) {
+    this._dataSource = value;
   }
 
 }
