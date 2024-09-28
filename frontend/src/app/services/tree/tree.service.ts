@@ -54,6 +54,9 @@ export class TreeService {
     window.URL.revokeObjectURL(url);
   }
 
+  /**
+   * Redraw the links between the statements on scrolling in the editor
+   */
   public onEditorContainerScrolled(): void {
     this._redrawNotifier.next();
   }

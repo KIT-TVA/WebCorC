@@ -12,6 +12,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { fakeProjectElementName } from '../../services/project/fake-element';
 import { MatInputModule } from '@angular/material/input';
 import { Router } from '@angular/router';
+import { first } from 'rxjs';
 
 class FlatNode {
   expandable: boolean;
@@ -116,18 +117,18 @@ export class ProjectExplorerComponent {
   }
 
   public save() {
-    this.projectService.explorerNotify.subscribe(() => {
+    this.projectService.explorerNotify.pipe(first()).subscribe(() => {
       
-      this.projectService.explorerNotify.unsubscribe()
+      
     })
   }
 
   public import() {
-    this.projectService.notifyEditortoSave()
+    
   }
 
   public export() {
-    this.projectService.explorerNotify.subscribe(() => {
+    this.projectService.explorerNotify.pipe(first()).subscribe(() => {
       const structure = JSON.stringify(this.projectService.root.export(), null, 2);
       const blob = new Blob([structure], {type: "application/json"});
       const url = window.URL.createObjectURL(blob);
