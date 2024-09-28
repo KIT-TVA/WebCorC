@@ -56,10 +56,10 @@ export class RefinementComponent implements AfterViewInit {
   constructor(private treeService: TreeService, private dialog: MatDialog) {
   }
 
-  ngAfterViewInit(): void {
+  public ngAfterViewInit(): void {
 
     // set the position to the saved position in the file
-    this.dragPosition = {x : this.refinement.position.xinPx, y: this.refinement.position.yinPx}
+    this.refreshDragPosition()
 
     if (this.refinement.isPreconditionEditable()) {
       this.toggleConditionEditorView(false);
@@ -70,20 +70,26 @@ export class RefinementComponent implements AfterViewInit {
 
     this.treeService.verificationResultNotifier.subscribe(
       verificationResult => this.onVerified(verificationResult));
+
+    if (this.isRoot()) {
+      this.refinement.getRedrawNotifier().subscribe(() => {
+        this.refreshDragPosition()
+      })
+    }
   }
 
-  deleteRefinement(): void {
+  public deleteRefinement(): void {
     this.refinement.removeVariableUsages();
     this.treeService.deletionNotifier.next(this.refinement);
   }
 
-  onDragMoved(move: CdkDragMove): void {
+  public onDragMoved(move: CdkDragMove): void {
     this.refinement.onDragMoveEmitter.next();
     this.expandEditorContainer(move);
   }
 
-  refreshLinkState() : void {
-    this.refinement.onDragMoveEmitter.next()
+  public refreshDragPosition() : void {
+    this.dragPosition = {x : this.refinement.position.xinPx, y: this.refinement.position.yinPx}
   }
 
   /**

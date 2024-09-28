@@ -126,6 +126,10 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       root.statementElementRef = undefined
       root.precondition.content = newFormula.statement.preCondition.content
       root.postcondition.content = newFormula.statement.postCondition.content
+      root.position = newFormula.statement.position
+      root.getRedrawNotifier().next()
+      
+
       
       const newChild = (newFormula.statement as SimpleStatement).statement?.toComponent(this.examplesSpawn)
 
