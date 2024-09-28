@@ -66,6 +66,7 @@ export class SelectionStatementComponent extends Refinement {
       for (let i = 0; i < this._statements.length; i++) {
         if (this._statements[i]) { 
           this._statements[i]!.precondition.content = "(" + super.precondition.content + ") & (" + this._guards[i].content + ")"
+          this._statements[i]!.precondition.originId = this.id
         }
       }
     })
@@ -74,6 +75,7 @@ export class SelectionStatementComponent extends Refinement {
       for (let i = 0; i < this._statements.length; i++) {
         if (this._statements[i]) { 
           this._statements[i]!.postcondition.content = super.postcondition.content
+          this._statements[i]!.postcondition.originId = super.postcondition.originId
         }
       }
     })

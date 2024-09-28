@@ -40,4 +40,8 @@ export class Condition {
     this._content = value.trim();
     this._contentChangeEmitter.next(this._content)
   }
+
+  set originId(id : number) {
+    this._originId = id
+  }
 }

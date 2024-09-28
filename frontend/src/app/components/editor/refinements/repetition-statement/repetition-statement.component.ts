@@ -73,10 +73,12 @@ export class RepetitionStatementComponent extends Refinement {
 
       if (this._loopStatement) {
         this._loopStatement.precondition.content = super.precondition.content
+        this._loopStatement.precondition.originId = this.id
       }
 
       if (this._loopStatement) {
         this._loopStatement.postcondition.content = super.postcondition.content
+        this._loopStatement.postcondition.originId = this.id
       }
     })
 
@@ -86,6 +88,7 @@ export class RepetitionStatementComponent extends Refinement {
       
       if (this._loopStatement) {
         this._loopStatement.precondition.content = super.precondition.content
+        this._loopStatement.precondition.originId = this.id
       }
     })
   }

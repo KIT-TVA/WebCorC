@@ -13,6 +13,8 @@ export abstract class Refinement {
   private _id: number;
   private _precondition: Condition;
   private _postcondition: Condition;
+  private _preconditionEditable : boolean = false;
+  private _postconditionEditable : boolean = false;
 
   private _onDragMoveEmitter: ReplaySubject<void>;
   private _onDragEndEmitter: ReplaySubject<CdkDragEnd>;
@@ -40,11 +42,16 @@ export abstract class Refinement {
   }
 
   isPreconditionEditable(): boolean {
-    return this.isConditionEditable(this._precondition);
+    return  this._preconditionEditable && this.isConditionEditable(this._precondition)
   }
 
   isPostConditionEditable(): boolean {
-    return this.isConditionEditable(this._postcondition);
+    return this._postconditionEditable && this.isConditionEditable(this._postcondition);
+  }
+
+  protected toogleEditableCondition() {
+    this._preconditionEditable = !this._preconditionEditable
+    this._postconditionEditable = !this._postconditionEditable
   }
 
   getRedrawNotifier(): ReplaySubject<void> {
@@ -105,7 +112,7 @@ export abstract class Refinement {
     this._onDragMoveEmitter.next()
   }
 
-  
+
 
   getBoxRowHeight(): string {
     return "120px";

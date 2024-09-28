@@ -50,12 +50,14 @@ export class StrongWeakStatementComponent extends Refinement {
       if (!this._statement) { return }
 
       this._statement.precondition.content = this._weakPreCondition.content
+      this._statement.precondition.originId = this.id
     })
 
     this._strongPostCondition.contentChangeObservable.subscribe(content => {
       if (!this._statement) { return }
 
       this._statement.postcondition.content = this._strongPostCondition.content
+      this._statement.precondition.originId = this.id
     })
   }
   

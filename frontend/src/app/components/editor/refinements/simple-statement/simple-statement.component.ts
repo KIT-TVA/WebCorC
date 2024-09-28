@@ -42,6 +42,10 @@ export class SimpleStatementComponent extends Refinement {
   constructor(treeService : TreeService, private dialog: MatDialog ) {
     super(treeService);
 
+    if (this.isRoot()) {
+      super.toogleEditableCondition()
+    }
+
     treeService.deletionNotifier.subscribe(refinement => {
       if (this._statement === refinement) {
         this._statement = undefined
@@ -53,12 +57,14 @@ export class SimpleStatementComponent extends Refinement {
       if (!this._statement) { return }
 
       this._statement.precondition.content = content
+      this._statement.precondition.originId = this.id
     })
 
     super.postcondition.contentChangeObservable.subscribe(content => {
       if (!this._statement) { return }
 
       this._statement.postcondition.content = content
+      this._statement.postcondition.originId = this.id
     })
   }
 
