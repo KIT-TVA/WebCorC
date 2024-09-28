@@ -1,5 +1,6 @@
 import {Observable, ReplaySubject, debounceTime, distinctUntilChanged} from "rxjs";
 
+
 export class Condition {
   protected readonly _title: string;
   private _content: string;
@@ -16,7 +17,7 @@ export class Condition {
     this._contentChangeEmitter = new ReplaySubject();
   }
 
-  export(): any {
+  export(): {content : string, originID: number, title : string} {
     return {content: this.content, originID: this.originId, title: this.title};
   }
 

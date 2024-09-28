@@ -11,7 +11,7 @@
       <mat-list-item>
         <mat-icon matListItemIcon style="color: rgb(201,73,73)">error</mat-icon>
         <div>
-          Verification failed. <label style="text-decoration: underline; cursor: pointer"
+          Verification failed. <label style="text-decoration: underline; cursor: pointer" (keypress)="openVerificationResultDialog()"
                                       (click)="openVerificationResultDialog()">See why</label>
         </div>
       </mat-list-item>
@@ -22,7 +22,7 @@
       <mat-list-item>
         <mat-icon matListItemIcon style="color: rgba(255,184,23,0.97)">warning</mat-icon>
         <div>
-          Verified under circumstances. <label style="text-decoration: underline; cursor: pointer"
+          Verified under circumstances. <label style="text-decoration: underline; cursor: pointer" (keypress)="openVerificationResultDialog()"
                                       (click)="openVerificationResultDialog()">See conditions</label>
         </div>
       </mat-list-item>

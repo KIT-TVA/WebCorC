@@ -1,4 +1,4 @@
-<form [formGroup]="conditions" (keydown.enter)="$event.preventDefault()">
+<form [formGroup]="conditions">
     <ng-container formArrayName="items" *ngFor="let variableForm of items.controls; let i = index">
         <ng-container [formGroupName]="i">
           <mat-form-field [style.width]="'100%'">
