@@ -1,3 +1,4 @@
+import { ApiDiagrammFile, ApiTextFile, Inode } from "../../types/project/inode";
 import { CBCFormula } from "./CBCFormula";
 import { ProjectElement } from "./project-element";
 
@@ -9,6 +10,10 @@ export class CodeFile extends ProjectElement {
 
     constructor(_parentpath : string, name : string, public type : string = "java", private _content : string = "") {
         super(_parentpath + name + "." + type, name + "." + type)
+    }
+
+    override export(): Inode {
+        return new ApiTextFile(this.path, this._content)
     }
 
     override get content() : string {
@@ -28,6 +33,10 @@ export class DiagramFile extends ProjectElement {
 
     constructor(private _parentpath : string, name : string, public type : string = "diagram", private _content : CBCFormula = new CBCFormula() ) {
         super(_parentpath + name + "." + type, name + "." + type)
+    }
+
+    override export(): Inode {
+        return new ApiDiagrammFile(this.path, this._content)    
     }
 
     override get content() : CBCFormula {

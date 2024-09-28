@@ -114,8 +114,8 @@ export class StrongWeakStatementComponent extends Refinement {
       this.id,
       false, 
       "",
-      this.precondition,
-      this.postcondition,
+      this.precondition.export(),
+      this.postcondition.export(),
       super.position,
       this.statement?.export()
     )

@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { ProjectDirectory } from './project-directory';
 import { CodeFile, DiagramFile } from './project-files';
 import { ProjectElement } from './project-element';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject} from 'rxjs';
 import { FakeProjectElement, fakeProjectElementName } from './fake-element';
 import { CBCFormula } from './CBCFormula';
+import { Inode } from '../../types/project/inode';
 
 /**
  * Service for project managment.
@@ -17,6 +18,8 @@ import { CBCFormula } from './CBCFormula';
 export class ProjectService {
   private _rootDir = new ProjectDirectory("","")
   private _dataChange = new BehaviorSubject<ProjectElement[]>(this._rootDir.content)
+  private _saveNotify = new Subject<void>();
+  private _savedFinished = new Subject<void>();
 
   constructor() {
   }
@@ -62,7 +65,7 @@ export class ProjectService {
   public addDirectory(parentPath : string, name : string) : ProjectDirectory {
     const parentDir = this.findByPath(parentPath);
     if (!parentDir) {
-      throw new Error("Parent dir of new dir not fournd");
+      throw new Error("Parent dir of new dir not found");
     }
 
     const dir = parentDir as ProjectDirectory
@@ -167,6 +170,7 @@ export class ProjectService {
     }
 
     file.content = content
+    this._savedFinished.next()
   }
 
   /**
@@ -183,6 +187,25 @@ export class ProjectService {
     return (file  as CodeFile | DiagramFile).content
   }
 
+  /**
+   * Export the project by exporting the root directory to the data only classes
+   * @returns 
+   */
+  public export() : Inode {
+    return this._rootDir.export()
+  }
+
+  public notifyEditortoSave() {
+    this._saveNotify.next()
+  }
+
+  get editorNotify() {
+    return this._saveNotify
+  }
+
+  get explorerNotify() {
+    return this._savedFinished
+  }
 
   get root() { 
     return this._rootDir
@@ -195,6 +218,5 @@ export class ProjectService {
   get isEmpty() : boolean {
     return this._rootDir.content.length == 0
   }
-
 
 }

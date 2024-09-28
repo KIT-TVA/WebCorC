@@ -9,7 +9,7 @@ import { FormArray, FormBuilder, FormControl, FormGroup,
 import { MatDividerModule} from "@angular/material/divider";
 import { MatFormFieldModule} from "@angular/material/form-field";
 import { MatListModule} from "@angular/material/list";
-import { Condition } from '../../../types/condition/condition';
+import { ConditionDTO } from '../../../types/condition/condition';
 
 /**
  * Component for the user to manage the global conditions in a cbc formula
@@ -89,7 +89,7 @@ export class GlobalConditionsComponent {
    * Import Condtions from the file state found in @see ProjectService
    * @param conditions The condtions to import
    */  
-  importConditions(conditions: Condition[]) {
+  importConditions(conditions: ConditionDTO[]) {
     for (const condition of conditions) {
       const conditionControl = this._fb.group({
         name : new FormControl(condition.content, [Validators.required])

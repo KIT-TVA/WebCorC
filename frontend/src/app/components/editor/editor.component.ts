@@ -39,7 +39,11 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
    * @param treeService The service to interact with the refinements 
    * @param projectService The service to persist and laod the file content
    */
-  constructor(public treeService: TreeService, private projectService : ProjectService) {}
+  constructor(public treeService: TreeService, private projectService : ProjectService) {
+    this.projectService.editorNotify.subscribe(() => {
+      this.saveContentToFile()
+    })
+  }
   
   /**
    * Input for the urn of the file to edit
@@ -60,6 +64,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     this._urn = uniformRessourceName
 
     let child : Refinement | undefined
+    
     // get the child of the root element
     if (this.treeService.rootNode) {
       child = (this.treeService.rootNode as SimpleStatementComponent).statement

@@ -1,4 +1,4 @@
-import { Condition } from "../../types/condition/condition";
+import { ConditionDTO } from "../../types/condition/condition";
 import { Statement } from "../../types/statements/statement";
 
 /**
@@ -16,9 +16,9 @@ export class CBCFormula {
         public className : string = "",
         public methodName : string = "",
         public javaVariables : string[] = [],
-        public globalConditions : Condition[]  = [],
-        public preCondition : Condition = new Condition(1),
-        public postCondition : Condition = new Condition(1),
+        public globalConditions : ConditionDTO[]  = [],
+        public preCondition : ConditionDTO = new ConditionDTO(1),
+        public postCondition : ConditionDTO = new ConditionDTO(1),
         public statement : Statement | null = null
     ) {}
 }

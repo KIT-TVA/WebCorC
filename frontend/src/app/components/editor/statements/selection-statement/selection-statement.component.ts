@@ -7,7 +7,7 @@ import { MatGridListModule } from "@angular/material/grid-list";
 import { GridTileBorderDirective } from "../../../../directives/grid-tile-border.directive";
 import { RefinementWidgetComponent } from "../../../../widgets/refinement-widget/refinement-widget.component";
 import { ConditionEditorComponent } from "../../condition/condition-editor/condition-editor.component";
-import { Condition } from "../../../../types/condition/condition";
+import { Condition, ConditionDTO } from "../../../../types/condition/condition";
 import { FormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -212,6 +212,12 @@ export class SelectionStatementComponent extends Refinement {
    */
   override export() {
 
+    const guards : ConditionDTO[] = []
+
+    for (const guard of this._guards) {
+      guards.push(guard.export())
+    }
+
     const statements : (Statement | undefined)[] = []
     for (const statement of this._statements) {
       if (statement) {
@@ -226,12 +232,12 @@ export class SelectionStatementComponent extends Refinement {
       false,
       // Todo: Implement annotation feature or drop comment attribute 
       "",
-      this.precondition,
-      this.postcondition,
+      this.precondition.export(),
+      this.postcondition.export(),
       super.position,
       // Todo: Save Statement Proven Statement
       false,
-      this._guards,
+      guards,
       statements
     )  
   }

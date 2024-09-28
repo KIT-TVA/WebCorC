@@ -176,8 +176,8 @@ export class RepetitionStatementComponent extends Refinement {
       false,
       // Todo: Implement annotation feature or drop comment attribute 
       "",
-      this.precondition,
-      this.postcondition,
+      this.precondition.export(),
+      this.postcondition.export(),
       super.position,
       // Todo: Save Statement Proven Statement
       false,
@@ -185,9 +185,9 @@ export class RepetitionStatementComponent extends Refinement {
       false,
       // Todo: Save Statement Proven Statement
       false,
-      this.invariantCondition,
-      this.variantCondition,
-      this.guardCondition,
+      this.invariantCondition.export(),
+      this.variantCondition.export(),
+      this.guardCondition.export(),
       this.loopStatement?.export()
     )
   }

@@ -1,8 +1,5 @@
-
-import { Postcondition } from "../condition/postcondition";
-import { Precondition } from "../condition/precondition";
 import { Statement } from "./statement";
-import { Condition } from "../condition/condition";
+import { ConditionDTO } from "../condition/condition";
 import { Position } from "../position";
 import { ViewContainerRef, ComponentRef } from "@angular/core";
 import { Refinement } from "../refinement";
@@ -15,15 +12,15 @@ export class RepetitionStatement extends Statement {
         id : number,
         proven : boolean,
         comment : string,
-        preCondition : Precondition,
-        postCondition : Postcondition,
+        preCondition : ConditionDTO,
+        postCondition : ConditionDTO,
         position : Position,
         public postProven : boolean,
         public preProven : boolean,
         public variantProven : boolean,
-        public invariantCondition : Condition,
-        public variantCondition : Condition,
-        public guardCondition : Condition,
+        public invariantCondition : ConditionDTO,
+        public variantCondition : ConditionDTO,
+        public guardCondition : ConditionDTO,
         public loopStatement : Statement | undefined
 
     ) {
@@ -34,11 +31,11 @@ export class RepetitionStatement extends Statement {
         const statementRef = spawn.createComponent(RepetitionStatementComponent)
         const statement = statementRef.instance as RepetitionStatementComponent
 
-        statement.precondition = this.preCondition
-        statement.postcondition = this.postCondition
-        statement.invariantCondition = this.invariantCondition
-        statement.variantCondition = this.variantCondition
-        statement.guardCondition = this.guardCondition
+        statement.precondition = this.preCondition.convert()
+        statement.postcondition = this.postCondition.convert()
+        statement.invariantCondition = this.invariantCondition.convert()
+        statement.variantCondition = this.variantCondition.convert()
+        statement.guardCondition = this.guardCondition.convert()
         statement.position = this.position
 
         

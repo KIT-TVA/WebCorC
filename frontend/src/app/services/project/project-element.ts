@@ -1,3 +1,4 @@
+import { Inode } from "../../types/project/inode";
 import { CBCFormula } from "./CBCFormula";
 
 
@@ -6,6 +7,7 @@ import { CBCFormula } from "./CBCFormula";
  */
 export interface IProjectElement {
     delete() : void
+    export() : Inode
     get name() : string
     get path() : string
     get content() : (IProjectElement[] | CBCFormula | string)
@@ -16,11 +18,12 @@ export interface IProjectElement {
 /**
  * Default implementation of @see IProjectElement
  */
-export class ProjectElement implements IProjectElement {
+export abstract class ProjectElement implements IProjectElement {
 
     constructor(private _path : string, private _name : string) {}
 
     delete(): void {  }
+    abstract export(): Inode;
 
     get path(): string {
         return this._path

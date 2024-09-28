@@ -1,7 +1,5 @@
 import { ComponentRef, ViewContainerRef } from "@angular/core";
-import { Condition } from "../condition/condition";
-import { Postcondition } from "../condition/postcondition";
-import { Precondition } from "../condition/precondition";
+import { ConditionDTO } from "../condition/condition";
 import { Position } from "../position";
 import { Refinement } from "../refinement";
 import { Statement } from "./statement";
@@ -15,10 +13,10 @@ export class CompositionStatement extends Statement {
         id : number,
         proven : boolean,
         comment : string,
-        preCondition : Precondition,
-        postCondition : Postcondition,
+        preCondition : ConditionDTO,
+        postCondition : ConditionDTO,
         position : Position,
-        public intermediateCondition : Condition,
+        public intermediateCondition : ConditionDTO,
         public leftStatement : Statement | undefined,
         public rightStatement : Statement | undefined,
     ) {
@@ -28,9 +26,9 @@ export class CompositionStatement extends Statement {
     public override toComponent(spawn: ViewContainerRef): [ refinement : Refinement, ref : ComponentRef<Refinement>] {
         const statementRef = spawn.createComponent(CompositionStatementComponent)
         const statement = statementRef.instance as CompositionStatementComponent
-        statement.precondition = this.preCondition
-        statement.postcondition = this.postCondition
-        statement.intermediateCondition = this.intermediateCondition
+        statement.precondition = this.preCondition.convert()
+        statement.postcondition = this.postCondition.convert()
+        statement.intermediateCondition = this.intermediateCondition.convert()
         statement.position = this.position
 
         

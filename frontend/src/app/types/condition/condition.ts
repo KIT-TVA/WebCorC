@@ -17,8 +17,8 @@ export class Condition {
     this._contentChangeEmitter = new ReplaySubject();
   }
 
-  export(): {content : string, originID: number, title : string} {
-    return {content: this.content, originID: this.originId, title: this.title};
+  export(): ConditionDTO {
+    return new ConditionDTO(this._originId, this._title, this._content);
   }
 
   get content(): string {
@@ -44,5 +44,18 @@ export class Condition {
 
   set originId(id : number) {
     this._originId = id
+  }
+}
+
+export class ConditionDTO {
+
+  public constructor(
+    public originId : number,
+    public title : string = "",
+    public content : string = ""
+  ) {}
+
+  public convert() : Condition {
+    return new Condition(this.originId, this.title, this.content)
   }
 }

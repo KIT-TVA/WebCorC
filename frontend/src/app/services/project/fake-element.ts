@@ -1,3 +1,4 @@
+import { Inode } from "../../types/project/inode";
 import { ProjectElement } from "./project-element";
 
 
@@ -8,6 +9,10 @@ export const fakeProjectElementName = "...new"
  * location of the user
  */
 export class FakeProjectElement extends ProjectElement {
+    
+    override export(): Inode {
+        throw new Error("Method not implemented.");
+    }
 
     constructor(_parentpath : string) {
         super(_parentpath, fakeProjectElementName)

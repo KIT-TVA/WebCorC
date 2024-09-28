@@ -1,8 +1,7 @@
 import { ComponentRef, ViewContainerRef } from "@angular/core";
-import { Postcondition } from "../condition/postcondition";
-import { Precondition } from "../condition/precondition";
 import { Position } from "../position";
 import { Refinement } from "../refinement";
+import { ConditionDTO } from "../condition/condition";
 
 export class Statement {
 
@@ -12,8 +11,8 @@ export class Statement {
         public id : number,
         public proven : boolean,
         public comment : string,
-        public preCondition : Precondition,
-        public postCondition : Postcondition,
+        public preCondition : ConditionDTO,
+        public postCondition : ConditionDTO,
         public position : Position 
     ) {}
 

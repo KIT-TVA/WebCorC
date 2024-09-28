@@ -115,6 +115,31 @@ export class ProjectExplorerComponent {
     }
   }
 
+  public save() {
+    this.projectService.explorerNotify.subscribe(() => {
+      
+      this.projectService.explorerNotify.unsubscribe()
+    })
+  }
+
+  public import() {
+    this.projectService.notifyEditortoSave()
+  }
+
+  public export() {
+    this.projectService.explorerNotify.subscribe(() => {
+      const structure = JSON.stringify(this.projectService.root.export(), null, 2);
+      const blob = new Blob([structure], {type: "application/json"});
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "program.json";
+      a.click();
+      window.URL.revokeObjectURL(url);
+    })
+    this.projectService.notifyEditortoSave()
+  }
+
   hasChild = (_: number, node: FlatNode) => node.expandable;
 
   isTypeLessAndHasNoName = (_ : number, node : FlatNode) => node.name === fakeProjectElementName;

@@ -200,10 +200,10 @@ export class CompositionStatementComponent extends Refinement {
       false,
       // Todo: Implement annotation feature or drop comment attribute 
       "",
-      this.precondition,
-      this.postcondition,
+      this.precondition.export(),
+      this.postcondition.export(),
       this.position,
-      this.intermediateCondition,
+      this.intermediateCondition.export(),
       this.leftStatement?.export(),
       this.rightStatement?.export()
     )

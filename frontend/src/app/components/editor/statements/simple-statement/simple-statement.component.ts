@@ -7,7 +7,7 @@ import { MatGridListModule } from "@angular/material/grid-list";
 import { GridTileBorderDirective } from "../../../../directives/grid-tile-border.directive";
 import { RefinementWidgetComponent } from "../../../../widgets/refinement-widget/refinement-widget.component";
 import { ConditionEditorComponent } from "../../condition/condition-editor/condition-editor.component";
-import { Condition } from "../../../../types/condition/condition";
+import { Condition, ConditionDTO } from "../../../../types/condition/condition";
 import { FormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -139,8 +139,8 @@ export class SimpleStatementComponent extends Refinement {
         this.id,
         false, 
         "",
-        new Condition(this.precondition.originId, this.precondition.title, this.precondition.content),
-        new Condition(this.postcondition.originId, this.postcondition.title, this.postcondition.content),
+        new ConditionDTO(this.precondition.originId, this.precondition.title, this.precondition.content),
+        new ConditionDTO(this.postcondition.originId, this.postcondition.title, this.postcondition.content),
         super.position,
         this.statement?.export()
       )
@@ -151,8 +151,8 @@ export class SimpleStatementComponent extends Refinement {
       this.id,
       false, 
       "",
-      super.precondition,
-      super.postcondition,
+      super.precondition.export(),
+      super.postcondition.export(),
       super.position,
       this.statement?.export()
     )

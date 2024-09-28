@@ -1,7 +1,5 @@
 import { ComponentRef, ViewContainerRef } from "@angular/core";
-import { Condition } from "../condition/condition";
-import { Postcondition } from "../condition/postcondition";
-import { Precondition } from "../condition/precondition";
+import { Condition, ConditionDTO } from "../condition/condition";
 import { Position } from "../position";
 import { Refinement } from "../refinement";
 import { Statement } from "./statement";
@@ -14,11 +12,11 @@ export class SelectionStatement extends Statement {
         id : number,
         proven : boolean,
         comment : string,
-        preCondition : Precondition,
-        postCondition : Postcondition,
+        preCondition : ConditionDTO,
+        postCondition : ConditionDTO,
         position : Position,
         public preProven : boolean,
-        public guards : Condition[],
+        public guards : ConditionDTO[],
         public statements : (Statement | undefined)[]
     ) {
         super(name, "selection", id, proven, comment, preCondition, postCondition, position)
@@ -27,13 +25,19 @@ export class SelectionStatement extends Statement {
     public override toComponent(spawn: ViewContainerRef): [ refinement : Refinement, ref : ComponentRef<Refinement>] {
         const statementRef = spawn.createComponent(SelectionStatementComponent)
         const statement = statementRef.instance as SelectionStatementComponent
-        statement.precondition = this.preCondition
-        statement.postcondition = this.postCondition
+        statement.precondition = this.preCondition.convert()
+        statement.postcondition = this.postCondition.convert()
 
-        statement.guards = this.guards
+        const guards : Condition[] = []
+
+        for (const guard of this.guards) {
+            guards.push(guard.convert())
+        }
+
+        statement.guards = guards
         statement.position = this.position
 
-        // Todo : Import the childs correctly and link them 
+
         for (const child of this.statements) {
             if (child) {
                 const childElement = child.toComponent(spawn)

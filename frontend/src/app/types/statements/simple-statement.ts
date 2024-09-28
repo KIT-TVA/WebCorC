@@ -1,11 +1,10 @@
 
 import { ComponentRef, ViewContainerRef } from "@angular/core";
-import { Postcondition } from "../condition/postcondition";
-import { Precondition } from "../condition/precondition";
 import { Position } from "../position";
 import { Refinement } from "../refinement";
 import { Statement } from "./statement";
 import { SimpleStatementComponent } from "../../components/editor/statements/simple-statement/simple-statement.component";
+import { ConditionDTO } from "../condition/condition";
 
 export class SimpleStatement extends Statement {
 
@@ -14,8 +13,8 @@ export class SimpleStatement extends Statement {
         id : number,
         proven : boolean,
         comment : string,
-        preCondition : Precondition,
-        postCondition : Postcondition,
+        preCondition : ConditionDTO,
+        postCondition : ConditionDTO,
         position : Position,
         public statement : Statement | undefined
 
@@ -26,8 +25,8 @@ export class SimpleStatement extends Statement {
     public override toComponent(spawn : ViewContainerRef): [ refinement : Refinement, ref : ComponentRef<Refinement>] {
         const statementRef = spawn.createComponent(SimpleStatementComponent)
         const statement = statementRef.instance as SimpleStatementComponent
-        statement.precondition = this.preCondition
-        statement.postcondition = this.postCondition
+        statement.precondition = this.preCondition.convert()
+        statement.postcondition = this.postCondition.convert()
         statement.condition = this.name
         statement.position = this.position
 

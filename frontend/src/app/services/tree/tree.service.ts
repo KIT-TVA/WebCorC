@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import {Refinement} from "../../types/refinement";
-import {ReplaySubject, Subject} from "rxjs";
-import {VerificationResult} from "../../types/net/verification-net-types";
+import { Refinement } from "../../types/refinement";
+import { ReplaySubject, Subject } from "rxjs";
+import { VerificationResult } from "../../types/net/verification-net-types";
 import { JavaVariable } from './JavaVariable';
-import { Condition } from '../../types/condition/condition';
+import { ConditionDTO } from '../../types/condition/condition';
 
 /**
  * Service for the context of the tree in the graphical editor.
@@ -20,8 +20,7 @@ export class TreeService {
   private _rootNode: Refinement | undefined;
 
   private readonly _verificationResultNotifier: Subject<VerificationResult>;
-  private readonly _variableSizeChangeNotifier: Subject<void>;
-
+  
   private _variables : JavaVariable[] = [];
   private _globalConditions : string[] = []; 
   variablesChangedNotifier: Subject<void> = new Subject<void>();
@@ -30,7 +29,6 @@ export class TreeService {
     this._redrawNotifier = new ReplaySubject();
     this._deletionNotifier = new ReplaySubject();
     this._verificationResultNotifier = new Subject<VerificationResult>();
-    this._variableSizeChangeNotifier = new Subject();
   }
 
   public verify(refinement: Refinement): void {
@@ -96,10 +94,6 @@ export class TreeService {
     this._variables = this._variables.filter(val => !variablesToBeRemoved.includes(val.name))
   }
 
-  public findVariable(name: string) : string {
-    return name
-  }
-
   /**
    * Add a global condition to the context,
    * checks for duplicates
@@ -127,10 +121,6 @@ export class TreeService {
     this._globalConditions = this._globalConditions.filter(val => val !== name)
   }
 
-  public changedVariableSize(): void {
-    this.variableSizeChangeNotifier.next();
-  }
-
   get deletionNotifier(): ReplaySubject<Refinement> {
     return this._deletionNotifier;
   }
@@ -153,18 +143,14 @@ export class TreeService {
     return variablesArray;
   }
 
-  get conditions() : Condition[] {
-    const conditionsArray : Condition[] = []
-    this._globalConditions.forEach((condition) => conditionsArray.push(new Condition(0, "globalCondition", condition)))
+  get conditions() : ConditionDTO[] {
+    const conditionsArray : ConditionDTO[] = []
+    this._globalConditions.forEach((condition) => conditionsArray.push(new ConditionDTO(0, "globalCondition", condition)))
     return conditionsArray
   }
 
   get verificationResultNotifier(): Subject<VerificationResult> {
     return this._verificationResultNotifier;
-  }
-
-  get variableSizeChangeNotifier(): Subject<void> {
-    return this._variableSizeChangeNotifier;
   }
 
   set title(value: string) {

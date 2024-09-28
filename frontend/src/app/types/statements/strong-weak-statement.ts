@@ -1,10 +1,9 @@
 import { ViewContainerRef, ComponentRef } from "@angular/core";
-import { Postcondition } from "../condition/postcondition";
-import { Precondition } from "../condition/precondition";
 import { Position } from "../position";
 import { Refinement } from "../refinement";
 import { Statement } from "./statement";
 import { StrongWeakStatementComponent } from "../../components/editor/statements/strong-weak-statement/strong-weak-statement.component";
+import { ConditionDTO } from "../condition/condition";
 
 export class StrongWeakStatement extends Statement {
 
@@ -13,8 +12,8 @@ export class StrongWeakStatement extends Statement {
         id : number,
         proven : boolean,
         comment : string,
-        preCondition : Precondition,
-        postCondition : Postcondition,
+        preCondition : ConditionDTO,
+        postCondition : ConditionDTO,
         position : Position,
         public statement : Statement | undefined 
 
@@ -26,8 +25,8 @@ export class StrongWeakStatement extends Statement {
         const statementRef = spawn.createComponent(StrongWeakStatementComponent)
         const statement = statementRef.instance as StrongWeakStatementComponent
 
-        statement.precondition = this.preCondition
-        statement.postcondition = this.postCondition
+        statement.precondition = this.preCondition.convert()
+        statement.postcondition = this.postCondition.convert()
         statement.position = this.position
 
         if (this.statement) {
