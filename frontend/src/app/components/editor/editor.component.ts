@@ -1,4 +1,4 @@
-import {AfterViewChecked, AfterViewInit, Component, Input, OnDestroy, Type, ViewChild, ViewContainerRef} from '@angular/core';
+import {AfterViewInit, Component, Input, OnDestroy, Type, ViewChild, ViewContainerRef} from '@angular/core';
 import {CommonModule, NgComponentOutlet} from '@angular/common';
 import {RefinementWidgetComponent} from "../../widgets/refinement-widget/refinement-widget.component";
 import {Refinement} from "../../types/refinement";
@@ -15,9 +15,6 @@ import { SimpleStatementComponent } from './refinements/simple-statement/simple-
 import { ProjectService } from '../../services/project/project.service';
 import { CBCFormula } from '../../services/project/CBCFormula';
 import { SimpleStatement } from '../../types/statements/simple-statement';
-import { Condition } from '../../types/condition/condition';
-import { Precondition } from '../../types/condition/precondition';
-import { Postcondition } from '../../types/condition/postcondition';
 
 @Component({
   selector: 'app-editor',
@@ -37,18 +34,19 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   private _urn : string = ''
   private _viewInit : boolean = false
 
-  constructor(public treeService: TreeService, private projectService : ProjectService) {
-  }
+  /**
+   * Constructor for dependency injection of the services
+   * @param treeService The service to interact with the refinements 
+   * @param projectService The service to persist and laod the file content
+   */
+  constructor(public treeService: TreeService, private projectService : ProjectService) {}
   
-  
-
-
   /**
    * Input for the urn of the file to edit
    * @param uniformRessourceName The path variable of the file to edit
    */
   @Input()
-  set urn(uniformRessourceName : string) {
+  public set urn(uniformRessourceName : string) {
 
     // prevent reloading the same context
     if (uniformRessourceName == this._urn) {
@@ -122,15 +120,17 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     let newFormula = this.projectService.getFileContent(this._urn) as CBCFormula
     // if the file is not empty load content
     if (newFormula.statement) {
+
+      // manually set the attributes of the root node
       const root = this.rootNodeOutlet['_componentRef'].instance as SimpleStatementComponent
       root.statementElementRef = undefined
       root.precondition.content = newFormula.statement.preCondition.content
       root.postcondition.content = newFormula.statement.postCondition.content
       root.position = newFormula.statement.position
+      // redraw the root element at the correct position
       root.getRedrawNotifier().next()
       
-
-      
+      // import the tree under the root statement recursively
       const newChild = (newFormula.statement as SimpleStatement).statement?.toComponent(this.examplesSpawn)
 
       if (newChild) {
@@ -138,6 +138,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
         root.statementElementRef = newChild?.[1].location
       }
 
+      // redraw all links between the components
       setTimeout(() => root.refreshLinkState(), 5)
 
       this.variables.importVariables(newFormula.javaVariables)
@@ -152,11 +153,10 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  addRootRefinement(type: Type<SimpleStatementComponent>): void {
-    this.rootNode = type;
-  }
-
-  onEditorContainerScrolled(): void {
+  /**
+   * 
+   */
+  public onEditorContainerScrolled(): void {
     this.treeService.onEditorContainerScrolled();
   }
 }
