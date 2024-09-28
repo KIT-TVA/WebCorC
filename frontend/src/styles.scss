@@ -62,7 +62,7 @@ body {
   width: 270px;
 }
 
-refinement-base, app-seq-refinement, app-unit-refinement, app-init-refinement, app-skip-refinement {
+app-statement-base, app-seq-refinement, app-unit-refinement, app-init-refinement, app-skip-refinement {
   display: block;
   width: fit-content;
 }

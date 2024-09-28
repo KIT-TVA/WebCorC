@@ -1,13 +1,13 @@
-import {Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {TreeService} from "../../../services/tree/tree.service";
-import {MatInputModule} from "@angular/material/input";
-import {MatButtonModule} from "@angular/material/button";
-import {MatIconModule} from "@angular/material/icon";
-import {FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
-import {MatDividerModule} from "@angular/material/divider";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatListModule} from "@angular/material/list";
+import { TreeService} from "../../../services/tree/tree.service";
+import { MatInputModule} from "@angular/material/input";
+import { MatButtonModule} from "@angular/material/button";
+import { MatIconModule} from "@angular/material/icon";
+import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
+import { MatDividerModule} from "@angular/material/divider";
+import { MatFormFieldModule} from "@angular/material/form-field";
+import { MatListModule} from "@angular/material/list";
 
 @Component({
   selector: 'app-variables',
@@ -16,7 +16,7 @@ import {MatListModule} from "@angular/material/list";
   templateUrl: './variables.component.html',
   styleUrl: './variables.component.scss'
 })
-export class VariablesComponent implements OnInit {
+export class VariablesComponent {
 
   variables: FormGroup = this._fb.group({
     newVariable: new FormControl("", []),
@@ -24,10 +24,6 @@ export class VariablesComponent implements OnInit {
   }) 
 
   constructor(private _fb: FormBuilder,  public treeService: TreeService) {}
-
-  ngOnInit(): void {
-   
-  }
 
   addVariable() : void {
     const value : string = this.variables.controls['newVariable'].value

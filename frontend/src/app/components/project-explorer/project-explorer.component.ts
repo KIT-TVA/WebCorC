@@ -8,7 +8,6 @@ import { FlatTreeControl } from '@angular/cdk/tree';
 import { ProjectElement } from '../../services/project/project-element';
 import { CodeFile, DiagramFile } from '../../services/project/project-files';
 import { ProjectDirectory } from '../../services/project/project-directory';
-import { BehaviorSubject } from 'rxjs';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { fakeProjectElementName } from '../../services/project/fake-element';
 import { MatInputModule } from '@angular/material/input';
@@ -98,7 +97,7 @@ export class ProjectExplorerComponent {
   }
 
   public navigate(node : FlatNode) {
-    let element = this.nodeToElementMap.get(node) 
+    const element = this.nodeToElementMap.get(node) 
     if (!element) {
       return
     }

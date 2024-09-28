@@ -38,7 +38,7 @@ export class ProjectService {
       if (child.path === path) { return child; }
 
       if (child instanceof ProjectDirectory) {
-        let relativePath = path.replace(child.path, '')
+        const relativePath = path.replace(child.path, '')
 
         if (relativePath.length < path.length && relativePath.length > 0) {
           return this.findByPath(path, child);

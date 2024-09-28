@@ -1,6 +1,6 @@
 import {Component, ElementRef, ViewChild, ViewContainerRef} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {RefinementComponent} from "../refinement/refinement.component";
+import {StatementComponent} from "../statement/statement.component";
 import {Refinement} from "../../../../types/refinement";
 import {TreeService} from "../../../../services/tree/tree.service";
 import {MatGridListModule} from "@angular/material/grid-list";
@@ -26,7 +26,7 @@ import { CompositionStatement } from '../../../../types/statements/compositon-st
 @Component({
   selector: 'app-composition-statement',
   standalone: true,
-  imports: [CommonModule, RefinementComponent, MatGridListModule, GridTileBorderDirective,
+  imports: [CommonModule, StatementComponent, MatGridListModule, GridTileBorderDirective,
     RefinementWidgetComponent, ConditionEditorComponent, FormsModule, MatFormFieldModule, MatInputModule, MatIconModule, LinkComponent],
   templateUrl: './composition-statement.component.html',
   styleUrl: './composition-statement.component.scss'

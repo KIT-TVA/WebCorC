@@ -1,24 +1,24 @@
-<refinement-base [refinement]="this">
-    <condition-editor *ngIf="!isRoot()" 
+<app-statement-base [refinement]="this">
+    <app-condition-editor *ngIf="!isRoot()" 
                       [condition]="condition"
                       [editable]="true">
-    </condition-editor>
+    </app-condition-editor>
    <div *ngIf="isRoot()" class="rootEnabledDiv">
-        <refinement-widget  *ngIf="!statement"
+        <app-refinement-widget  *ngIf="!statement"
                             text="Statement"
                             icon="add"
                             (click)="chooseRefinement()">
-        </refinement-widget>
+        </app-refinement-widget>
         <p *ngIf="statement" [style.width]="'100px'" [style.textAlign]="'center'"> Statement </p>
-        <refinement-link *ngIf="statementElementRef && statement"
+        <app-refinement-link *ngIf="statementElementRef && statement"
                           [linkedRefinement]="statementElementRef"
                           [onSubRefinementDragMove]="statement.onDragMoveEmitter"
                           [onSubRefinementDragEnd]="statement.onDragEndEmitter"
                           [onOriginRefinementDragMove]="onDragMoveEmitter"
                           [onOriginRefinementDragEnd]="onDragEndEmitter"
                           [scrollNotifier]="statement.getRedrawNotifier()"
-                          [style.margin-top]="'auto'"></refinement-link>
+                          [style.margin-top]="'auto'"></app-refinement-link>
     </div>
-</refinement-base>
+</app-statement-base>
 <div style="height: 30px; width: 100%;"></div>
 <ng-template #subComponentSpawn></ng-template>

@@ -4,7 +4,7 @@ import { Precondition } from "../condition/precondition";
 import { Position } from "../position";
 import { Refinement } from "../refinement";
 import { Statement } from "./statement";
-import { StrongWeakStatementComponent } from "../../components/editor/refinements/strong-weak-statement/strong-weak-statement.component";
+import { StrongWeakStatementComponent } from "../../components/editor/statements/strong-weak-statement/strong-weak-statement.component";
 
 export class StrongWeakStatement extends Statement {
 

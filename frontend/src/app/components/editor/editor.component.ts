@@ -11,7 +11,7 @@ import {VariablesComponent} from "./variables/variables.component";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {MatMenuModule} from "@angular/material/menu";
 import { GlobalConditionsComponent } from './global-conditions/global-conditions.component';
-import { SimpleStatementComponent } from './refinements/simple-statement/simple-statement.component';
+import { SimpleStatementComponent } from './statements/simple-statement/simple-statement.component';
 import { ProjectService } from '../../services/project/project.service';
 import { CBCFormula } from '../../services/project/CBCFormula';
 import { SimpleStatement } from '../../types/statements/simple-statement';
@@ -94,7 +94,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
 
   private saveContentToFile() : void {
     // create a new Formula to save 
-    let formula = new CBCFormula()
+    const formula = new CBCFormula()
     if (this.treeService.rootNode) {
 
       const rootNode = (this.treeService.rootNode as SimpleStatementComponent).export()
@@ -117,7 +117,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
 
     Refinement.resetIDs(2)
 
-    let newFormula = this.projectService.getFileContent(this._urn) as CBCFormula
+    const newFormula = this.projectService.getFileContent(this._urn) as CBCFormula
     // if the file is not empty load content
     if (newFormula.statement) {
 

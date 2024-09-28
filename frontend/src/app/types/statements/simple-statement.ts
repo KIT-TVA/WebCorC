@@ -5,7 +5,7 @@ import { Precondition } from "../condition/precondition";
 import { Position } from "../position";
 import { Refinement } from "../refinement";
 import { Statement } from "./statement";
-import { SimpleStatementComponent } from "../../components/editor/refinements/simple-statement/simple-statement.component";
+import { SimpleStatementComponent } from "../../components/editor/statements/simple-statement/simple-statement.component";
 
 export class SimpleStatement extends Statement {
 

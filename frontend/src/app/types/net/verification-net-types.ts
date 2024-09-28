@@ -12,8 +12,8 @@ export interface RequestError {
 }
 
 export interface QbCException {
-  type: String;
-  message: String;
+  type: string;
+  message: string;
   refinementID: number;
-  title: String;
+  title: string;
 }

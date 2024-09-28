@@ -1,6 +1,6 @@
 import {Component, ElementRef, ViewChild, ViewContainerRef} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {RefinementComponent} from "../refinement/refinement.component";
+import {StatementComponent} from "../statement/statement.component";
 import {Refinement} from "../../../../types/refinement";
 import {TreeService} from "../../../../services/tree/tree.service";
 import {MatGridListModule} from "@angular/material/grid-list";
@@ -20,7 +20,7 @@ import { StrongWeakStatement } from '../../../../types/statements/strong-weak-st
 @Component({
   selector: 'app-strong-weak-statement',
   standalone: true,
-  imports: [CommonModule, RefinementComponent, MatGridListModule, GridTileBorderDirective,
+  imports: [CommonModule, StatementComponent, MatGridListModule, GridTileBorderDirective,
     RefinementWidgetComponent, ConditionEditorComponent, FormsModule, MatFormFieldModule, MatInputModule, MatIconModule, LinkComponent],
   templateUrl: './strong-weak-statement.component.html',
   styleUrl: './strong-weak-statement.component.scss'
@@ -46,14 +46,14 @@ export class StrongWeakStatementComponent extends Refinement {
       }
     })
 
-    this._weakPreCondition.contentChangeObservable.subscribe(content => {
+    this._weakPreCondition.contentChangeObservable.subscribe(() => {
       if (!this._statement) { return }
 
       this._statement.precondition.content = this._weakPreCondition.content
       this._statement.precondition.originId = this.id
     })
 
-    this._strongPostCondition.contentChangeObservable.subscribe(content => {
+    this._strongPostCondition.contentChangeObservable.subscribe(() => {
       if (!this._statement) { return }
 
       this._statement.postcondition.content = this._strongPostCondition.content

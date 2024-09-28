@@ -41,12 +41,12 @@
   </div>
 
   <div style="display: flex">
-    <div gtBorder="r" #preconditionDiv style="width: 50px; min-height: 140px">
+    <div appGtBorder="r" #preconditionDiv style="width: 50px; min-height: 140px">
       <mat-drawer-container class="example-container" autosize>
         <mat-drawer #preconditionDrawer class="example-sidenav" mode="side">
-          <div class="conditionParent" > 
-            <condition-editor [condition]="refinement.precondition"
-                            [editable]="refinement.isPreconditionEditable()"></condition-editor>
+          <div class="conditionParent">
+            <app-condition-editor [condition]="refinement.precondition"
+                            [editable]="refinement.isPreconditionEditable()"></app-condition-editor>
           </div>
         </mat-drawer>
 
@@ -63,12 +63,12 @@
       <ng-content></ng-content>
     </div>
 
-    <div gtBorder="l" #postconditionDiv style="width: 50px">
+    <div appGtBorder="l" #postconditionDiv style="width: 50px">
       <mat-drawer-container class="example-container" autosize>
         <mat-drawer #postconditionDrawer class="example-sidenav" mode="side" position="end">
           <div class="conditionParent">
-            <condition-editor [condition]="refinement.postcondition"
-                              [editable]="refinement.isPostConditionEditable()"></condition-editor>
+            <app-condition-editor [condition]="refinement.postcondition"
+                              [editable]="refinement.isPostConditionEditable()"></app-condition-editor>
           </div>
           
         </mat-drawer>

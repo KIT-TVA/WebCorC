@@ -2,7 +2,7 @@ import {Directive, ElementRef} from '@angular/core';
 import {GridTileBorderDirective} from "./grid-tile-border.directive";
 
 @Directive({
-  selector: '[gridTileHeader]',
+  selector: '[appGridTileHeader]',
   standalone: true
 })
 export class GridTileHeaderDirective {

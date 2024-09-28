@@ -1,12 +1,12 @@
-<refinement-base [refinement]="this" >
-    <condition-editor [condition]="weakPreCondition" ></condition-editor>
+<app-statement-base [refinement]="this" >
+    <app-condition-editor [condition]="weakPreCondition" ></app-condition-editor>
 
-    <refinement-widget *ngIf="!statement"
+    <app-refinement-widget *ngIf="!statement"
                        text="Statement"
                        icon="add"
                        (click)="chooseRefinement()">
-    </refinement-widget>
-    <refinement-link *ngIf="statementRef && statement" 
+    </app-refinement-widget>
+    <app-refinement-link *ngIf="statementRef && statement" 
                      [linkedRefinement]="statementRef"
                      [onSubRefinementDragMove]="statement.onDragMoveEmitter"
                      [onSubRefinementDragEnd]="statement.onDragEndEmitter"
@@ -14,10 +14,10 @@
                      [onOriginRefinementDragEnd]="onDragEndEmitter"
                      [scrollNotifier]="statement.getRedrawNotifier()"
                      [style.margin-top]="'auto'">
-    </refinement-link>
+    </app-refinement-link>
 
-    <condition-editor [condition]="strongPostCondition"></condition-editor>
-</refinement-base>
+    <app-condition-editor [condition]="strongPostCondition"></app-condition-editor>
+</app-statement-base>
 
 <div style="height: 30px; width: 100%"></div>
 <ng-template #subComponentSpawn></ng-template>

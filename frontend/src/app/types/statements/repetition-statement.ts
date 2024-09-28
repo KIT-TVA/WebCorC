@@ -6,7 +6,7 @@ import { Condition } from "../condition/condition";
 import { Position } from "../position";
 import { ViewContainerRef, ComponentRef } from "@angular/core";
 import { Refinement } from "../refinement";
-import { RepetitionStatementComponent } from "../../components/editor/refinements/repetition-statement/repetition-statement.component";
+import { RepetitionStatementComponent } from "../../components/editor/statements/repetition-statement/repetition-statement.component";
 
 export class RepetitionStatement extends Statement {
 

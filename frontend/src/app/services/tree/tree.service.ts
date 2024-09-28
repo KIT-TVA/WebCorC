@@ -71,7 +71,7 @@ export class TreeService {
    * @returns true, if added sucessful, else false
    */
   public addVariable(name : string) : boolean {
-    let sizeBeforeAdd = this._variables.length;
+    const sizeBeforeAdd = this._variables.length;
     const newVariable = new JavaVariable(name);
   
     let isDuplicate : boolean = false
@@ -107,7 +107,7 @@ export class TreeService {
    * @returns true, if added else false
    */
   public addGlobalCondition(name : string) : boolean {
-    let sizeBeforeAdd = this._globalConditions.length;
+    const sizeBeforeAdd = this._globalConditions.length;
     
     let isDuplicate : boolean = false
     this._globalConditions.forEach(val => { if (val == name) { isDuplicate = true }})
@@ -125,10 +125,6 @@ export class TreeService {
    */
   public removeGlobalCondition(name : string) : void {
     this._globalConditions = this._globalConditions.filter(val => val !== name)
-  } 
-
-  public moveVariableByNameTo(name : string, index : number) {
-
   }
 
   public changedVariableSize(): void {
@@ -152,13 +148,13 @@ export class TreeService {
   }
 
   get variables() : string[] {
-    let variablesArray : string[] = []
+    const variablesArray : string[] = []
     this._variables.forEach((javaVariable) => variablesArray.push(javaVariable.toString()))
     return variablesArray;
   }
 
   get conditions() : Condition[] {
-    let conditionsArray : Condition[] = []
+    const conditionsArray : Condition[] = []
     this._globalConditions.forEach((condition) => conditionsArray.push(new Condition(0, "globalCondition", condition)))
     return conditionsArray
   }

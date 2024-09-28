@@ -5,20 +5,20 @@ import {ChooseRefinementComponent} from "../../components/choose-refinement/choo
 import {MatDialog} from "@angular/material/dialog";
 
 @Component({
-  selector: 'add-refinement-widget',
+  selector: 'app-add-refinement-widget',
   standalone: true,
   imports: [CommonModule, RefinementWidgetComponent],
   template: `
-    <refinement-widget [text]="text"
+    <app-refinement-widget [text]="text"
                        icon="add"
                        (click)="addRefinement()">
-    </refinement-widget>
+    </app-refinement-widget>
   `,
   styles: ``
 })
 export class AddRefinementWidgetComponent {
   @Input() text: string = "Add Refinement"
-  @Output() onRefinementSelected = new EventEmitter();
+  @Output() selectedRefinement = new EventEmitter();
 
   constructor(private dialog: MatDialog) {
   }
@@ -28,7 +28,7 @@ export class AddRefinementWidgetComponent {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.onRefinementSelected.emit(result);
+        this.selectedRefinement.emit(result);
       }
     });
   }

@@ -1,12 +1,12 @@
 
-<refinement-base [refinement]="this">
-    <refinement-widget *ngIf="!leftStatement"
+<app-statement-base [refinement]="this">
+    <app-refinement-widget *ngIf="!leftStatement"
                         text="Left"
                         icon="add"
                         (click)="chooseRefinement('left')"
     >
-    </refinement-widget>
-    <refinement-link *ngIf="leftStatementRef && leftStatement"  
+    </app-refinement-widget>
+    <app-refinement-link *ngIf="leftStatementRef && leftStatement"  
                         [linkedRefinement]="leftStatementRef"
                         [onSubRefinementDragMove]="leftStatement.onDragMoveEmitter"
                         [onSubRefinementDragEnd]="leftStatement.onDragEndEmitter"
@@ -14,16 +14,16 @@
                         [onOriginRefinementDragEnd]="onDragEndEmitter"
                         [scrollNotifier]="leftStatement.getRedrawNotifier()"
                         [style.margin-top]="'auto'">
-    </refinement-link>
+    </app-refinement-link>
 
-    <condition-editor [condition]="intermediateCondition" ></condition-editor>
+    <app-condition-editor [condition]="intermediateCondition" ></app-condition-editor>
 
-    <refinement-widget *ngIf="!rightStatement"
+    <app-refinement-widget *ngIf="!rightStatement"
                         text="Right"
                         icon="add"
                         (click)="chooseRefinement('right')">
-    </refinement-widget>
-    <refinement-link *ngIf="rightStatementRef && rightStatement"
+    </app-refinement-widget>
+    <app-refinement-link *ngIf="rightStatementRef && rightStatement"
                      [linkedRefinement]="rightStatementRef"
                      [onSubRefinementDragMove]="rightStatement.onDragMoveEmitter"
                      [onSubRefinementDragEnd]="rightStatement.onDragEndEmitter"
@@ -31,9 +31,9 @@
                      [onOriginRefinementDragEnd]="onDragEndEmitter"
                      [scrollNotifier]="rightStatement.getRedrawNotifier()"
                      [style.margin-top]="'auto'">
-    </refinement-link>
+    </app-refinement-link>
 
-</refinement-base>
+</app-statement-base>
   
 <div style="height: 30px; width: 100%"></div>
 <ng-template #subComponentSpawn></ng-template>

@@ -1,6 +1,6 @@
 import {Component, ElementRef, ViewChild, ViewContainerRef} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {RefinementComponent} from "../refinement/refinement.component";
+import {StatementComponent} from "../statement/statement.component";
 import {Refinement} from "../../../../types/refinement";
 import {TreeService} from "../../../../services/tree/tree.service";
 import {MatGridListModule} from "@angular/material/grid-list";
@@ -24,7 +24,7 @@ import { RepetitionStatement } from '../../../../types/statements/repetition-sta
 @Component({
   selector: 'app-repetition-statement',
   standalone: true,
-  imports: [CommonModule, RefinementComponent, MatGridListModule, GridTileBorderDirective,
+  imports: [CommonModule, StatementComponent, MatGridListModule, GridTileBorderDirective,
     RefinementWidgetComponent, ConditionEditorComponent, FormsModule, MatFormFieldModule, MatInputModule, MatIconModule, LinkComponent],
   templateUrl: './repetition-statement.component.html',
   styleUrl: './repetition-statement.component.scss'
@@ -59,7 +59,7 @@ export class RepetitionStatementComponent extends Refinement {
     * Following lines forces the content to be correct, but the users sees the content of 
     * the precondition for a split second
     */
-    super.precondition.contentChangeObservable.subscribe(content => {
+    super.precondition.contentChangeObservable.subscribe(() => {
       super.precondition.content = "((" + this._invariantCondition.content + ") & (" + this._guardCondition.content + "))"
     })
 
@@ -67,7 +67,7 @@ export class RepetitionStatementComponent extends Refinement {
      * Propagate the changes of the invariant conditon to the pre- and postcondition of this and the loop 
      * statement
      */
-    this._invariantCondition.contentChangeObservable.subscribe(content => {
+    this._invariantCondition.contentChangeObservable.subscribe(() => {
       super.precondition.content = "((" + this._invariantCondition.content + ") & (" + this._guardCondition.content + "))"
       super.postcondition.content = "(" + this._invariantCondition.content + ")"
 
@@ -83,7 +83,7 @@ export class RepetitionStatementComponent extends Refinement {
     })
 
 
-    this._guardCondition.contentChangeObservable.subscribe(content => {
+    this._guardCondition.contentChangeObservable.subscribe(() => {
       super.precondition.content = "((" + this._invariantCondition.content + ") & (" + this._guardCondition.content + "))"
       
       if (this._loopStatement) {

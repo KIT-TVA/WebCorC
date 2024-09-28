@@ -9,33 +9,34 @@ import {ConditionEditorComponent} from "../../condition/condition-editor/conditi
 import {GridTileHeaderDirective} from "../../../../directives/grid-tile-header.directive";
 import {GridTileBorderDirective} from "../../../../directives/grid-tile-border.directive";
 import {CdkDrag, CdkDragEnd, CdkDragHandle, CdkDragMove, Point} from "@angular/cdk/drag-drop";
-
 import {TreeService} from "../../../../services/tree/tree.service";
 import {MatIconModule} from "@angular/material/icon";
 import {MatDrawer, MatSidenavModule} from "@angular/material/sidenav";
 import {MatButtonModule} from "@angular/material/button";
-import {QbCException, VerificationResult} from "../../../../types/net/verification-net-types";
+import {VerificationResult} from "../../../../types/net/verification-net-types";
 import {MatExpansionModule} from "@angular/material/expansion";
 import {VerificationErrorListComponent} from "../../../verification-error-list.component";
 import {MatListModule} from "@angular/material/list";
 import {MatDialog} from "@angular/material/dialog";
 import {VerificationResultComponent} from "../../../../dialogs/verification-result.component";
-import { Statement } from '../../../../types/statements/statement';
 import { Position } from '../../../../types/position';
 
 /**
- * Component to present refinements.
- * This component is only to show the refinement given.
+ * Component to present the statements.
+ * This component is only to show the statement given.
  * This is not the (super) type Refinement.
  */
 @Component({
-  selector: 'refinement-base',
+  selector: 'app-statement-base',
   standalone: true,
-  imports: [CommonModule, MatGridListModule, MatFormFieldModule, MatInputModule, FormsModule, ConditionEditorComponent, GridTileHeaderDirective, GridTileBorderDirective, CdkDrag, CdkDragHandle, MatIconModule, MatSidenavModule, MatButtonModule, MatExpansionModule, VerificationErrorListComponent, MatListModule],
-  templateUrl: './refinement.component.html',
-  styleUrl: './refinement.component.scss'
+  imports: [CommonModule, MatGridListModule, MatFormFieldModule, MatInputModule, FormsModule,
+            ConditionEditorComponent, GridTileHeaderDirective, GridTileBorderDirective, CdkDrag,
+            CdkDragHandle, MatIconModule, MatSidenavModule, MatButtonModule, MatExpansionModule,
+            VerificationErrorListComponent, MatListModule],
+  templateUrl: './statement.component.html',
+  styleUrl: './statement.component.scss'
 })
-export class RefinementComponent implements AfterViewInit {
+export class StatementComponent implements AfterViewInit {
   private static readonly EDITOR_CONTAINER_EXPANSION_TRIGGER = 150;
   private static readonly EDITOR_CONTAINER_EXPANSION = 200;
 
@@ -103,12 +104,12 @@ export class RefinementComponent implements AfterViewInit {
     const heightController = document.getElementById("editorHeightController");
     if (editorContainer && widthController && heightController) {
       if (boxPosition.x + boxPosition.width + editorContainer.scrollLeft >=
-          editorContainer.scrollWidth - RefinementComponent.EDITOR_CONTAINER_EXPANSION_TRIGGER) {
-        widthController.style.width = editorContainer.scrollWidth+RefinementComponent.EDITOR_CONTAINER_EXPANSION + "px";
+          editorContainer.scrollWidth - StatementComponent.EDITOR_CONTAINER_EXPANSION_TRIGGER) {
+        widthController.style.width = editorContainer.scrollWidth+StatementComponent.EDITOR_CONTAINER_EXPANSION + "px";
       }
       if (boxPosition.y + boxPosition.height + editorContainer.scrollTop >=
-          editorContainer.scrollHeight - RefinementComponent.EDITOR_CONTAINER_EXPANSION_TRIGGER) {
-        heightController.style.height = editorContainer.scrollHeight + RefinementComponent.EDITOR_CONTAINER_EXPANSION + "px";
+          editorContainer.scrollHeight - StatementComponent.EDITOR_CONTAINER_EXPANSION_TRIGGER) {
+        heightController.style.height = editorContainer.scrollHeight + StatementComponent.EDITOR_CONTAINER_EXPANSION + "px";
       }
     }
   }

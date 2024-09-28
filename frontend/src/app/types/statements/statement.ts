@@ -18,6 +18,7 @@ export class Statement {
     ) {}
 
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public toComponent(spawn : ViewContainerRef) : [ refinement : Refinement, ref : ComponentRef<Refinement>] | undefined {
         return
     }

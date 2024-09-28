@@ -5,7 +5,7 @@ import { Precondition } from "../condition/precondition";
 import { Position } from "../position";
 import { Refinement } from "../refinement";
 import { Statement } from "./statement";
-import { SelectionStatementComponent } from "../../components/editor/refinements/selection-statement/selection-statement.component";
+import { SelectionStatementComponent } from "../../components/editor/statements/selection-statement/selection-statement.component";
 
 export class SelectionStatement extends Statement {
 

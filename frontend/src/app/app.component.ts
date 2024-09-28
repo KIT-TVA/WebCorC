@@ -1,15 +1,15 @@
-import { Component, HostListener, inject } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
-import {MatToolbarModule} from "@angular/material/toolbar";
-import {MatDrawer, MatSidenavModule} from "@angular/material/sidenav";
-import {FormsModule} from "@angular/forms";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatInputModule} from "@angular/material/input";
-import {TreeService} from "./services/tree/tree.service";
-import {MatButtonModule} from "@angular/material/button";
-import {MatDialog} from "@angular/material/dialog";
-import {CodegenComponent} from "./dialogs/codegen.component";
+import { MatToolbarModule } from "@angular/material/toolbar";
+import { MatSidenavModule } from "@angular/material/sidenav";
+import { FormsModule } from "@angular/forms";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { TreeService } from "./services/tree/tree.service";
+import { MatButtonModule } from "@angular/material/button";
+import { MatDialog } from "@angular/material/dialog";
+import { CodegenComponent } from "./dialogs/codegen.component";
 import { ProjectExplorerComponent } from "./components/project-explorer/project-explorer.component";
 import { MatIconModule } from '@angular/material/icon';
 import { NuMonacoEditorModule } from '@ng-util/monaco-editor';
@@ -39,9 +39,9 @@ export class AppComponent {
   }
 
   @HostListener('window:beforeunload', ['$event'])
-  onClose($event : any) {
+  onClose() : boolean {
     if (this.projectService.isEmpty) {
-      return
+      return true
     }
     
 

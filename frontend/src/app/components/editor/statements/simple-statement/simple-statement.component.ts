@@ -1,20 +1,20 @@
-import {AfterViewInit, Component, ElementRef, ViewChild, ViewContainerRef} from '@angular/core';
+import { Component, ElementRef, ViewChild, ViewContainerRef} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {RefinementComponent} from "../refinement/refinement.component";
-import {Refinement} from "../../../../types/refinement";
-import {TreeService} from "../../../../services/tree/tree.service";
-import {MatGridListModule} from "@angular/material/grid-list";
-import {GridTileBorderDirective} from "../../../../directives/grid-tile-border.directive";
-import {RefinementWidgetComponent} from "../../../../widgets/refinement-widget/refinement-widget.component";
-import {ConditionEditorComponent} from "../../condition/condition-editor/condition-editor.component";
-import {Condition} from "../../../../types/condition/condition";
-import {FormsModule} from "@angular/forms";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatInputModule} from "@angular/material/input";
-import {MatDialog} from "@angular/material/dialog";
-import {ChooseRefinementComponent} from "../../../choose-refinement/choose-refinement.component";
-import {MatIconModule} from "@angular/material/icon";
-import {LinkComponent} from "../link/link.component";
+import { StatementComponent } from "../statement/statement.component";
+import { Refinement } from "../../../../types/refinement";
+import { TreeService } from "../../../../services/tree/tree.service";
+import { MatGridListModule } from "@angular/material/grid-list";
+import { GridTileBorderDirective } from "../../../../directives/grid-tile-border.directive";
+import { RefinementWidgetComponent } from "../../../../widgets/refinement-widget/refinement-widget.component";
+import { ConditionEditorComponent } from "../../condition/condition-editor/condition-editor.component";
+import { Condition } from "../../../../types/condition/condition";
+import { FormsModule } from "@angular/forms";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatDialog } from "@angular/material/dialog";
+import { ChooseRefinementComponent } from "../../../choose-refinement/choose-refinement.component";
+import { MatIconModule } from "@angular/material/icon";
+import { LinkComponent } from "../link/link.component";
 import { SimpleStatement } from '../../../../types/statements/simple-statement';
 
 /**
@@ -26,7 +26,7 @@ import { SimpleStatement } from '../../../../types/statements/simple-statement';
 @Component({
   selector: 'app-simple-statement',
   standalone: true,
-  imports: [CommonModule, RefinementComponent, MatGridListModule, GridTileBorderDirective,
+  imports: [CommonModule, StatementComponent, MatGridListModule, GridTileBorderDirective,
     RefinementWidgetComponent, ConditionEditorComponent, FormsModule, MatFormFieldModule, MatInputModule, MatIconModule, LinkComponent, ConditionEditorComponent],
   templateUrl: './simple-statement.component.html',
   styleUrl: './simple-statement.component.scss'
@@ -110,7 +110,7 @@ export class SimpleStatementComponent extends Refinement {
     return this._statementElementRef
   }
 
-  set statementElementRef(ref : ElementRef<any> | undefined) {
+  set statementElementRef(ref : ElementRef | undefined) {
     this._statementElementRef = ref
   }
 

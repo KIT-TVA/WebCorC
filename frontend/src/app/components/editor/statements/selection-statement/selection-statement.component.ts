@@ -1,20 +1,20 @@
-import {AfterViewInit, Component, ElementRef, ViewChild, ViewContainerRef} from '@angular/core';
+import { Component, ElementRef, ViewChild, ViewContainerRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {RefinementComponent} from "../refinement/refinement.component";
-import {Refinement} from "../../../../types/refinement";
-import {TreeService} from "../../../../services/tree/tree.service";
-import {MatGridListModule} from "@angular/material/grid-list";
-import {GridTileBorderDirective} from "../../../../directives/grid-tile-border.directive";
-import {RefinementWidgetComponent} from "../../../../widgets/refinement-widget/refinement-widget.component";
-import {ConditionEditorComponent} from "../../condition/condition-editor/condition-editor.component";
-import {Condition} from "../../../../types/condition/condition";
-import {FormsModule} from "@angular/forms";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatInputModule} from "@angular/material/input";
-import {MatDialog} from "@angular/material/dialog";
-import {ChooseRefinementComponent} from "../../../choose-refinement/choose-refinement.component";
-import {MatIconModule} from "@angular/material/icon";
-import {LinkComponent} from "../link/link.component";
+import { StatementComponent } from "../statement/statement.component";
+import { Refinement } from "../../../../types/refinement";
+import { TreeService } from "../../../../services/tree/tree.service";
+import { MatGridListModule } from "@angular/material/grid-list";
+import { GridTileBorderDirective } from "../../../../directives/grid-tile-border.directive";
+import { RefinementWidgetComponent } from "../../../../widgets/refinement-widget/refinement-widget.component";
+import { ConditionEditorComponent } from "../../condition/condition-editor/condition-editor.component";
+import { Condition } from "../../../../types/condition/condition";
+import { FormsModule } from "@angular/forms";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatDialog } from "@angular/material/dialog";
+import { ChooseRefinementComponent } from "../../../choose-refinement/choose-refinement.component";
+import { MatIconModule } from "@angular/material/icon";
+import { LinkComponent } from "../link/link.component";
 import { MatButtonModule } from '@angular/material/button';
 import { Statement } from '../../../../types/statements/statement';
 import { SelectionStatement } from '../../../../types/statements/selection-statement';
@@ -27,7 +27,7 @@ import { SelectionStatement } from '../../../../types/statements/selection-state
 @Component({
   selector: 'app-selection-statement',
   standalone: true,
-  imports: [CommonModule, RefinementComponent, MatGridListModule, GridTileBorderDirective,
+  imports: [CommonModule, StatementComponent, MatGridListModule, GridTileBorderDirective,
     RefinementWidgetComponent, ConditionEditorComponent, FormsModule, MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule, LinkComponent, ConditionEditorComponent],
   templateUrl: './selection-statement.component.html',
   styleUrl: './selection-statement.component.scss'
@@ -62,7 +62,7 @@ export class SelectionStatementComponent extends Refinement {
     })
 
     // propgate changes of the preconditon and guard condition to the childs
-    super.precondition.contentChangeObservable.subscribe(content => {
+    super.precondition.contentChangeObservable.subscribe(() => {
       for (let i = 0; i < this._statements.length; i++) {
         if (this._statements[i]) { 
           this._statements[i]!.precondition.content = "(" + super.precondition.content + ") & (" + this._guards[i].content + ")"
@@ -71,7 +71,7 @@ export class SelectionStatementComponent extends Refinement {
       }
     })
 
-    super.postcondition.contentChangeObservable.subscribe(content => {
+    super.postcondition.contentChangeObservable.subscribe(() => {
       for (let i = 0; i < this._statements.length; i++) {
         if (this._statements[i]) { 
           this._statements[i]!.postcondition.content = super.postcondition.content
@@ -117,7 +117,7 @@ export class SelectionStatementComponent extends Refinement {
       this._statements[index]!.precondition.content = "(" + super.precondition.content + ") & (" + this._guards[index].content + ")"
       this._statements[index]!.postcondition.content = super.postcondition.content
 
-      this._guards[index].contentChangeObservable.subscribe(content => {
+      this._guards[index].contentChangeObservable.subscribe(() => {
         this._statements[index]!.precondition.content = "(" + super.precondition.content + ") & (" + this._guards[index].content + ")"
         this._statements[index]!.postcondition.content = super.postcondition.content
       })
@@ -186,8 +186,8 @@ export class SelectionStatementComponent extends Refinement {
     this._statements.push(selection)
     this._statementsElementRefs.push(ref)
 
-    let indexSelection = this._guards.length - 1
-    this._guards[indexSelection].contentChangeObservable.subscribe(content => {
+    const indexSelection = this._guards.length - 1
+    this._guards[indexSelection].contentChangeObservable.subscribe(() => {
       this._statements[indexSelection]!.precondition.content = "(" + super.precondition.content + ") & (" + this._guards[indexSelection].content + ")"
       this._statements[indexSelection]!.postcondition.content = super.postcondition.content
     })

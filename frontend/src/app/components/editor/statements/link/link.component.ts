@@ -6,7 +6,7 @@ import {ReplaySubject} from "rxjs";
 import { TreeService } from '../../../../services/tree/tree.service';
 
 @Component({
-  selector: 'refinement-link',
+  selector: 'app-refinement-link',
   standalone: true,
   imports: [CommonModule, MatIconModule],
   template: `

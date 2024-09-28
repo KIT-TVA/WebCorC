@@ -1,15 +1,15 @@
-<refinement-base [refinement]="this">
-    <condition-editor [condition]="invariantCondition"></condition-editor>
-    <condition-editor [condition]="guardCondition" [style.margin-left]="'0.5rem'"></condition-editor>
-    <condition-editor [condition]="variantCondition" [style.margin-left]="'0.5rem'" ></condition-editor>
+<app-statement-base [refinement]="this">
+    <app-condition-editor [condition]="invariantCondition"></app-condition-editor>
+    <app-condition-editor [condition]="guardCondition" [style.margin-left]="'0.5rem'"></app-condition-editor>
+    <app-condition-editor [condition]="variantCondition" [style.margin-left]="'0.5rem'" ></app-condition-editor>
 
-    <refinement-widget *ngIf="!loopStatement"
+    <app-refinement-widget *ngIf="!loopStatement"
                        text="Loop Statement"
                        icon="add"
                        (click)="chooseRefinement()"
     >
-    </refinement-widget>
-    <refinement-link *ngIf="loopStatementRef && loopStatement" 
+    </app-refinement-widget>
+    <app-refinement-link *ngIf="loopStatementRef && loopStatement" 
                      [linkedRefinement]="loopStatementRef"
                      [onSubRefinementDragMove]="loopStatement.onDragMoveEmitter"
                      [onSubRefinementDragEnd]="loopStatement.onDragEndEmitter"
@@ -17,8 +17,8 @@
                      [onOriginRefinementDragEnd]="onDragEndEmitter"
                      [scrollNotifier]="loopStatement.getRedrawNotifier()"
                      [style.margin-top]="'auto'">
-    </refinement-link>
-</refinement-base>
+    </app-refinement-link>
+</app-statement-base>
 
 <div style="height: 30px; width: 100%"></div>
 <ng-template #subComponentSpawn></ng-template>

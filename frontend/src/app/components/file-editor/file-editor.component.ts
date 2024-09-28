@@ -72,7 +72,7 @@ export class FileEditorComponent implements AfterViewInit,OnDestroy {
   }
 
   private loadContentFromFile() {
-    let newCode =  this.projectService.getFileContent(this._urn) as string
+    const newCode =  this.projectService.getFileContent(this._urn) as string
     if (newCode) {
       this.code = newCode 
     } else {

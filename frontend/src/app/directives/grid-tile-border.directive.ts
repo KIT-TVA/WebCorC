@@ -1,7 +1,7 @@
 import {Directive, ElementRef, Input} from '@angular/core';
 
 @Directive({
-  selector: '[gtBorder]',
+  selector: '[appGtBorder]',
   standalone: true
 })
 export class GridTileBorderDirective {
@@ -11,7 +11,7 @@ export class GridTileBorderDirective {
     ref.nativeElement.classList.add("conditionTileWidth");
   }
 
-  @Input() set gtBorder(borders: string) {
+  @Input() set appGtBorder(borders: string) {
     if (borders) {
       if (borders.includes("r")) {
         this.ref.nativeElement.style.borderRight = GridTileBorderDirective.BORDER_STYLE;
