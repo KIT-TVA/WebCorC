@@ -25,7 +25,7 @@ import { ProjectService } from './services/project/project.service';
 })
 export class AppComponent {
 
-  constructor(public treeService: TreeService, private dialog: MatDialog, private projectService : ProjectService) {}
+  constructor(public treeService: TreeService, private dialog: MatDialog, public projectService : ProjectService) {}
 
   verify(): void {
   }

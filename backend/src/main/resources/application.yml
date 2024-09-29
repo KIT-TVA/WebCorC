@@ -8,6 +8,9 @@ micronaut:
     multipart:
       enabled: true
       max-file-size: 1000000
+    cors:
+      enabled: true
+      localhost-pass-through: true
   http.client.max-content-length: 1000000
 
 aws:

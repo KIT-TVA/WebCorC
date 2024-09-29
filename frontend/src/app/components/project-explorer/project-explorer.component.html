@@ -5,7 +5,7 @@
         <button mat-button (click)="export()"> <mat-icon> download </mat-icon> Export </button>
     </div>
     <div class="project-header">
-        <h4> Projektname </h4>
+        <h4> {{ projectService.projectname ? projectService.projectname : "Projectname" }} </h4>
         <div class="node-actions" >
             <button mat-icon-button (click)="addElement(root)"> <mat-icon [style.color]="'green'"> add</mat-icon> </button>
         </div>

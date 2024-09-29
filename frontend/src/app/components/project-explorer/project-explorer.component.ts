@@ -60,7 +60,7 @@ export class ProjectExplorerComponent {
   );
 
 
-  constructor(private projectService : ProjectService, private router : Router) {
+  constructor(public projectService : ProjectService, private router : Router) {
     this.dataSource.data = this.projectService.root.content;
 
     this.projectService.dataChange.subscribe((data) => {
@@ -117,6 +117,8 @@ export class ProjectExplorerComponent {
   }
 
   public save() {
+
+    this.projectService.createProject()
     this.projectService.explorerNotify.pipe(first()).subscribe(() => {
       
       

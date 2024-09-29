@@ -6,6 +6,7 @@ import { BehaviorSubject, Subject} from 'rxjs';
 import { FakeProjectElement, fakeProjectElementName } from './fake-element';
 import { CBCFormula } from './CBCFormula';
 import { Inode } from '../../types/project/inode';
+import { NetworkProjectService } from './network/network-project.service';
 
 /**
  * Service for project managment.
@@ -18,10 +19,12 @@ import { Inode } from '../../types/project/inode';
 export class ProjectService {
   private _rootDir = new ProjectDirectory("","")
   private _dataChange = new BehaviorSubject<ProjectElement[]>(this._rootDir.content)
-  private _saveNotify = new Subject<void>();
-  private _savedFinished = new Subject<void>();
+  private _saveNotify = new Subject<void>()
+  private _savedFinished = new Subject<void>()
+  private _projectname: string = "";
+  private _shouldCreateProject : boolean = false
 
-  constructor() {
+  constructor(private network : NetworkProjectService) {
   }
 
   /**
@@ -195,28 +198,40 @@ export class ProjectService {
     return this._rootDir.export()
   }
 
+
+  public createProject() {
+    this.network.createProject(this._projectname)
+  }
+
   public notifyEditortoSave() {
     this._saveNotify.next()
   }
 
-  get editorNotify() {
+  public get editorNotify() {
     return this._saveNotify
   }
 
-  get explorerNotify() {
+  public get explorerNotify() {
     return this._savedFinished
   }
 
-  get root() { 
+  public get root() { 
     return this._rootDir
   }
 
-  get dataChange() {
+  public get dataChange() {
     return this._dataChange
   }
 
-  get isEmpty() : boolean {
+  public get isEmpty() : boolean {
     return this._rootDir.content.length == 0
+  }
+
+  public get projectname(): string {
+    return this._projectname;
+  }
+  public set projectname(value: string) {
+    this._projectname = value;
   }
 
 }
