@@ -13,7 +13,8 @@ micronaut:
       enabled: true
       localhost-pass-through: true
       configurations:
-        - '"${FRONTEND_URL:webcorc.informatik.kit.edu}"'
+        frontend:
+          - '"${FRONTEND_URL:webcorc.informatik.kit.edu}"'
       
   http.client.max-content-length: 1000000
 
