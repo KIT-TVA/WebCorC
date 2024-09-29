@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, ɵdevModeEqual } from '@angular/core';
 import { ApiDiagrammFile, ApiDirectory, ApiTextFile } from '../../../types/project/inode';
 import { CBCFormula } from '../CBCFormula';
 import { environment } from '../../../../environments/environment';
@@ -8,20 +8,30 @@ import { environment } from '../../../../environments/environment';
 })
 export class NetworkProjectService {
   private static projects = "/projects"
+  private static project = "/project"
+
+  private projectId : string | undefined
 
   constructor() { }
 
 
-  public createProject(name : string) {
-    console.log(name)
+  public async createProject(name : string) {
 
-    fetch(environment.apiUrl + "/projects", {
+    const request = new Request(environment.apiUrl + NetworkProjectService.projects, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ name : name })
+      body: JSON.stringify({name : name})
     })
+
+
+    fetch(request)
+      .then((response : Response) => response.json())
+      .then((data) => {
+          this.projectId = data.id
+
+      })
   }
 
 
