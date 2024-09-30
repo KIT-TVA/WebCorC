@@ -13,6 +13,8 @@ import { fakeProjectElementName } from '../../services/project/fake-element';
 import { MatInputModule } from '@angular/material/input';
 import { Router } from '@angular/router';
 import { first } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { CreateProjectDialogComponent } from './create-project-dialog/create-project-dialog.component';
 
 class FlatNode {
   expandable: boolean;
@@ -60,7 +62,7 @@ export class ProjectExplorerComponent {
   );
 
 
-  constructor(public projectService : ProjectService, private router : Router) {
+  constructor(public projectService : ProjectService, private router : Router, private dialog : MatDialog) {
     this.dataSource.data = this.projectService.root.content;
 
     this.projectService.dataChange.subscribe((data) => {
@@ -118,11 +120,11 @@ export class ProjectExplorerComponent {
 
   public save() {
 
-    this.projectService.createProject()
-    this.projectService.explorerNotify.pipe(first()).subscribe(() => {
-      
-      
-    })
+    if (this.projectService.shouldCreateProject)  {
+      this.dialog.open(CreateProjectDialogComponent)
+    }
+    
+    this.projectService.uploadWorkspace()
   }
 
   public import() {
