@@ -30,11 +30,12 @@ export class LandingPageComponent implements OnInit {
   ngOnInit(): void {
     this.route.queryParams
       .subscribe(params => {
-
+        this.projectService.projectId = params['projectId']
         this._projectId = params['projectId']
       })
       
     if (this._projectId) {
+      this.projectService.downloadWorkspace()
       // load project from backend
     }
   }

@@ -38,6 +38,12 @@ export class AppComponent {
     this.treeService.downloadJSON();
   }
 
+  public share() {
+    // Todo: Ensure to create Project if projectid is undefined
+    navigator.clipboard.writeText(window.location.protocol + "//" +window.location.hostname + ":" + window.location.port + "?projectId=" + this.projectService.projectId)
+    //Todo: Visual Feedback to user
+  }
+
   @HostListener('window:beforeunload', ['$event'])
   onClose() : boolean {
     if (this.projectService.isEmpty) {

@@ -120,11 +120,13 @@ export class ProjectExplorerComponent {
 
   public save() {
 
+    let wait = false
     if (this.projectService.shouldCreateProject)  {
       this.dialog.open(CreateProjectDialogComponent)
+      wait = true
     }
     
-    this.projectService.uploadWorkspace()
+    this.projectService.uploadWorkspace(wait)
   }
 
   public import() {

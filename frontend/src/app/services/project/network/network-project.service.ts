@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { ApiDiagrammFile, ApiDirectory, ApiTextFile, Inode } from '../../../types/project/inode';
-import { CBCFormula } from '../CBCFormula';
 import { environment } from '../../../../environments/environment';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { ConsoleService } from '../../console/console.service';
@@ -35,6 +34,9 @@ export class NetworkProjectService {
           this._projectId = data.id
           this._finishedRequest.next()
       })
+      .catch(() => {
+        // Todo: Error Handling
+      })
   }
 
 
@@ -51,22 +53,10 @@ export class NetworkProjectService {
 
     fetch(request)
       .then((response : Response) => response.json())
-      .then((data) => this._dataChange.next(data.files))
-
-  }
-
-
-  public getFileTree() {
-    const request = new Request(this.buildProjectURL(), {
-      method: "GET",
-      headers: {
-        "Accept": "application/json"
-      }
-    })
-
-    fetch(request)
-      .then((response : Response) => response.json())
-      .then((data) => this._dataChange.next(data))
+      .then((data) => this._dataChange.next(new ApiDirectory(data.files.urn, data.files.content)))
+      .catch(() => {
+        //Todo: Error Handling
+      })
   }
 
 
@@ -75,19 +65,23 @@ export class NetworkProjectService {
 
     let realFile
 
+    const urn = file.urn.substring(1)
+    console.log(file.urn)
+    console.log(urn)
+
     if (file instanceof ApiDiagrammFile) {
-      realFile = new File([JSON.stringify(file)], this.removeLeadingSlashFromURN(file.urn), {
+      realFile = new File([JSON.stringify(file.content)], urn, {
         type: "application/json"
       })
     } else {
-      realFile = new File([(file as ApiTextFile).content], this.removeLeadingSlashFromURN(file.urn), {
+      realFile = new File([(file as ApiTextFile).content], urn, {
         type: "text/plain"
       })
     }
     
-    formData.append("fileUpload", realFile, this.removeLeadingSlashFromURN(file.urn))
+    formData.append("fileUpload", realFile, urn)
 
-    const request = new Request(this.buildFileURL(file.urn), {
+    const request = new Request(this.buildFileURL(urn), {
       method: "POST",
       body: formData
     })
@@ -95,7 +89,7 @@ export class NetworkProjectService {
     fetch(request)
       .then((response : Response)=> response.json())
       .catch(() => {
-        this.consoleService.ttyChange.next("Uploading file " + file.urn + " failed")
+        //Todo Error Handling
       })
   }
 
@@ -103,8 +97,22 @@ export class NetworkProjectService {
 
   }
 
-  public getFileContent() :  ApiDiagrammFile | ApiTextFile {
-    return new ApiDiagrammFile("", new CBCFormula())
+  public getFileContent(urn : string) :  ApiDiagrammFile | ApiTextFile {
+    const request = new Request(this.buildFileURL(urn), {
+      method : "GET"
+    })
+
+    fetch(request)
+      .then((response : Response) => response.blob())
+      .then(blob => {
+        if (blob.type === "application/json") {
+          // Todo: transform blob to ApiDiagrammFile
+        } else {
+          // Todo: transform blob to ApiTextFile
+        }
+      })
+
+      throw Error("not implemented")
   }
 
   public uploadFileContent(file : ApiDiagrammFile | ApiTextFile) {
@@ -127,16 +135,16 @@ export class NetworkProjectService {
   }
 
   private buildFileURL(urn : string) : string {
-    return this.buildProjectURL() + "/files/" + encodeURIComponent(urn.substring(1))
-  }
-
-  private removeLeadingSlashFromURN(urn : string) : string {
-    return urn.substring(1)
+    return this.buildProjectURL() + "/files/" + encodeURIComponent(urn)
   }
 
 
   get projectId() {
     return this._projectId
+  }
+
+  set projectId(value : string | undefined) {
+    this._projectId = value
   }
 
   get dataChange() {

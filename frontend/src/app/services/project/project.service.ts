@@ -5,7 +5,7 @@ import { ProjectElement } from './project-element';
 import { BehaviorSubject, Subject, first} from 'rxjs';
 import { FakeProjectElement, fakeProjectElementName } from './fake-element';
 import { CBCFormula } from './CBCFormula';
-import { Inode } from '../../types/project/inode';
+import { ApiDirectory, Inode } from '../../types/project/inode';
 import { NetworkProjectService } from './network/network-project.service';
 
 /**
@@ -25,8 +25,13 @@ export class ProjectService {
 
   constructor(private network : NetworkProjectService) {
 
-    this.network.dataChange.subscribe(rootDir => {
+    this.network.dataChange.subscribe((rootDir : ApiDirectory) => {
+
+      console.log(rootDir)
+
       // Todo: On Changes after network requests update file tree
+      this._rootDir = rootDir.import()
+      this._dataChange.next(this._rootDir.content)
     })
   }
 
@@ -201,8 +206,15 @@ export class ProjectService {
     return this._rootDir.export()
   }
 
-  public uploadWorkspace() {
-    this.network.requestFinished.pipe(first()).subscribe(() => this.uploadFolder(this._rootDir))
+  public uploadWorkspace(wait : boolean = false) {
+    if (!wait) {
+      this.uploadFolder(this._rootDir)
+      return
+    }
+
+    this.network.requestFinished
+      .pipe(first())
+      .subscribe(() => this.uploadFolder(this._rootDir))
   }
 
 
@@ -224,6 +236,11 @@ export class ProjectService {
 
   public createProject() {
     this.network.createProject(this._projectname)
+  }
+
+
+  public downloadWorkspace() {
+    this.network.readProject()
   }
 
   public notifyEditortoSave() {
@@ -253,8 +270,18 @@ export class ProjectService {
   public get projectname(): string {
     return this._projectname;
   }
+
+
   public set projectname(value: string) {
     this._projectname = value;
+  }
+
+  public set projectId(value : string) {
+    this.network.projectId = value
+  }
+
+  public get projectId() : string | undefined {
+    return this.network.projectId
   }
 
 }
