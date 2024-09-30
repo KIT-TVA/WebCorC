@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ProjectDirectory } from './project-directory';
 import { CodeFile, DiagramFile } from './project-files';
 import { ProjectElement } from './project-element';
-import { BehaviorSubject, Subject} from 'rxjs';
+import { BehaviorSubject, Subject, first} from 'rxjs';
 import { FakeProjectElement, fakeProjectElementName } from './fake-element';
 import { CBCFormula } from './CBCFormula';
 import { Inode } from '../../types/project/inode';
@@ -22,9 +22,12 @@ export class ProjectService {
   private _saveNotify = new Subject<void>()
   private _savedFinished = new Subject<void>()
   private _projectname: string = "";
-  private _shouldCreateProject : boolean = false
 
   constructor(private network : NetworkProjectService) {
+
+    this.network.dataChange.subscribe(rootDir => {
+      // Todo: On Changes after network requests update file tree
+    })
   }
 
   /**
@@ -196,6 +199,26 @@ export class ProjectService {
    */
   public export() : Inode {
     return this._rootDir.export()
+  }
+
+  public uploadWorkspace() {
+    this.network.requestFinished.pipe(first()).subscribe(() => this.uploadFolder(this._rootDir))
+  }
+
+
+  private uploadFolder(folder : ProjectDirectory) {
+    for (const item of folder.content) {
+      if (item instanceof ProjectDirectory) {
+        this.uploadFolder(item)
+      } 
+
+      this.network.createFile(item.export())
+    }
+  }
+
+
+  public get shouldCreateProject() : boolean {
+    return this.network.projectId === undefined
   }
 
 
