@@ -6,6 +6,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
 
+/**
+ * Dialog for creating a new project, when pressing the save button in the project explorer without a known projectId
+ */
 @Component({
   selector: 'app-create-project-dialog',
   standalone: true,

@@ -1,3 +1,7 @@
+/**
+ * Class for representing java variables 
+ * and ensuring signatures are unique
+ */
 export class JavaVariable {
     type : string
     name : string 

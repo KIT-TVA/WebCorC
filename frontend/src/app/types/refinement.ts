@@ -7,6 +7,9 @@ import {Postcondition} from "./condition/postcondition";
 import { Position } from "./position";
 import { Statement } from "./statements/statement";
 
+/**
+ * Super class Refinement of all statement components
+ */
 export abstract class Refinement {
   private static NEXT_ID: number = 1;
 

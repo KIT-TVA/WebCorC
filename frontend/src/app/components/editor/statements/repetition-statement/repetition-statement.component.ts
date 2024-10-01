@@ -18,8 +18,7 @@ import {LinkComponent} from "../link/link.component";
 import { RepetitionStatement } from '../../../../types/statements/repetition-statement';
 
 /**
- * Compoent in the Graphical Editor to represent a repetition statement
- * @see RepetitionStatement
+ * Compoent in the Graphical Editor to represent an instance of {@link RepetitionStatement}
  */
 @Component({
   selector: 'app-repetition-statement',
@@ -82,7 +81,9 @@ export class RepetitionStatementComponent extends Refinement {
       }
     })
 
-
+    /**
+     * Propagate the changes of the guard condition to the precondition and the loop statement
+     */
     this._guardCondition.contentChangeObservable.subscribe(() => {
       super.precondition.content = "((" + this._invariantCondition.content + ") & (" + this._guardCondition.content + "))"
       
@@ -97,6 +98,9 @@ export class RepetitionStatementComponent extends Refinement {
     return "Repetition";
   }
 
+  /**
+   * Open {@link ChooseRefinementComponent} and add the child statement to the dom
+   */
   chooseRefinement() {
     const dialogRef = this.dialog.open(ChooseRefinementComponent);
     

@@ -24,6 +24,7 @@ import { Position } from '../../../../types/position';
 /**
  * Component to present the statements.
  * This component is only to show the statement given.
+ * It is used as the template for the statements.
  * This is not the (super) type Refinement.
  */
 @Component({
@@ -69,6 +70,7 @@ export class StatementComponent implements AfterViewInit {
       this.toggleConditionEditorView(true);
     }
 
+    // Todo: Rewerite Verification of statements
     this.treeService.verificationResultNotifier.subscribe(
       verificationResult => this.onVerified(verificationResult));
 
@@ -133,7 +135,7 @@ export class StatementComponent implements AfterViewInit {
     }
   }
 
-  // Todo: Rewrite for new backend
+  // Todo: Rewrite Verification
   onVerified(verificationResult: VerificationResult): void {
     if (!verificationResult.errors) {
       return;

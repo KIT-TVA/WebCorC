@@ -18,10 +18,8 @@ import { LinkComponent } from "../link/link.component";
 import { SimpleStatement } from '../../../../types/statements/simple-statement';
 
 /**
- * Component representing a simple statement in the grahical editor.
+ * Component representing an instande of {@link SimpleStatement} in the grahical editor.
  * The Root statement is also a simple statement, with one child element
- * @see EditorComponent
- * @see SimpleStatement
  */
 @Component({
   selector: 'app-simple-statement',
@@ -42,16 +40,21 @@ export class SimpleStatementComponent extends Refinement {
   constructor(treeService : TreeService, private dialog: MatDialog ) {
     super(treeService);
 
+    // If root enable the conditions to be edited
     if (this.isRoot()) {
       super.toogleEditableCondition()
+
+      // allow deletion of the child statement
+      treeService.deletionNotifier.subscribe(refinement => {
+        if (this._statement === refinement) {
+          this._statement = undefined
+          this._statementElementRef!.nativeElement!.remove();
+        }
+      })
     }
 
-    treeService.deletionNotifier.subscribe(refinement => {
-      if (this._statement === refinement) {
-        this._statement = undefined
-        this._statementElementRef!.nativeElement!.remove();
-      }
-    })
+    
+    
 
     super.precondition.contentChangeObservable.subscribe(content => {
       if (!this._statement) { return }

@@ -5,6 +5,9 @@ import { Statement } from "./statement";
 import { StrongWeakStatementComponent } from "../../components/editor/statements/strong-weak-statement/strong-weak-statement.component";
 import { ConditionDTO } from "../condition/condition";
 
+/**
+ * Data only representation of {@link StrongWeakStatementComponent}
+ */
 export class StrongWeakStatement extends Statement {
 
     constructor(

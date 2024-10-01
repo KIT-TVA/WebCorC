@@ -10,7 +10,7 @@ import { NetworkProjectService } from './network/network-project.service';
 
 /**
  * Service for project managment.
- * This srevice is the single point of truth for the file tree and file content in the project
+ * This service is the single point of truth for the file tree and file content in the project
  * Used by all components, which interact with the file tree or the content of the files
  */
 @Injectable({
@@ -224,7 +224,7 @@ export class ProjectService {
         this.uploadFolder(item)
       } 
 
-      this.network.createFile(item.export())
+      this.network.uploadFile(item.export())
     }
   }
 

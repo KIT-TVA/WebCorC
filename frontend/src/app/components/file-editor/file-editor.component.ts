@@ -5,7 +5,9 @@ import { FormsModule } from '@angular/forms';
 import { ProjectService } from '../../services/project/project.service';
 
 /**
- * Simple wrapper around the nu-monaco text editor, which saves and loads the file content from the @see ProjectService
+ * Simple wrapper around the nu-monaco text editor, which saves and loads the file content from the {@link ProjectService}
+ * This component is mapped under the url /editor/file/{urn}
+ * @link https://www.npmjs.com/package/@ng-util/monaco-editor
  */
 @Component({
   selector: 'app-file-editor',
@@ -23,10 +25,12 @@ export class FileEditorComponent implements AfterViewInit,OnDestroy {
   private _urn : string = ''
   private _viewInit : boolean = false
   
+  //Todo: Fix / Inverstigate Flickering Issue when usuing getters and setters
   public code : string = '';
 
   constructor(private projectService : ProjectService) {}
 
+  //Todo: make language configurable
   editorOptions =  {
       theme: 'vs',
       language: 'java',

@@ -12,6 +12,9 @@ import {MatTabGroup, MatTabsModule} from "@angular/material/tabs";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {FormBuilder, ReactiveFormsModule} from "@angular/forms";
 
+/**
+ * Todo: Rewrite for new Backend
+ */
 @Component({
   selector: 'app-codegen',
   standalone: true,

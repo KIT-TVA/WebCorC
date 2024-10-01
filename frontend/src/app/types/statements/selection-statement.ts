@@ -5,6 +5,9 @@ import { Refinement } from "../refinement";
 import { Statement } from "./statement";
 import { SelectionStatementComponent } from "../../components/editor/statements/selection-statement/selection-statement.component";
 
+/**
+ * Data only representation of {@link SelectionStatementComponent}
+ */
 export class SelectionStatement extends Statement {
 
     constructor(
@@ -22,6 +25,7 @@ export class SelectionStatement extends Statement {
         super(name, "selection", id, proven, comment, preCondition, postCondition, position)
     }
 
+    
     public override toComponent(spawn: ViewContainerRef): [ refinement : Refinement, ref : ComponentRef<Refinement>] {
         const statementRef = spawn.createComponent(SelectionStatementComponent)
         const statement = statementRef.instance as SelectionStatementComponent

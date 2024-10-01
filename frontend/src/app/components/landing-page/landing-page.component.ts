@@ -9,7 +9,6 @@ import { ProjectService } from '../../services/project/project.service';
  * Landingpage infront of the editors to prevent file not found errors,
  * this component is mounted at the root / of the url path and so the default page for users
  * to see.
- * Todo: Allow Passing a known projectId to this component via queryparameters to allow easy shareable links for projects
  */
 @Component({
   selector: 'app-landing-page',
@@ -26,8 +25,8 @@ export class LandingPageComponent implements OnInit {
 
   }
   
-  
   ngOnInit(): void {
+    // read the query Params and setting them to the projectService
     this.route.queryParams
       .subscribe(params => {
         this.projectService.projectId = params['projectId']
@@ -35,8 +34,8 @@ export class LandingPageComponent implements OnInit {
       })
       
     if (this._projectId) {
+      // if the projectId is not undefined load the project from the backend
       this.projectService.downloadWorkspace()
-      // load project from backend
     }
   }
 

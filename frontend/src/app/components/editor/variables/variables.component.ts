@@ -9,6 +9,12 @@ import { MatDividerModule} from "@angular/material/divider";
 import { MatFormFieldModule} from "@angular/material/form-field";
 import { MatListModule} from "@angular/material/list";
 
+/**
+ * Component to edit the variables of the file.
+ * Uses {@link TreeService} to manage and persist the variables
+ * @link https://material.angular.io/components/form-field/overview
+ * @link https://angular.dev/guide/forms/reactive-forms
+ */
 @Component({
   selector: 'app-variables',
   standalone: true,
@@ -18,6 +24,9 @@ import { MatListModule} from "@angular/material/list";
 })
 export class VariablesComponent {
 
+  /**
+   * Forms Template
+   */
   variables: FormGroup = this._fb.group({
     newVariable: new FormControl("", []),
     items: this._fb.array([])
@@ -25,6 +34,9 @@ export class VariablesComponent {
 
   constructor(private _fb: FormBuilder,  public treeService: TreeService) {}
 
+  /**
+   * Add new variable and check for duplicate variable names
+   */
   addVariable() : void {
     const value : string = this.variables.controls['newVariable'].value
 
@@ -45,11 +57,18 @@ export class VariablesComponent {
     this.variables.controls['newVariable'].reset()
   }
 
+  /**
+   * Remove variables based on the index 
+   * @param index The index of the variable to remove
+   */
   removeVariable(index : number) : void {
     this.treeService.removeVariables([this.items.at(index).value.name])
     this.items.removeAt(index)
   }
 
+  /**
+   * Clear the form
+   */
   removeAllVariables() : void {
 
     for (let i = 0; i < this.items.length; i++) {
@@ -60,6 +79,10 @@ export class VariablesComponent {
     this.variables.controls['newVariable'].reset()
   }
 
+  /**
+   * Import variables on opening the file 
+   * @param variables the variables to import
+   */
   importVariables(variables : string[]) {
     for (const variable of variables) {
       const variableControl = this._fb.group({
@@ -70,7 +93,6 @@ export class VariablesComponent {
       this.treeService.addVariable(variable)
     }
   }
-
 
   get items() : FormArray {
     return this.variables.controls["items"] as FormArray

@@ -5,8 +5,11 @@ import { Refinement } from "../refinement";
 import { Statement } from "./statement";
 import { CompositionStatementComponent } from "../../components/editor/statements/composition-statement/composition-statement.component";
 
+/**
+ * Data only representation of {@link CompositionStatementComponent}.
+ * Compatible with the api calls.
+ */
 export class CompositionStatement extends Statement {
-
 
     constructor(
         name : string,
@@ -22,6 +25,7 @@ export class CompositionStatement extends Statement {
     ) {
         super(name, "composition" ,id, proven, comment, preCondition, postCondition, position)
     }
+
 
     public override toComponent(spawn: ViewContainerRef): [ refinement : Refinement, ref : ComponentRef<Refinement>] {
         const statementRef = spawn.createComponent(CompositionStatementComponent)

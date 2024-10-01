@@ -20,9 +20,10 @@ import { Statement } from '../../../../types/statements/statement';
 import { SelectionStatement } from '../../../../types/statements/selection-statement';
 
 /**
- * Component in the graphical editor to represent the selection statement
- * @see EditorComponent
- * @see SelectionStatement
+ * Component in the graphical editor to represent the {@link SelectionStatement}
+ * The Selectionstatement has n child statements and n guard statements.
+ * The guard conditons and the precondition get propagated to the precondition
+ * of the child.
  */
 @Component({
   selector: 'app-selection-statement',
@@ -87,6 +88,9 @@ export class SelectionStatementComponent extends Refinement {
     return "Selection"
   }
 
+  /**
+   * Refresh the link state of this statement and all child statements
+   */
   override refreshLinkState(): void {
     super.refreshLinkState()
 
@@ -98,7 +102,8 @@ export class SelectionStatementComponent extends Refinement {
   }
 
   /**
-   * 
+   * Open {@link ChooseRefinementComponent} and add the child statement according to the 
+   * index of the guard to add the statement to.
    * @param index The position to add the statement
    */
   chooseRefinement(index : number) : void {
@@ -122,8 +127,7 @@ export class SelectionStatementComponent extends Refinement {
         this._statements[index]!.postcondition.content = super.postcondition.content
       })
 
-      // Todo: Find better way to refresh the links between the statements
-      setTimeout(() => this.treeService.redrawNotifier.next(), 5)
+      setTimeout(() => this.refreshLinkState(), 5)
     })
   }
 
@@ -161,14 +165,6 @@ export class SelectionStatementComponent extends Refinement {
     setTimeout(() => this.refreshLinkState(), 5)
   }
 
-  get statements() {
-    return this._statements
-  }
-
-  set guards(guards : Condition[]) {
-    this._guards = guards
-  }
-
   /**
    * Import the Selections from the file @see ProjectService
    * @param selection The selection to be imported
@@ -204,6 +200,14 @@ export class SelectionStatementComponent extends Refinement {
 
   getGuardByIndex(index : number) : Condition {
     return this._guards[index] as Condition
+  }
+
+  get statements() {
+    return this._statements
+  }
+
+  set guards(guards : Condition[]) {
+    this._guards = guards
   }
 
   /**

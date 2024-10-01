@@ -12,9 +12,9 @@ import { MatListModule} from "@angular/material/list";
 import { ConditionDTO } from '../../../types/condition/condition';
 
 /**
- * Component for the user to manage the global conditions in a cbc formula
- * Uses @see TreeService for saving the global conditions
- * Uses Angular Reactive Forms to dynamically show the inputs
+ * Component for the user to manage the global conditions in a cbc formula.
+ * Uses {@link TreeService} for saving the global conditions.
+ * Uses Angular Reactive Forms to dynamically show the inputs.
  * @link https://angular.dev/guide/forms/reactive-forms
  */
 @Component({
@@ -100,6 +100,9 @@ export class GlobalConditionsComponent {
     }
   }
 
+  /**
+   * Get the array of inputs for rendering the inputs
+   */
   get items() : FormArray {
     return this.conditions.controls["items"] as FormArray
   }

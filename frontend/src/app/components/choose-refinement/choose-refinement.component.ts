@@ -18,7 +18,8 @@ import { StrongWeakStatementComponent } from '../editor/statements/strong-weak-s
 
 
 /**
- * Dialog for adding the refinements as a child of the element which opened this dialog
+ * Dialog for adding the refinements as a child of the element which opened this Dialog
+ * @link https://material.angular.io/components/dialog/overview
  */
 @Component({
   selector: 'app-choose-refinement',
@@ -40,6 +41,9 @@ export class ChooseRefinementComponent {
 
   constructor(public dialogRef: MatDialogRef<ChooseRefinementComponent>) {}
 
+  /**
+   * Close the Dialog when clicking outside of the dialog content
+   */
   onNoClick(): void {
     this.dialogRef.close();
   }

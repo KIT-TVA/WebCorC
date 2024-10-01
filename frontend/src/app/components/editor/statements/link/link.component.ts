@@ -2,9 +2,13 @@ import {AfterViewInit, Component, ElementRef, Input, OnDestroy, ViewChild} from 
 import { CommonModule } from '@angular/common';
 import {MatIcon, MatIconModule} from "@angular/material/icon";
 import {CdkDragEnd} from "@angular/cdk/drag-drop";
-import {ReplaySubject} from "rxjs";
+import { ReplaySubject} from "rxjs";
 import { TreeService } from '../../../../services/tree/tree.service';
 
+/**
+ * Component for the connections between the statements {@link StatementComponent}.
+ * Each Instance connects one parent and one child statement together. 
+ */
 @Component({
   selector: 'app-refinement-link',
   standalone: true,
@@ -35,6 +39,11 @@ export class LinkComponent implements AfterViewInit, OnDestroy {
   constructor(private treeService : TreeService) {}
 
 
+  /**
+   * Subscribe to the subjects which get tirggered by moving the 
+   * connected statements and scrolling the in the editor.
+   * On deletion the Background needs to be fully refreshed.
+   */
   ngAfterViewInit(): void {
     this.createLineDOM();
 
@@ -47,10 +56,16 @@ export class LinkComponent implements AfterViewInit, OnDestroy {
     this.drawLine();
   }
 
+  /**
+   * Remove the line on destruction
+   */
   ngOnDestroy() {
     this.lineContainerDOM!.remove();
   }
 
+  /**
+   * Create the a svg in the background for drawing the lines in
+   */
   createLineDOM(): void {
     const lineSpawn = document.getElementById("lineSpawn");
     if (lineSpawn) {
@@ -72,6 +87,9 @@ export class LinkComponent implements AfterViewInit, OnDestroy {
     }
   }
 
+  /**
+   * Draw the line between the refinements in the svg background
+   */
   drawLine(): void {
     const refinementBoundaries = this.linkedRefinement.nativeElement.children[0].children[0].getBoundingClientRect();
     const iconBoundaries = this.linkIcon._elementRef.nativeElement.getBoundingClientRect();
@@ -104,6 +122,9 @@ export class LinkComponent implements AfterViewInit, OnDestroy {
     }
   }
 
+  /**
+   * Redraw the whole background
+   */
   redrawBackground() : void {
     this.lineContainerDOM.childNodes.forEach((child) => {
       this.lineContainerDOM.removeChild(child)

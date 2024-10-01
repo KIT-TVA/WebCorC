@@ -2,6 +2,9 @@ import {Component, Input} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {MatIconModule} from "@angular/material/icon";
 
+/**
+ * Button in the add refinement widget
+ */
 @Component({
   selector: 'app-refinement-widget',
   standalone: true,

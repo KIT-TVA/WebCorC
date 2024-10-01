@@ -10,6 +10,8 @@ import { ConsoleService } from '../../services/console/console.service';
 
 /**
  * Currently very minimal textarea for showing the logs of the verification or generation services
+ * @link https://material.angular.io/components/form-field/overview
+ * @link https://angular.dev/guide/forms/reactive-forms
  */
 @Component({
   selector: 'app-console',
@@ -31,6 +33,9 @@ export class ConsoleComponent {
     })
   }
 
+  /**
+   * Clear the console
+   */
   public clear() {
     this.console.get('content')?.reset()
   }

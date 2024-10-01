@@ -6,6 +6,9 @@ import { Statement } from "./statement";
 import { SimpleStatementComponent } from "../../components/editor/statements/simple-statement/simple-statement.component";
 import { ConditionDTO } from "../condition/condition";
 
+/**
+ * Data only representation of {@link SimpleStatementComponent}
+ */
 export class SimpleStatement extends Statement {
 
     constructor(

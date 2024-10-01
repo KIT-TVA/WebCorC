@@ -16,6 +16,11 @@ import { NuMonacoEditorModule } from '@ng-util/monaco-editor';
 import { ConsoleComponent } from './components/console/console.component';
 import { ProjectService } from './services/project/project.service';
 
+/**
+ * Top Component of this application, 
+ * this component includes the top bar and the routing element.
+ * In which the editors and landing page get rendered in.
+ */
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -38,12 +43,19 @@ export class AppComponent {
     this.treeService.downloadJSON();
   }
 
+  /**  
+   * Write the url of the current project into the clipboard 
+   */
   public share() {
     // Todo: Ensure to create Project if projectid is undefined
     navigator.clipboard.writeText(window.location.protocol + "//" +window.location.hostname + ":" + window.location.port + "?projectId=" + this.projectService.projectId)
     //Todo: Visual Feedback to user
   }
 
+  /**
+   * Prevent closing the tab with not saved changes
+   * @returns the permission to close the tab
+   */
   @HostListener('window:beforeunload', ['$event'])
   onClose() : boolean {
     if (this.projectService.isEmpty) {

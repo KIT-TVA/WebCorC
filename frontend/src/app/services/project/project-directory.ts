@@ -1,5 +1,6 @@
 import { ApiDirectory, Inode } from "../../types/project/inode"
 import { ProjectElement } from "./project-element"
+
 /**
  * Represents a directory in the project, which includes more Projectelements as childs 
  */

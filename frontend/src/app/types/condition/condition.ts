@@ -1,13 +1,14 @@
 import {Observable, ReplaySubject, debounceTime, distinctUntilChanged} from "rxjs";
 
-
+/**
+ * Conditon edited in the Condtion Editor
+ */
 export class Condition {
   protected readonly _title: string;
   private _content: string;
   private _contentChangeEmitter: ReplaySubject<string>;
 
-  // The refinement this condition is initiated.
-  // 0 for side condition.
+
   private _originId: number;
 
   constructor(originId: number, title: string = "", content: string = "") {
@@ -47,6 +48,10 @@ export class Condition {
   }
 }
 
+/**
+ * Data only conditon class to use in the data only classes.
+ * Compatible with the api calls for the backend
+ */
 export class ConditionDTO {
 
   public constructor(

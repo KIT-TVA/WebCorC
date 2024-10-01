@@ -11,6 +11,9 @@ import {RequestError, VerificationResult} from "../types/net/verification-net-ty
 import {MatButtonModule} from "@angular/material/button";
 import {VerificationErrorListComponent} from "../components/verification-error-list.component";
 
+/**
+ * Todo: Rewrite the verification
+ */
 @Component({
   selector: 'app-verification-result',
   standalone: true,

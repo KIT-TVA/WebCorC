@@ -1,27 +1,28 @@
-import {Component, ElementRef, ViewChild, ViewContainerRef} from '@angular/core';
+import { Component, ElementRef, ViewChild, ViewContainerRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {StatementComponent} from "../statement/statement.component";
-import {Refinement} from "../../../../types/refinement";
-import {TreeService} from "../../../../services/tree/tree.service";
-import {MatGridListModule} from "@angular/material/grid-list";
-import {GridTileBorderDirective} from "../../../../directives/grid-tile-border.directive";
-import {RefinementWidgetComponent} from "../../../../widgets/refinement-widget/refinement-widget.component";
-import {ConditionEditorComponent} from "../../condition/condition-editor/condition-editor.component";
-import {Condition} from "../../../../types/condition/condition";
-import {FormsModule} from "@angular/forms";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatInputModule} from "@angular/material/input";
-import {MatDialog} from "@angular/material/dialog";
-import {ChooseRefinementComponent} from "../../../choose-refinement/choose-refinement.component";
-import {MatIconModule} from "@angular/material/icon";
-import {LinkComponent} from "../link/link.component";
+import { StatementComponent } from "../statement/statement.component";
+import { Refinement } from "../../../../types/refinement";
+import { TreeService } from "../../../../services/tree/tree.service";
+import { MatGridListModule } from "@angular/material/grid-list";
+import { GridTileBorderDirective } from "../../../../directives/grid-tile-border.directive";
+import { RefinementWidgetComponent } from "../../../../widgets/refinement-widget/refinement-widget.component";
+import { ConditionEditorComponent } from "../../condition/condition-editor/condition-editor.component";
+import { Condition } from "../../../../types/condition/condition";
+import { FormsModule } from "@angular/forms";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatDialog } from "@angular/material/dialog";
+import { ChooseRefinementComponent } from "../../../choose-refinement/choose-refinement.component";
+import { MatIconModule } from "@angular/material/icon";
+import { LinkComponent } from "../link/link.component";
 import { Statement } from '../../../../types/statements/statement';
 import { CompositionStatement } from '../../../../types/statements/compositon-statement';
 
 /**
- * Composition statement in the graphical editor.
+ * Composition statement in {@link EditorComponent}.
  * The compositon statement propagates the precondition to the left statement and the postcondition to the right statement.
  * The intermediate condition is the post condition of the left statement and the precondition of the right statement. 
+ * The Composition Statement gets saved as {@link CompositionStatement}
  */
 @Component({
   selector: 'app-composition-statement',
@@ -63,6 +64,7 @@ export class CompositionStatementComponent extends Refinement {
     })
 
     // Propagate the changes from the precondition to the left statement
+    // passtrough the originId
     super.precondition.contentChangeObservable.subscribe(content => {
       if (!this._leftStatement) { return }
 
@@ -72,6 +74,7 @@ export class CompositionStatementComponent extends Refinement {
     })
 
     // Propagate the changes from the post condition to the right statement
+    // passthrough the originId
     super.postcondition.contentChangeObservable.subscribe(content => {
       if (!this._rightStatement) { return }
 
@@ -101,7 +104,7 @@ export class CompositionStatementComponent extends Refinement {
   }
 
   /**
-   * Add the child statements chosen by the user in @see ChooseRefinementComponent .
+   * Add the child statements chosen by the user in {@link ChooseRefinementComponent} .
    * The new child statement then get created in component
    * @param side hardcoded string from the template to identify which button got used
    */
@@ -136,6 +139,9 @@ export class CompositionStatementComponent extends Refinement {
     })
   }
 
+  /**
+   * Refresh the Link State of this Statement and the left and right child statements
+   */
   override refreshLinkState(): void {
     super.refreshLinkState()
     
@@ -189,7 +195,7 @@ export class CompositionStatementComponent extends Refinement {
   } 
  
   /**
-   * Converts this component to the data only CompositionStatment @see CompositionStatement
+   * Converts this component to the data only CompositionStatment {@link CompositionStatement}
    * @returns a new Instance of CompositionStatment
    */
   override export() : Statement | undefined {

@@ -16,7 +16,11 @@ export class Statement {
         public position : Position 
     ) {}
 
-
+    /**
+     * Convert the data only statement to the corresponding component 
+     * @param spawn The element to spawn the component in
+     * @returns The raw statment and the component reference of the statement, used to connect the statements in the graphical editor
+     */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public toComponent(spawn : ViewContainerRef) : [ refinement : Refinement, ref : ComponentRef<Refinement>] | undefined {
         return

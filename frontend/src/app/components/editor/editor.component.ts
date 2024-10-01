@@ -16,6 +16,11 @@ import { ProjectService } from '../../services/project/project.service';
 import { CBCFormula } from '../../services/project/CBCFormula';
 import { SimpleStatement } from '../../types/statements/simple-statement';
 
+/**
+ * Component to edit {@link CBCFormula} by editing a grahical representation based of the statement components like {@link SimpleStatementComponent}.
+ * This Component is opened when the user clicks on the .diagram files in the project explorer.
+ * The path of the component is /editor/diagram/{file.urn}
+ */
 @Component({
   selector: 'app-editor',
   standalone: true,
@@ -97,6 +102,9 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     this._viewInit = false
   }
 
+  /**
+   * Save current editor content to {@link CBCFormula}
+   */
   private saveContentToFile() : void {
     // create a new Formula to save 
     const formula = new CBCFormula()
@@ -117,6 +125,9 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     this.conditions.removeAllConditions()
   }
 
+  /**
+   * Load {@link CBCFormula} in to editor to be edited
+   */
   private loadFileContent() : void {
     // load the diagram of the file into the component
 
@@ -159,7 +170,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   }
 
   /**
-   * 
+   * Redraw the lines when scrolling in the editor
    */
   public onEditorContainerScrolled(): void {
     this.treeService.onEditorContainerScrolled();

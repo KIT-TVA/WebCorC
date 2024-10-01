@@ -11,6 +11,11 @@ import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatButtonModule } from "@angular/material/button";
 
+/**
+ * Editor in the statements for the {@link Condition}
+ * @link https://material.angular.io/components/form-field/overview
+ * @link https://angular.dev/guide/forms/reactive-forms
+ */
 @Component({
   selector: 'app-condition-editor',
   standalone: true,
@@ -31,6 +36,9 @@ export class ConditionEditorComponent implements OnInit {
 
   constructor(private fb: FormBuilder) {}
 
+  /**
+   * Initialize the input on angular initalization
+   */
   ngOnInit() {
     // Set up form group on init, since here the @Inputs available
     this.conditionGroup = this.fb.group({
@@ -50,13 +58,5 @@ export class ConditionEditorComponent implements OnInit {
         this.conditionGroup!.get("condition")!.setValue(value);
       }
     });
-  }
-
-  insertSymbol(symbol: string): void {
-    const inp: HTMLInputElement = document.getElementById(this.input.id) as HTMLInputElement;
-    const currentValue = this.conditionGroup!.get("condition")!.value;
-    this.conditionGroup!.get("condition")!.setValue(
-      currentValue.substring(0, inp.selectionStart) + symbol + currentValue.substring(inp.selectionEnd));
-    this.input.focus();
   }
 }

@@ -31,7 +31,7 @@ class FlatNode {
 }
 /**
  * Component for the file management and navigating between the files,
- * Primarly interacts with the @see ProjectService, in which the state is stored
+ * Primarly interacts with the {@link ProjectService}, in which the state is stored
  */
 @Component({
   selector: 'app-project-explorer',
@@ -42,6 +42,7 @@ class FlatNode {
 })
 export class ProjectExplorerComponent {
 
+  // convert the project elements to the flatnode
   private _transformer = (element : ProjectElement, level : number) : FlatNode => {
     const existingNode = this.elementToNodeMap.get(element);
     const flatNode = existingNode && existingNode.path === element.path ? existingNode : new FlatNode(element, level);
@@ -57,9 +58,7 @@ export class ProjectExplorerComponent {
 
   private _treeControl = new FlatTreeControl<FlatNode>(node => node.level, node => node.expandable);
 
-  private _dataSource = new MatTreeFlatDataSource(this.treeControl, this._treeFlatener
-
-  );
+  private _dataSource = new MatTreeFlatDataSource(this.treeControl, this._treeFlatener);
 
 
   constructor(public projectService : ProjectService, private router : Router, private dialog : MatDialog) {
@@ -70,6 +69,11 @@ export class ProjectExplorerComponent {
     })
   }
 
+  /**
+   * Add a new folder to the file tree
+   * @param node The parent node 
+   * @param name The name of the new directory
+   */
   public addFolder(node : FlatNode, name : string) {
 
     if (!name) {
@@ -80,6 +84,13 @@ export class ProjectExplorerComponent {
     this.treeControl.expand(node)
   }
 
+  /**
+   * Add a new file to the file tree
+   * @param node The parent node
+   * @param name The name of the new file
+   * @param type The type of the new file
+   * @returns 
+   */
   public addFile(node : FlatNode, name : string, type : string) {
     
     if (!name) {
@@ -90,15 +101,23 @@ export class ProjectExplorerComponent {
     this.treeControl.expand(node)
   }
 
+
+
   public deleteElement(node : FlatNode) {
     this.projectService.deleteElement(node.path, node.name)
   }
+
 
   public addElement(node : FlatNode) {
     this.projectService.addFakeElement(node.path)
     this.treeControl.expand(node)
   }
 
+
+  /**
+   * Open the files on clicking on them in the file tree in the corresponding editor
+   * @param node The node to be opened
+   */
   public navigate(node : FlatNode) {
     const element = this.nodeToElementMap.get(node) 
     if (!element) {
@@ -118,8 +137,12 @@ export class ProjectExplorerComponent {
     }
   }
 
+  /**
+   * Save the current state of the project to the backend.
+   * If the projectId is not defined the user is asked to create a
+   * new project
+   */
   public save() {
-
     let wait = false
     if (this.projectService.shouldCreateProject)  {
       this.dialog.open(CreateProjectDialogComponent)
@@ -133,6 +156,9 @@ export class ProjectExplorerComponent {
     
   }
 
+  /**
+   * Todo: Rewrite Export with /export to allow the backend to handle the export
+   */
   public export() {
     this.projectService.explorerNotify.pipe(first()).subscribe(() => {
       const structure = JSON.stringify(this.projectService.root.export(), null, 2);
@@ -147,8 +173,10 @@ export class ProjectExplorerComponent {
     this.projectService.notifyEditortoSave()
   }
 
+  // identify the directories for the html template
   hasChild = (_: number, node: FlatNode) => node.expandable;
 
+  // identify the fakeProjectElement for the html template
   isTypeLessAndHasNoName = (_ : number, node : FlatNode) => node.name === fakeProjectElementName;
 
   get root() {

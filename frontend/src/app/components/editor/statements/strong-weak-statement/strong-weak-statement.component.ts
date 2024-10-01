@@ -17,6 +17,9 @@ import {MatIconModule} from "@angular/material/icon";
 import {LinkComponent} from "../link/link.component";
 import { StrongWeakStatement } from '../../../../types/statements/strong-weak-statement';
 
+/**
+ * Component in the graphic editor representing {@link StrongWeakStatement}
+ */
 @Component({
   selector: 'app-strong-weak-statement',
   standalone: true,
@@ -39,6 +42,7 @@ export class StrongWeakStatementComponent extends Refinement {
     this._weakPreCondition = new Condition(this.id, "Weak precondition");
     this._strongPostCondition = new Condition(this.id, "Strong postcondition");
 
+    // delete the child statement on deletion
     treeService.deletionNotifier.subscribe(refinement => {
       if (refinement === this._statement) {
         this._statement = undefined;
@@ -46,6 +50,7 @@ export class StrongWeakStatementComponent extends Refinement {
       }
     })
 
+    // propagate the changes of the weak precondition to the precondition of the child
     this._weakPreCondition.contentChangeObservable.subscribe(() => {
       if (!this._statement) { return }
 
@@ -53,6 +58,7 @@ export class StrongWeakStatementComponent extends Refinement {
       this._statement.precondition.originId = this.id
     })
 
+    // propagate the changes of the strong postcondition to the postcondition of the child
     this._strongPostCondition.contentChangeObservable.subscribe(() => {
       if (!this._statement) { return }
 
@@ -65,6 +71,9 @@ export class StrongWeakStatementComponent extends Refinement {
     return "Strong-Weak"
   }
 
+  /**
+   * Open {@link ChooseRefinementComponent} and allow adding a child to this statement
+   */
   chooseRefinement() {
     const dialogRef = this.dialog.open(ChooseRefinementComponent);
 
@@ -108,19 +117,26 @@ export class StrongWeakStatementComponent extends Refinement {
     return this._strongPostCondition;
   }
 
+  /**
+   * Convert this Component to the data only {@link StrongWeakStatement}
+   * @returns 
+   */
   override export() {
     return new StrongWeakStatement(
       this.getTitle(),
       this.id,
       false, 
       "",
-      this.precondition.export(),
-      this.postcondition.export(),
+      this._weakPreCondition.export(),
+      this._strongPostCondition.export(),
       super.position,
       this.statement?.export()
     )
   }
 
+  /**
+   * Refresh the link between this and the child statement
+   */
   override refreshLinkState(): void {
     super.refreshLinkState()
     if (!this._statement) return

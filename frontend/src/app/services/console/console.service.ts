@@ -1,6 +1,10 @@
 import { Injectable } from '@angular/core';
 import { ReplaySubject } from 'rxjs';
 
+/**
+ * Service to allow interaction with the console 
+ * Caution: Not fully implemented
+ */
 @Injectable({
   providedIn: 'root'
 })

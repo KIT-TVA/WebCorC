@@ -4,6 +4,9 @@ import { environment } from '../../../../environments/environment';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { ConsoleService } from '../../console/console.service';
 
+/**
+ * Service to interact with the backend for managing the project.
+ */
 @Injectable({
   providedIn: 'root'
 })
@@ -17,7 +20,13 @@ export class NetworkProjectService {
   constructor(private consoleService : ConsoleService) { }
 
 
+  /**
+   * Create a new project 
+   * @param name The name of the project, should not be empty
+   */
   public createProject(name : string) {
+
+    if (!name) return
 
     const request = new Request(environment.apiUrl + NetworkProjectService.projects, {
       method: "POST",
@@ -39,7 +48,10 @@ export class NetworkProjectService {
       })
   }
 
-
+  /**
+   * Read the project from the backend based on its id
+   * @param projectId The project id of the project to read from the backend
+   */
   public readProject(projectId : string | undefined = this._projectId) {
     this._projectId = projectId
 
@@ -60,14 +72,16 @@ export class NetworkProjectService {
   }
 
 
-  public createFile(file : Inode) {
+  /**
+   * Upload the given file to the backend
+   * @param file The file to upload
+   */
+  public uploadFile(file : Inode) {
     const formData = new FormData()
 
     let realFile
 
     const urn = file.urn.substring(1)
-    console.log(file.urn)
-    console.log(urn)
 
     if (file instanceof ApiDiagrammFile) {
       realFile = new File([JSON.stringify(file.content)], urn, {
@@ -97,6 +111,11 @@ export class NetworkProjectService {
 
   }
 
+  /**
+   * Get the content of the file from the backend.
+   * Caution: Not fully implemented
+   * @param urn 
+   */
   public getFileContent(urn : string) :  ApiDiagrammFile | ApiTextFile {
     const request = new Request(this.buildFileURL(urn), {
       method : "GET"
@@ -113,21 +132,6 @@ export class NetworkProjectService {
       })
 
       throw Error("not implemented")
-  }
-
-  public uploadFileContent(file : ApiDiagrammFile | ApiTextFile) {
-    const request = new Request(this.buildProjectURL(), {
-      method: "POST"
-    })
-  }
-
-
-  public createFolder() {
-
-  }
-
-  public deleteFolder() {
-
   }
 
   private buildProjectURL() : string {

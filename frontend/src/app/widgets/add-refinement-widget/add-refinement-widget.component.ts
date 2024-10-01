@@ -4,6 +4,10 @@ import {RefinementWidgetComponent} from "../refinement-widget/refinement-widget.
 import {ChooseRefinementComponent} from "../../components/choose-refinement/choose-refinement.component";
 import {MatDialog} from "@angular/material/dialog";
 
+/**
+ * Add refinement component placed in the statements 
+ * to add the child statements
+ */
 @Component({
   selector: 'app-add-refinement-widget',
   standalone: true,

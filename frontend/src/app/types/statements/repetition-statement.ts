@@ -5,6 +5,9 @@ import { ViewContainerRef, ComponentRef } from "@angular/core";
 import { Refinement } from "../refinement";
 import { RepetitionStatementComponent } from "../../components/editor/statements/repetition-statement/repetition-statement.component";
 
+/**
+ * Data only representation of {@link RepetitionStatementComponent}
+ */
 export class RepetitionStatement extends Statement {
 
     constructor(
@@ -27,6 +30,7 @@ export class RepetitionStatement extends Statement {
         super(name, "repetition", id, proven, comment, preCondition, postCondition, position)
     }
 
+    
     public override toComponent(spawn: ViewContainerRef): [refinement: Refinement, ref: ComponentRef<Refinement>] | undefined {
         const statementRef = spawn.createComponent(RepetitionStatementComponent)
         const statement = statementRef.instance as RepetitionStatementComponent
