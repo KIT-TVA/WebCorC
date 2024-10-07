@@ -1,6 +1,6 @@
 package edu.kit.cbc.projects;
 
-import edu.kit.cbc.projects.files.DirectoryDto;
+import edu.kit.cbc.projects.files.dto.DirectoryDto;
 
 import java.util.Set;
 import java.time.ZonedDateTime;

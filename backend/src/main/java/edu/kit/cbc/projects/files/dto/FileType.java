@@ -1,4 +1,4 @@
-package edu.kit.cbc.projects.files;
+package edu.kit.cbc.projects.files.dto;
 
 public enum FileType {
     key,

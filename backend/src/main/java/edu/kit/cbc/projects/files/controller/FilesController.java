@@ -4,7 +4,7 @@ import java.util.Optional;
 import java.net.URI;
 import java.util.NoSuchElementException;
 
-import edu.kit.cbc.projects.files.DirectoryDto;
+import edu.kit.cbc.projects.files.dto.DirectoryDto;
 import edu.kit.cbc.projects.ProjectService;
 import edu.kit.cbc.projects.ReadProjectDto;
 import edu.kit.cbc.common.Problem;
