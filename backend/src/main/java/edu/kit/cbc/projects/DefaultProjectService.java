@@ -1,4 +1,6 @@
-package edu.kit.cbc.models;
+package edu.kit.cbc.projects;
+
+import edu.kit.cbc.projects.files.DirectoryDto;
 
 import java.util.Set;
 import java.time.ZonedDateTime;

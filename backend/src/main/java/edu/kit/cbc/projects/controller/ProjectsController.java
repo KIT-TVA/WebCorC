@@ -1,8 +1,8 @@
-package edu.kit.cbc.controllers;
+package edu.kit.cbc.projects.controller;
 
-import edu.kit.cbc.models.CreateProjectDto;
-import edu.kit.cbc.models.ReadProjectDto;
-import edu.kit.cbc.models.ProjectService;
+import edu.kit.cbc.projects.CreateProjectDto;
+import edu.kit.cbc.projects.ReadProjectDto;
+import edu.kit.cbc.projects.ProjectService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
@@ -21,12 +21,12 @@ import jakarta.validation.Valid;
 
 @Controller("/projects")
 @ExecuteOn(TaskExecutors.BLOCKING)
-public class ProjectManagementController {
+public class ProjectsController {
 
     private final ProjectService projectService;
     private final AwsS3Operations objectStorage;
 
-    ProjectManagementController(ProjectService projectService, AwsS3Operations objectStorage) {
+    ProjectsController(ProjectService projectService, AwsS3Operations objectStorage) {
         this.projectService = projectService;
         this.objectStorage = objectStorage;
     }

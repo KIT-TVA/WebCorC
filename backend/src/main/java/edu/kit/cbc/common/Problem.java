@@ -1,4 +1,4 @@
-package edu.kit.cbc.models;
+package edu.kit.cbc.common;
 
 import io.micronaut.serde.annotation.Serdeable;
 
