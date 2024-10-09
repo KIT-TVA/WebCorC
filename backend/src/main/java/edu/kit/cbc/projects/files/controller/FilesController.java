@@ -1,13 +1,13 @@
-package edu.kit.cbc.controllers;
+package edu.kit.cbc.projects.files.controller;
 
 import java.util.Optional;
 import java.net.URI;
 import java.util.NoSuchElementException;
 
-import edu.kit.cbc.models.DirectoryDto;
-import edu.kit.cbc.models.ProjectService;
-import edu.kit.cbc.models.ReadProjectDto;
-import edu.kit.cbc.models.Problem;
+import edu.kit.cbc.projects.files.dto.DirectoryDto;
+import edu.kit.cbc.projects.ProjectService;
+import edu.kit.cbc.projects.ReadProjectDto;
+import edu.kit.cbc.common.Problem;
 import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -37,14 +37,14 @@ import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
 @Controller("/projects/{id}/files")
 @ExecuteOn(TaskExecutors.BLOCKING)
-public class ProjectFileManagementController {
+public class FilesController {
     private static final String pathFormat = "%s/files/%s";
 
     private final ProjectService projectService;
     private final AwsS3Operations objectStorage;
     private final HttpHostResolver httpHostResolver;
 
-    ProjectFileManagementController(ProjectService projectService, AwsS3Operations objectStorage, HttpHostResolver httpHostResolver) {
+    FilesController(ProjectService projectService, AwsS3Operations objectStorage, HttpHostResolver httpHostResolver) {
         this.projectService = projectService;
         this.objectStorage = objectStorage;
         this.httpHostResolver = httpHostResolver;
@@ -60,7 +60,7 @@ public class ProjectFileManagementController {
     public Optional<HttpResponse<StreamedFile>> getFile(@PathVariable String id, @PathVariable URI urn) {
         String path = String.format(pathFormat, id, urn);
         return objectStorage.retrieve(path)
-            .map(ProjectFileManagementController::buildStreamedFile);
+            .map(FilesController::buildStreamedFile);
     }
 
     private static HttpResponse<StreamedFile> buildStreamedFile(AwsS3ObjectStorageEntry entry) {

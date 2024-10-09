@@ -1,4 +1,4 @@
-package edu.kit.cbc.models;
+package edu.kit.cbc.projects;
 
 import io.micronaut.serde.annotation.Serdeable;
 import jakarta.validation.constraints.NotBlank;

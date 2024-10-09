@@ -15,14 +15,17 @@ micronaut:
       configurations:
         frontend:
           - '"${FRONTEND_URL:webcorc.informatik.kit.edu}"'
-      
+
   http.client.max-content-length: 1000000
 
+mongodb:
+  uri: '${MONGODB_URI}'
+
 aws:
-  accessKeyId: root
-  secretKey: rootpwwp
+  accessKeyId: '${MINIO_ROOT_USER:root}'
+  secretKey: '${MINIO_ROOT_PASSWORD:changeme}'
   region: 'eu-west-1'
   s3:
     enabled: true
     path-style-access-enabled: true
-  services.s3.endpoint-override: 'http://localhost:9000'
+  services.s3.endpoint-override: "${MINIO_URL:`http://localhost:9000`}"
