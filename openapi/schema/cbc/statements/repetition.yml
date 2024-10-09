@@ -18,11 +18,6 @@ allOf:
       guardCondition:
         $ref: '../condition.yml'
 
-      statements: 
-        type: array 
-        items: 
-          $ref: '../statement.yml'
-
       variant: 
         type: string 
 
@@ -35,6 +30,5 @@ required:
   - variantProven
   - invariantCondition
   - guardCondition
-  - statements
   - variant
   - loopStatement

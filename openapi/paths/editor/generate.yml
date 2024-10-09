@@ -1,0 +1,43 @@
+post: 
+  summary: Generate Java Code
+  operationId: generateJavaCode
+  description: Generate Java Code based on a cbc formular
+  tags:
+    - Editor
+  requestBody:
+    description: Formula to base the java code on
+    content:
+      application/json:
+        schema:
+          $ref: '../../schema/cbc/formula.yml'
+
+  responses:
+    '202':
+      description: Generation Job accepted
+      headers:
+        Location: 
+          schema:
+            type: string 
+            format: url
+          description: Representation of Job Status
+
+    '400': 
+      description: Malformed Request Body
+      content:
+        application/problem+json:
+          schema: 
+            $ref: '../../schema/problem.yml'
+
+    '500': 
+      description: Generic Server Error 
+      content: 
+        application/problem+json:
+          schema:
+            $ref: '../../schema/problem.yml'
+
+    '503': 
+      description: Service Unavailable 
+      content: 
+        application/problem+json:
+          schema: 
+            $ref: '../../schema/problem.yml'

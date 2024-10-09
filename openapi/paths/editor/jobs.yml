@@ -14,7 +14,7 @@ get:
     - Editor 
   responses:
     '200':
-      description: 'Webhook opened'
+      description: 'Websocket opened'
     '404':
       description: 'Job by id not found'
       content:
