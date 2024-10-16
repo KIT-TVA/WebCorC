@@ -19,6 +19,11 @@ services:
       - docker-compose.env
     ports:
       - "8081:8080"
+    depends_on:
+      minio:
+        condition: service_started
+      mongo:
+        condition: service_started
 
   webcorc-frontend:
     build:
