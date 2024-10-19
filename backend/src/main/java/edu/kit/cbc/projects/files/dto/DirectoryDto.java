@@ -1,19 +1,29 @@
 package edu.kit.cbc.projects.files.dto;
 
 import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 import java.util.HashSet;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.net.URI;
-import java.lang.IllegalArgumentException;
 import java.util.NoSuchElementException;
 
 import io.micronaut.serde.annotation.Serdeable;
 
 @Serdeable
 public class DirectoryDto extends FileDirectoryDto {
+    public static final String inodeType = "directory";
 
+    @JsonInclude(Include.ALWAYS)
     private final Set<FileDirectoryDto> content;
+
+    @Override
+    public String getInodeType() {
+        return inodeType;
+    }
 
     public void addFilePath(URI path) {
         addFilePath(
@@ -22,14 +32,14 @@ public class DirectoryDto extends FileDirectoryDto {
                     path.getPath().split("/")
                 )
             ),
-            path.getPath().endsWith("/") ? InodeType.directory : InodeType.file
+            path.getPath().endsWith("/") ? DirectoryDto.inodeType : FileDto.inodeType
         );
     }
 
-    private void addFilePath(LinkedList<String> path, InodeType inodeType) {
+    private void addFilePath(LinkedList<String> path, String inodeType) {
         String name = path.removeFirst();
 
-        if (path.isEmpty() && inodeType == InodeType.file) {
+        if (path.isEmpty() && inodeType.equals(FileDto.inodeType)) {
             //TODO: hardcoded FileType
             FileDto newFile = new FileDto(name, FileType.other);
             if (!content.contains(newFile)) {
@@ -43,7 +53,7 @@ public class DirectoryDto extends FileDirectoryDto {
             nextDir = (DirectoryDto) content.stream()
                 .filter(
                     fdd -> {
-                        return fdd.getUrn().equals(name) && fdd.getInodeType() == InodeType.directory;
+                        return fdd.getUrn().equals(name) && fdd.getInodeType().equals(DirectoryDto.inodeType);
                     })
                 .findFirst()
                 .get();
@@ -61,11 +71,11 @@ public class DirectoryDto extends FileDirectoryDto {
                     .split("/")
                 )
             ),
-            path.getPath().endsWith("/") ? InodeType.directory : InodeType.file
+            path.getPath().endsWith("/") ? DirectoryDto.inodeType : FileDto.inodeType
         );
     }
 
-    private void removeFilePath(LinkedList<String> path, InodeType inodeType) {
+    private void removeFilePath(LinkedList<String> path, String inodeType) {
         //TODO: consider deleting empty parent directories as well
         String name = path.removeFirst();
         if (!path.isEmpty()) {
@@ -74,7 +84,7 @@ public class DirectoryDto extends FileDirectoryDto {
                 nextDir = (DirectoryDto) content.stream()
                     .filter(
                         fdd -> {
-                            return fdd.getUrn().equals(name) && fdd.getInodeType() == InodeType.directory;
+                            return fdd.getUrn().equals(name) && fdd.getInodeType().equals(DirectoryDto.inodeType);
                         })
                     .findFirst()
                     .get();
@@ -86,20 +96,13 @@ public class DirectoryDto extends FileDirectoryDto {
         }
 
         content.removeIf(fdd -> {
-            return fdd.getUrn().equals(name) && fdd.getInodeType() == inodeType;
+            return fdd.getUrn().equals(name) && fdd.getInodeType().equals(inodeType);
         });
     }
 
-    public DirectoryDto(String urn, InodeType inodeType, Set<FileDirectoryDto> content){
-        super(urn, inodeType);
-        if (inodeType != InodeType.directory) {
-            throw new IllegalArgumentException("Only InodeType.directory is allowed");
-        }
-        this.content = content;
-    }
-
     public DirectoryDto(String urn, Set<FileDirectoryDto> content) {
-        this(urn, InodeType.directory, content);
+        super(urn);
+        this.content = content;
     }
 
     public Set<FileDirectoryDto> getContent() {

@@ -1,23 +1,31 @@
 package edu.kit.cbc.projects.files.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 import io.micronaut.serde.annotation.Serdeable;
 
 @Serdeable
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "inodeType")
+@JsonSubTypes({
+    @JsonSubTypes.Type(value = FileDto.class, name = FileDto.inodeType),
+    @JsonSubTypes.Type(value = DirectoryDto.class, name = DirectoryDto.inodeType)
+})
 public abstract class FileDirectoryDto {
-    private final String urn;
-    private final InodeType inodeType;
 
-    public FileDirectoryDto(String urn, InodeType inodeType) {
+    @JsonInclude(Include.ALWAYS)
+    private final String urn;
+
+    public abstract String getInodeType();
+
+    public FileDirectoryDto(String urn) {
         this.urn = urn;
-        this.inodeType = inodeType;
     }
 
     public String getUrn() {
         return urn;
-    }
-
-    public InodeType getInodeType() {
-        return inodeType;
     }
 
     @Override
@@ -26,11 +34,11 @@ public abstract class FileDirectoryDto {
         if (!(obj instanceof FileDirectoryDto)) { return false; }
 
         FileDirectoryDto fddto = (FileDirectoryDto) obj;
-        return fddto.getUrn().equals(this.urn) && fddto.getInodeType() == this.inodeType;
+        return fddto.getUrn().equals(this.urn) && fddto.getInodeType() == this.getInodeType();
     }
 
     @Override
     public int hashCode() {
-        return urn.hashCode() + inodeType.hashCode();
+        return urn.hashCode() + getInodeType().hashCode();
     }
 }
