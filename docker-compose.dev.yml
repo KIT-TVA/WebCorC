@@ -1,0 +1,44 @@
+services:
+  minio:
+    image: quay.io/minio/minio
+    command: 
+      - 'server'
+      - '/data'
+      - '--console-address'
+      - ':9001'
+    env_file:
+      - docker-compose.env
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+
+  webcorc-backend:
+    build:
+      context: backend
+      dockerfile: dev.Dockerfile
+    env_file:
+      - docker-compose.env
+    ports:
+      - "8081:8080"
+    volumes: 
+      - "./backend/:/app/"
+
+    depends_on:
+      minio:
+        condition: service_started
+      mongo:
+        condition: service_started
+
+  webcorc-frontend:
+    build:
+      context: frontend
+      dockerfile: dev.Dockerfile
+    volumes:
+      - "./frontend/src/:/app/src/"
+    ports:
+      - "4200:4200"
