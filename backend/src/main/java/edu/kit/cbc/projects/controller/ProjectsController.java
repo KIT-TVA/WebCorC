@@ -1,12 +1,18 @@
 package edu.kit.cbc.projects.controller;
 
+import org.eclipse.emfcloud.jackson.module.EMFModule;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import de.tu_bs.cs.isf.cbc.cbcmodel.AbstractStatement;
-import de.tu_bs.cs.isf.cbc.cbcmodel.Condition;
-import de.tu_bs.cs.isf.cbc.cbcmodel.impl.SkipStatementImpl;
+import de.tu_bs.cs.isf.cbc.cbcmodel.CbCFormula;
+import de.tu_bs.cs.isf.cbc.cbcmodel.CbcmodelPackage;
+
 import edu.kit.cbc.projects.CreateProjectDto;
 import edu.kit.cbc.projects.ReadProjectDto;
 import edu.kit.cbc.projects.ProjectService;
-import io.micronaut.core.annotation.Introspected;
+
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
@@ -21,15 +27,11 @@ import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.objectstorage.aws.AwsS3Operations;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
-import io.micronaut.serde.annotation.SerdeImport;
+
 import jakarta.validation.Valid;
 
 @Controller("/projects")
 @ExecuteOn(TaskExecutors.BLOCKING)
-@SerdeImport(SkipStatementImpl.class)
-@SerdeImport(AbstractStatement.class)
-@SerdeImport(Condition.class)
-@Introspected(classes = {AbstractStatement.class, SkipStatementImpl.class, Condition.class})
 public class ProjectsController {
 
     private final ProjectService projectService;
@@ -52,14 +54,25 @@ public class ProjectsController {
     @Post(uri = "/testing")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public HttpResponse<AbstractStatement> testing(@Body SkipStatementImpl example) {
-        example.setProven(!example.isProven());
-        //AbstractStatement statement = CbcmodelFactory.eINSTANCE.createSkipStatement();
-        //Condition pre = CbcmodelFactory.eINSTANCE.createCondition();
-        //pre.setName("asdfb");
-        //statement.setPreCondition(pre);
-        return HttpResponse.ok(example);
-        //return HttpResponse.ok(projectService.findById(id));
+    public HttpResponse<String> testing(@Body String cbcFormulaString) {
+        ObjectMapper mapper = EMFModule.setupDefaultMapper();
+
+        //This is necessary to initialize and register the package so
+        //emfjson-jackson can actually use the generated classes
+        CbcmodelPackage cbcmodelPackage = CbcmodelPackage.eINSTANCE;
+
+        CbCFormula formula;
+        try {
+            formula = mapper.reader()
+                .forType(AbstractStatement.class)
+                .readValue(cbcFormulaString);
+            formula.setProven(!formula.isProven());
+            return HttpResponse.ok(
+                mapper.writeValueAsString(formula)
+            );
+        } catch (JsonProcessingException e) {
+            return HttpResponse.badRequest(e.getMessage());
+        }
     }
 
     @Get(uri = "/{id}")
