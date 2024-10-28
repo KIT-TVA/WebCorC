@@ -1,14 +1,5 @@
 package edu.kit.cbc.projects.controller;
 
-import org.eclipse.emfcloud.jackson.module.EMFModule;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import de.tu_bs.cs.isf.cbc.cbcmodel.AbstractStatement;
-import de.tu_bs.cs.isf.cbc.cbcmodel.CbCFormula;
-import de.tu_bs.cs.isf.cbc.cbcmodel.CbcmodelPackage;
-
 import edu.kit.cbc.projects.CreateProjectDto;
 import edu.kit.cbc.projects.ReadProjectDto;
 import edu.kit.cbc.projects.ProjectService;
@@ -49,30 +40,6 @@ public class ProjectsController {
         return HttpResponse.ok(
             projectService.create(project)
         );
-    }
-
-    @Post(uri = "/testing")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public HttpResponse<String> testing(@Body String cbcFormulaString) {
-        ObjectMapper mapper = EMFModule.setupDefaultMapper();
-
-        //This is necessary to initialize and register the package so
-        //emfjson-jackson can actually use the generated classes
-        CbcmodelPackage cbcmodelPackage = CbcmodelPackage.eINSTANCE;
-
-        CbCFormula formula;
-        try {
-            formula = mapper.reader()
-                .forType(AbstractStatement.class)
-                .readValue(cbcFormulaString);
-            formula.setProven(!formula.isProven());
-            return HttpResponse.ok(
-                mapper.writeValueAsString(formula)
-            );
-        } catch (JsonProcessingException e) {
-            return HttpResponse.badRequest(e.getMessage());
-        }
     }
 
     @Get(uri = "/{id}")
