@@ -220,7 +220,11 @@ export class ProjectService {
 
   public uploadWorkspace(wait : boolean = false) {
     if (!wait) {
-      this.uploadFolder(this._rootDir)
+      this.editorNotify.next()
+
+      this._savedFinished
+        .pipe(first())
+        .subscribe(() => this.uploadFolder(this._rootDir))
       return
     }
 
@@ -236,9 +240,9 @@ export class ProjectService {
     for (const item of folder.content) {
       if (item instanceof ProjectDirectory) {
         this.uploadFolder(item)
-      } 
-
-      this.network.uploadFile(item.export())
+      } else {
+        this.network.uploadFile(item.export())
+      }
     }
   }
 
