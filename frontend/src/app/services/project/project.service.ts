@@ -130,6 +130,7 @@ export class ProjectService {
     }
 
     this._dataChange.next(this._rootDir.content)
+
     return dir;
   }
 
@@ -201,10 +202,25 @@ export class ProjectService {
       throw new Error("File not found")
     }
 
+    let needstoBeFetched = false
+
+    if (file.content instanceof CBCFormula) {
+      needstoBeFetched = (file.content as CBCFormula).statement === null
+    }
+
+    if (file.content instanceof String) {
+      needstoBeFetched = (file.content as string) === ""
+    }
+
+    console.log(file.content && this.projectId)
     // if file content is default value and projectId is set
-    if (file.content === new CBCFormula() && this.projectId) {
+    if (this.projectId && needstoBeFetched) {
       let content = await this.network.getFileContent(urn)
-      file.content = content
+      if (content instanceof CBCFormula) {
+        file.content  = <CBCFormula>content
+      } else {
+        file.content = content
+      }
     }
 
     return (file as CodeFile | DiagramFile).content

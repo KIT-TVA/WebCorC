@@ -10,6 +10,8 @@ import { ConditionDTO } from "../condition/condition";
  */
 export class StrongWeakStatement extends Statement {
 
+    public static TYPE = "StrongWeakStatement"
+
     constructor(
         name : string,
         id : number,
@@ -21,7 +23,7 @@ export class StrongWeakStatement extends Statement {
         public statement : Statement | undefined 
 
     ) {
-        super(name, "StrongWeakStatement", id, proven, comment, preCondition, postCondition, position)
+        super(name, StrongWeakStatement.TYPE , id, proven, comment, preCondition, postCondition, position)
     }
 
     public override toComponent(spawn: ViewContainerRef): [refinement: Refinement, ref: ComponentRef<Refinement>] | undefined {

@@ -4,6 +4,8 @@ import { environment } from '../../../../environments/environment';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { ConsoleService } from '../../console/console.service';
 import { CBCFormula } from '../CBCFormula';
+import { HttpClient } from '@angular/common/http';
+import { NetProject } from './NetProject';
 
 /**
  * Service to interact with the backend for managing the project.
@@ -18,7 +20,7 @@ export class NetworkProjectService {
   private _dataChange = new BehaviorSubject<ApiDirectory>(new ApiDirectory("", []))
   private _finishedRequest = new Subject<void>()
 
-  constructor(private consoleService : ConsoleService) { }
+  constructor(private http : HttpClient ,private consoleService : ConsoleService) { }
 
 
   /**
@@ -37,15 +39,11 @@ export class NetworkProjectService {
       body: JSON.stringify({name : name})
     })
 
-
-    fetch(request)
-      .then((response : Response) => response.json())
-      .then((data) => {
-          this._projectId = data.id
-          this._finishedRequest.next()
-      })
-      .catch(() => {
-        // Todo: Error Handling
+    this.http
+      .post<NetProject>(environment.apiUrl + NetworkProjectService.projects, { name: name })
+      .subscribe(project => {
+        this.projectId = project.id
+        this._finishedRequest.next()
       })
   }
 
@@ -63,12 +61,10 @@ export class NetworkProjectService {
       }
     })
 
-
-    fetch(request)
-      .then((response : Response) => response.json())
-      .then((data) => this._dataChange.next(new ApiDirectory(data.files.urn, data.files.content)))
-      .catch(() => {
-        //Todo: Error Handling
+    this.http
+      .get<NetProject>(this.buildProjectURL())
+      .subscribe(project => {
+        this._dataChange.next(new ApiDirectory(project.files.urn, project.files.content))
       })
   }
 
@@ -133,6 +129,25 @@ export class NetworkProjectService {
           file = await blob.text()
         }
         return file
+      }).then((file) => {
+        if ( typeof file === "string") {
+          return file
+        }
+
+        return new CBCFormula(
+          file.type,
+          file.name,
+          file.proven,
+          file.comment,
+          file.compositionTechnique,
+          file.className,
+          file.methodName,
+          file.javaVariables,
+          file.globalConditions,
+          file.preCondition,
+          file.postCondition,
+          file.statement
+        ).import()
       })
 
   }

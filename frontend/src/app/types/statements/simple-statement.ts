@@ -11,6 +11,8 @@ import { ConditionDTO } from "../condition/condition";
  */
 export class SimpleStatement extends Statement {
 
+    public static TYPE : string = "AbstractStatement"
+
     constructor(
         name : string,
         id : number,
@@ -18,11 +20,11 @@ export class SimpleStatement extends Statement {
         comment : string,
         preCondition : ConditionDTO,
         postCondition : ConditionDTO,
-        position : Position,
+        position : Position = new Position(0,0),
         public statement : Statement | undefined
 
     ) {
-        super(name, "AbstractStatement", id, proven, comment, preCondition, postCondition, position)
+        super(name, SimpleStatement.TYPE , id, proven, comment, preCondition, postCondition, position)
     }
 
     public override toComponent(spawn : ViewContainerRef): [ refinement : Refinement, ref : ComponentRef<Refinement>] {

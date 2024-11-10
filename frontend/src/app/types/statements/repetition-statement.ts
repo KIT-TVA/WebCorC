@@ -10,6 +10,8 @@ import { RepetitionStatementComponent } from "../../components/editor/statements
  */
 export class RepetitionStatement extends Statement {
 
+    public static TYPE = "SmallRepetitionStatement"
+
     constructor(
         name : string,
         id : number,
@@ -27,7 +29,7 @@ export class RepetitionStatement extends Statement {
         public loopStatement : Statement | undefined
 
     ) {
-        super(name, "SmallRepetitionStatement", id, proven, comment, preCondition, postCondition, position)
+        super(name, RepetitionStatement.TYPE, id, proven, comment, preCondition, postCondition, position)
     }
 
     

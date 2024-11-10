@@ -11,6 +11,8 @@ import { CompositionStatementComponent } from "../../components/editor/statement
  */
 export class CompositionStatement extends Statement {
 
+    public static TYPE = "CompositionStatement"
+
     constructor(
         name : string,
         id : number,
@@ -23,7 +25,7 @@ export class CompositionStatement extends Statement {
         public firstStatement : Statement | undefined,
         public secondStatement : Statement | undefined,
     ) {
-        super(name, "CompositionStatement" ,id, proven, comment, preCondition, postCondition, position)
+        super(name, CompositionStatement.TYPE ,id, proven, comment, preCondition, postCondition, position)
     }
 
 

@@ -10,6 +10,8 @@ import { SelectionStatementComponent } from "../../components/editor/statements/
  */
 export class SelectionStatement extends Statement {
 
+    public static TYPE = "SelectionStatement"
+
     constructor(
         name : string,
         id : number,
@@ -22,7 +24,7 @@ export class SelectionStatement extends Statement {
         public guards : ConditionDTO[],
         public commands : (Statement | undefined)[]
     ) {
-        super(name, "SelectionStatement", id, proven, comment, preCondition, postCondition, position)
+        super(name, SelectionStatement.TYPE, id, proven, comment, preCondition, postCondition, position)
     }
 
     
