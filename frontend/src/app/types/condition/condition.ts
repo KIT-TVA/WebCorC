@@ -57,7 +57,8 @@ export class ConditionDTO {
   public constructor(
     public originId : number,
     public title : string = "",
-    public content : string = ""
+    public content : string = "",
+    public name : string = content
   ) {}
 
   public convert() : Condition {

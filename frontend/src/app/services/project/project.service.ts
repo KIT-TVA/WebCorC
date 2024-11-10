@@ -26,9 +26,6 @@ export class ProjectService {
   constructor(private network : NetworkProjectService) {
 
     this.network.dataChange.subscribe((rootDir : ApiDirectory) => {
-
-      console.log(rootDir)
-
       // Todo: On Changes after network requests update file tree
       this._rootDir = rootDir.import()
       this._dataChange.next(this._rootDir.content)
@@ -81,9 +78,14 @@ export class ProjectService {
 
     const dir = parentDir as ProjectDirectory
 
+    let relativePath = parentPath
+    if (parentPath.startsWith("/")) {
+      relativePath = parentPath.substring(1)
+    }
+
     dir.removeElement(fakeProjectElementName)
 
-    const newDir = new ProjectDirectory(parentPath, name);
+    const newDir = new ProjectDirectory(relativePath, name);
     if (!dir.addElement(newDir)) {
       throw new Error("Could not add directory, maybe you tried to create a duplicate?")
     }
@@ -108,14 +110,18 @@ export class ProjectService {
     }
 
     const dir = parentDir as ProjectDirectory
+    let relativePath = parentPath
+    if (parentPath.startsWith("/")) {
+      relativePath = parentPath.substring(1)
+    }
 
     dir.removeElement(fakeProjectElementName)
 
     let newFile = null 
 
     switch (type) {
-      case "java" : newFile = new CodeFile(parentPath, name, type); break;
-      case "diagram" : newFile = new DiagramFile(parentPath, name, type); break;
+      case "java" : newFile = new CodeFile(relativePath, name, type); break;
+      case "diagram" : newFile = new DiagramFile(relativePath, name, type); break;
       default: throw new Error("Could not add file, unknown type")
     }
     
@@ -189,13 +195,19 @@ export class ProjectService {
    * @param urn The path of the file to read the content from
    * @returns The content of the file
    */
-  public getFileContent(urn : string) : string | CBCFormula  {
+  public async getFileContent(urn : string) : Promise<string | CBCFormula> {
     const file = this.findByPath(urn)
     if (!file) {
       throw new Error("File not found")
     }
 
-    return (file  as CodeFile | DiagramFile).content
+    // if file content is default value and projectId is set
+    if (file.content === new CBCFormula() && this.projectId) {
+      let content = await this.network.getFileContent(urn)
+      file.content = content
+    }
+
+    return (file as CodeFile | DiagramFile).content
   }
 
   /**
@@ -211,6 +223,8 @@ export class ProjectService {
       this.uploadFolder(this._rootDir)
       return
     }
+
+    this.editorNotify.next()
 
     this.network.requestFinished
       .pipe(first())

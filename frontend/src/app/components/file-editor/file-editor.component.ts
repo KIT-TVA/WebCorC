@@ -75,8 +75,8 @@ export class FileEditorComponent implements AfterViewInit,OnDestroy {
     this._viewInit = false
   }
 
-  private loadContentFromFile() {
-    const newCode =  this.projectService.getFileContent(this._urn) as string
+  private async loadContentFromFile() {
+    const newCode = await this.projectService.getFileContent(this._urn) as string
     if (newCode) {
       this.code = newCode 
     } else {

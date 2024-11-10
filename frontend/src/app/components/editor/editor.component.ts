@@ -128,12 +128,15 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   /**
    * Load {@link CBCFormula} in to editor to be edited
    */
-  private loadFileContent() : void {
+  private async loadFileContent() : Promise<void> {
     // load the diagram of the file into the component
 
     Refinement.resetIDs(2)
 
-    const newFormula = this.projectService.getFileContent(this._urn) as CBCFormula
+    const newFormula = await this.projectService.getFileContent(this._urn) as CBCFormula
+
+    console.log(newFormula.statement)
+
     // if the file is not empty load content
     if (newFormula.statement) {
 

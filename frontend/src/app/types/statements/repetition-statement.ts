@@ -21,13 +21,13 @@ export class RepetitionStatement extends Statement {
         public postProven : boolean,
         public preProven : boolean,
         public variantProven : boolean,
-        public invariantCondition : ConditionDTO,
-        public variantCondition : ConditionDTO,
-        public guardCondition : ConditionDTO,
+        public invariant : ConditionDTO,
+        public variant : ConditionDTO,
+        public guard : ConditionDTO,
         public loopStatement : Statement | undefined
 
     ) {
-        super(name, "repetition", id, proven, comment, preCondition, postCondition, position)
+        super(name, "SmallRepetitionStatement", id, proven, comment, preCondition, postCondition, position)
     }
 
     
@@ -37,9 +37,9 @@ export class RepetitionStatement extends Statement {
 
         statement.precondition = this.preCondition.convert()
         statement.postcondition = this.postCondition.convert()
-        statement.invariantCondition = this.invariantCondition.convert()
-        statement.variantCondition = this.variantCondition.convert()
-        statement.guardCondition = this.guardCondition.convert()
+        statement.invariantCondition = this.invariant.convert()
+        statement.variantCondition = this.variant.convert()
+        statement.guardCondition = this.guard.convert()
         statement.position = this.position
 
         

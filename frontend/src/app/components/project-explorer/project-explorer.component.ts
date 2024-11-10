@@ -123,7 +123,7 @@ export class ProjectExplorerComponent {
     if (!element) {
       return
     }
- 
+
     if (element instanceof CodeFile) {
       this.router.navigate(
         ['editor/file/', element.path],
@@ -148,7 +148,6 @@ export class ProjectExplorerComponent {
       this.dialog.open(CreateProjectDialogComponent)
       wait = true
     }
-    
     this.projectService.uploadWorkspace(wait)
   }
 

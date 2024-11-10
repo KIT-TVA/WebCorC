@@ -23,24 +23,24 @@ export class ApiDirectory implements Inode {
         public inodeType : string = "directory"
     ) {}
 
-    public import() : ProjectDirectory {
-
-        const lastIndexofSlash = this.urn.lastIndexOf("/")
-        const parentPath = this.urn.substring(0, lastIndexofSlash - 1)
-        const name = this.urn.substring(lastIndexofSlash + 1)
-
+    public import(parentPath : string = "") : ProjectDirectory {
         const childs : ProjectElement[] = []
+
+        let path = parentPath + this.urn + "/"
+        if (parentPath == "" && this.urn == "") {
+            path = ""
+        }
 
         for (const child of this.content) {
             if (child.inodeType == "directory") {
-                childs.push(new ApiDirectory(child.urn, (child as ApiDirectory).content).import())
+                childs.push(new ApiDirectory(child.urn, (child as ApiDirectory).content).import(path))
             }
             if (child.inodeType == "file") {
-                childs.push(new ApiFile(child.urn, child.inodeType, (child as ApiFile).type).import())
+                childs.push(new ApiFile(child.urn, child.inodeType, (child as ApiFile).type).import(path))
             }
         }
 
-        return new ProjectDirectory(parentPath,name, childs)
+        return new ProjectDirectory(parentPath, this.urn, childs)
     }
 }
 
@@ -61,15 +61,8 @@ export class ApiFile implements Inode {
         public type : ApiFileType
     ) {}
 
-    public import() : ProjectElement {
-
-        const lastIndexofSlash = this.urn.lastIndexOf("/")
-        const parentPath = this.urn.substring(0, lastIndexofSlash - 1)
-        const lastIndexofPoint = this.urn.lastIndexOf(".")
-        const name = this.urn.substring(lastIndexofSlash + 1, lastIndexofPoint)
-
-        // TODO: Map based on file type 
-        
+    public import(parentPath : string = "") : ProjectElement {
+        let name = this.urn.substring(0, this.urn.lastIndexOf("."))
         return new DiagramFile(parentPath, name, this.type)
     }
 }
@@ -85,12 +78,9 @@ export class ApiDiagrammFile implements Inode {
         public inodeType : string = "file",
     ) {}
 
-    public import(): DiagramFile {
-        const lastIndexofSlash = this.urn.lastIndexOf("/")
-        const parentPath = this.urn.substring(0, lastIndexofSlash - 1)
-        const name = this.urn.substring(lastIndexofSlash + 1)
+    public import(parentPath : string = ""): DiagramFile {
 
-        return new DiagramFile(parentPath, name)
+        return new DiagramFile(parentPath, this.urn.substring(0, this.urn.lastIndexOf(".")))
     }
 }
 
@@ -105,11 +95,8 @@ export class ApiTextFile implements Inode {
         public inodeType : string = "file",
     ) {}
 
-    public import() : CodeFile {
-        const lastIndexofSlash = this.urn.lastIndexOf("/")
-        const parentPath = this.urn.substring(0, lastIndexofSlash - 1)
-        const name = this.urn.substring(lastIndexofSlash + 1)
+    public import(parentPath : string  = "") : CodeFile {
 
-        return new CodeFile(parentPath, name)
+        return new CodeFile(parentPath, this.urn.substring(0, this.urn.lastIndexOf(".")))
     }
 }

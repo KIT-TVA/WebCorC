@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { ApiDiagrammFile, ApiDirectory, ApiTextFile, Inode } from '../../../types/project/inode';
+import { ApiDiagrammFile, ApiDirectory, ApiFile, ApiTextFile, Inode } from '../../../types/project/inode';
 import { environment } from '../../../../environments/environment';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { ConsoleService } from '../../console/console.service';
+import { CBCFormula } from '../CBCFormula';
 
 /**
  * Service to interact with the backend for managing the project.
@@ -79,9 +80,9 @@ export class NetworkProjectService {
   public uploadFile(file : Inode) {
     const formData = new FormData()
 
-    let realFile
+    const urn = file.urn 
 
-    const urn = file.urn.substring(1)
+    let realFile
 
     if (file instanceof ApiDiagrammFile) {
       realFile = new File([JSON.stringify(file.content)], urn, {
@@ -116,22 +117,24 @@ export class NetworkProjectService {
    * Caution: Not fully implemented
    * @param urn 
    */
-  public getFileContent(urn : string) :  ApiDiagrammFile | ApiTextFile {
+  public async getFileContent(urn : string) :  Promise<string | CBCFormula> {
+
     const request = new Request(this.buildFileURL(urn), {
       method : "GET"
     })
 
-    fetch(request)
+    return await fetch(request)
       .then((response : Response) => response.blob())
-      .then(blob => {
+      .then(async (blob) => {
+        let file : string | CBCFormula
         if (blob.type === "application/json") {
-          // Todo: transform blob to ApiDiagrammFile
+          file = JSON.parse(await blob.text()) as CBCFormula
         } else {
-          // Todo: transform blob to ApiTextFile
+          file = await blob.text()
         }
+        return file
       })
 
-      throw Error("not implemented")
   }
 
   private buildProjectURL() : string {

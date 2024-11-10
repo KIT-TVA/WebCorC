@@ -7,7 +7,7 @@ export class Statement {
 
     constructor(
         public name : string,
-        public statementType : string,
+        public type : string,
         public id : number,
         public proven : boolean,
         public comment : string,

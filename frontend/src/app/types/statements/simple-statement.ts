@@ -22,7 +22,7 @@ export class SimpleStatement extends Statement {
         public statement : Statement | undefined
 
     ) {
-        super(name, "simple", id, proven, comment, preCondition, postCondition, position)
+        super(name, "AbstractStatement", id, proven, comment, preCondition, postCondition, position)
     }
 
     public override toComponent(spawn : ViewContainerRef): [ refinement : Refinement, ref : ComponentRef<Refinement>] {

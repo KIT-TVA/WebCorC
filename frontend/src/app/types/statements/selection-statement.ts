@@ -20,9 +20,9 @@ export class SelectionStatement extends Statement {
         position : Position,
         public preProven : boolean,
         public guards : ConditionDTO[],
-        public statements : (Statement | undefined)[]
+        public commands : (Statement | undefined)[]
     ) {
-        super(name, "selection", id, proven, comment, preCondition, postCondition, position)
+        super(name, "SelectionStatement", id, proven, comment, preCondition, postCondition, position)
     }
 
     
@@ -42,7 +42,7 @@ export class SelectionStatement extends Statement {
         statement.position = this.position
 
 
-        for (const child of this.statements) {
+        for (const child of this.commands) {
             if (child) {
                 const childElement = child.toComponent(spawn)
 

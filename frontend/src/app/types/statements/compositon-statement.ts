@@ -20,10 +20,10 @@ export class CompositionStatement extends Statement {
         postCondition : ConditionDTO,
         position : Position,
         public intermediateCondition : ConditionDTO,
-        public leftStatement : Statement | undefined,
-        public rightStatement : Statement | undefined,
+        public firstStatement : Statement | undefined,
+        public secondStatement : Statement | undefined,
     ) {
-        super(name, "composition" ,id, proven, comment, preCondition, postCondition, position)
+        super(name, "CompositionStatement" ,id, proven, comment, preCondition, postCondition, position)
     }
 
 
@@ -36,8 +36,8 @@ export class CompositionStatement extends Statement {
         statement.position = this.position
 
         
-        if (this.leftStatement) {
-            const left = this.leftStatement.toComponent(spawn)
+        if (this.firstStatement) {
+            const left = this.firstStatement.toComponent(spawn)
 
             if (left) {
                 statement.leftStatement = left?.[0]
@@ -45,8 +45,8 @@ export class CompositionStatement extends Statement {
             }
         }
 
-        if (this.rightStatement) {
-            const right = this.rightStatement.toComponent(spawn)
+        if (this.secondStatement) {
+            const right = this.secondStatement.toComponent(spawn)
             if (right) {
                 statement.rightStatement = right?.[0]
                 statement.rightStatementRef = right?.[1].location
