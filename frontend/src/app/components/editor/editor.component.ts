@@ -95,6 +95,9 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     this._viewInit = true
     // workaround to ensure proper loading of file content on switch between files
     setTimeout(() => this.loadFileContent(), 10)
+    this.projectService.editorNotify.subscribe(() => {
+      this.saveContentToFile()
+    })
   }
 
   public ngOnDestroy(): void {
@@ -134,8 +137,6 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     Refinement.resetIDs(2)
 
     const newFormula = await this.projectService.getFileContent(this._urn) as CBCFormula
-
-    console.log(newFormula.statement)
 
     // if the file is not empty load content
     if (newFormula.statement) {

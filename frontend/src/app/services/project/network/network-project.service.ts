@@ -17,6 +17,7 @@ export class NetworkProjectService {
   private static projects = "/projects"
 
   private _projectId : string | undefined
+  private _projectname : string | undefined
   private _dataChange = new BehaviorSubject<ApiDirectory>(new ApiDirectory("", []))
   private _finishedRequest = new Subject<void>()
 
@@ -64,6 +65,7 @@ export class NetworkProjectService {
     this.http
       .get<NetProject>(this.buildProjectURL())
       .subscribe(project => {
+        this._projectname = project.name
         this._dataChange.next(new ApiDirectory(project.files.urn, project.files.content))
       })
   }
@@ -172,6 +174,10 @@ export class NetworkProjectService {
 
   get projectId() {
     return this._projectId
+  }
+
+  get projectName() {
+    return this._projectname
   }
 
   set projectId(value : string | undefined) {

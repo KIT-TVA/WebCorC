@@ -28,6 +28,7 @@ export class ProjectService {
     this.network.dataChange.subscribe((rootDir : ApiDirectory) => {
       // Todo: On Changes after network requests update file tree
       this._rootDir = rootDir.import()
+      this._projectname = network.projectName ? network.projectName : ""
       this._dataChange.next(this._rootDir.content)
     })
   }
@@ -236,19 +237,20 @@ export class ProjectService {
 
   public uploadWorkspace(wait : boolean = false) {
     if (!wait) {
-      this.editorNotify.next()
-
       this._savedFinished
         .pipe(first())
         .subscribe(() => this.uploadFolder(this._rootDir))
+        
+      this._saveNotify.next()
+      
       return
     }
-
-    this.editorNotify.next()
 
     this.network.requestFinished
       .pipe(first())
       .subscribe(() => this.uploadFolder(this._rootDir))
+
+    this.editorNotify.next()
   }
 
 
