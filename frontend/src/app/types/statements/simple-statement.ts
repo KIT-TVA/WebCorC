@@ -11,7 +11,7 @@ import { ConditionDTO } from "../condition/condition";
  */
 export class SimpleStatement extends Statement {
 
-    public static TYPE : string = "AbstractStatement"
+    public static readonly TYPE : string = "AbstractStatement"
 
     constructor(
         name : string,

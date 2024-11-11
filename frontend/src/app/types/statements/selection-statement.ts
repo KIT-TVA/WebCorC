@@ -10,7 +10,7 @@ import { SelectionStatementComponent } from "../../components/editor/statements/
  */
 export class SelectionStatement extends Statement {
 
-    public static TYPE = "SelectionStatement"
+    public static readonly TYPE = "SelectionStatement"
 
     constructor(
         name : string,

@@ -11,7 +11,7 @@ import { CompositionStatementComponent } from "../../components/editor/statement
  */
 export class CompositionStatement extends Statement {
 
-    public static TYPE = "CompositionStatement"
+    public static readonly TYPE = "CompositionStatement"
 
     constructor(
         name : string,

@@ -124,7 +124,7 @@ export class NetworkProjectService {
       .then(async (blob) => {
         let file : string | CBCFormula
         if (blob.type === "application/json") {
-          file = JSON.parse(await blob.text()) as CBCFormula
+          file = JSON.parse(await blob.text())
         } else {
           file = await blob.text()
         }
@@ -134,7 +134,13 @@ export class NetworkProjectService {
           return file
         }
 
-        return new CBCFormula(
+        let entries : [string, any][] | null = null
+
+        if (file.statement) {
+          entries = Object.entries(file.statement)
+        }
+
+        let formula = new CBCFormula(
           file.type,
           file.name,
           file.proven,
@@ -147,7 +153,10 @@ export class NetworkProjectService {
           file.preCondition,
           file.postCondition,
           file.statement
-        ).import()
+        )
+
+        formula.import()
+        return formula
       })
 
   }

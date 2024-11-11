@@ -10,7 +10,7 @@ import { RepetitionStatementComponent } from "../../components/editor/statements
  */
 export class RepetitionStatement extends Statement {
 
-    public static TYPE = "SmallRepetitionStatement"
+    public static readonly TYPE = "SmallRepetitionStatement"
 
     constructor(
         name : string,

@@ -10,7 +10,7 @@ import { ConditionDTO } from "../condition/condition";
  */
 export class StrongWeakStatement extends Statement {
 
-    public static TYPE = "StrongWeakStatement"
+    public static readonly TYPE = "StrongWeakStatement"
 
     constructor(
         name : string,
