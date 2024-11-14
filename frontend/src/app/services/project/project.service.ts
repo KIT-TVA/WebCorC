@@ -216,7 +216,7 @@ export class ProjectService {
     console.log(file.content && this.projectId)
     // if file content is default value and projectId is set
     if (this.projectId && needstoBeFetched) {
-      let content = await this.network.getFileContent(urn)
+      const content = await this.network.getFileContent(urn)
       if (content instanceof CBCFormula) {
         file.content  = <CBCFormula>content
       } else {

@@ -16,6 +16,7 @@ import { ChooseRefinementComponent } from "../../../choose-refinement/choose-ref
 import { MatIconModule } from "@angular/material/icon";
 import { LinkComponent } from "../link/link.component";
 import { SimpleStatement } from '../../../../types/statements/simple-statement';
+import { Position } from '../../../../types/position';
 
 /**
  * Component representing an instande of {@link SimpleStatement} in the grahical editor.
@@ -167,6 +168,14 @@ export class SimpleStatementComponent extends Refinement {
     if (this._statement) {
       this._statement.refreshLinkState()
     }
+  }
+
+  override resetPosition(position: Position): void {
+      this.position = position
+
+      console.log(this._statement)
+
+      this._statement?.resetPosition(new Position(position.xinPx + 200, position.yinPx))
   }
 
 }

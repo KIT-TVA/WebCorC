@@ -17,6 +17,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { LinkComponent } from "../link/link.component";
 import { Statement } from '../../../../types/statements/statement';
 import { CompositionStatement } from '../../../../types/statements/compositon-statement';
+import { Position } from '../../../../types/position';
 
 /**
  * Composition statement in {@link EditorComponent}.
@@ -33,6 +34,7 @@ import { CompositionStatement } from '../../../../types/statements/compositon-st
   styleUrl: './composition-statement.component.scss'
 })
 export class CompositionStatementComponent extends Refinement {
+  
   private _leftStatement : Refinement | undefined;
   private _rightStatement : Refinement | undefined;
   private _intermediateCondition : Condition;
@@ -153,6 +155,17 @@ export class CompositionStatementComponent extends Refinement {
       this.rightStatement.refreshLinkState()
     }
   }
+
+  override resetPosition(position : Position): void {
+    this.position = position;
+
+    const leftPosition = new Position(position.xinPx + 200, position.yinPx + 200)
+    const rightPosition = new Position(position.xinPx + 200, position.yinPx)
+
+    this._leftStatement?.resetPosition(leftPosition)
+    this._rightStatement?.resetPosition(rightPosition)
+  }
+
 
   get leftStatement() : Refinement | undefined  {
     return this._leftStatement

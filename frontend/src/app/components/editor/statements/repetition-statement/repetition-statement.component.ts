@@ -16,6 +16,7 @@ import {ChooseRefinementComponent} from "../../../choose-refinement/choose-refin
 import {MatIconModule} from "@angular/material/icon";
 import {LinkComponent} from "../link/link.component";
 import { RepetitionStatement } from '../../../../types/statements/repetition-statement';
+import { Position } from '../../../../types/position';
 
 /**
  * Compoent in the Graphical Editor to represent an instance of {@link RepetitionStatement}
@@ -125,6 +126,12 @@ export class RepetitionStatementComponent extends Refinement {
     super.refreshLinkState()
     if (!this.loopStatement) return
     this.loopStatement.refreshLinkState()
+  }
+
+  override resetPosition(position: Position): void {
+      this.position = position;
+
+      this._loopStatement?.resetPosition(new Position(position.xinPx + 200, position.yinPx))
   }
 
   get loopStatement() : Refinement | undefined {

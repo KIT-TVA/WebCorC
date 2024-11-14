@@ -4,6 +4,7 @@ import { ReplaySubject, Subject } from "rxjs";
 import { VerificationResult } from "../../types/net/verification-net-types";
 import { JavaVariable } from './JavaVariable';
 import { ConditionDTO } from '../../types/condition/condition';
+import { Position } from '../../types/position';
 
 /**
  * Service for the context of the tree in the graphical editor.
@@ -37,6 +38,11 @@ export class TreeService {
 
   public generateCode(language: string, options: any): void {
     // TODO: HTTP Request to backend with cbc /generate
+  }
+
+  public resetPositions() : void {
+    this._rootNode?.resetPosition(new Position(0,0))
+    this._redrawNotifier.next()
   }
 
   public downloadJSON(): void {
