@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Refinement } from "../../types/refinement";
-import { ReplaySubject, Subject } from "rxjs";
+import { ReplaySubject, Subject, first } from "rxjs";
 import { VerificationResult } from "../../types/net/verification-net-types";
 import { JavaVariable } from './JavaVariable';
 import { ConditionDTO } from '../../types/condition/condition';
 import { Position } from '../../types/position';
+import { NetworkTreeService } from './network/network-tree.service';
+import { CBCFormula } from '../project/CBCFormula';
+import { SimpleStatementComponent } from '../../components/editor/statements/simple-statement/simple-statement.component';
 
 /**
  * Service for the context of the tree in the graphical editor.
@@ -14,30 +17,49 @@ import { Position } from '../../types/position';
   providedIn: 'root'
 })
 export class TreeService {
-  private readonly _redrawNotifier: ReplaySubject<void>;
-  private readonly _deletionNotifier: ReplaySubject<Refinement>;
+  private readonly _redrawNotifier: ReplaySubject<void>
+  private readonly _deletionNotifier: ReplaySubject<Refinement>
 
   private _title: string = "";
   private _rootNode: Refinement | undefined;
 
-  private readonly _verificationResultNotifier: Subject<VerificationResult>;
+  private readonly _verificationResultNotifier: Subject<VerificationResult>
   
-  private _variables : JavaVariable[] = [];
-  private _globalConditions : string[] = []; 
+  private _variables : JavaVariable[] = []
+  private _globalConditions : string[] = []
   variablesChangedNotifier: Subject<void> = new Subject<void>();
 
-  constructor() {
+  constructor(private readonly network : NetworkTreeService) {
     this._redrawNotifier = new ReplaySubject();
     this._deletionNotifier = new ReplaySubject();
     this._verificationResultNotifier = new Subject<VerificationResult>();
   }
 
-  public verify(refinement: Refinement): void {
-    // TODO: HTTP Rwquest to backend with cbc formula to /verify
+  public verify(): void {
+    this.network.verifyStatus.pipe(first()).subscribe(formula => {
+      console.log(formula)
+      // TODO: Traverse over tree and set verify status and color the statements
+    })
+
+    const formula = new CBCFormula()
+
+    if (this.rootNode) {
+
+      const rootNode = (this.rootNode as SimpleStatementComponent).export()
+      formula.statement = rootNode
+      formula.javaVariables = this.variables
+      formula.globalConditions = this.conditions
+
+    }
+
+    this.network.verify(formula)
   }
 
-  public generateCode(language: string, options: any): void {
-    // TODO: HTTP Request to backend with cbc /generate
+  public generateCode(language : string, options : any): void {
+    this.network.generateStatus.pipe(first()).subscribe(content => {
+      console.log(content)
+      // TODO: Get generated Files into local project explorer
+    })
   }
 
   public resetPositions() : void {
