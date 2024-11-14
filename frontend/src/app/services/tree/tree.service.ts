@@ -5,6 +5,8 @@ import { VerificationResult } from "../../types/net/verification-net-types";
 import { JavaVariable } from './JavaVariable';
 import { ConditionDTO } from '../../types/condition/condition';
 import { Position } from '../../types/position';
+import { NetworkTreeService } from './network/network-tree.service';
+import { CBCFormula } from '../project/CBCFormula';
 
 /**
  * Service for the context of the tree in the graphical editor.
@@ -16,6 +18,7 @@ import { Position } from '../../types/position';
 export class TreeService {
   private readonly _redrawNotifier: ReplaySubject<void>;
   private readonly _deletionNotifier: ReplaySubject<Refinement>;
+  private readonly _verifyNotifier: Subject<void>;
 
   private _title: string = "";
   private _rootNode: Refinement | undefined;
@@ -26,14 +29,15 @@ export class TreeService {
   private _globalConditions : string[] = []; 
   variablesChangedNotifier: Subject<void> = new Subject<void>();
 
-  constructor() {
+  constructor(private network : NetworkTreeService) {
     this._redrawNotifier = new ReplaySubject();
     this._deletionNotifier = new ReplaySubject();
     this._verificationResultNotifier = new Subject<VerificationResult>();
+    this._verifyNotifier = new Subject<void>();
   }
 
-  public verify(refinement: Refinement): void {
-    // TODO: HTTP Rwquest to backend with cbc formula to /verify
+  public verify(formula : CBCFormula): void {
+    this.network.verify(formula)
   }
 
   public generateCode(language: string, options: any): void {
@@ -160,6 +164,10 @@ export class TreeService {
 
   get verificationResultNotifier(): Subject<VerificationResult> {
     return this._verificationResultNotifier;
+  }
+
+  get verifyNotifier()  {
+    return this._verifyNotifier
   }
 
   set title(value: string) {
