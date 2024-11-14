@@ -33,7 +33,7 @@ export class AppComponent {
   constructor(public treeService: TreeService, private dialog: MatDialog, public projectService : ProjectService) {}
 
   verify(): void {
-    //this.treeService.verify()
+    this.treeService.verifyNotifier.next()
   }
 
   openGenerateCodeDialog(): void {

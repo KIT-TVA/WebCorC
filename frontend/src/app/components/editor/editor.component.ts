@@ -49,6 +49,17 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     this.projectService.editorNotify.subscribe(() => {
       this.saveContentToFile()
     })
+
+    this.treeService.verifyNotifier.subscribe(() => {
+      if (this.treeService.rootNode) {
+        const rootNode = (this.treeService.rootNode as SimpleStatementComponent).export()
+        const formula = new CBCFormula()
+        formula.statement = rootNode
+        formula.javaVariables = this.treeService.variables
+        formula.globalConditions = this.treeService.conditions
+        this.treeService.verify(formula)
+      }
+    })
   }
   
   /**

@@ -7,7 +7,6 @@ import { ConditionDTO } from '../../types/condition/condition';
 import { Position } from '../../types/position';
 import { NetworkTreeService } from './network/network-tree.service';
 import { CBCFormula } from '../project/CBCFormula';
-import { SimpleStatementComponent } from '../../components/editor/statements/simple-statement/simple-statement.component';
 
 /**
  * Service for the context of the tree in the graphical editor.
@@ -17,8 +16,9 @@ import { SimpleStatementComponent } from '../../components/editor/statements/sim
   providedIn: 'root'
 })
 export class TreeService {
-  private readonly _redrawNotifier: ReplaySubject<void>
-  private readonly _deletionNotifier: ReplaySubject<Refinement>
+  private readonly _redrawNotifier: ReplaySubject<void>;
+  private readonly _deletionNotifier: ReplaySubject<Refinement>;
+  private readonly _verifyNotifier: Subject<void>;
 
   private _title: string = "";
   private _rootNode: Refinement | undefined;
@@ -29,37 +29,18 @@ export class TreeService {
   private _globalConditions : string[] = []
   variablesChangedNotifier: Subject<void> = new Subject<void>();
 
-  constructor(private readonly network : NetworkTreeService) {
+  constructor(private network : NetworkTreeService) {
     this._redrawNotifier = new ReplaySubject();
     this._deletionNotifier = new ReplaySubject();
     this._verificationResultNotifier = new Subject<VerificationResult>();
+    this._verifyNotifier = new Subject<void>();
   }
 
-  public verify(): void {
-    this.network.verifyStatus.pipe(first()).subscribe(formula => {
-      console.log(formula)
-      // TODO: Traverse over tree and set verify status and color the statements
-    })
-
-    const formula = new CBCFormula()
-
-    if (this.rootNode) {
-
-      const rootNode = (this.rootNode as SimpleStatementComponent).export()
-      formula.statement = rootNode
-      formula.javaVariables = this.variables
-      formula.globalConditions = this.conditions
-
-    }
-
+  public verify(formula : CBCFormula): void {
     this.network.verify(formula)
   }
 
   public generateCode(language : string, options : any): void {
-    this.network.generateStatus.pipe(first()).subscribe(content => {
-      console.log(content)
-      // TODO: Get generated Files into local project explorer
-    })
   }
 
   public resetPositions() : void {
@@ -182,6 +163,10 @@ export class TreeService {
 
   get verificationResultNotifier(): Subject<VerificationResult> {
     return this._verificationResultNotifier;
+  }
+
+  get verifyNotifier()  {
+    return this._verifyNotifier
   }
 
   set title(value: string) {
