@@ -51,6 +51,7 @@ export class NetworkProjectService {
       .get<NetProject>(this.buildProjectURL())
       .subscribe(project => {
         this._projectname = project.name
+        console.log(new ApiDirectory(project.files.urn, project.files.content))
         this._dataChange.next(new ApiDirectory(project.files.urn, project.files.content))
       })
   }

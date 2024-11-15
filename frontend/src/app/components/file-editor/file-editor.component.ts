@@ -28,7 +28,11 @@ export class FileEditorComponent implements AfterViewInit,OnDestroy {
   //Todo: Fix / Inverstigate Flickering Issue when usuing getters and setters
   public code : string = '';
 
-  constructor(private projectService : ProjectService) {}
+  constructor(private projectService : ProjectService) {
+    this.projectService.editorNotify.subscribe(() => {
+      this.saveContentToFile()
+    })
+  }
 
   //Todo: make language configurable
   editorOptions =  {
@@ -82,5 +86,9 @@ export class FileEditorComponent implements AfterViewInit,OnDestroy {
     } else {
       this.code = ""
     }
+  }
+
+  private saveContentToFile() : void {
+    this.projectService.syncFileContent(this._urn, this.code)
   }
 }
