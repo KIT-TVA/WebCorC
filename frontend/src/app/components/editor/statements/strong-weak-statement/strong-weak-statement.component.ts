@@ -16,6 +16,7 @@ import {ChooseRefinementComponent} from "../../../choose-refinement/choose-refin
 import {MatIconModule} from "@angular/material/icon";
 import {LinkComponent} from "../link/link.component";
 import { StrongWeakStatement } from '../../../../types/statements/strong-weak-statement';
+import { Position } from '../../../../types/position';
 
 /**
  * Component in the graphic editor representing {@link StrongWeakStatement}
@@ -141,5 +142,12 @@ export class StrongWeakStatementComponent extends Refinement {
     super.refreshLinkState()
     if (!this._statement) return
     this.statement?.refreshLinkState()
+  }
+
+
+  override resetPosition(position: Position): void {
+      this.position = position
+
+      this._statement?.resetPosition(new Position(position.xinPx + 200, position.yinPx))
   }
 }

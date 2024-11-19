@@ -26,8 +26,8 @@ export class ProjectService {
   constructor(private network : NetworkProjectService) {
 
     this.network.dataChange.subscribe((rootDir : ApiDirectory) => {
-      // Todo: On Changes after network requests update file tree
       this._rootDir = rootDir.import()
+      console.log(this._rootDir)
       this._projectname = network.projectName ? network.projectName : ""
       this._dataChange.next(this._rootDir.content)
     })
@@ -207,16 +207,14 @@ export class ProjectService {
 
     if (file.content instanceof CBCFormula) {
       needstoBeFetched = (file.content as CBCFormula).statement === null
-    }
-
-    if (file.content instanceof String) {
-      needstoBeFetched = (file.content as string) === ""
+    } else {
+      needstoBeFetched = file.content === ""
     }
 
     console.log(file.content && this.projectId)
     // if file content is default value and projectId is set
     if (this.projectId && needstoBeFetched) {
-      let content = await this.network.getFileContent(urn)
+      const content = await this.network.getFileContent(urn)
       if (content instanceof CBCFormula) {
         file.content  = <CBCFormula>content
       } else {

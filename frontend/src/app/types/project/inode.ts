@@ -62,8 +62,19 @@ export class ApiFile implements Inode {
     ) {}
 
     public import(parentPath : string = "") : ProjectElement {
-        let name = this.urn.substring(0, this.urn.lastIndexOf("."))
-        return new DiagramFile(parentPath, name, this.type)
+        const lastIndexofPoint = this.urn.lastIndexOf(".")
+        const name = this.urn.substring(0, lastIndexofPoint)
+        const fileType = this.urn.substring(lastIndexofPoint + 1)
+        
+        console.log(fileType)
+
+        switch (fileType) {
+            case "diagram" : return new DiagramFile(parentPath, name, this.type)
+            case "java":    
+            case "prove":
+            case "other":
+            default : return new CodeFile(parentPath, name, this.type)
+        }
     }
 }
 

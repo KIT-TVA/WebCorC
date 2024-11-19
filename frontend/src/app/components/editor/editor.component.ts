@@ -15,6 +15,7 @@ import { SimpleStatementComponent } from './statements/simple-statement/simple-s
 import { ProjectService } from '../../services/project/project.service';
 import { CBCFormula } from '../../services/project/CBCFormula';
 import { SimpleStatement } from '../../types/statements/simple-statement';
+import { OptionsComponent } from './options/options.component';
 
 /**
  * Component to edit {@link CBCFormula} by editing a grahical representation based of the statement components like {@link SimpleStatementComponent}.
@@ -24,7 +25,7 @@ import { SimpleStatement } from '../../types/statements/simple-statement';
 @Component({
   selector: 'app-editor',
   standalone: true,
-  imports: [CommonModule, RefinementWidgetComponent, MatButtonModule, AddRefinementWidgetComponent, MatIconModule, MatExpansionModule, VariablesComponent, MatTooltipModule, MatMenuModule, GlobalConditionsComponent],
+  imports: [CommonModule, RefinementWidgetComponent, MatButtonModule, AddRefinementWidgetComponent, MatIconModule, MatExpansionModule, VariablesComponent, MatTooltipModule, MatMenuModule, GlobalConditionsComponent, OptionsComponent],
   templateUrl: './editor.component.html',
   styleUrl: './editor.component.scss'
 })
@@ -47,6 +48,17 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   constructor(public treeService: TreeService, private projectService : ProjectService) {
     this.projectService.editorNotify.subscribe(() => {
       this.saveContentToFile()
+    })
+
+    this.treeService.verifyNotifier.subscribe(() => {
+      if (this.treeService.rootNode) {
+        const rootNode = (this.treeService.rootNode as SimpleStatementComponent).export()
+        const formula = new CBCFormula()
+        formula.statement = rootNode
+        formula.javaVariables = this.treeService.variables
+        formula.globalConditions = this.treeService.conditions
+        this.treeService.verify(formula)
+      }
     })
   }
   
@@ -124,8 +136,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       this.projectService.syncFileContent(this._urn, formula)
     }
 
-    this.variables.removeAllVariables()
-    this.conditions.removeAllConditions()
+    
   }
 
   /**
@@ -133,6 +144,9 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
    */
   private async loadFileContent() : Promise<void> {
     // load the diagram of the file into the component
+
+    this.variables.removeAllVariables()
+    this.conditions.removeAllConditions()
 
     Refinement.resetIDs(2)
 

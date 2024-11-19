@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Refinement } from "../../types/refinement";
-import { ReplaySubject, Subject } from "rxjs";
+import { ReplaySubject, Subject, first } from "rxjs";
 import { VerificationResult } from "../../types/net/verification-net-types";
 import { JavaVariable } from './JavaVariable';
 import { ConditionDTO } from '../../types/condition/condition';
+import { Position } from '../../types/position';
+import { NetworkTreeService } from './network/network-tree.service';
+import { CBCFormula } from '../project/CBCFormula';
 
 /**
  * Service for the context of the tree in the graphical editor.
@@ -15,28 +18,34 @@ import { ConditionDTO } from '../../types/condition/condition';
 export class TreeService {
   private readonly _redrawNotifier: ReplaySubject<void>;
   private readonly _deletionNotifier: ReplaySubject<Refinement>;
+  private readonly _verifyNotifier: Subject<void>;
 
   private _title: string = "";
   private _rootNode: Refinement | undefined;
 
-  private readonly _verificationResultNotifier: Subject<VerificationResult>;
+  private readonly _verificationResultNotifier: Subject<VerificationResult>
   
-  private _variables : JavaVariable[] = [];
-  private _globalConditions : string[] = []; 
+  private _variables : JavaVariable[] = []
+  private _globalConditions : string[] = []
   variablesChangedNotifier: Subject<void> = new Subject<void>();
 
-  constructor() {
+  constructor(private network : NetworkTreeService) {
     this._redrawNotifier = new ReplaySubject();
     this._deletionNotifier = new ReplaySubject();
     this._verificationResultNotifier = new Subject<VerificationResult>();
+    this._verifyNotifier = new Subject<void>();
   }
 
-  public verify(refinement: Refinement): void {
-    // TODO: HTTP Rwquest to backend with cbc formula to /verify
+  public verify(formula : CBCFormula): void {
+    this.network.verify(formula)
   }
 
-  public generateCode(language: string, options: any): void {
-    // TODO: HTTP Request to backend with cbc /generate
+  public generateCode(language : string, options : any): void {
+  }
+
+  public resetPositions() : void {
+    this._rootNode?.resetPosition(new Position(0,0))
+    this._redrawNotifier.next()
   }
 
   public downloadJSON(): void {
@@ -154,6 +163,10 @@ export class TreeService {
 
   get verificationResultNotifier(): Subject<VerificationResult> {
     return this._verificationResultNotifier;
+  }
+
+  get verifyNotifier()  {
+    return this._verifyNotifier
   }
 
   set title(value: string) {

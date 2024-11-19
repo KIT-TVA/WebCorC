@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ApiDiagrammFile, ApiDirectory, ApiFile, ApiTextFile, Inode } from '../../../types/project/inode';
+import { ApiDiagrammFile, ApiDirectory, ApiTextFile, Inode } from '../../../types/project/inode';
 import { environment } from '../../../../environments/environment';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { ConsoleService } from '../../console/console.service';
@@ -18,7 +18,7 @@ export class NetworkProjectService {
 
   private _projectId : string | undefined
   private _projectname : string | undefined
-  private _dataChange = new BehaviorSubject<ApiDirectory>(new ApiDirectory("", []))
+  private  _dataChange = new BehaviorSubject<ApiDirectory>(new ApiDirectory("", []))
   private _finishedRequest = new Subject<void>()
 
   constructor(private http : HttpClient ,private consoleService : ConsoleService) { }
@@ -31,14 +31,6 @@ export class NetworkProjectService {
   public createProject(name : string) {
 
     if (!name) return
-
-    const request = new Request(environment.apiUrl + NetworkProjectService.projects, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({name : name})
-    })
 
     this.http
       .post<NetProject>(environment.apiUrl + NetworkProjectService.projects, { name: name })
@@ -55,17 +47,11 @@ export class NetworkProjectService {
   public readProject(projectId : string | undefined = this._projectId) {
     this._projectId = projectId
 
-    const request = new Request(this.buildProjectURL(), {
-      method: "GET",
-      headers: {
-        "Accept": "application/json"
-      }
-    })
-
     this.http
       .get<NetProject>(this.buildProjectURL())
       .subscribe(project => {
         this._projectname = project.name
+        console.log(new ApiDirectory(project.files.urn, project.files.content))
         this._dataChange.next(new ApiDirectory(project.files.urn, project.files.content))
       })
   }
@@ -94,16 +80,9 @@ export class NetworkProjectService {
     
     formData.append("fileUpload", realFile, urn)
 
-    const request = new Request(this.buildFileURL(urn), {
-      method: "POST",
-      body: formData
-    })
+    this.http.post(this.buildFileURL(urn), formData)
+      .subscribe(() => {})
     
-    fetch(request)
-      .then((response : Response)=> response.json())
-      .catch(() => {
-        //Todo Error Handling
-      })
   }
 
   public deleteFile() {
@@ -136,13 +115,8 @@ export class NetworkProjectService {
           return file
         }
 
-        let entries : [string, any][] | null = null
-
-        if (file.statement) {
-          entries = Object.entries(file.statement)
-        }
-
-        let formula = new CBCFormula(
+    
+        const formula = new CBCFormula(
           file.type,
           file.name,
           file.proven,

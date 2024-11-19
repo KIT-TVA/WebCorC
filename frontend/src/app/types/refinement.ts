@@ -105,6 +105,8 @@ export abstract class Refinement {
   */
   abstract export(): Statement | undefined
 
+  abstract resetPosition(position : Position) : void
+
   /**
    * Removes variable usages of this refinement on deletion.
    */

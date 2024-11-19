@@ -18,6 +18,7 @@ import { LinkComponent } from "../link/link.component";
 import { MatButtonModule } from '@angular/material/button';
 import { Statement } from '../../../../types/statements/statement';
 import { SelectionStatement } from '../../../../types/statements/selection-statement';
+import { Position } from '../../../../types/position';
 
 /**
  * Component in the graphical editor to represent the {@link SelectionStatement}
@@ -99,6 +100,16 @@ export class SelectionStatementComponent extends Refinement {
         this._statements[i]?.refreshLinkState()
       }
     }
+  }
+
+  override resetPosition(position: Position): void {
+      this.position = position
+
+      for (let i = 0; i < this._statements.length; i++) {
+        if (this.statements) {
+          this._statements[i]?.resetPosition(new Position(position.xinPx + 200 * (i + 1), position.yinPx + 200 * (i + 1)))
+        }
+      }
   }
 
   /**
