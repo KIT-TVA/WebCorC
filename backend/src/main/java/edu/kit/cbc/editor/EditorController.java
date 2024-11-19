@@ -3,6 +3,8 @@ package edu.kit.cbc.editor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import de.tu_bs.cs.isf.cbc.cbcmodel.CbCFormula;
+import de.tu_bs.cs.isf.cbc.cbcmodel.GlobalConditions;
+import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariables;
 import edu.kit.cbc.common.Problem;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -16,9 +18,9 @@ import io.micronaut.http.annotation.Produces;
 @Controller("/editor")
 public class EditorController {
 
-    private final CbcFormulaParser parser;
+    private final FormulaParser parser;
 
-    EditorController(CbcFormulaParser parser) {
+    EditorController(FormulaParser parser) {
         this.parser = parser;
     }
 
@@ -41,11 +43,15 @@ public class EditorController {
     @Consumes(MediaType.APPLICATION_JSON)
     public HttpResponse<?> verify(@Body String cbcFormulaString) {
         try {
-            CbCFormula formula = parser.fromJsonString(cbcFormulaString);
+            CbCFormula formula = parser.fromJsonStringToCbC(cbcFormulaString);
             //TODO: perform actual verification procedure
             //currently the proven state is just inverted for demo purposes
+
+            JavaVariables jv = parser.fromJsonStringToJavaVariables(cbcFormulaString);
+            GlobalConditions gc = parser.fromJsonStringToGlobalConditions(cbcFormulaString);
+
             formula.setProven(!formula.isProven());
-            return HttpResponse.ok(parser.toJsonString(formula));
+            return HttpResponse.ok(parser.toJsonString(formula, jv, gc));
         } catch (JsonProcessingException e) {
             return HttpResponse.serverError(Problem.PARSING_ERROR(e.getMessage()));
         }
