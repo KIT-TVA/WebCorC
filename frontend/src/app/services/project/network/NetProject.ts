@@ -1,4 +1,4 @@
-import { ApiDirectory } from "../../../types/project/inode"
+import { ApiDirectory } from "../types/api-elements"
 
 export interface NetProject {
     id : string,

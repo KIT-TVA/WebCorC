@@ -5,16 +5,13 @@ import { MatButtonModule } from '@angular/material/button';
 import {MatTreeFlatDataSource, MatTreeFlattener, MatTreeModule} from '@angular/material/tree';
 import { ProjectService } from '../../services/project/project.service';
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { ProjectElement } from '../../services/project/project-element';
-import { CodeFile, DiagramFile } from '../../services/project/project-files';
-import { ProjectDirectory } from '../../services/project/project-directory';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { fakeProjectElementName } from '../../services/project/fake-element';
 import { MatInputModule } from '@angular/material/input';
 import { Router } from '@angular/router';
 import { first } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateProjectDialogComponent } from './create-project-dialog/create-project-dialog.component';
+import { ProjectElement, ProjectDirectory, CodeFile, DiagramFile } from '../../services/project/types/project-elements';
 
 class FlatNode {
   expandable: boolean;
@@ -160,7 +157,7 @@ export class ProjectExplorerComponent {
    */
   public export() {
     this.projectService.explorerNotify.pipe(first()).subscribe(() => {
-      const structure = JSON.stringify(this.projectService.root.export(), null, 2);
+      const structure = JSON.stringify(this.projectService.export(), null, 2);
       const blob = new Blob([structure], {type: "application/json"});
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -176,7 +173,7 @@ export class ProjectExplorerComponent {
   hasChild = (_: number, node: FlatNode) => node.expandable;
 
   // identify the fakeProjectElement for the html template
-  isTypeLessAndHasNoName = (_ : number, node : FlatNode) => node.name === fakeProjectElementName;
+  isTypeLessAndHasNoName = (_ : number, node : FlatNode) => node.name === this.projectService.fakeElementName;
 
   get root() {
     return new FlatNode(this.projectService.root, -1)

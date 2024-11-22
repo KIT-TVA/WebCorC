@@ -1,12 +1,9 @@
 import { Injectable } from '@angular/core';
-import { ProjectDirectory } from './project-directory';
-import { CodeFile, DiagramFile } from './project-files';
-import { ProjectElement } from './project-element';
 import { BehaviorSubject, Subject, first} from 'rxjs';
-import { FakeProjectElement, fakeProjectElementName } from './fake-element';
 import { CBCFormula } from './CBCFormula';
-import { ApiDirectory, Inode } from '../../types/project/inode';
 import { NetworkProjectService } from './network/network-project.service';
+import { ProjectDirectory, ProjectElement } from './types/project-elements';
+import { ProjectElementsMapperService } from './types/project-elements-mapper.service';
 
 /**
  * Service for project managment.
@@ -23,11 +20,10 @@ export class ProjectService {
   private _savedFinished = new Subject<void>()
   private _projectname: string = "";
 
-  constructor(private network : NetworkProjectService) {
+  constructor(private network : NetworkProjectService, private mapper : ProjectElementsMapperService) {
 
-    this.network.dataChange.subscribe((rootDir : ApiDirectory) => {
-      this._rootDir = rootDir.import()
-      console.log(this._rootDir)
+    this.network.dataChange.subscribe((rootDir) => {
+      this._rootDir = mapper.importDirectory(rootDir)
       this._projectname = network.projectName ? network.projectName : ""
       this._dataChange.next(this._rootDir.content)
     })
@@ -84,7 +80,7 @@ export class ProjectService {
       relativePath = parentPath.substring(1)
     }
 
-    dir.removeElement(fakeProjectElementName)
+    dir.removeElement(this.mapper.fakeElementName)
 
     const newDir = new ProjectDirectory(relativePath, name);
     if (!dir.addElement(newDir)) {
@@ -116,13 +112,13 @@ export class ProjectService {
       relativePath = parentPath.substring(1)
     }
 
-    dir.removeElement(fakeProjectElementName)
+    dir.removeElement(this.mapper.fakeElementName)
 
     let newFile = null 
 
     switch (type) {
-      case "java" : newFile = new CodeFile(relativePath, name, type); break;
-      case "diagram" : newFile = new DiagramFile(relativePath, name, type); break;
+      case "java" : newFile = this.mapper.constructCodeFile(relativePath, name, type); break;
+      case "diagram" : newFile = this.mapper.constructDiagramFile(relativePath, name, type); break;
       default: throw new Error("Could not add file, unknown type")
     }
     
@@ -147,7 +143,7 @@ export class ProjectService {
     }
 
     const dir = parentDir as ProjectDirectory;
-    const newElement = new FakeProjectElement(path);
+    const newElement = this.mapper.constructFakeElement(path);
     if (!dir.addElement(newElement)) {
       throw new Error("Could not add fake element")
     }
@@ -211,26 +207,21 @@ export class ProjectService {
       needstoBeFetched = file.content === ""
     }
 
-    console.log(file.content && this.projectId)
+    let content : string | CBCFormula = ""
     // if file content is default value and projectId is set
     if (this.projectId && needstoBeFetched) {
-      const content = await this.network.getFileContent(urn)
-      if (content instanceof CBCFormula) {
-        file.content  = <CBCFormula>content
-      } else {
-        file.content = content
-      }
+      content = await this.network.getFileContent(urn)
     }
 
-    return (file as CodeFile | DiagramFile).content
+    return content
   }
 
   /**
    * Export the project by exporting the root directory to the data only classes
    * @returns 
    */
-  public export() : Inode {
-    return this._rootDir.export()
+  public export() {
+    return this.mapper.exportDirectory(this._rootDir)
   }
 
   public uploadWorkspace(wait : boolean = false) {
@@ -257,7 +248,7 @@ export class ProjectService {
       if (item instanceof ProjectDirectory) {
         this.uploadFolder(item)
       } else {
-        this.network.uploadFile(item.export())
+        this.network.uploadFile(this.mapper.exportFile(item))
       }
     }
   }
@@ -316,6 +307,10 @@ export class ProjectService {
 
   public get projectId() : string | undefined {
     return this.network.projectId
+  }
+
+  public get fakeElementName() {
+    return this.mapper.fakeElementName
   }
 
 }

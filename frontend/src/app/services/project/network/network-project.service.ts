@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { ApiDiagrammFile, ApiDirectory, ApiTextFile, Inode } from '../../../types/project/inode';
 import { environment } from '../../../../environments/environment';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { ConsoleService } from '../../console/console.service';
 import { CBCFormula } from '../CBCFormula';
 import { HttpClient } from '@angular/common/http';
 import { NetProject } from './NetProject';
+import { ApiDiagrammFile, ApiDirectory, ApiTextFile, Inode } from '../types/api-elements';
 
 /**
  * Service to interact with the backend for managing the project.
@@ -21,7 +21,7 @@ export class NetworkProjectService {
   private  _dataChange = new BehaviorSubject<ApiDirectory>(new ApiDirectory("", []))
   private _finishedRequest = new Subject<void>()
 
-  constructor(private http : HttpClient ,private consoleService : ConsoleService) { }
+  constructor(private http : HttpClient, private consoleService : ConsoleService) { }
 
 
   /**
