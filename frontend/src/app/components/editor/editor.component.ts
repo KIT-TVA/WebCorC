@@ -165,7 +165,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       root.getRedrawNotifier().next()
       
       // import the tree under the root statement recursively
-      const newChild = (newFormula.statement as SimpleStatement).statement?.toComponent(this.examplesSpawn)
+      const newChild = (newFormula.statement as SimpleStatement).refinement?.toComponent(this.examplesSpawn)
 
       if (newChild) {
         root.statement = newChild?.[0]

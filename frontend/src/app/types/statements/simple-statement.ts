@@ -21,7 +21,7 @@ export class SimpleStatement extends Statement {
         preCondition : ConditionDTO,
         postCondition : ConditionDTO,
         position : Position = new Position(0,0),
-        public statement : Statement | undefined
+        public refinement : Statement | undefined
 
     ) {
         super(name, SimpleStatement.TYPE , id, proven, comment, preCondition, postCondition, position)
@@ -35,8 +35,8 @@ export class SimpleStatement extends Statement {
         statement.condition = this.name
         statement.position = this.position
 
-        if (this.statement) {
-            const child = this.statement.toComponent(spawn)
+        if (this.refinement) {
+            const child = this.refinement.toComponent(spawn)
             statement.statement = child?.[0]
             statement.statementElementRef = child?.[1].location
         }

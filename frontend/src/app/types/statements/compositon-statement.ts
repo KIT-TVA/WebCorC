@@ -20,7 +20,7 @@ export class CompositionStatement extends Statement {
         comment : string,
         preCondition : ConditionDTO,
         postCondition : ConditionDTO,
-        position : Position,
+        position : Position = new Position(0,0),
         public intermediateCondition : ConditionDTO,
         public firstStatement : Statement | undefined,
         public secondStatement : Statement | undefined,

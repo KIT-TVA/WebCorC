@@ -22,7 +22,7 @@ export function importStatementsfromJSON(statement : Statement | undefined) : St
                 new ConditionDTO(statement.preCondition.originId, statement.preCondition.title, statement.preCondition.content),
                 new ConditionDTO(statement.postCondition.originId, statement.postCondition.title, statement.postCondition.content),
                 statement.position,
-                importStatementsfromJSON((statement as SimpleStatement).statement)
+                importStatementsfromJSON((statement as SimpleStatement).refinement)
             )
 
         case SelectionStatement.TYPE:

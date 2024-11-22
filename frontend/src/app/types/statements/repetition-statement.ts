@@ -19,7 +19,7 @@ export class RepetitionStatement extends Statement {
         comment : string,
         preCondition : ConditionDTO,
         postCondition : ConditionDTO,
-        position : Position,
+        position : Position = new Position(0,0),
         public postProven : boolean,
         public preProven : boolean,
         public variantProven : boolean,

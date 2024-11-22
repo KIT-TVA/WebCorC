@@ -58,7 +58,6 @@ export class ConditionDTO {
     public originId : number,
     public title : string = "",
     public content : string = "",
-    public name : string = content
   ) {}
 
   public convert() : Condition {

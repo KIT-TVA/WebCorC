@@ -19,7 +19,7 @@ export class SelectionStatement extends Statement {
         comment : string,
         preCondition : ConditionDTO,
         postCondition : ConditionDTO,
-        position : Position,
+        position : Position = new Position(0,0),
         public preProven : boolean,
         public guards : ConditionDTO[],
         public commands : (Statement | undefined)[]
