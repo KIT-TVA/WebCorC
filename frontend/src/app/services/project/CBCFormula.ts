@@ -1,17 +1,27 @@
-import { ConditionDTO } from "../../types/condition/condition";
-import { CompositionStatement } from "../../types/statements/compositon-statement";
-import { RepetitionStatement } from "../../types/statements/repetition-statement";
-import { SelectionStatement } from "../../types/statements/selection-statement";
-import { SimpleStatement } from "../../types/statements/simple-statement";
-import { Statement } from "../../types/statements/statement";
-import { StrongWeakStatement } from "../../types/statements/strong-weak-statement";
+import { ConditionDTO, IConditionDTO } from "../../types/condition/condition";
+import { IStatement, Statement } from "../../types/statements/statement";
 import { importStatementsfromJSON } from "./util";
+
+export interface ICBCFormula {
+    type : string
+    name : string
+    proven : boolean
+    comment : string
+    compositionTechnique : string
+    className : string 
+    methodName : string
+    javaVariables : string[]
+    globalConditions : IConditionDTO[]
+    preCondition : IConditionDTO
+    postCondition : IConditionDTO
+    statement : IStatement | null 
+}
 
 /**
  * The representation of the data in the graphical editor in a json object.
  * Used for saving state and communicate with the backend.
  */
-export class CBCFormula {
+export class CBCFormula implements ICBCFormula {
 
     constructor(
         public type : string = "CBCFormula",  

@@ -2,14 +2,19 @@
 import { ComponentRef, ViewContainerRef } from "@angular/core";
 import { Position } from "../position";
 import { Refinement } from "../refinement";
-import { Statement } from "./statement";
+import { IStatement, Statement } from "./statement";
 import { SimpleStatementComponent } from "../../components/editor/statements/simple-statement/simple-statement.component";
 import { ConditionDTO } from "../condition/condition";
+
+export interface ISimpleStatement extends IStatement {
+    refinement : Statement | undefined
+}
+
 
 /**
  * Data only representation of {@link SimpleStatementComponent}
  */
-export class SimpleStatement extends Statement {
+export class SimpleStatement extends Statement implements ISimpleStatement {
 
     public static readonly TYPE : string = "AbstractStatement"
 

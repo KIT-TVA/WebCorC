@@ -48,11 +48,17 @@ export class Condition {
   }
 }
 
+export interface IConditionDTO {
+  originId : number,
+  title : string
+  content : string
+}
+
 /**
  * Data only conditon class to use in the data only classes.
  * Compatible with the api calls for the backend
  */
-export class ConditionDTO {
+export class ConditionDTO implements IConditionDTO {
 
   public constructor(
     public originId : number,

@@ -1,14 +1,18 @@
 import { ViewContainerRef, ComponentRef } from "@angular/core";
 import { Position } from "../position";
 import { Refinement } from "../refinement";
-import { Statement } from "./statement";
+import { IStatement, Statement } from "./statement";
 import { StrongWeakStatementComponent } from "../../components/editor/statements/strong-weak-statement/strong-weak-statement.component";
 import { ConditionDTO } from "../condition/condition";
+
+export interface IStrongWeakStatement extends IStatement {
+    refinement : Statement | undefined 
+}
 
 /**
  * Data only representation of {@link StrongWeakStatementComponent}
  */
-export class StrongWeakStatement extends Statement {
+export class StrongWeakStatement extends Statement implements IStrongWeakStatement {
 
     public static readonly TYPE = "StrongWeakStatement"
 
@@ -20,7 +24,7 @@ export class StrongWeakStatement extends Statement {
         preCondition : ConditionDTO,
         postCondition : ConditionDTO,
         position : Position  = new Position(0,0),
-        public statement : Statement | undefined 
+        public refinement : Statement | undefined 
 
     ) {
         super(name, StrongWeakStatement.TYPE , id, proven, comment, preCondition, postCondition, position)
@@ -34,8 +38,8 @@ export class StrongWeakStatement extends Statement {
         statement.postcondition = this.postCondition.convert()
         statement.position = this.position
 
-        if (this.statement) {
-            const child = this.statement.toComponent(spawn)
+        if (this.refinement) {
+            const child = this.refinement.toComponent(spawn)
 
             if (child) {
                 statement.statement = child?.[0]

@@ -1,13 +1,14 @@
 
-import { ConditionDTO } from "../../types/condition/condition"
+import { ConditionDTO, IConditionDTO } from "../../types/condition/condition"
+import { IPosition, Position } from "../../types/position"
 import { CompositionStatement } from "../../types/statements/compositon-statement"
 import { RepetitionStatement } from "../../types/statements/repetition-statement"
-import { SelectionStatement } from "../../types/statements/selection-statement"
-import { SimpleStatement } from "../../types/statements/simple-statement"
-import { Statement } from "../../types/statements/statement"
+import { ISelectionStatement, SelectionStatement } from "../../types/statements/selection-statement"
+import { ISimpleStatement, SimpleStatement } from "../../types/statements/simple-statement"
+import { IStatement, Statement } from "../../types/statements/statement"
 import { StrongWeakStatement } from "../../types/statements/strong-weak-statement"
 
-export function importStatementsfromJSON(statement : Statement | undefined) : Statement | undefined {
+export function importStatementsfromJSON(statement : IStatement | undefined) : Statement | undefined {
     if (!statement) {
         return
     }
@@ -19,24 +20,24 @@ export function importStatementsfromJSON(statement : Statement | undefined) : St
                 statement.id,
                 statement.proven,
                 statement.comment,
-                new ConditionDTO(statement.preCondition.originId, statement.preCondition.title, statement.preCondition.content),
-                new ConditionDTO(statement.postCondition.originId, statement.postCondition.title, statement.postCondition.content),
-                statement.position,
-                importStatementsfromJSON((statement as SimpleStatement).refinement)
+                importCondition(statement.preCondition),
+                importCondition(statement.postCondition),
+                importPosition(statement.position),
+                importStatementsfromJSON((statement as ISimpleStatement).refinement)
             )
 
         case SelectionStatement.TYPE:
             var childs : (Statement | undefined)[] = []
-            for (var child of (statement as SelectionStatement).commands) {
+            for (var child of (statement as ISelectionStatement).commands) {
                 childs.push(
                     importStatementsfromJSON(child)
                 )
             }
 
             var guards : ConditionDTO[] = []
-            for (var guard of (statement as SelectionStatement).guards) {
+            for (var guard of (statement as ISelectionStatement).guards) {
                 guards.push(
-                    new ConditionDTO(guard.originId, guard.title, guard.content)
+                    importCondition(guard)
                 )
             }
 
@@ -45,47 +46,42 @@ export function importStatementsfromJSON(statement : Statement | undefined) : St
                 statement.id,
                 statement.proven,
                 statement.comment,
-                new ConditionDTO(statement.preCondition.originId, statement.preCondition.title, statement.preCondition.content),
-                new ConditionDTO(statement.postCondition.originId, statement.postCondition.title, statement.postCondition.content),
-                statement.position,
+                importCondition(statement.preCondition),
+                importCondition(statement.postCondition),
+                importPosition(statement.position),
                 (statement as SelectionStatement).preProven,
                 guards,
                 childs
             )
         
         case RepetitionStatement.TYPE:
-            var invariant = (statement as RepetitionStatement).invariant
-            var variant = (statement as RepetitionStatement).variant
-            var guard = (statement as RepetitionStatement).guard
-
             return new RepetitionStatement(
                 statement.name,
                 statement.id,
                 statement.proven,
                 statement.comment,
-                new ConditionDTO(statement.preCondition.originId, statement.preCondition.title, statement.preCondition.content),
-                new ConditionDTO(statement.postCondition.originId, statement.postCondition.title, statement.postCondition.content),
-                statement.position,
+                importCondition(statement.preCondition),
+                importCondition(statement.postCondition),
+                importPosition(statement.position),
                 (statement as RepetitionStatement).postProven,
                 (statement as RepetitionStatement).preProven,
                 (statement as RepetitionStatement).variantProven,
-                new ConditionDTO(invariant.originId, invariant.title, invariant.content),
-                new ConditionDTO(variant.originId, variant.title, variant.content),
-                new ConditionDTO(guard.originId, guard.title, guard.content),
+                importCondition((statement as RepetitionStatement).invariant),
+                importCondition((statement as RepetitionStatement).variant),
+                importCondition((statement as RepetitionStatement).guard),
                 importStatementsfromJSON((statement as RepetitionStatement).loopStatement)
             )
     
         case CompositionStatement.TYPE:
-            var intermediateCondition = (statement as CompositionStatement).intermediateCondition
             return new CompositionStatement(
                 statement.name,
                 statement.id,
                 statement.proven,
                 statement.comment,
-                new ConditionDTO(statement.preCondition.originId, statement.preCondition.title, statement.preCondition.content),
-                new ConditionDTO(statement.postCondition.originId, statement.postCondition.title, statement.postCondition.content),
-                statement.position,
-                new ConditionDTO(intermediateCondition.originId, intermediateCondition.title, intermediateCondition.content),
+                importCondition(statement.preCondition),
+                importCondition(statement.postCondition),
+                importPosition(statement.position),
+                importCondition((statement as CompositionStatement).intermediateCondition),
                 importStatementsfromJSON((statement as CompositionStatement).firstStatement),
                 importStatementsfromJSON((statement as CompositionStatement).secondStatement)
             )
@@ -96,12 +92,20 @@ export function importStatementsfromJSON(statement : Statement | undefined) : St
                 statement.id,
                 statement.proven,
                 statement.comment,
-                new ConditionDTO(statement.preCondition.originId, statement.preCondition.title, statement.preCondition.content),
-                new ConditionDTO(statement.postCondition.originId, statement.postCondition.title, statement.postCondition.content),
-                statement.position,
-                importStatementsfromJSON((statement as StrongWeakStatement).statement)
+                importCondition(statement.preCondition),
+                importCondition(statement.postCondition),
+                importPosition(statement.position),
+                importStatementsfromJSON((statement as StrongWeakStatement).refinement)
             )    
     }
 
     return
+}
+
+function importCondition(condition : IConditionDTO) : ConditionDTO {
+    return new ConditionDTO(condition.originId, condition.title, condition.content)
+}
+
+function importPosition(position : IPosition) : Position {
+    return new Position(position.xinPx, position.yinPx)
 }

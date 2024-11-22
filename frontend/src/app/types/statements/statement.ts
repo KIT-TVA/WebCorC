@@ -1,9 +1,21 @@
 import { ComponentRef, ViewContainerRef } from "@angular/core";
-import { Position } from "../position";
+import { IPosition, Position } from "../position";
 import { Refinement } from "../refinement";
-import { ConditionDTO } from "../condition/condition";
+import { ConditionDTO, IConditionDTO } from "../condition/condition";
 
-export class Statement {
+export interface IStatement {
+    name : string
+    type : string
+    id : number
+    proven : boolean
+    comment : string
+    preCondition : IConditionDTO
+    postCondition : IConditionDTO
+    position : IPosition
+}
+
+
+export class Statement implements IStatement {
 
     constructor(
         public name : string,

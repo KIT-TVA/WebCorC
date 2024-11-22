@@ -1,14 +1,25 @@
-import { Statement } from "./statement";
-import { ConditionDTO } from "../condition/condition";
+import { IStatement, Statement } from "./statement";
+import { ConditionDTO, IConditionDTO } from "../condition/condition";
 import { Position } from "../position";
 import { ViewContainerRef, ComponentRef } from "@angular/core";
 import { Refinement } from "../refinement";
 import { RepetitionStatementComponent } from "../../components/editor/statements/repetition-statement/repetition-statement.component";
 
+export interface IRepetitionStatement extends IStatement {
+    postProven : boolean
+    preProven : boolean
+    variantProven : boolean
+    invariant : IConditionDTO
+    variant : IConditionDTO
+    guard : IConditionDTO
+    loopStatement : IStatement | undefined
+}
+
+
 /**
  * Data only representation of {@link RepetitionStatementComponent}
  */
-export class RepetitionStatement extends Statement {
+export class RepetitionStatement extends Statement implements IRepetitionStatement {
 
     public static readonly TYPE = "SmallRepetitionStatement"
 

@@ -1,14 +1,21 @@
 import { ComponentRef, ViewContainerRef } from "@angular/core";
-import { Condition, ConditionDTO } from "../condition/condition";
+import { Condition, ConditionDTO, IConditionDTO } from "../condition/condition";
 import { Position } from "../position";
 import { Refinement } from "../refinement";
-import { Statement } from "./statement";
+import { IStatement, Statement } from "./statement";
 import { SelectionStatementComponent } from "../../components/editor/statements/selection-statement/selection-statement.component";
+
+export interface ISelectionStatement extends IStatement {
+    preProven : boolean
+    guards : IConditionDTO[]
+    commands : (IStatement | undefined)[]
+}
+
 
 /**
  * Data only representation of {@link SelectionStatementComponent}
  */
-export class SelectionStatement extends Statement {
+export class SelectionStatement extends Statement implements ISelectionStatement {
 
     public static readonly TYPE = "SelectionStatement"
 

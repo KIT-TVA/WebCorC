@@ -2,14 +2,20 @@ import { ComponentRef, ViewContainerRef } from "@angular/core";
 import { ConditionDTO } from "../condition/condition";
 import { Position } from "../position";
 import { Refinement } from "../refinement";
-import { Statement } from "./statement";
+import { IStatement, Statement } from "./statement";
 import { CompositionStatementComponent } from "../../components/editor/statements/composition-statement/composition-statement.component";
+
+export interface ICompositionStatement extends IStatement {
+    intermediateCondition : ConditionDTO
+    firstStatement : Statement | undefined
+    secondStatement : Statement | undefined
+}
 
 /**
  * Data only representation of {@link CompositionStatementComponent}.
  * Compatible with the api calls.
  */
-export class CompositionStatement extends Statement {
+export class CompositionStatement extends Statement implements ICompositionStatement {
 
     public static readonly TYPE = "CompositionStatement"
 
