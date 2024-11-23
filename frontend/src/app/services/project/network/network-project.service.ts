@@ -86,8 +86,9 @@ export class NetworkProjectService {
     
   }
 
-  public deleteFile() {
-
+  public deleteFile(file : Inode) {
+    this.http.delete(this.buildFileURL(file.urn))
+      .subscribe()
   }
 
   /**

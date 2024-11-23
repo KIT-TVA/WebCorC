@@ -157,15 +157,34 @@ export class ProjectService {
    * @param name The name of the element
    */
   public deleteElement(path : string, name : string) {
+    console.log(path)
     let parentDirPath = path.replace(name, '')
+    if (parentDirPath === '') {
+      parentDirPath = '/'
+     }
+
     if (parentDirPath.endsWith('//')) {
       parentDirPath = parentDirPath.slice(0, parentDirPath.length - 1)
     }
 
     const parentDir = this.findByPath(parentDirPath)
+    const elementToDelete = this.findByPath(path)
 
     if (!parentDir) {
       throw new Error("Parent dir of element to delete not found")
+    }
+
+    if (!elementToDelete) {
+      throw new Error("Element not found")
+    }
+
+    let inode = this.mapper.exportFile(elementToDelete)
+    if (elementToDelete instanceof ProjectDirectory) {
+      inode = this.mapper.exportDirectory(elementToDelete)
+    }
+
+    if (this._projectname) {
+      this.network.deleteFile(inode)
     }
 
     const dir = parentDir as ProjectDirectory

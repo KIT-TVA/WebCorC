@@ -124,12 +124,14 @@ export class ProjectExplorerComponent {
     if (element instanceof CodeFile) {
       this.router.navigate(
         ['editor/file/', element.path],
+        { queryParamsHandling: 'preserve' }
       )
     }
 
     if (element instanceof DiagramFile) {
       this.router.navigate(
         ['editor/diagram/', element.path],
+        { queryParamsHandling: 'preserve' }
       )
     }
   }

@@ -31,7 +31,7 @@ export class NetworkTreeService {
     formula.globalConditions = globalConditions
 
     this._networkActivity.next(true)
-
+    //Todo: Websocket?
     this.http
       .post<EMFCbcFormula>(environment.apiUrl + NetworkTreeService.verifyPath, this.mapper.toEMFCbcFormula(formula))
       .subscribe((formula) => {

@@ -11,37 +11,38 @@ import { Statement } from "./statements/statement";
  * Super class Refinement of all statement components
  */
 export abstract class Refinement {
-  private static NEXT_ID: number = 1;
+  private static NEXT_ID: number = 1
 
-  private _id: number;
-  private _precondition: Condition;
+  private _id: number
+  private _precondition: Condition
   private _postcondition: Condition;
-  private _preconditionEditable : boolean = false;
-  private _postconditionEditable : boolean = false;
+  private _preconditionEditable : boolean = false
+  private _postconditionEditable : boolean = false
+  private _proven : boolean = false
 
-  private _onDragMoveEmitter: ReplaySubject<void>;
-  private _onDragEndEmitter: ReplaySubject<CdkDragEnd>;
-  private _position: Position = new Position(0,0);
+  private _onDragMoveEmitter: ReplaySubject<void>
+  private _onDragEndEmitter: ReplaySubject<CdkDragEnd>
+  private _position: Position = new Position(0,0)
 
   protected constructor(protected treeService: TreeService) {
-    this._id = Refinement.NEXT_ID++;
-    this._precondition = new Precondition(this._id);
-    this._postcondition = new Postcondition(this._id);
+    this._id = Refinement.NEXT_ID++
+    this._precondition = new Precondition(this._id)
+    this._postcondition = new Postcondition(this._id)
 
     if (this._id === 1) {
-      this.treeService.rootNode = this;
+      this.treeService.rootNode = this
     }
 
-    this._onDragMoveEmitter = new ReplaySubject<void>();
-    this._onDragEndEmitter = new ReplaySubject<CdkDragEnd>();
+    this._onDragMoveEmitter = new ReplaySubject<void>()
+    this._onDragEndEmitter = new ReplaySubject<CdkDragEnd>()
   }
 
   public static resetIDs(next: number = 1): void {
-    this.NEXT_ID = next;
+    this.NEXT_ID = next
   }
 
   isConditionEditable(condition: Condition): boolean {
-    return this._id === condition.originId;
+    return this._id === condition.originId
   }
 
   isPreconditionEditable(): boolean {
@@ -49,7 +50,7 @@ export abstract class Refinement {
   }
 
   isPostConditionEditable(): boolean {
-    return this._postconditionEditable && this.isConditionEditable(this._postcondition);
+    return this._postconditionEditable && this.isConditionEditable(this._postcondition)
   }
 
   protected toogleEditableCondition() {
