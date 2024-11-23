@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { ConsoleService } from '../../console/console.service';
-import { CBCFormula } from '../CBCFormula';
+import { CBCFormula, ICBCFormula } from '../CBCFormula';
 import { HttpClient } from '@angular/common/http';
 import { NetProject } from './NetProject';
 import { ApiDiagrammFile, ApiDirectory, ApiTextFile, Inode } from '../types/api-elements';
+import { CbcFormulaMapperService } from '../mapper/cbc-formula-mapper.service';
 
 /**
  * Service to interact with the backend for managing the project.
@@ -21,7 +22,7 @@ export class NetworkProjectService {
   private  _dataChange = new BehaviorSubject<ApiDirectory>(new ApiDirectory("", []))
   private _finishedRequest = new Subject<void>()
 
-  constructor(private http : HttpClient, private consoleService : ConsoleService) { }
+  constructor(private http : HttpClient, private mapper : CbcFormulaMapperService , private consoleService : ConsoleService) { }
 
 
   /**
@@ -95,7 +96,7 @@ export class NetworkProjectService {
    * @param urn 
    */
   public async getFileContent(urn : string) :  Promise<string | CBCFormula> {
-
+    console.log("getFileContent")
     const request = new Request(this.buildFileURL(urn), {
       method : "GET"
     })
@@ -103,7 +104,7 @@ export class NetworkProjectService {
     return await fetch(request)
       .then((response : Response) => response.blob())
       .then(async (blob) => {
-        let file : string | CBCFormula
+        let file : string | ICBCFormula
         if (blob.type === "application/json") {
           file = JSON.parse(await blob.text())
         } else {
@@ -115,24 +116,7 @@ export class NetworkProjectService {
           return file
         }
 
-    
-        const formula = new CBCFormula(
-          file.type,
-          file.name,
-          file.proven,
-          file.comment,
-          file.compositionTechnique,
-          file.className,
-          file.methodName,
-          file.javaVariables,
-          file.globalConditions,
-          file.preCondition,
-          file.postCondition,
-          file.statement
-        )
-
-        formula.import()
-        return formula
+        return this.mapper.importFormula(file)
       })
 
   }

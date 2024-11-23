@@ -42,7 +42,7 @@ export class ChooseRefinementComponent {
   constructor(public dialogRef: MatDialogRef<ChooseRefinementComponent>) {}
 
   /**
-   * Close the Dialog when clicking outside of the dialog content
+   * Close the Dialog when clicking outside the dialog content
    */
   onNoClick(): void {
     this.dialogRef.close();

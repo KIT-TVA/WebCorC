@@ -202,7 +202,7 @@ export class ProjectService {
     let needstoBeFetched = false
 
     if (file.content instanceof CBCFormula) {
-      needstoBeFetched = (file.content as CBCFormula).statement === null
+      needstoBeFetched = (file.content as CBCFormula).statement === undefined
     } else {
       needstoBeFetched = file.content === ""
     }

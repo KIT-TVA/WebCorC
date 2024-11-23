@@ -1,6 +1,5 @@
 import { ConditionDTO, IConditionDTO } from "../../types/condition/condition";
 import { IStatement, Statement } from "../../types/statements/statement";
-import { importStatementsfromJSON } from "./util";
 
 export interface ICBCFormula {
     type : string
@@ -14,7 +13,7 @@ export interface ICBCFormula {
     globalConditions : IConditionDTO[]
     preCondition : IConditionDTO
     postCondition : IConditionDTO
-    statement : IStatement | null 
+    statement : IStatement | undefined 
 }
 
 /**
@@ -35,16 +34,7 @@ export class CBCFormula implements ICBCFormula {
         public globalConditions : ConditionDTO[]  = [],
         public preCondition : ConditionDTO = new ConditionDTO(1),
         public postCondition : ConditionDTO = new ConditionDTO(1),
-        public statement : Statement | null = null
+        public statement : Statement | undefined = undefined
     ) {}
-
-
-    public import() {
-        if (!this.statement) return
-
-        let statement = importStatementsfromJSON(this.statement)
-
-        this.statement = statement ? statement : null
-    }
 }
 
