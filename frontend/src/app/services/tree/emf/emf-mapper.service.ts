@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { EMFCbcFormula } from './emf-cbc-formula';
-import { EMFCondition } from './emf-condition';
+import { EMFCondition, EMFConditions, GlobalEMFConditions } from './emf-condition';
 import { CBCFormula } from '../../project/CBCFormula';
-import { EMFJavaVariable } from './emf-java-variable';
+import { EMFJavaVariables, EMFVariable, EMFVariables } from './emf-java-variable';
 import { ConditionDTO } from '../../../types/condition/condition';
 import { EMFCompositionStatement, EMFRepetitionStatement, EMFSelectionStatement, EMFSimpleStatement, EMFStatement, EMFStrongWeakStatement } from './emf-statement';
 import { SimpleStatement } from '../../../types/statements/simple-statement';
@@ -11,8 +11,6 @@ import { Statement } from '../../../types/statements/statement';
 import { RepetitionStatement } from '../../../types/statements/repetition-statement';
 import { CompositionStatement } from '../../../types/statements/compositon-statement';
 import { StrongWeakStatement } from '../../../types/statements/strong-weak-statement';
-import { Refinement } from '../../../types/refinement';
-import { SimpleStatementComponent } from '../../../components/editor/statements/simple-statement/simple-statement.component';
 
 @Injectable({
   providedIn: 'root'
@@ -149,10 +147,10 @@ export class EmfMapperService {
     return
   } 
 
-  private toEMFGlobalConditions(conditions : ConditionDTO[]) : EMFCondition[] {
-    const emfCondtions : EMFCondition[] = []
+  private toEMFGlobalConditions(conditions : ConditionDTO[]) : EMFConditions {
+    const emfCondtions : EMFConditions = new GlobalEMFConditions()
     for (const condition of conditions) {
-      emfCondtions.push(
+      emfCondtions.conditions.push(
         this.toEMFCondition(condition)
       )
     }
@@ -164,10 +162,10 @@ export class EmfMapperService {
     return { name : condition.content }
   }
 
-  private toEMFJavaVariables(javaVariables : string[]) : EMFJavaVariable[] {
-    const variables : EMFJavaVariable[] = []
+  private toEMFJavaVariables(javaVariables : string[]) : EMFJavaVariables {
+    const variables : EMFVariables = new EMFJavaVariables()
     for (const variable of javaVariables) {
-      variables.push(
+      variables.variables.push(
         this.toEMFVariable(variable)
       )
     }
@@ -177,7 +175,7 @@ export class EmfMapperService {
 
 
 
-  private toEMFVariable(javaVariable : string) : EMFJavaVariable {
+  private toEMFVariable(javaVariable : string) : EMFVariable {
     return { name : javaVariable }
   }
 
@@ -280,18 +278,18 @@ export class EmfMapperService {
     return new ConditionDTO(0, "", emfCondition.name)
   }
 
-  private toVariables(emfJavaVariables : EMFJavaVariable[]) : string[] {
+  private toVariables(emfJavaVariables : EMFJavaVariables) : string[] {
     const variables : string[] = []
-    for (const variable of emfJavaVariables) {
+    for (const variable of emfJavaVariables.variables) {
       variables.push(variable.name)
     }
 
     return variables
   }
 
-  private toGlobalConditions(emfConditions : EMFCondition[]) : ConditionDTO[] {
+  private toGlobalConditions(emfConditions : EMFConditions) : ConditionDTO[] {
     const conditions : ConditionDTO[] = []
-    for (const condition of emfConditions) {
+    for (const condition of emfConditions.conditions) {
       conditions.push(this.toConditon(condition))
     }
     return conditions
