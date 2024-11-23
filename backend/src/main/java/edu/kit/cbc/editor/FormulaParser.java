@@ -11,13 +11,19 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import de.tu_bs.cs.isf.cbc.cbcmodel.CbCFormula;
 import de.tu_bs.cs.isf.cbc.cbcmodel.CbcmodelPackage;
+import de.tu_bs.cs.isf.cbc.cbcmodel.GlobalConditions;
+import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariables;
 import jakarta.inject.Singleton;
 
 @Singleton
-public class CbcFormulaParser {
+public class FormulaParser {
+
+    private static String JAVA_VARIABLES_NAME = "javaVariables";
+    private static String GLOBAL_CONDITIONS_NAME = "globalConditions";
 
     private ObjectMapper mapper;
 
@@ -25,7 +31,7 @@ public class CbcFormulaParser {
     //emfjson-jackson can actually use the generated classes
     private CbcmodelPackage cbcmodelPackage = CbcmodelPackage.eINSTANCE;
 
-    CbcFormulaParser() {
+    FormulaParser() {
         this.mapper = new ObjectMapper();
         EMFModule module = new EMFModule();
         module.configure(Feature.OPTION_SERIALIZE_DEFAULT_VALUE, true);
@@ -53,11 +59,36 @@ public class CbcFormulaParser {
         mapper.registerModule(module);
     }
 
-    CbCFormula fromJsonString(String jsonString) throws JsonProcessingException {
-        return mapper.readValue(jsonString, CbCFormula.class);
+    CbCFormula fromJsonStringToCbC(String jsonString) throws JsonProcessingException {
+        //TODO: consider setting parent fields of statements accordingly
+        return fromJsonString(jsonString, CbCFormula.class);
     }
 
-    String toJsonString(CbCFormula formula) throws JsonProcessingException {
-        return mapper.writeValueAsString(formula);
+    JavaVariables fromJsonStringToJavaVariables(String jsonString) throws JsonProcessingException {
+        String javaVariablesString = mapper.readTree(jsonString)
+            .get(JAVA_VARIABLES_NAME)
+            .toString();
+
+        return fromJsonString(javaVariablesString, JavaVariables.class);
+    }
+
+    GlobalConditions fromJsonStringToGlobalConditions(String jsonString) throws JsonProcessingException {
+        String globalConditionsString = mapper.readTree(jsonString)
+            .get(GLOBAL_CONDITIONS_NAME)
+            .toString();
+
+        return fromJsonString(globalConditionsString, GlobalConditions.class);
+    }
+
+    <T> T fromJsonString(String jsonString, Class<T> type) throws JsonProcessingException {
+        return mapper.readValue(jsonString, type);
+    }
+
+    String toJsonString(CbCFormula formula, JavaVariables javaVariables, GlobalConditions globalConditions) throws JsonProcessingException {
+        ObjectNode result = (ObjectNode) mapper.valueToTree(formula);
+        result.putPOJO(JAVA_VARIABLES_NAME, mapper.valueToTree(javaVariables));
+        result.putPOJO(GLOBAL_CONDITIONS_NAME, mapper.valueToTree(globalConditions));
+
+        return result.toString();
     }
 }

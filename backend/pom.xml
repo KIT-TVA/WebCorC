@@ -29,6 +29,10 @@
       <id>central</id>
       <url>https://repo.maven.apache.org/maven2</url>
     </repository>
+    <repository>
+      <id>gitlab-maven</id>
+      <url>https://git.key-project.org/api/v4/projects/35/packages/maven</url>
+    </repository>
   </repositories>
 
   <dependencies>
@@ -136,6 +140,11 @@
       <groupId>org.eclipse.emfcloud</groupId>
       <artifactId>emfjson-jackson</artifactId>
       <version>2.2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.key-project</groupId>
+      <artifactId>key.core</artifactId>
+      <version>2.12.2</version>
     </dependency>
   </dependencies>
   <build>
@@ -246,5 +255,4 @@
       </plugin>
     </plugins>
   </build>
-
 </project>
