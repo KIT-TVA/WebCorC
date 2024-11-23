@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subject, first} from 'rxjs';
 import { CBCFormula } from './CBCFormula';
 import { NetworkProjectService } from './network/network-project.service';
-import { ProjectDirectory, ProjectElement } from './types/project-elements';
+import { CodeFile, DiagramFile, ProjectDirectory, ProjectElement } from './types/project-elements';
 import { ProjectElementsMapperService } from './types/project-elements-mapper.service';
+import { ApiDiagrammFile } from './types/api-elements';
 
 /**
  * Service for project managment.
@@ -157,7 +158,6 @@ export class ProjectService {
    * @param name The name of the element
    */
   public deleteElement(path : string, name : string) {
-    console.log(path)
     let parentDirPath = path.replace(name, '')
     if (parentDirPath === '') {
       parentDirPath = '/'
@@ -226,7 +226,7 @@ export class ProjectService {
       needstoBeFetched = file.content === ""
     }
 
-    let content : string | CBCFormula = ""
+    let content : string | CBCFormula = (file as CodeFile).content
     // if file content is default value and projectId is set
     if (this.projectId && needstoBeFetched) {
       content = await this.network.getFileContent(urn)
@@ -266,7 +266,15 @@ export class ProjectService {
     for (const item of folder.content) {
       if (item instanceof ProjectDirectory) {
         this.uploadFolder(item)
-      } else {
+        continue
+      }
+      
+      if (item instanceof DiagramFile && item.content.statement !== undefined) {
+        this.network.uploadFile(this.mapper.exportFile(item))
+        continue
+      }
+
+      if (item instanceof CodeFile && item.content !== "") {
         this.network.uploadFile(this.mapper.exportFile(item))
       }
     }

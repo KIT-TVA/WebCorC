@@ -141,8 +141,6 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
 
     const newFormula = await this.projectService.getFileContent(this._urn) as CBCFormula
 
-    console.log(newFormula)
-
     // if the file is not empty load content
     if (newFormula.statement) {
 

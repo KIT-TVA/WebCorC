@@ -173,8 +173,6 @@ export class SimpleStatementComponent extends Refinement {
   override resetPosition(position: Position): void {
       this.position = position
 
-      console.log(this._statement)
-
       this._statement?.resetPosition(new Position(position.xinPx + 200, position.yinPx))
   }
 
