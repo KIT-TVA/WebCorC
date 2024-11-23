@@ -147,6 +147,6 @@ export class CbcFormulaMapperService {
 
   private importPosition(position : IPosition) : Position {
     return new Position(position.xinPx, position.yinPx)
-}
+  }
 
 }

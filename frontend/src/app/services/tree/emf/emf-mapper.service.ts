@@ -11,6 +11,8 @@ import { Statement } from '../../../types/statements/statement';
 import { RepetitionStatement } from '../../../types/statements/repetition-statement';
 import { CompositionStatement } from '../../../types/statements/compositon-statement';
 import { StrongWeakStatement } from '../../../types/statements/strong-weak-statement';
+import { Refinement } from '../../../types/refinement';
+import { SimpleStatementComponent } from '../../../components/editor/statements/simple-statement/simple-statement.component';
 
 @Injectable({
   providedIn: 'root'

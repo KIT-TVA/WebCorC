@@ -1,12 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Refinement } from "../../types/refinement";
-import { ReplaySubject, Subject, first } from "rxjs";
+import { ReplaySubject, Subject } from "rxjs";
 import { VerificationResult } from "../../types/net/verification-net-types";
 import { JavaVariable } from './JavaVariable';
 import { ConditionDTO } from '../../types/condition/condition';
 import { Position } from '../../types/position';
-import { NetworkTreeService } from './network/network-tree.service';
-import { CBCFormula } from '../project/CBCFormula';
 
 /**
  * Service for the context of the tree in the graphical editor.
@@ -29,15 +27,11 @@ export class TreeService {
   private _globalConditions : string[] = []
   variablesChangedNotifier: Subject<void> = new Subject<void>();
 
-  constructor(private network : NetworkTreeService) {
+  constructor() {
     this._redrawNotifier = new ReplaySubject();
     this._deletionNotifier = new ReplaySubject();
     this._verificationResultNotifier = new Subject<VerificationResult>();
     this._verifyNotifier = new Subject<void>();
-  }
-
-  public verify(formula : CBCFormula): void {
-    this.network.verify(formula)
   }
 
   public generateCode(language : string, options : any): void {

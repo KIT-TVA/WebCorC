@@ -15,6 +15,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { NuMonacoEditorModule } from '@ng-util/monaco-editor';
 import { ConsoleComponent } from './components/console/console.component';
 import { ProjectService } from './services/project/project.service';
+import { NetworkTreeService } from './services/tree/network/network-tree.service';
 
 /**
  * Top Component of this application, 
@@ -30,10 +31,10 @@ import { ProjectService } from './services/project/project.service';
 })
 export class AppComponent {
 
-  constructor(public treeService: TreeService, private dialog: MatDialog, public projectService : ProjectService) {}
+  constructor(public treeService: TreeService, private networkTreeService : NetworkTreeService, private dialog: MatDialog, public projectService : ProjectService) {}
 
   verify(): void {
-    this.treeService.verifyNotifier.next()
+    this.networkTreeService.verify(this.treeService.rootNode, this.treeService.variables, this.treeService.conditions)
   }
 
   openGenerateCodeDialog(): void {
