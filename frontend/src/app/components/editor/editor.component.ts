@@ -58,6 +58,8 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   @Input()
   public set urn(uniformRessourceName : string) {
 
+    console.log("test")
+
     // prevent reloading the same context
     if (uniformRessourceName == this._urn) {
       return

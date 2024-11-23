@@ -92,9 +92,6 @@ export class FileEditorComponent implements AfterViewInit,OnDestroy {
   }
 
   private saveContentToFile() : void {
-    console.log(this.code)
-    console.log("sync File Content")
     this.projectService.syncFileContent(this._urn, this.code)
-    console.log(this.projectService.getFileContent(this._urn))
   }
 }
