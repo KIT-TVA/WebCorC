@@ -59,8 +59,6 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   @Input()
   public set urn(uniformRessourceName : string) {
 
-    console.log("test")
-
     // prevent reloading the same context
     if (uniformRessourceName == this._urn) {
       return
@@ -147,14 +145,11 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       newFormula = await this.projectService.getFileContent(this._urn) as CBCFormula
     } catch (e) {
 
-      console.log(e)
-
       const projectId = this.router.parseUrl(this.router.url).queryParamMap.get("projectId")
       if (!this.projectService.projectId && projectId) {
         this.projectService.projectId = projectId
 
         this.projectService.dataChange.subscribe(async () => {
-          console.log("downloaded workspace")
           newFormula = await this.projectService.getFileContent(this._urn) as CBCFormula
           this.loadFileContent()
         })

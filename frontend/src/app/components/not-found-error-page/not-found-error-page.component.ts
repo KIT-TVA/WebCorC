@@ -22,8 +22,6 @@ export class NotFoundErrorPageComponent implements AfterViewInit {
     
     const urlTree = this.router.parseUrl(this.router.url)
 
-    console.log(urlTree)
-
     const projectId = urlTree.queryParamMap.get("projectId")
     
     if (!projectId) {

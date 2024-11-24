@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { NuMonacoEditorModule } from '@ng-util/monaco-editor';
 import { FormsModule } from '@angular/forms';
 import { ProjectService } from '../../services/project/project.service';
+import { Router } from '@angular/router';
 
 /**
  * Simple wrapper around the nu-monaco text editor, which saves and loads the file content from the {@link ProjectService}
@@ -28,7 +29,7 @@ export class FileEditorComponent implements AfterViewInit,OnDestroy {
   //Todo: Fix / Inverstigate Flickering Issue when usuing getters and setters
   public code : string = '';
 
-  constructor(private projectService : ProjectService) {
+  constructor(private projectService : ProjectService, private router : Router) {
     this.projectService.editorNotify.subscribe(() => {
       this.saveContentToFile()
     })
@@ -83,7 +84,22 @@ export class FileEditorComponent implements AfterViewInit,OnDestroy {
   }
 
   private async loadContentFromFile() {
-    const newCode = await this.projectService.getFileContent(this._urn) as string
+    let newCode : string | undefined = undefined 
+    try {
+      newCode = await this.projectService.getFileContent(this._urn) as string
+    } catch (e) {
+      const projectId = this.router.parseUrl(this.router.url).queryParamMap.get("projectId")
+      if (!this.projectService.projectId && projectId) {
+        this.projectService.projectId = projectId
+        
+        this.projectService.dataChange.subscribe(async () => {
+          newCode = await this.projectService.getFileContent(this._urn) as string
+          this.loadContentFromFile()
+        })
+
+        this.projectService.downloadWorkspace()
+      }
+    }
     if (newCode) {
       this.code = newCode 
     } else {
