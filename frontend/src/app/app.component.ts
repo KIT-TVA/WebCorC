@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatSidenavModule } from "@angular/material/sidenav";
+import { MatSnackBar } from "@angular/material/snack-bar";
 import { FormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -16,6 +17,7 @@ import { NuMonacoEditorModule } from '@ng-util/monaco-editor';
 import { ConsoleComponent } from './components/console/console.component';
 import { ProjectService } from './services/project/project.service';
 import { NetworkTreeService } from './services/tree/network/network-tree.service';
+import { CreateProjectDialogComponent } from './components/project-explorer/create-project-dialog/create-project-dialog.component';
 
 /**
  * Top Component of this application, 
@@ -31,7 +33,13 @@ import { NetworkTreeService } from './services/tree/network/network-tree.service
 })
 export class AppComponent {
 
-  constructor(public treeService: TreeService, private networkTreeService : NetworkTreeService, private dialog: MatDialog, public projectService : ProjectService) {}
+  constructor(
+    public treeService: TreeService,
+    private networkTreeService : NetworkTreeService,
+    private dialog: MatDialog,
+    public projectService : ProjectService,
+    private snackBar : MatSnackBar
+  ) {}
 
   verify(): void {
     this.networkTreeService.verify(this.treeService.rootNode, this.treeService.variables, this.treeService.conditions)
@@ -49,9 +57,22 @@ export class AppComponent {
    * Write the url of the current project into the clipboard 
    */
   public share() {
-    // Todo: Ensure to create Project if projectid is undefined
-    navigator.clipboard.writeText(window.location.protocol + "//" +window.location.hostname + ":" + window.location.port + "?projectId=" + this.projectService.projectId)
-    //Todo: Visual Feedback to user
+    let wait = false 
+    if (this.projectService.shouldCreateProject) {
+      this.dialog.open(CreateProjectDialogComponent)
+      wait = true 
+    }
+
+    this.projectService.uploadWorkspace(wait)
+
+    this.projectService.editorNotify.subscribe(() => {
+      navigator.clipboard.writeText(window.location.protocol + "//" +window.location.hostname + ":" + window.location.port + "?projectId=" + this.projectService.projectId)
+      this.snackBar.open("Copied project url", "Dismiss", {
+        horizontalPosition : "end",
+        verticalPosition: "bottom",
+        duration: 5000
+      })
+    })
   }
 
   /**

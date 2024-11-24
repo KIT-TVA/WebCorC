@@ -4,7 +4,6 @@ import { CBCFormula } from './CBCFormula';
 import { NetworkProjectService } from './network/network-project.service';
 import { CodeFile, DiagramFile, ProjectDirectory, ProjectElement } from './types/project-elements';
 import { ProjectElementsMapperService } from './types/project-elements-mapper.service';
-import { ApiDiagrammFile } from './types/api-elements';
 
 /**
  * Service for project managment.
