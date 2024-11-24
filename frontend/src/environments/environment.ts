@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: "https://api.qbc.cloud.yniklas.de"
+  apiUrl: "http://localhost:8081"
 };

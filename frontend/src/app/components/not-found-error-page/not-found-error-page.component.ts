@@ -37,11 +37,14 @@ export class NotFoundErrorPageComponent implements AfterViewInit {
     this._message = "Project defined, loading..."
 
     this.projectService.projectId = projectId
-    this.projectService.downloadWorkspace()
 
     this.projectService.dataChange.subscribe(() => {
       this.router.navigateByUrl(urlTree)
     })
+
+    this.projectService.downloadWorkspace()
+
+
   }
 
   get message() {

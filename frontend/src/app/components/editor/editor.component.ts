@@ -16,6 +16,7 @@ import { ProjectService } from '../../services/project/project.service';
 import { CBCFormula } from '../../services/project/CBCFormula';
 import { SimpleStatement } from '../../types/statements/simple-statement';
 import { OptionsComponent } from './options/options.component';
+import { Router } from '@angular/router';
 
 /**
  * Component to edit {@link CBCFormula} by editing a grahical representation based of the statement components like {@link SimpleStatementComponent}.
@@ -45,7 +46,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
    * @param treeService The service to interact with the refinements 
    * @param projectService The service to persist and laod the file content
    */
-  constructor(public treeService: TreeService, private projectService : ProjectService) {
+  constructor(public treeService: TreeService, private projectService : ProjectService, private router : Router) {
     this.projectService.editorNotify.subscribe(() => {
       this.saveContentToFile()
     })
@@ -141,10 +142,30 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
 
     Refinement.resetIDs(2)
 
-    const newFormula = await this.projectService.getFileContent(this._urn) as CBCFormula
+    let newFormula : CBCFormula | undefined = undefined
+    try {
+      newFormula = await this.projectService.getFileContent(this._urn) as CBCFormula
+    } catch (e) {
+
+      console.log(e)
+
+      const projectId = this.router.parseUrl(this.router.url).queryParamMap.get("projectId")
+      if (!this.projectService.projectId && projectId) {
+        this.projectService.projectId = projectId
+
+        this.projectService.dataChange.subscribe(async () => {
+          console.log("downloaded workspace")
+          newFormula = await this.projectService.getFileContent(this._urn) as CBCFormula
+          this.loadFileContent()
+        })
+
+        this.projectService.downloadWorkspace()
+      }
+
+    }
 
     // if the file is not empty load content
-    if (newFormula.statement) {
+    if (newFormula && newFormula.statement) {
 
       // manually set the attributes of the root node
       const root = this.rootNodeOutlet['_componentRef'].instance as SimpleStatementComponent
@@ -169,13 +190,15 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       this.variables.importVariables(newFormula.javaVariables)
       this.conditions.importConditions(newFormula.globalConditions)
 
-    } else {
-      // file is empty, reset rootNode to default values
-      this.rootNode = SimpleStatementComponent
-      const root =  this.rootNodeOutlet['_componentRef'].instance as SimpleStatementComponent
-      root.precondition.content = ""
-      root.postcondition.content = ""
+      return
     }
+    
+    // file is empty, reset rootNode to default values
+    this.rootNode = SimpleStatementComponent
+    const root =  this.rootNodeOutlet['_componentRef'].instance as SimpleStatementComponent
+    root.precondition.content = ""
+    root.postcondition.content = ""
+    
   }
 
   /**
