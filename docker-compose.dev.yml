@@ -27,6 +27,7 @@ services:
       - "8081:8080"
     volumes: 
       - "./backend/:/app/"
+      - "./tmp/:/tmp/"
 
     depends_on:
       minio:

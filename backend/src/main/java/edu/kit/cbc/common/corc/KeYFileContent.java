@@ -14,7 +14,7 @@ import de.tu_bs.cs.isf.cbc.cbcmodel.VariableKind;
 public class KeYFileContent {
 
     private String location = "";
-    private String helper = "../../HelperFiles/default.key";
+    private String helper = "helper.key";
     private String programVariables = "";
     private String globalConditions = "";
     private String conditionArraysCreated = "";

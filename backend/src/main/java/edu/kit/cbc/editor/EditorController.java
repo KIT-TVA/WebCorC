@@ -1,11 +1,16 @@
 package edu.kit.cbc.editor;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import de.tu_bs.cs.isf.cbc.cbcmodel.CbCFormula;
 import de.tu_bs.cs.isf.cbc.cbcmodel.GlobalConditions;
 import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariables;
 import edu.kit.cbc.common.Problem;
+import edu.kit.cbc.common.corc.VerifyAllStatements;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
@@ -14,8 +19,12 @@ import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Produces;
+import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
+
 
 @Controller("/editor")
+@ExecuteOn(TaskExecutors.BLOCKING)
 public class EditorController {
 
     private final FormulaParser parser;
@@ -44,13 +53,14 @@ public class EditorController {
     public HttpResponse<?> verify(@Body String cbcFormulaString) {
         try {
             CbCFormula formula = parser.fromJsonStringToCbC(cbcFormulaString);
-            //TODO: perform actual verification procedure
-            //currently the proven state is just inverted for demo purposes
-
             JavaVariables jv = parser.fromJsonStringToJavaVariables(cbcFormulaString);
             GlobalConditions gc = parser.fromJsonStringToGlobalConditions(cbcFormulaString);
-
-            formula.setProven(!formula.isProven());
+            try {
+                Path p = Files.createTempDirectory("proof");
+                VerifyAllStatements.verify(formula, jv, gc, null, p.toUri());
+            } catch (IOException e) {
+                return HttpResponse.serverError(e.getMessage());
+            }
             return HttpResponse.ok(parser.toJsonString(formula, jv, gc));
         } catch (JsonProcessingException e) {
             return HttpResponse.serverError(Problem.PARSING_ERROR(e.getMessage()));

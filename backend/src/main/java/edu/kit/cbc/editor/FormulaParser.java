@@ -61,6 +61,7 @@ public class FormulaParser {
 
     CbCFormula fromJsonStringToCbC(String jsonString) throws JsonProcessingException {
         //TODO: consider setting parent fields of statements accordingly
+        //TODO: consider checking pre and post conditions
         return fromJsonString(jsonString, CbCFormula.class);
     }
 
