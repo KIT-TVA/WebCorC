@@ -102,12 +102,14 @@ export class SelectionStatementComponent extends Refinement {
     }
   }
 
-  override resetPosition(position: Position): void {
-      this.position = position
+  override resetPosition(position: Position, offset : Position): void {
+      this.position.set(position)
+      this.position.add(offset)
 
-      for (let i = 0; i < this._statements.length; i++) {
+
+      for (let i = this._statements.length ; i > -1; i--) {
         if (this.statements) {
-          this._statements[i]?.resetPosition(new Position(position.xinPx + 200 * (i + 1), position.yinPx + 200 * (i + 1)))
+          this._statements[i]?.resetPosition(this.position, new Position(600, (this._statements.length - i + 2) * -100))
         }
       }
   }

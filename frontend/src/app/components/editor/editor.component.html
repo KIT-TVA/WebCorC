@@ -25,7 +25,7 @@
   </mat-accordion>
 </div>
 
-<div *ngIf="rootNode" id="editorContainer" (scroll)="onEditorContainerScrolled()">
+<div *ngIf="rootNode" id="editorContainer" (scroll)="onEditorContainerScrolled()" #editorContainer>
   <!-- Control elements for the scrollWidth and scrollHeight of the editor container -->
   <div id="editorWidthController"></div>
   <div id="editorHeightController"></div>

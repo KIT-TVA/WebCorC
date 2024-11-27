@@ -10,4 +10,14 @@ export interface IPosition {
 export class Position implements IPosition {
 
     constructor(public xinPx : number, public yinPx : number) {}
+
+    public set(position : Position) {
+        this.xinPx = position.xinPx
+        this.yinPx = position.yinPx
+    }
+
+    public add(offset : Position) {
+        this.xinPx = this.xinPx + offset.xinPx
+        this.yinPx = this.yinPx + offset.yinPx
+    }
 }

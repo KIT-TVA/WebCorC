@@ -145,9 +145,10 @@ export class StrongWeakStatementComponent extends Refinement {
   }
 
 
-  override resetPosition(position: Position): void {
-      this.position = position
+  override resetPosition(position: Position, offset : Position): void {
+      this.position.set(position)
+      this.position.add(offset)
 
-      this._statement?.resetPosition(new Position(position.xinPx + 200, position.yinPx))
+      this._statement?.resetPosition(this.position, new Position(100, 0))
   }
 }

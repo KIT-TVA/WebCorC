@@ -128,10 +128,15 @@ export class RepetitionStatementComponent extends Refinement {
     this.loopStatement.refreshLinkState()
   }
 
-  override resetPosition(position: Position): void {
-      this.position = position;
+  override resetPosition(position: Position, offset : Position): void {
+    if (offset.xinPx < 0) {
+      offset.xinPx = offset.xinPx * 3.5 
+    }
+    
+    this.position.set(position)
+    this.position.add(offset)
 
-      this._loopStatement?.resetPosition(new Position(position.xinPx + 200, position.yinPx))
+    this._loopStatement?.resetPosition(this.position, new Position(200, 0))
   }
 
   get loopStatement() : Refinement | undefined {

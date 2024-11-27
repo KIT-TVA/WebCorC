@@ -20,6 +20,7 @@ export class TreeService {
 
   private _title: string = "";
   private _rootNode: Refinement | undefined;
+  private _editorWidth : number = 0;
 
   private readonly _verificationResultNotifier: Subject<VerificationResult>
   
@@ -38,7 +39,7 @@ export class TreeService {
   }
 
   public resetPositions() : void {
-    this._rootNode?.resetPosition(new Position(0,0))
+    this._rootNode?.resetPosition(new Position(this._editorWidth / 2, 0), new Position( -450, 10))
     this._redrawNotifier.next()
   }
 
@@ -169,5 +170,9 @@ export class TreeService {
 
   set rootNode(value: Refinement | undefined) {
     this._rootNode = value;
+  }
+
+  set editorWidth(editorWidth : number) {
+    this._editorWidth = editorWidth
   }
 }
