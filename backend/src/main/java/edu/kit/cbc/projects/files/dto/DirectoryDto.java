@@ -40,8 +40,7 @@ public class DirectoryDto extends FileDirectoryDto {
         String name = path.removeFirst();
 
         if (path.isEmpty() && inodeType.equals(FileDto.inodeType)) {
-            //TODO: hardcoded FileType
-            FileDto newFile = new FileDto(name, FileType.other);
+            FileDto newFile = new FileDto(name, getFileType(name));
             if (!content.contains(newFile)) {
                 content.add(newFile);
             }
@@ -62,6 +61,14 @@ public class DirectoryDto extends FileDirectoryDto {
             content.add(nextDir);
         }
         nextDir.addFilePath(path, inodeType);
+    }
+
+    private FileType getFileType(String name) {
+        return name.endsWith(".key") ? FileType.key
+             : name.endsWith(".prove") ? FileType.prove
+             : name.endsWith(".java") ? FileType.java
+             : name.endsWith(".diagram") ? FileType.diagram
+             : FileType.other;
     }
 
     public void removeFilePath(URI path) {
