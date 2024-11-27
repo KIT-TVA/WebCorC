@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Input, OnDestroy, Type, ViewChild, ViewContainerRef} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, HostListener, Input, OnDestroy, Type, ViewChild, ViewContainerRef} from '@angular/core';
 import {CommonModule, NgComponentOutlet} from '@angular/common';
 import {RefinementWidgetComponent} from "../../widgets/refinement-widget/refinement-widget.component";
 import {Refinement} from "../../types/refinement";
@@ -17,6 +17,7 @@ import { CBCFormula } from '../../services/project/CBCFormula';
 import { SimpleStatement } from '../../types/statements/simple-statement';
 import { OptionsComponent } from './options/options.component';
 import { Router } from '@angular/router';
+import { EditorService } from '../../services/editor/editor.service';
 
 /**
  * Component to edit {@link CBCFormula} by editing a grahical representation based of the statement components like {@link SimpleStatementComponent}.
@@ -35,6 +36,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   @ViewChild(NgComponentOutlet, {static: false}) rootNodeOutlet!: NgComponentOutlet
   @ViewChild("variables") variables! : VariablesComponent
   @ViewChild("conditions") conditions! : GlobalConditionsComponent
+  @ViewChild("editorContainer") editorContainer!: ElementRef
 
   rootNode: Type<SimpleStatementComponent> | undefined
 
@@ -46,10 +48,17 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
    * @param treeService The service to interact with the refinements 
    * @param projectService The service to persist and laod the file content
    */
-  constructor(public treeService: TreeService, private projectService : ProjectService, private router : Router) {
+  constructor(
+    public treeService: TreeService,
+    private projectService : ProjectService,
+    private editorService : EditorService,
+    private router : Router
+  ) {
     this.projectService.editorNotify.subscribe(() => {
       this.saveContentToFile()
     })
+
+    
   }
   
   /**
@@ -99,6 +108,24 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     setTimeout(() => this.loadFileContent(), 10)
     this.projectService.editorNotify.subscribe(() => {
       this.saveContentToFile()
+    })
+
+    this.treeService.editorWidth = this.editorContainer.nativeElement.offsetWidth
+
+    this.editorService.reload.subscribe(() => {
+      let child : Refinement | undefined
+      if (this.treeService.rootNode) {
+        child = (this.treeService.rootNode as SimpleStatementComponent).statement
+      }
+
+      Refinement.resetIDs(1)
+
+      if (child) {
+        this.treeService.deletionNotifier.next(child)
+        this.examplesSpawn.clear()
+      }
+
+      this.loadFileContent()
     })
   }
 
@@ -201,5 +228,10 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
    */
   public onEditorContainerScrolled(): void {
     this.treeService.onEditorContainerScrolled();
+  }
+
+  @HostListener('window:resize', ['event'])
+  onHostWindowResize() {
+    this.treeService.editorWidth = this.editorContainer.nativeElement.offsetWidth
   }
 }

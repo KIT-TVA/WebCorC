@@ -170,10 +170,15 @@ export class SimpleStatementComponent extends Refinement {
     }
   }
 
-  override resetPosition(position: Position): void {
-      this.position = position
+  override resetPosition(position: Position, offset : Position): void {
+    this.position.set(position)
+    this.position.add(offset)
+      
+    console.log(this.position)
 
-      this._statement?.resetPosition(new Position(position.xinPx + 200, position.yinPx))
+    if (this._statement) {
+      this._statement.resetPosition(this.position, new Position(100, -10))
+    }
   }
 
 }

@@ -18,6 +18,7 @@ import { ConsoleComponent } from './components/console/console.component';
 import { ProjectService } from './services/project/project.service';
 import { NetworkTreeService } from './services/tree/network/network-tree.service';
 import { CreateProjectDialogComponent } from './components/project-explorer/create-project-dialog/create-project-dialog.component';
+import { first } from 'rxjs';
 
 /**
  * Top Component of this application, 
@@ -65,7 +66,7 @@ export class AppComponent {
 
     this.projectService.uploadWorkspace(wait)
 
-    this.projectService.editorNotify.subscribe(() => {
+    this.projectService.editorNotify.pipe(first()).subscribe(() => {
       navigator.clipboard.writeText(window.location.protocol + "//" +window.location.hostname + ":" + window.location.port + "?projectId=" + this.projectService.projectId)
       this.snackBar.open("Copied project url", "Dismiss", {
         horizontalPosition : "end",

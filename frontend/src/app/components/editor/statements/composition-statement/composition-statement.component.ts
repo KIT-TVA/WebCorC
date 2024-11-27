@@ -156,14 +156,12 @@ export class CompositionStatementComponent extends Refinement {
     }
   }
 
-  override resetPosition(position : Position): void {
-    this.position = position;
+  override resetPosition(position : Position, offset : Position): void {
+    this.position.set(position)
+    this.position.add(offset)
 
-    const leftPosition = new Position(position.xinPx + 200, position.yinPx + 200)
-    const rightPosition = new Position(position.xinPx + 200, position.yinPx)
-
-    this._leftStatement?.resetPosition(leftPosition)
-    this._rightStatement?.resetPosition(rightPosition)
+    this._leftStatement?.resetPosition(this.position, new Position(-200, 0))
+    this._rightStatement?.resetPosition(this.position, new Position(200 , -210))
   }
 
 
