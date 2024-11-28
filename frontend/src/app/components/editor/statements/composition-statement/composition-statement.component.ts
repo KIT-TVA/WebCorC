@@ -213,8 +213,7 @@ export class CompositionStatementComponent extends Refinement {
     return new CompositionStatement(
       this.getTitle(),
       this.id,
-      // Todo: Save Statement Proven State 
-      false,
+      this.proven,
       // Todo: Implement annotation feature or drop comment attribute 
       "",
       this.precondition.export(),

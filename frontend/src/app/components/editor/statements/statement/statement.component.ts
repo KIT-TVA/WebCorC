@@ -20,6 +20,7 @@ import {MatListModule} from "@angular/material/list";
 import {MatDialog} from "@angular/material/dialog";
 import {VerificationResultComponent} from "../../../../dialogs/verification-result.component";
 import { Position } from '../../../../types/position';
+import { Statement } from '../../../../types/statements/statement';
 
 /**
  * Component to present the statements.
@@ -55,7 +56,7 @@ export class StatementComponent implements AfterViewInit {
   // position of the element in the drag and drop area
   dragPosition : Point = {x:0, y: 0}
 
-  constructor(private treeService: TreeService, private dialog: MatDialog) {
+  constructor(private treeService: TreeService ,private dialog: MatDialog) {
   }
 
   public ngAfterViewInit(): void {
@@ -72,12 +73,21 @@ export class StatementComponent implements AfterViewInit {
 
     // Todo: Rewerite Verification of statements
     this.treeService.verificationResultNotifier.subscribe(
-      verificationResult => this.onVerified(verificationResult));
+      verificationResult => this.setVerifcationState(verificationResult));
+
+    this
 
     if (this.isRoot()) {
       this.refinement.getRedrawNotifier().subscribe(() => {
         this.refreshDragPosition()
       })
+
+      
+    }
+
+    if (this.refinement.proven) {
+      this.boxTitleRef.nativeElement.style.backgroundColor = "rgb(46,171,63)";
+      this.refinementBoxRef.nativeElement.style.borderColor = "rgb(46,171,63)";
     }
   }
 
@@ -133,6 +143,22 @@ export class StatementComponent implements AfterViewInit {
       drawer.toggle();
       this.refinement.onDragMoveEmitter.next();
     }
+  }
+
+  private setVerifcationState(statement : Statement) {
+    if (this.refinement.id == statement.id) {
+      this.refinement.proven = statement.proven
+      if (this.refinement.proven) {
+        this.boxTitleRef.nativeElement.style.backgroundColor = "rgb(46,171,63)";
+        this.refinementBoxRef.nativeElement.style.borderColor = "rgb(46,171,63)";
+      } else {
+        this.boxTitleRef.nativeElement.style.backgroundColor = "rgb(201,73,73)";
+        this.refinementBoxRef.nativeElement.style.borderColor = "rgb(201,73,73)";
+      }
+      
+    }
+
+    
   }
 
   // Todo: Rewrite Verification

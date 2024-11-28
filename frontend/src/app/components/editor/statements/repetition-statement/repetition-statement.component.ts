@@ -17,7 +17,6 @@ import {MatIconModule} from "@angular/material/icon";
 import {LinkComponent} from "../link/link.component";
 import { RepetitionStatement } from '../../../../types/statements/repetition-statement';
 import { Position } from '../../../../types/position';
-
 /**
  * Compoent in the Graphical Editor to represent an instance of {@link RepetitionStatement}
  */
@@ -188,8 +187,7 @@ export class RepetitionStatementComponent extends Refinement {
     return new RepetitionStatement(
       this.getTitle(),
       this.id,
-      // Todo: Save Statement Proven Statement
-      false,
+      this.proven,
       // Todo: Implement annotation feature or drop comment attribute 
       "",
       this.precondition.export(),

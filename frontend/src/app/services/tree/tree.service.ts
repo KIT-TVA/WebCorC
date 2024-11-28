@@ -5,6 +5,7 @@ import { VerificationResult } from "../../types/net/verification-net-types";
 import { JavaVariable } from './JavaVariable';
 import { ConditionDTO } from '../../types/condition/condition';
 import { Position } from '../../types/position';
+import { Statement } from '../../types/statements/statement';
 
 /**
  * Service for the context of the tree in the graphical editor.
@@ -22,7 +23,7 @@ export class TreeService {
   private _rootNode: Refinement | undefined;
   private _editorWidth : number = 0;
 
-  private readonly _verificationResultNotifier: Subject<VerificationResult>
+  private readonly _verificationResultNotifier: Subject<Statement>
   
   private _variables : JavaVariable[] = []
   private _globalConditions : string[] = []
@@ -31,7 +32,7 @@ export class TreeService {
   constructor() {
     this._redrawNotifier = new ReplaySubject();
     this._deletionNotifier = new ReplaySubject();
-    this._verificationResultNotifier = new Subject<VerificationResult>();
+    this._verificationResultNotifier = new Subject<Statement>();
     this._verifyNotifier = new Subject<void>();
   }
 
@@ -156,7 +157,7 @@ export class TreeService {
     return conditionsArray
   }
 
-  get verificationResultNotifier(): Subject<VerificationResult> {
+  get verificationResultNotifier() {
     return this._verificationResultNotifier;
   }
 

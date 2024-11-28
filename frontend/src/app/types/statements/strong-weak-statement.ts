@@ -33,11 +33,12 @@ export class StrongWeakStatement extends Statement implements IStrongWeakStateme
     public override toComponent(spawn: ViewContainerRef): [refinement: Refinement, ref: ComponentRef<Refinement>] | undefined {
         const statementRef = spawn.createComponent(StrongWeakStatementComponent)
         const statement = statementRef.instance as StrongWeakStatementComponent
-
+    
         statement.precondition = this.preCondition.convert()
         statement.postcondition = this.postCondition.convert()
         statement.position = this.position
-
+        statement.proven = this.proven
+        
         if (this.refinement) {
             const child = this.refinement.toComponent(spawn)
 

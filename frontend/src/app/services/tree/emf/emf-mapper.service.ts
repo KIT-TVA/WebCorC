@@ -268,6 +268,18 @@ export class EmfMapperService {
           undefined,
           this.toStatement((emfStatement as EMFStrongWeakStatement).refinement)
         )
+
+      default: 
+        return new SimpleStatement(
+          emfStatement.name,
+          emfStatement.id,
+          emfStatement.proven,
+          emfStatement.comment,
+          this.toConditon(emfStatement.preCondition),
+          this.toConditon(emfStatement.postCondition),
+          undefined,
+          this.toStatement((emfStatement as EMFSimpleStatement).refinement)
+        )
     }
 
     return
@@ -289,6 +301,7 @@ export class EmfMapperService {
 
   private toGlobalConditions(emfConditions : EMFConditions) : ConditionDTO[] {
     const conditions : ConditionDTO[] = []
+    if (!emfConditions.conditions) { return conditions}
     for (const condition of emfConditions.conditions) {
       conditions.push(this.toConditon(condition))
     }

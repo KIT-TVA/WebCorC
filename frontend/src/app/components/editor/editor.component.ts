@@ -18,6 +18,7 @@ import { SimpleStatement } from '../../types/statements/simple-statement';
 import { OptionsComponent } from './options/options.component';
 import { Router } from '@angular/router';
 import { EditorService } from '../../services/editor/editor.service';
+import { Position } from '../../types/position';
 
 /**
  * Component to edit {@link CBCFormula} by editing a grahical representation based of the statement components like {@link SimpleStatementComponent}.
@@ -143,9 +144,13 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     if (this.treeService.rootNode) {
 
       const rootNode = (this.treeService.rootNode as SimpleStatementComponent).export()
-      formula.statement = rootNode
+      formula.statement = (rootNode as SimpleStatement).refinement
+      formula.preCondition = rootNode.preCondition
+      formula.postCondition = rootNode.postCondition
       formula.javaVariables = this.treeService.variables
       formula.globalConditions = this.treeService.conditions
+      formula.position = rootNode.position
+      formula.proven = rootNode.proven
     }
 
     if (this._urn !== '' && this.treeService.rootNode) {
@@ -192,14 +197,15 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       // manually set the attributes of the root node
       const root = this.rootNodeOutlet['_componentRef'].instance as SimpleStatementComponent
       root.statementElementRef = undefined
-      root.precondition.content = newFormula.statement.preCondition.content
-      root.postcondition.content = newFormula.statement.postCondition.content
-      root.position = newFormula.statement.position
+      root.precondition.content = newFormula.preCondition.content
+      root.postcondition.content = newFormula.postCondition.content
+      root.position = newFormula.position
+      root.proven = newFormula.proven
       // redraw the root element at the correct position
       root.getRedrawNotifier().next()
       
       // import the tree under the root statement recursively
-      const newChild = (newFormula.statement as SimpleStatement).refinement?.toComponent(this.examplesSpawn)
+      const newChild = (newFormula.statement as SimpleStatement).toComponent(this.examplesSpawn)
 
       if (newChild) {
         root.statement = newChild?.[0]
@@ -220,7 +226,8 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     const root =  this.rootNodeOutlet['_componentRef'].instance as SimpleStatementComponent
     root.precondition.content = ""
     root.postcondition.content = ""
-    
+    root.position = new Position(this.treeService.editorWidth / 2 - 450, 10)
+    root.proven = false
   }
 
   /**

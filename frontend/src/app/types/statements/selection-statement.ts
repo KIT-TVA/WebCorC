@@ -40,6 +40,7 @@ export class SelectionStatement extends Statement implements ISelectionStatement
         const statement = statementRef.instance as SelectionStatementComponent
         statement.precondition = this.preCondition.convert()
         statement.postcondition = this.postCondition.convert()
+        statement.proven = this.proven
 
         const guards : Condition[] = []
 

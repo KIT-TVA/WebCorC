@@ -245,8 +245,7 @@ export class SelectionStatementComponent extends Refinement {
     return new SelectionStatement(
       this.getTitle(),
       this.id,
-      // Todo: Save Statement Proven Statement
-      false,
+      this.proven,
       // Todo: Implement annotation feature or drop comment attribute 
       "",
       this.precondition.export(),

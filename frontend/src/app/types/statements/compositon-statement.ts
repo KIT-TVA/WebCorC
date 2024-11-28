@@ -42,6 +42,7 @@ export class CompositionStatement extends Statement implements ICompositionState
         statement.postcondition = this.postCondition.convert()
         statement.intermediateCondition = this.intermediateCondition.convert()
         statement.position = this.position
+        statement.proven = this.proven
 
         
         if (this.firstStatement) {

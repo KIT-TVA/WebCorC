@@ -52,6 +52,12 @@ export class SimpleStatementComponent extends Refinement {
           this._statementElementRef!.nativeElement!.remove();
         }
       })
+
+      treeService.verificationResultNotifier.subscribe((statement) => {
+        if (statement.id == this._statement?.id) {
+          
+        }
+      })
     }
 
     
@@ -153,7 +159,7 @@ export class SimpleStatementComponent extends Refinement {
     return new SimpleStatement(
       this._condition.content,
       this.id,
-      false, 
+      this.proven, 
       "",
       super.precondition.export(),
       super.postcondition.export(),
@@ -173,8 +179,6 @@ export class SimpleStatementComponent extends Refinement {
   override resetPosition(position: Position, offset : Position): void {
     this.position.set(position)
     this.position.add(offset)
-      
-    console.log(this.position)
 
     if (this._statement) {
       this._statement.resetPosition(this.position, new Position(100, -10))

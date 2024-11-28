@@ -39,6 +39,7 @@ export class SimpleStatement extends Statement implements ISimpleStatement {
         statement.postcondition = this.postCondition.convert()
         statement.condition = this.name
         statement.position = this.position
+        statement.proven = this.proven
 
         if (this.refinement) {
             const child = this.refinement.toComponent(spawn)

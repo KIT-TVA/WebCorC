@@ -41,8 +41,6 @@ export class GlobalConditionsComponent {
    * And adds a new item to the form with the content of the new created condition 
    */
   addCondition() : void {
-
-    console.log("add")
     
     const value : string = this.conditions.controls['newCondition'].value.trim()
 

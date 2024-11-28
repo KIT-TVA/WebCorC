@@ -98,6 +98,14 @@ export abstract class Refinement {
     return this._position
   }
 
+  set proven(value : boolean) {
+    this._proven = value
+  }
+
+  get proven() {
+    return this._proven
+  }
+
   abstract getTitle(): string;
 
   /**

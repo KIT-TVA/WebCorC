@@ -54,6 +54,7 @@ export class RepetitionStatement extends Statement implements IRepetitionStateme
         statement.variantCondition = this.variant.convert()
         statement.guardCondition = this.guard.convert()
         statement.position = this.position
+        statement.proven = this.proven
 
         
         if (this.loopStatement) {

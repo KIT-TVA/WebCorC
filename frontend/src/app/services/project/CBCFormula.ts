@@ -1,4 +1,5 @@
 import { ConditionDTO, IConditionDTO } from "../../types/condition/condition";
+import { Position } from "../../types/position";
 import { IStatement, Statement } from "../../types/statements/statement";
 
 export interface ICBCFormula {
@@ -34,7 +35,8 @@ export class CBCFormula implements ICBCFormula {
         public globalConditions : ConditionDTO[]  = [],
         public preCondition : ConditionDTO = new ConditionDTO(1),
         public postCondition : ConditionDTO = new ConditionDTO(1),
-        public statement : Statement | undefined = undefined
+        public statement : Statement | undefined = undefined,
+        public position : Position = new Position(0,0)
     ) {}
 }
 
