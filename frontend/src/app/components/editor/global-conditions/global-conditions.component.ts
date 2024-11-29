@@ -63,6 +63,16 @@ export class GlobalConditionsComponent {
     this.conditions.controls['newCondition'].reset()
   }
 
+  onDelete(event : Event, index : number) {
+    event.preventDefault()
+    this.removeCondition(index)
+  }
+
+  onEnter(event : Event) {
+    event.preventDefault()
+    this.addCondition()
+  }
+
   /**
    * Removes the condition at the index of the items array and syncs the changes to the @see TreeService
    * @param index The index of the condition to remove

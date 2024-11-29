@@ -57,6 +57,16 @@ export class VariablesComponent {
     this.variables.controls['newVariable'].reset()
   }
 
+  onEnter(event : Event) {
+    event.preventDefault()
+    this.addVariable()
+  }
+
+  onDelete(event : Event, i : number) {
+    event.preventDefault()
+    this.removeVariable(i)
+  }
+
   /**
    * Remove variables based on the index 
    * @param index The index of the variable to remove

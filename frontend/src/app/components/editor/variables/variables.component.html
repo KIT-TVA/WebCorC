@@ -1,18 +1,18 @@
 <form [formGroup]="variables">
   <ng-container formArrayName="items" *ngFor="let variableForm of items.controls; let i = index">
       <ng-container [formGroupName]="i">
-        <mat-form-field [style.width]="'100%'">
+        <mat-form-field [style.width]="'100%'" (keydown.delete)="onDelete($event, i)" (keydown.enter)="$event.preventDefault()" >
           <mat-label>Variable</mat-label>
           <input matInput formControlName="name">
-          <button matSuffix mat-icon-button aria-label="Remove" (click)="removeVariable(i)" (keydown.enter)="$event.preventDefault()" (keydown.backspace)="removeVariable(i)" >
+          <button matSuffix mat-icon-button aria-label="Remove" (click)="removeVariable(i)">
             <mat-icon>remove</mat-icon>
           </button>
         </mat-form-field>
     </ng-container>
   </ng-container>
-  <mat-form-field [style.width]="'100%'">
+  <mat-form-field [style.width]="'100%'" (keydown.enter)="onEnter($event)">
     <mat-label>Add Variable</mat-label>
-    <input matInput formControlName="newVariable" (keydown.enter)="addVariable()">
+    <input matInput formControlName="newVariable" >
       <button matSuffix mat-icon-button aria-label="Add" (click)="addVariable()"  (keydown.enter)="$event.preventDefault()">
         <mat-icon>add</mat-icon>
       </button>
