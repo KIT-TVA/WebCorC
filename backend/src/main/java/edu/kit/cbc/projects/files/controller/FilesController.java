@@ -94,9 +94,9 @@ public class FilesController {
 
         return HttpResponse
             .created(UriBuilder.of(httpHostResolver.resolve(request))
-                    .path("projects")
-                    .path(path)
-                    .build())
+                .path("projects")
+                .path(path)
+                .build())
             .header(HttpHeaders.ETAG, response.getETag());
     }
 
