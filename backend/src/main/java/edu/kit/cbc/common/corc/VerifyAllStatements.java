@@ -208,10 +208,11 @@ public class VerifyAllStatements {
             GlobalConditions conds, Renaming renaming, URI uri) {
         SmallRepetitionStatement repStatement = (SmallRepetitionStatement) statement;
         boolean proven = true;
-        if (repStatement.getLoopStatement().getRefinement() != null) {
-            proven = (proveStatement(repStatement.getLoopStatement().getRefinement(), vars, conds, renaming, uri)
+        //TODO: consider using refinements of statements instead of statements themselves to stay compatible with CorC
+        //if (repStatement.getLoopStatement().getRefinement() != null) {
+            proven = (proveStatement(repStatement.getLoopStatement()/*.getRefinement()*/, vars, conds, renaming, uri)
                     && proven && true);
-        }
+        //}
         boolean provePre = repStatement.isPreProven();
         boolean provePost = repStatement.isPostProven();
         boolean proveVar = repStatement.isVariantProven();
