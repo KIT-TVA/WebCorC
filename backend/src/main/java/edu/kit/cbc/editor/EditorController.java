@@ -61,6 +61,7 @@ public class EditorController {
             } catch (IOException e) {
                 return HttpResponse.serverError(e.getMessage());
             }
+            //TODO: upload generated files from key proof to object storage
             return HttpResponse.ok(parser.toJsonString(formula, jv, gc));
         } catch (JsonProcessingException e) {
             return HttpResponse.serverError(Problem.PARSING_ERROR(e.getMessage()));

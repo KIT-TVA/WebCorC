@@ -2,11 +2,9 @@ package edu.kit.cbc.projects.files.controller;
 
 import java.util.Optional;
 import java.net.URI;
-import java.util.NoSuchElementException;
 
 import edu.kit.cbc.projects.files.dto.DirectoryDto;
 import edu.kit.cbc.projects.ProjectService;
-import edu.kit.cbc.projects.ReadProjectDto;
 import edu.kit.cbc.common.Problem;
 import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpRequest;
@@ -81,29 +79,24 @@ public class FilesController {
             @PathVariable String id,
             @PathVariable URI urn,
             HttpRequest<?> request) {
-        String path = String.format(pathFormat, id, urn);
-
-        ReadProjectDto project;
-        try {
-            project = projectService.findById(id);
-        } catch (NoSuchElementException e) {
+        if (!projectService.existsById(id)) {
             return HttpResponse.notFound(new Problem("about:blank", "Not found", 404, String.format("project with id %s was not found", id), "about:blank"));
         }
+
+        String path = String.format(pathFormat, id, urn);
 
         UploadRequest objectStorageUpload = UploadRequest.fromCompletedFileUpload(fileUpload, path);
         UploadResponse<PutObjectResponse> response = objectStorage.upload(objectStorageUpload, builder -> {
             builder.acl(ObjectCannedACL.PUBLIC_READ);
         });
 
-        //TODO: Move adding/removing logic to projectServive
-        project.files().addFilePath(urn);
-        projectService.updateById(id, project);
+        projectService.addFilePathToId(id, urn);
 
         return HttpResponse
             .created(UriBuilder.of(httpHostResolver.resolve(request))
-                    .path("projects")
-                    .path(path)
-                    .build())
+                .path("projects")
+                .path(path)
+                .build())
             .header(HttpHeaders.ETAG, response.getETag());
     }
 
@@ -116,14 +109,13 @@ public class FilesController {
     @Delete(uri = "/{urn:.*}")
     @Produces(MediaType.APPLICATION_JSON)
     public HttpResponse<?> deleteFileOrDirectory(@PathVariable String id, @PathVariable URI urn) {
-        String path = String.format(pathFormat, id, urn);
-        //TODO: should project existence be checked first?
-        objectStorage.delete(path);
+        if (!projectService.existsById(id)) {
+            return HttpResponse.notFound(new Problem("about:blank", "Not found", 404, String.format("project with id %s was not found", id), "about:blank"));
+        }
 
-        //TODO: Move adding/removing logic to projectServive
-        ReadProjectDto project = projectService.findById(id);
-        project.files().removeFilePath(urn);
-        projectService.updateById(id, project);
+        String path = String.format(pathFormat, id, urn);
+        objectStorage.delete(path); //TODO: doesn't delete folders with children
+        projectService.removeFilePathFromId(id, urn);
 
         return HttpResponse.ok("file deleted");
     }

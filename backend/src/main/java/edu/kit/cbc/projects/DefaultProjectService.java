@@ -4,6 +4,7 @@ import edu.kit.cbc.projects.files.dto.DirectoryDto;
 
 import java.util.Set;
 import java.time.ZonedDateTime;
+import java.net.URI;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
@@ -52,6 +53,23 @@ class DefaultProjectService implements ProjectService {
 
     public ReadProjectDto findById(@NotBlank String id) {
         return projectRepository.findById(id).orElseThrow();
+    }
+
+    public boolean existsById(@NotBlank String id) {
+        return projectRepository.existsById(id);
+
+    }
+
+    public void addFilePathToId(@NotBlank String id, URI urn) {
+        ReadProjectDto project = findById(id);
+        project.files().addFilePath(urn);
+        updateById(id, project);
+    }
+
+    public void removeFilePathFromId(@NotBlank String id, URI urn) {
+        ReadProjectDto project = findById(id);
+        project.files().removeFilePath(urn);
+        updateById(id, project);
     }
 
     public void deleteById(@NotBlank String id) {
