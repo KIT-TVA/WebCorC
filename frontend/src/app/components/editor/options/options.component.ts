@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { TreeService } from '../../../services/tree/tree.service';
-import { Router } from '@angular/router';
 import { ProjectService } from '../../../services/project/project.service';
 import { first } from 'rxjs';
 import { EditorService } from '../../../services/editor/editor.service';
