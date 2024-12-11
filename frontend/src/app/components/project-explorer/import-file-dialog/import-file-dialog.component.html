@@ -1,0 +1,8 @@
+<h2 mat-dialog-title> Import File into Folder {{ data.parentURN }} </h2>
+<mat-dialog-content>
+    <input type="file" class="fileInput" accept="json" (change)="onFileSelected($event)" #fileUpload />
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button mat-dialog-close> Abort </button>
+    <button mat-button mat-dialog-close (click)="confirm()" class="confirm"> Confirm </button>
+</mat-dialog-actions>

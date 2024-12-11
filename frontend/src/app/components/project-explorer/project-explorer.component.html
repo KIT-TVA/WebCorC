@@ -1,7 +1,11 @@
 <div class="drawer-content">
     <div class="project-actions">
         <button mat-button (click)="save()" > <mat-icon> save </mat-icon> Save </button>
-        <button mat-button (click)="import()" > <mat-icon> publish</mat-icon> Import </button>
+        <button mat-button [matMenuTriggerFor]="importMenu" > <mat-icon> publish</mat-icon> Import </button>
+        <mat-menu #importMenu="matMenu">
+            <button mat-menu-item> Import Project </button>
+            <button mat-menu-item (click)="import()" > Import File </button>
+        </mat-menu>
         <button mat-button (click)="export()"> <mat-icon> download </mat-icon> Export </button>
     </div>
     <div class="project-header">
@@ -38,6 +42,7 @@
             </button>
             {{ node.name }}
             <div class="node-actions">
+                <button mat-icon-button (click)="importElement(node)"> <mat-icon> publish </mat-icon> </button>
                 <button mat-icon-button (click)="addElement(node)"> <mat-icon [style.color]="'green'"> add</mat-icon> </button>
                 <button mat-icon-button (click)="deleteElement(node)"><mat-icon [style.color]="'red'"> delete </mat-icon></button>
             </div>

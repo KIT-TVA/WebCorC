@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Refinement } from "../../types/refinement";
 import { ReplaySubject, Subject } from "rxjs";
-import { VerificationResult } from "../../types/net/verification-net-types";
 import { JavaVariable } from './JavaVariable';
 import { ConditionDTO } from '../../types/condition/condition';
 import { Position } from '../../types/position';
@@ -18,6 +17,7 @@ export class TreeService {
   private readonly _redrawNotifier: ReplaySubject<void>;
   private readonly _deletionNotifier: ReplaySubject<Refinement>;
   private readonly _verifyNotifier: Subject<void>;
+  private readonly _exportNotifier: Subject<void>;
 
   private _title: string = "";
   private _rootNode: Refinement | undefined;
@@ -34,6 +34,7 @@ export class TreeService {
     this._deletionNotifier = new ReplaySubject();
     this._verificationResultNotifier = new Subject<Statement>();
     this._verifyNotifier = new Subject<void>();
+    this._exportNotifier = new Subject<void>();
   }
 
   public generateCode(language : string, options : any): void {
@@ -44,20 +45,10 @@ export class TreeService {
     this._redrawNotifier.next()
   }
 
-  public downloadJSON(): void {
-    if (!this.rootNode) {
-      return;
-    }
-
-    const structure = JSON.stringify(this.rootNode?.export(), null, 2);
-    const blob = new Blob([structure], {type: "application/json"});
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "program.json";
-    a.click();
-    window.URL.revokeObjectURL(url);
+  public export(): void {
+    this._exportNotifier.next()
   }
+
 
   /**
    * Redraw the links between the statements on scrolling in the editor
@@ -131,6 +122,10 @@ export class TreeService {
 
   get deletionNotifier(): ReplaySubject<Refinement> {
     return this._deletionNotifier;
+  }
+
+  get exportNotifier() : Subject<void> {
+    return this._exportNotifier
   }
 
   get title(): string {

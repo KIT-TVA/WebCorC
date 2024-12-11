@@ -12,6 +12,8 @@ import { first } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateProjectDialogComponent } from './create-project-dialog/create-project-dialog.component';
 import { ProjectElement, ProjectDirectory, CodeFile, DiagramFile } from '../../services/project/types/project-elements';
+import { ImportFileDialogComponent } from './import-file-dialog/import-file-dialog';
+import { MatMenu, MatMenuModule } from '@angular/material/menu';
 
 class FlatNode {
   expandable: boolean;
@@ -33,7 +35,7 @@ class FlatNode {
 @Component({
   selector: 'app-project-explorer',
   standalone: true,
-  imports: [CommonModule, MatTreeModule, MatIconModule, MatButtonModule, MatFormFieldModule, MatInputModule],
+  imports: [CommonModule, MatTreeModule, MatIconModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatMenuModule],
   templateUrl: './project-explorer.component.html',
   styleUrl: './project-explorer.component.scss'
 })
@@ -150,8 +152,17 @@ export class ProjectExplorerComponent {
     this.projectService.uploadWorkspace(wait)
   }
 
+  public importElement(node : FlatNode) {
+    const element = this.nodeToElementMap.get(node)
+    if (!element) {
+      return
+    }
+    const path = element.path
+    this.dialog.open(ImportFileDialogComponent, { data: { parentURN: path } })
+  }
+
   public import() {
-    
+    this.dialog.open(ImportFileDialogComponent, { data: { parentURN: "/" }})
   }
 
   /**

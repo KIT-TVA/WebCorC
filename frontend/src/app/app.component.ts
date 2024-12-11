@@ -50,10 +50,6 @@ export class AppComponent {
     this.dialog.open(CodegenComponent, {minWidth: "350px", height: "300px"});
   }
 
-  export(): void {
-    this.treeService.downloadJSON();
-  }
-
   /**  
    * Write the url of the current project into the clipboard 
    */

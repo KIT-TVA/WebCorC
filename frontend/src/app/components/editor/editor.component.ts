@@ -59,6 +59,8 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       this.saveContentToFile()
     })
 
+    this.treeService.exportNotifier.subscribe(() => this.export())
+
     
   }
   
@@ -157,8 +159,30 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       // save the current state outside of the component
       this.projectService.syncFileContent(this._urn, formula)
     }
+  }
 
-    
+  private export() {
+    const formula = new CBCFormula()
+    if (this.treeService.rootNode) {
+      const rootNode = (this.treeService.rootNode as SimpleStatementComponent).export()
+      formula.statement = (rootNode as SimpleStatement).refinement
+      formula.preCondition = rootNode.preCondition
+      formula.postCondition = rootNode.postCondition
+      formula.javaVariables = this.treeService.variables
+      formula.globalConditions = this.treeService.conditions
+      formula.position = rootNode.position
+      formula.proven = rootNode.proven
+    }
+
+    const urnSplit = this._urn.split("/")
+    const structure = JSON.stringify(formula, null, 2);
+    const blob = new Blob([structure], {type: "application/json"});
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = urnSplit[urnSplit.length - 1] + ".json"
+    a.click();
+    window.URL.revokeObjectURL(url);
   }
 
   /**

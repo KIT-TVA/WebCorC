@@ -127,7 +127,6 @@ export class ProjectService {
     }
 
     this._dataChange.next(this._rootDir.content)
-
     return dir;
   }
 
@@ -182,7 +181,7 @@ export class ProjectService {
       inode = this.mapper.exportDirectory(elementToDelete)
     }
 
-    if (this._projectname) {
+    if (this._projectname && name !== this.fakeElementName) {
       this.network.deleteFile(inode)
     }
 
