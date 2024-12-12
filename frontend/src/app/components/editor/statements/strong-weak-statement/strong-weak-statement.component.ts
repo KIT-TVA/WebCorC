@@ -22,12 +22,11 @@ import { Position } from '../../../../types/position';
  * Component in the graphic editor representing {@link StrongWeakStatement}
  */
 @Component({
-  selector: 'app-strong-weak-statement',
-  standalone: true,
-  imports: [CommonModule, StatementComponent, MatGridListModule, GridTileBorderDirective,
-    RefinementWidgetComponent, ConditionEditorComponent, FormsModule, MatFormFieldModule, MatInputModule, MatIconModule, LinkComponent],
-  templateUrl: './strong-weak-statement.component.html',
-  styleUrl: './strong-weak-statement.component.scss'
+    selector: 'app-strong-weak-statement',
+    imports: [CommonModule, StatementComponent, MatGridListModule, GridTileBorderDirective,
+        RefinementWidgetComponent, ConditionEditorComponent, FormsModule, MatFormFieldModule, MatInputModule, MatIconModule, LinkComponent],
+    templateUrl: './strong-weak-statement.component.html',
+    styleUrl: './strong-weak-statement.component.scss'
 })
 export class StrongWeakStatementComponent extends Refinement {
   private _weakPreCondition : Condition;

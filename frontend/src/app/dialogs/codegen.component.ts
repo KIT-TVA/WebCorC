@@ -16,10 +16,9 @@ import {FormBuilder, ReactiveFormsModule} from "@angular/forms";
  * Todo: Rewrite for new Backend
  */
 @Component({
-  selector: 'app-codegen',
-  standalone: true,
-  imports: [CommonModule, MatDialogTitle, MatDialogContent, MatDialogActions, MatButtonModule, MatTabsModule, MatCheckboxModule, ReactiveFormsModule],
-  template: `
+    selector: 'app-codegen',
+    imports: [CommonModule, MatDialogTitle, MatDialogContent, MatDialogActions, MatButtonModule, MatTabsModule, MatCheckboxModule, ReactiveFormsModule],
+    template: `
     <h2 mat-dialog-title>Code Generation</h2>
     <mat-dialog-content>
         <mat-tab-group #tabGroup>
@@ -37,7 +36,7 @@ import {FormBuilder, ReactiveFormsModule} from "@angular/forms";
         <button mat-button (click)="dialogRef.close()">Close</button>
     </mat-dialog-actions>
   `,
-  styles: ``
+    styles: ``
 })
 export class CodegenComponent {
   @ViewChild(MatTabGroup) tabGroup!: MatTabGroup;

@@ -10,13 +10,12 @@ import { TreeService } from '../../../../services/tree/tree.service';
  * Each Instance connects one parent and one child statement together. 
  */
 @Component({
-  selector: 'app-refinement-link',
-  standalone: true,
-  imports: [CommonModule, MatIconModule],
-  template: `
+    selector: 'app-refinement-link',
+    imports: [CommonModule, MatIconModule],
+    template: `
     <mat-icon #linkIcon>link</mat-icon>
   `,
-  styles: `
+    styles: `
     @import "../../../../../styles";
     mat-icon {
       padding-left: $refinementBodyPadding;

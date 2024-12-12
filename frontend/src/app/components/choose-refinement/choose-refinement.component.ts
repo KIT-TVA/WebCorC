@@ -22,13 +22,12 @@ import { StrongWeakStatementComponent } from '../editor/statements/strong-weak-s
  * @link https://material.angular.io/components/dialog/overview
  */
 @Component({
-  selector: 'app-choose-refinement',
-  standalone: true,
-  imports: [CommonModule, MatDialogTitle, MatDialogContent,
-            MatDialogActions, MatButtonModule, RefinementWidgetComponent,
-            MatDialogClose],
-  templateUrl: './choose-refinement.component.html',
-  styleUrl: './choose-refinement.component.scss'
+    selector: 'app-choose-refinement',
+    imports: [CommonModule, MatDialogTitle, MatDialogContent,
+        MatDialogActions, MatButtonModule, RefinementWidgetComponent,
+        MatDialogClose],
+    templateUrl: './choose-refinement.component.html',
+    styleUrl: './choose-refinement.component.scss'
 })
 export class ChooseRefinementComponent {
   /**

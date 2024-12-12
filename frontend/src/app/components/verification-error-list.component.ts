@@ -5,10 +5,9 @@ import {MatListModule} from "@angular/material/list";
 import {MatIconModule} from "@angular/material/icon";
 
 @Component({
-  selector: 'app-verification-error-list',
-  standalone: true,
-  imports: [CommonModule, MatListModule, MatIconModule],
-  template: `
+    selector: 'app-verification-error-list',
+    imports: [CommonModule, MatListModule, MatIconModule],
+    template: `
       <mat-list>
           @if (!refinementId) {
               <div matSubheader>The verification process provides the following result:</div>
@@ -50,7 +49,7 @@ import {MatIconModule} from "@angular/material/icon";
           }
       </mat-list>
   `,
-  styles: ``
+    styles: ``
 })
 export class VerificationErrorListComponent {
   @Input() result!: VerificationResult;

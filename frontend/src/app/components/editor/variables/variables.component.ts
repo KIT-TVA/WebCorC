@@ -16,11 +16,10 @@ import { MatListModule} from "@angular/material/list";
  * @link https://angular.dev/guide/forms/reactive-forms
  */
 @Component({
-  selector: 'app-variables',
-  standalone: true,
-  imports: [CommonModule, FormsModule, MatButtonModule, MatDividerModule, MatFormFieldModule, MatInputModule, MatListModule, ReactiveFormsModule, MatIconModule],
-  templateUrl: './variables.component.html',
-  styleUrl: './variables.component.scss'
+    selector: 'app-variables',
+    imports: [CommonModule, FormsModule, MatButtonModule, MatDividerModule, MatFormFieldModule, MatInputModule, MatListModule, ReactiveFormsModule, MatIconModule],
+    templateUrl: './variables.component.html',
+    styleUrl: './variables.component.scss'
 })
 export class VariablesComponent {
 

@@ -27,12 +27,11 @@ import { Position } from '../../../../types/position';
  * of the child.
  */
 @Component({
-  selector: 'app-selection-statement',
-  standalone: true,
-  imports: [CommonModule, StatementComponent, MatGridListModule, GridTileBorderDirective,
-    RefinementWidgetComponent, ConditionEditorComponent, FormsModule, MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule, LinkComponent, ConditionEditorComponent],
-  templateUrl: './selection-statement.component.html',
-  styleUrl: './selection-statement.component.scss'
+    selector: 'app-selection-statement',
+    imports: [CommonModule, StatementComponent, MatGridListModule, GridTileBorderDirective,
+        RefinementWidgetComponent, ConditionEditorComponent, FormsModule, MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule, LinkComponent, ConditionEditorComponent],
+    templateUrl: './selection-statement.component.html',
+    styleUrl: './selection-statement.component.scss'
 })
 export class SelectionStatementComponent extends Refinement {
   private _statements : (Refinement | undefined )[]

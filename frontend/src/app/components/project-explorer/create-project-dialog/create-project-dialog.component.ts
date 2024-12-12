@@ -10,11 +10,10 @@ import { FormsModule } from '@angular/forms';
  * Dialog for creating a new project, when pressing the save button in the project explorer without a known projectId
  */
 @Component({
-  selector: 'app-create-project-dialog',
-  standalone: true,
-  imports: [MatButtonModule, MatDialogActions, MatDialogClose, MatDialogTitle, MatDialogContent, MatInputModule, MatFormFieldModule, FormsModule],
-  templateUrl: './create-project-dialog.component.html',
-  styleUrl: './create-project-dialog.component.scss'
+    selector: 'app-create-project-dialog',
+    imports: [MatButtonModule, MatDialogActions, MatDialogClose, MatDialogTitle, MatDialogContent, MatInputModule, MatFormFieldModule, FormsModule],
+    templateUrl: './create-project-dialog.component.html',
+    styleUrl: './create-project-dialog.component.scss'
 })
 export class CreateProjectDialogComponent {
 

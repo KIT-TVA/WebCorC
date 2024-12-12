@@ -11,11 +11,10 @@ import { ProjectService } from '../../services/project/project.service';
  * to see.
  */
 @Component({
-  selector: 'app-landing-page',
-  standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule],
-  templateUrl: './landing-page.component.html',
-  styleUrl: './landing-page.component.scss'
+    selector: 'app-landing-page',
+    imports: [CommonModule, MatButtonModule, MatIconModule],
+    templateUrl: './landing-page.component.html',
+    styleUrl: './landing-page.component.scss'
 })
 export class LandingPageComponent implements OnInit {
 

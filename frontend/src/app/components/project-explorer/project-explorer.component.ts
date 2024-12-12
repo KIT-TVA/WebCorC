@@ -33,11 +33,10 @@ class FlatNode {
  * Primarly interacts with the {@link ProjectService}, in which the state is stored
  */
 @Component({
-  selector: 'app-project-explorer',
-  standalone: true,
-  imports: [CommonModule, MatTreeModule, MatIconModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatMenuModule],
-  templateUrl: './project-explorer.component.html',
-  styleUrl: './project-explorer.component.scss'
+    selector: 'app-project-explorer',
+    imports: [CommonModule, MatTreeModule, MatIconModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatMenuModule],
+    templateUrl: './project-explorer.component.html',
+    styleUrl: './project-explorer.component.scss'
 })
 export class ProjectExplorerComponent {
 

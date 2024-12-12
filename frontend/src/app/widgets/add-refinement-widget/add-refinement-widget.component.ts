@@ -9,16 +9,15 @@ import {MatDialog} from "@angular/material/dialog";
  * to add the child statements
  */
 @Component({
-  selector: 'app-add-refinement-widget',
-  standalone: true,
-  imports: [CommonModule, RefinementWidgetComponent],
-  template: `
+    selector: 'app-add-refinement-widget',
+    imports: [CommonModule, RefinementWidgetComponent],
+    template: `
     <app-refinement-widget [text]="text"
                        icon="add"
                        (click)="addRefinement()">
     </app-refinement-widget>
   `,
-  styles: ``
+    styles: ``
 })
 export class AddRefinementWidgetComponent {
   @Input() text: string = "Add Refinement"

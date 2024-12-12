@@ -4,11 +4,10 @@ import { ProjectService } from '../../services/project/project.service';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-not-found-error-page',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './not-found-error-page.component.html',
-  styleUrl: './not-found-error-page.component.scss'
+    selector: 'app-not-found-error-page',
+    imports: [CommonModule],
+    templateUrl: './not-found-error-page.component.html',
+    styleUrl: './not-found-error-page.component.scss'
 })
 export class NotFoundErrorPageComponent implements AfterViewInit {
 

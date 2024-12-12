@@ -6,16 +6,15 @@ import {MatIconModule} from "@angular/material/icon";
  * Button in the add refinement widget
  */
 @Component({
-  selector: 'app-refinement-widget',
-  standalone: true,
-  imports: [CommonModule, MatIconModule],
-  template: `
+    selector: 'app-refinement-widget',
+    imports: [CommonModule, MatIconModule],
+    template: `
     <div id="background">
       <mat-icon>{{icon}}</mat-icon><br>
       <span>{{text}}</span>
     </div>
   `,
-  styles: `
+    styles: `
     #background {
       width: fit-content;
       padding: 10px;

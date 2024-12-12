@@ -26,12 +26,11 @@ import { Position } from '../../../../types/position';
  * The Composition Statement gets saved as {@link CompositionStatement}
  */
 @Component({
-  selector: 'app-composition-statement',
-  standalone: true,
-  imports: [CommonModule, StatementComponent, MatGridListModule, GridTileBorderDirective,
-    RefinementWidgetComponent, ConditionEditorComponent, FormsModule, MatFormFieldModule, MatInputModule, MatIconModule, LinkComponent],
-  templateUrl: './composition-statement.component.html',
-  styleUrl: './composition-statement.component.scss'
+    selector: 'app-composition-statement',
+    imports: [CommonModule, StatementComponent, MatGridListModule, GridTileBorderDirective,
+        RefinementWidgetComponent, ConditionEditorComponent, FormsModule, MatFormFieldModule, MatInputModule, MatIconModule, LinkComponent],
+    templateUrl: './composition-statement.component.html',
+    styleUrl: './composition-statement.component.scss'
 })
 export class CompositionStatementComponent extends Refinement {
   

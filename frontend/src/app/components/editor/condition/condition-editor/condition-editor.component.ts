@@ -17,13 +17,12 @@ import { MatButtonModule } from "@angular/material/button";
  * @link https://angular.dev/guide/forms/reactive-forms
  */
 @Component({
-  selector: 'app-condition-editor',
-  standalone: true,
-  imports: [CommonModule, FormsModule, MatFormFieldModule, MatInputModule,
-            GridTileBorderDirective, GridTileHeaderDirective, MatGridListModule,
-            ReactiveFormsModule, MatAutocompleteModule, MatMenuModule, MatButtonModule],
-  templateUrl: './condition-editor.component.html',
-  styleUrl: './condition-editor.component.scss'
+    selector: 'app-condition-editor',
+    imports: [CommonModule, FormsModule, MatFormFieldModule, MatInputModule,
+        GridTileBorderDirective, GridTileHeaderDirective, MatGridListModule,
+        ReactiveFormsModule, MatAutocompleteModule, MatMenuModule, MatButtonModule],
+    templateUrl: './condition-editor.component.html',
+    styleUrl: './condition-editor.component.scss'
 })
 export class ConditionEditorComponent implements OnInit {
   @Input() public condition!: Condition;

@@ -23,12 +23,11 @@ import { Position } from '../../../../types/position';
  * The Root statement is also a simple statement, with one child element
  */
 @Component({
-  selector: 'app-simple-statement',
-  standalone: true,
-  imports: [CommonModule, StatementComponent, MatGridListModule, GridTileBorderDirective,
-    RefinementWidgetComponent, ConditionEditorComponent, FormsModule, MatFormFieldModule, MatInputModule, MatIconModule, LinkComponent, ConditionEditorComponent],
-  templateUrl: './simple-statement.component.html',
-  styleUrl: './simple-statement.component.scss'
+    selector: 'app-simple-statement',
+    imports: [CommonModule, StatementComponent, MatGridListModule, GridTileBorderDirective,
+        RefinementWidgetComponent, ConditionEditorComponent, FormsModule, MatFormFieldModule, MatInputModule, MatIconModule, LinkComponent, ConditionEditorComponent],
+    templateUrl: './simple-statement.component.html',
+    styleUrl: './simple-statement.component.scss'
 })
 export class SimpleStatementComponent extends Refinement {
   private _statement : Refinement | undefined;

@@ -26,14 +26,13 @@ import { Statement } from '../../../../types/statements/statement';
  * This is not the (super) type Refinement.
  */
 @Component({
-  selector: 'app-statement-base',
-  standalone: true,
-  imports: [CommonModule, MatGridListModule, MatFormFieldModule, MatInputModule, FormsModule,
-            ConditionEditorComponent, GridTileHeaderDirective, GridTileBorderDirective, CdkDrag,
-            CdkDragHandle, MatIconModule, MatSidenavModule, MatButtonModule, MatExpansionModule,
-            VerificationErrorListComponent, MatListModule],
-  templateUrl: './statement.component.html',
-  styleUrl: './statement.component.scss'
+    selector: 'app-statement-base',
+    imports: [CommonModule, MatGridListModule, MatFormFieldModule, MatInputModule, FormsModule,
+        ConditionEditorComponent, GridTileHeaderDirective, GridTileBorderDirective, CdkDrag,
+        CdkDragHandle, MatIconModule, MatSidenavModule, MatButtonModule, MatExpansionModule,
+        VerificationErrorListComponent, MatListModule],
+    templateUrl: './statement.component.html',
+    styleUrl: './statement.component.scss'
 })
 export class StatementComponent implements AfterViewInit {
   private static readonly EDITOR_CONTAINER_EXPANSION_TRIGGER = 150;

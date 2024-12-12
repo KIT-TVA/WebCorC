@@ -11,15 +11,14 @@ import { Router } from '@angular/router';
  * @link https://www.npmjs.com/package/@ng-util/monaco-editor
  */
 @Component({
-  selector: 'app-file-editor',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    NuMonacoEditorModule
-  ],
-  templateUrl: './file-editor.component.html',
-  styleUrl: './file-editor.component.scss'
+    selector: 'app-file-editor',
+    imports: [
+        CommonModule,
+        FormsModule,
+        NuMonacoEditorModule
+    ],
+    templateUrl: './file-editor.component.html',
+    styleUrl: './file-editor.component.scss'
 })
 export class FileEditorComponent implements AfterViewInit,OnDestroy {
 

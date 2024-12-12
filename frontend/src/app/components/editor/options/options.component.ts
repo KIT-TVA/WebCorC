@@ -12,11 +12,10 @@ import { MatIconModule } from '@angular/material/icon';
  * shown in the expand panel
  */
 @Component({
-  selector: 'app-options',
-  standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule],
-  templateUrl: './options.component.html',
-  styleUrl: './options.component.scss'
+    selector: 'app-options',
+    imports: [CommonModule, MatButtonModule, MatIconModule],
+    templateUrl: './options.component.html',
+    styleUrl: './options.component.scss'
 })
 export class OptionsComponent {
 

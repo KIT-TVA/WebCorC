@@ -18,11 +18,10 @@ import { ConditionDTO } from '../../../types/condition/condition';
  * @link https://angular.dev/guide/forms/reactive-forms
  */
 @Component({
-  selector: 'app-global-conditions',
-  standalone: true,
-  imports: [CommonModule, FormsModule, MatButtonModule, MatDividerModule, MatFormFieldModule, MatInputModule, MatListModule, ReactiveFormsModule, MatIconModule],
-  templateUrl: './global-conditions.component.html',
-  styleUrl: './global-conditions.component.scss'
+    selector: 'app-global-conditions',
+    imports: [CommonModule, FormsModule, MatButtonModule, MatDividerModule, MatFormFieldModule, MatInputModule, MatListModule, ReactiveFormsModule, MatIconModule],
+    templateUrl: './global-conditions.component.html',
+    styleUrl: './global-conditions.component.scss'
 })
 export class GlobalConditionsComponent {
 

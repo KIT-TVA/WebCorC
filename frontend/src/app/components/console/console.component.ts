@@ -14,11 +14,10 @@ import { ConsoleService } from '../../services/console/console.service';
  * @link https://angular.dev/guide/forms/reactive-forms
  */
 @Component({
-  selector: 'app-console',
-  standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatInputModule, FormsModule, ReactiveFormsModule],
-  templateUrl: './console.component.html',
-  styleUrl: './console.component.scss'
+    selector: 'app-console',
+    imports: [CommonModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatInputModule, FormsModule, ReactiveFormsModule],
+    templateUrl: './console.component.html',
+    styleUrl: './console.component.scss'
 })
 export class ConsoleComponent {
 

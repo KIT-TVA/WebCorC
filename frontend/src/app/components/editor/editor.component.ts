@@ -26,11 +26,10 @@ import { Position } from '../../types/position';
  * The path of the component is /editor/diagram/{file.urn}
  */
 @Component({
-  selector: 'app-editor',
-  standalone: true,
-  imports: [CommonModule, RefinementWidgetComponent, MatButtonModule, AddRefinementWidgetComponent, MatIconModule, MatExpansionModule, VariablesComponent, MatTooltipModule, MatMenuModule, GlobalConditionsComponent, OptionsComponent],
-  templateUrl: './editor.component.html',
-  styleUrl: './editor.component.scss'
+    selector: 'app-editor',
+    imports: [CommonModule, RefinementWidgetComponent, MatButtonModule, AddRefinementWidgetComponent, MatIconModule, MatExpansionModule, VariablesComponent, MatTooltipModule, MatMenuModule, GlobalConditionsComponent, OptionsComponent],
+    templateUrl: './editor.component.html',
+    styleUrl: './editor.component.scss'
 })
 export class EditorComponent implements AfterViewInit, OnDestroy {
   @ViewChild("examplesSpawn", {read: ViewContainerRef, static: false}) private examplesSpawn!: ViewContainerRef

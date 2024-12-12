@@ -9,11 +9,10 @@ import { ApiFileType } from '../../../services/project/types/api-elements';
 import { MatButtonModule } from '@angular/material/button';
 
 @Component({
-  selector: 'app-import-graph-dialog',
-  standalone: true,
-  imports: [CommonModule, MatDialogModule, MatFormFieldModule, MatButtonModule],
-  templateUrl: './import-file-dialog.component.html',
-  styleUrl: './import-file-dialog.component.scss'
+    selector: 'app-import-graph-dialog',
+    imports: [CommonModule, MatDialogModule, MatFormFieldModule, MatButtonModule],
+    templateUrl: './import-file-dialog.component.html',
+    styleUrl: './import-file-dialog.component.scss'
 })
 export class ImportFileDialogComponent {
 

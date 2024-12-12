@@ -21,12 +21,11 @@ import { Position } from '../../../../types/position';
  * Compoent in the Graphical Editor to represent an instance of {@link RepetitionStatement}
  */
 @Component({
-  selector: 'app-repetition-statement',
-  standalone: true,
-  imports: [CommonModule, StatementComponent, MatGridListModule, GridTileBorderDirective,
-    RefinementWidgetComponent, ConditionEditorComponent, FormsModule, MatFormFieldModule, MatInputModule, MatIconModule, LinkComponent],
-  templateUrl: './repetition-statement.component.html',
-  styleUrl: './repetition-statement.component.scss'
+    selector: 'app-repetition-statement',
+    imports: [CommonModule, StatementComponent, MatGridListModule, GridTileBorderDirective,
+        RefinementWidgetComponent, ConditionEditorComponent, FormsModule, MatFormFieldModule, MatInputModule, MatIconModule, LinkComponent],
+    templateUrl: './repetition-statement.component.html',
+    styleUrl: './repetition-statement.component.scss'
 })
 export class RepetitionStatementComponent extends Refinement {
   private _invariantCondition : Condition;
