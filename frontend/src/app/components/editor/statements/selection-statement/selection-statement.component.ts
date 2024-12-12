@@ -40,9 +40,9 @@ export class SelectionStatementComponent extends Refinement {
 
   private _statementsElementRefs : (ElementRef | undefined )[]
 
-  @ViewChild("subComponentSpawn", {read: ViewContainerRef}) componentSpawn!: ViewContainerRef;
+  @ViewChild("subComponentSpawn", {read: ViewContainerRef}) private componentSpawn!: ViewContainerRef;
   
-  constructor(treeService : TreeService, private dialog : MatDialog) {
+  public constructor(treeService : TreeService, private dialog : MatDialog) {
     super(treeService)
 
     // ensure at least one element is in the array to ensure rendering without errors
@@ -85,14 +85,14 @@ export class SelectionStatementComponent extends Refinement {
   }
 
   
-  override getTitle(): string {
+  public override getTitle(): string {
     return "Selection"
   }
 
   /**
    * Refresh the link state of this statement and all child statements
    */
-  override refreshLinkState(): void {
+  public override refreshLinkState(): void {
     super.refreshLinkState()
 
     for (let i = 0; i < this.statements.length; i++) {
@@ -102,7 +102,7 @@ export class SelectionStatementComponent extends Refinement {
     }
   }
 
-  override resetPosition(position: Position, offset : Position): void {
+  public override resetPosition(position: Position, offset : Position): void {
       this.position.set(position)
       this.position.add(offset)
 
@@ -119,7 +119,7 @@ export class SelectionStatementComponent extends Refinement {
    * index of the guard to add the statement to.
    * @param index The position to add the statement
    */
-  chooseRefinement(index : number) : void {
+  public chooseRefinement(index : number) : void {
     const dialogRef = this.dialog.open(ChooseRefinementComponent);
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {
@@ -148,7 +148,7 @@ export class SelectionStatementComponent extends Refinement {
    * Add a new selection to to the selection statement
    * and ensure the correct length of the statment arrays
    */
-  addSelection() : void {
+  public addSelection() : void {
     this._guards.push(new Condition(this.id, "guard #" + (this._statements.length), ""))
     this._statements.push(undefined)
     this._statementsElementRefs.push(undefined)
@@ -161,7 +161,7 @@ export class SelectionStatementComponent extends Refinement {
    * If there are connected child statements to the to be deleted selection
    * remove the child statements
    */
-  removeSelection() : void {
+  public removeSelection() : void {
     if (this._statements.length <= 1) {
       return
     }
@@ -183,7 +183,7 @@ export class SelectionStatementComponent extends Refinement {
    * @param selection The selection to be imported
    * @param ref the html element of the child statement
    */
-  importSelection(selection : Refinement | undefined, ref : ElementRef | undefined) {
+  public importSelection(selection : Refinement | undefined, ref : ElementRef | undefined) {
     if (this._statements[0] == undefined) {
       this._guards[0] = new Condition(this.id, "guard #" + (this._statements.length), "")
       this._statements[0] = selection
@@ -203,31 +203,11 @@ export class SelectionStatementComponent extends Refinement {
     
   }
 
-  getStatementByIndex(index : number) : Refinement {
-    return this._statements[index] as Refinement
-  }
-   
-  getStatementElementsRefByIndex(index : number) : ElementRef {
-    return this._statementsElementRefs[index] as ElementRef
-  }
-
-  getGuardByIndex(index : number) : Condition {
-    return this._guards[index] as Condition
-  }
-
-  get statements() {
-    return this._statements
-  }
-
-  set guards(guards : Condition[]) {
-    this._guards = guards
-  }
-
   /**
-   * Exports all child statements and the state of this component
-   * @returns New Instance of Selection Statement with the state in this component
-   */
-  override export() {
+  * Exports all child statements and the state of this component
+  * @returns New Instance of Selection Statement with the state in this component
+  */
+  public override export() {
 
     const guards : ConditionDTO[] = []
 
@@ -257,4 +237,26 @@ export class SelectionStatementComponent extends Refinement {
       statements
     )  
   }
+
+  public getStatementByIndex(index : number) : Refinement {
+    return this._statements[index] as Refinement
+  }
+   
+  public getStatementElementsRefByIndex(index : number) : ElementRef {
+    return this._statementsElementRefs[index] as ElementRef
+  }
+
+  public getGuardByIndex(index : number) : Condition {
+    return this._guards[index] as Condition
+  }
+
+  public get statements() {
+    return this._statements
+  }
+
+  set guards(guards : Condition[]) {
+    this._guards = guards
+  }
+
+
 }

@@ -73,15 +73,15 @@ export class EmfMapperService {
         } as EMFSimpleStatement
 
       case SelectionStatement.TYPE:
-        var childs : (EMFStatement | undefined)[] = []
-        for (var child of (statement as SelectionStatement).commands) {
+        const childs : (EMFStatement | undefined)[] = []
+        for (const child of (statement as SelectionStatement).commands) {
           childs.push(
             this.toEMFStatement(child)
           )
         }
 
-        var guards : EMFCondition[] = []
-        for (var guard of (statement as SelectionStatement).guards) {
+        const guards : EMFCondition[] = []
+        for (const guard of (statement as SelectionStatement).guards) {
           guards.push(
             this.toEMFCondition(guard)
           )
@@ -198,15 +198,15 @@ export class EmfMapperService {
         )
       
       case SelectionStatement.TYPE: 
-        var childs : (Statement | undefined)[] = []
-        for (var child of (emfStatement as EMFSelectionStatement).commands) {
+        const childs : (Statement | undefined)[] = []
+        for (const child of (emfStatement as EMFSelectionStatement).commands) {
           childs.push(
             this.toStatement(child)
           )
         }
 
-        var guards : ConditionDTO[] = []
-        for (var guard of (emfStatement as EMFSelectionStatement).guards) {
+        const guards : ConditionDTO[] = []
+        for (const guard of (emfStatement as EMFSelectionStatement).guards) {
           guards.push(
             this.toConditon(guard)
           )

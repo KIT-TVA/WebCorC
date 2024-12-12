@@ -15,10 +15,10 @@ export class NotFoundErrorPageComponent implements AfterViewInit {
 
   private _message : string = "Not found"
 
-  constructor(private router : Router ,private projectService : ProjectService) {}
+  public constructor(private router : Router ,private projectService : ProjectService) {}
   
   
-  ngAfterViewInit(): void {
+  public ngAfterViewInit(): void {
     
     const urlTree = this.router.parseUrl(this.router.url)
 
@@ -45,7 +45,7 @@ export class NotFoundErrorPageComponent implements AfterViewInit {
 
   }
 
-  get message() {
+  public get message() {
     return this._message
   }
 

@@ -54,15 +54,15 @@ export class CbcFormulaMapperService {
           )
 
       case SelectionStatement.TYPE:
-          var childs : (Statement | undefined)[] = []
-          for (var child of (statement as ISelectionStatement).commands) {
+          const childs : (Statement | undefined)[] = []
+          for (const child of (statement as ISelectionStatement).commands) {
               childs.push(
                   this.importStatement(child)
               )
           }
 
-          var guards : ConditionDTO[] = []
-          for (var guard of (statement as ISelectionStatement).guards) {
+          const guards : ConditionDTO[] = []
+          for (const guard of (statement as ISelectionStatement).guards) {
               guards.push(
                   this.importCondition(guard)
               )

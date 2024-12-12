@@ -18,9 +18,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class CreateProjectDialogComponent {
 
-
-  constructor(private projectService : ProjectService, private dialog : MatDialogRef<CreateProjectDialogComponent>) {}
-
+  public constructor(private projectService : ProjectService, private dialog : MatDialogRef<CreateProjectDialogComponent>) {}
 
   public confirm() {
     this.projectService.createProject()

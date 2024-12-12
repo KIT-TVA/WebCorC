@@ -22,12 +22,12 @@ import { ConsoleService } from '../../services/console/console.service';
 })
 export class ConsoleComponent {
 
-  console: FormGroup = this._fb.group({
+  private _console: FormGroup = this._fb.group({
     content: new FormControl("", [])
   })
 
 
-  constructor(private _fb: FormBuilder, private service: ConsoleService) {
+  public constructor(private _fb: FormBuilder, private service: ConsoleService) {
     service.ttyChange.subscribe(content => {
       this.console.get('content')!.setValue(content)
     })
@@ -38,5 +38,9 @@ export class ConsoleComponent {
    */
   public clear() {
     this.console.get('content')?.reset()
+  }
+
+  public get console() {
+    return this._console
   }
 }

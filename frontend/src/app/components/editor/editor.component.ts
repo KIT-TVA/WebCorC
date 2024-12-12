@@ -33,13 +33,13 @@ import { Position } from '../../types/position';
   styleUrl: './editor.component.scss'
 })
 export class EditorComponent implements AfterViewInit, OnDestroy {
-  @ViewChild("examplesSpawn", {read: ViewContainerRef, static: false}) examplesSpawn!: ViewContainerRef
-  @ViewChild(NgComponentOutlet, {static: false}) rootNodeOutlet!: NgComponentOutlet
-  @ViewChild("variables") variables! : VariablesComponent
-  @ViewChild("conditions") conditions! : GlobalConditionsComponent
-  @ViewChild("editorContainer") editorContainer!: ElementRef
+  @ViewChild("examplesSpawn", {read: ViewContainerRef, static: false}) private examplesSpawn!: ViewContainerRef
+  @ViewChild(NgComponentOutlet, {static: false}) private rootNodeOutlet!: NgComponentOutlet
+  @ViewChild("variables") private variables! : VariablesComponent
+  @ViewChild("conditions") private conditions! : GlobalConditionsComponent
+  @ViewChild("editorContainer") private editorContainer!: ElementRef
 
-  rootNode: Type<SimpleStatementComponent> | undefined
+  private _rootNode: Type<SimpleStatementComponent> | undefined
 
   private _urn : string = ''
   private _viewInit : boolean = false
@@ -49,8 +49,8 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
    * @param treeService The service to interact with the refinements 
    * @param projectService The service to persist and laod the file content
    */
-  constructor(
-    public treeService: TreeService,
+  public constructor(
+    private treeService: TreeService,
     private projectService : ProjectService,
     private editorService : EditorService,
     private router : Router
@@ -60,8 +60,6 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     })
 
     this.treeService.exportNotifier.subscribe(() => this.export())
-
-    
   }
   
   /**
@@ -79,19 +77,15 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     if (this._viewInit) {
       this.saveContentToFile()
     }
-    
     this._urn = uniformRessourceName
-
     let child : Refinement | undefined
     
     // get the child of the root element
     if (this.treeService.rootNode) {
       child = (this.treeService.rootNode as SimpleStatementComponent).statement
     }
-
     Refinement.resetIDs(1)
-
-    this.rootNode = SimpleStatementComponent
+    this._rootNode = SimpleStatementComponent
 
     // if the child is defined delete the child and all grandchildren and 
     if (child) {
@@ -114,7 +108,6 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     })
 
     this.treeService.editorWidth = this.editorContainer.nativeElement.offsetWidth
-
     this.editorService.reload.subscribe(() => {
       let child : Refinement | undefined
       if (this.treeService.rootNode) {
@@ -122,12 +115,11 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       }
 
       Refinement.resetIDs(1)
-
+      
       if (child) {
         this.treeService.deletionNotifier.next(child)
         this.examplesSpawn.clear()
       }
-
       this.loadFileContent()
     })
   }
@@ -246,7 +238,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     }
     
     // file is empty, reset rootNode to default values
-    this.rootNode = SimpleStatementComponent
+    this._rootNode = SimpleStatementComponent
     const root =  this.rootNodeOutlet['_componentRef'].instance as SimpleStatementComponent
     root.precondition.content = ""
     root.postcondition.content = ""
@@ -264,5 +256,9 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   @HostListener('window:resize', ['event'])
   onHostWindowResize() {
     this.treeService.editorWidth = this.editorContainer.nativeElement.offsetWidth
+  }
+
+  public get rootNode() {
+    return this._rootNode
   }
 }

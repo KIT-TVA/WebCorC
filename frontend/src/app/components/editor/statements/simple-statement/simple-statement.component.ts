@@ -36,9 +36,9 @@ export class SimpleStatementComponent extends Refinement {
 
   private _statementElementRef: ElementRef | undefined;
 
-  @ViewChild("subComponentSpawn", {read: ViewContainerRef}) componentSpawn!: ViewContainerRef;
+  @ViewChild("subComponentSpawn", {read: ViewContainerRef}) private componentSpawn!: ViewContainerRef;
 
-  constructor(treeService : TreeService, private dialog: MatDialog ) {
+  public constructor(treeService : TreeService, private dialog: MatDialog ) {
     super(treeService);
 
     // If root enable the conditions to be edited
@@ -78,12 +78,12 @@ export class SimpleStatementComponent extends Refinement {
     })
   }
 
-  override getTitle(): string {
+  public override getTitle(): string {
     return  this.isRoot() ? "Root" : "Statement";
   }
 
 
-  chooseRefinement() : void {
+  public chooseRefinement() : void {
     if (!this.isRoot()) {
       return
     } 
@@ -105,42 +105,11 @@ export class SimpleStatementComponent extends Refinement {
     })
   }
 
-  
-
-
-  get statement() : Refinement | undefined {
-    return this._statement
-  }
-
-  set statement(statement : Refinement | undefined) {
-    this._statement = statement
-  }
-
-  get statementElementRef() {
-    return this._statementElementRef
-  }
-
-  set statementElementRef(ref : ElementRef | undefined) {
-    this._statementElementRef = ref
-  }
-
-  public isRoot() : boolean {
-    return this.treeService.isRootNode(this);
-  }
-
-  get condition() : Condition {
-    return this._condition
-  }
-
-  set condition(content : string) {
-    this._condition.content = content
-  }
-
   /**
    * 
    * @returns New Instance of SimpleStatement with the state of the component
    */
-  override export() {
+  public override export() {
 
     // workaround to ensure the root statement is unique for every cbc formula file  
     if (this.isRoot()) {
@@ -168,7 +137,7 @@ export class SimpleStatementComponent extends Refinement {
     )
   }
 
-  override refreshLinkState(): void {
+  public override refreshLinkState(): void {
     super.refreshLinkState()
 
     if (this._statement) {
@@ -176,7 +145,7 @@ export class SimpleStatementComponent extends Refinement {
     }
   }
 
-  override resetPosition(position: Position, offset : Position): void {
+  public override resetPosition(position: Position, offset : Position): void {
     this.position.set(position)
     this.position.add(offset)
 
@@ -185,4 +154,32 @@ export class SimpleStatementComponent extends Refinement {
     }
   }
 
+  public isRoot() : boolean {
+    return this.treeService.isRootNode(this);
+  }
+
+
+  public get statement() : Refinement | undefined {
+    return this._statement
+  }
+
+  public set statement(statement : Refinement | undefined) {
+    this._statement = statement
+  }
+
+  public get statementElementRef() {
+    return this._statementElementRef
+  }
+
+  public set statementElementRef(ref : ElementRef | undefined) {
+    this._statementElementRef = ref
+  }
+
+  public get condition() : Condition {
+    return this._condition
+  }
+
+  public set condition(content : string) {
+    this._condition.content = content
+  }
 }

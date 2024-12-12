@@ -27,17 +27,17 @@ export class VariablesComponent {
   /**
    * Forms Template
    */
-  variables: FormGroup = this._fb.group({
+  private _variables: FormGroup = this._fb.group({
     newVariable: new FormControl("", []),
     items: this._fb.array([])
   }) 
 
-  constructor(private _fb: FormBuilder,  public treeService: TreeService) {}
+  public constructor(private _fb: FormBuilder,  public treeService: TreeService) {}
 
   /**
    * Add new variable and check for duplicate variable names
    */
-  addVariable() : void {
+  public addVariable() : void {
     const value : string = this.variables.controls['newVariable'].value
 
     if (!value) {
@@ -57,12 +57,21 @@ export class VariablesComponent {
     this.variables.controls['newVariable'].reset()
   }
 
-  onEnter(event : Event) {
+  /**
+   * Eventlistener triggered on pressing enter key in the form
+   * @param event 
+   */
+  public onEnter(event : Event) {
     event.preventDefault()
     this.addVariable()
   }
 
-  onDelete(event : Event, i : number) {
+  /**
+   * Eventlistener triggered on pressing deleting key in the form
+   * @param event 
+   * @param i 
+   */
+  public onDelete(event : Event, i : number) {
     event.preventDefault()
     this.removeVariable(i)
   }
@@ -71,7 +80,7 @@ export class VariablesComponent {
    * Remove variables based on the index 
    * @param index The index of the variable to remove
    */
-  removeVariable(index : number) : void {
+  public removeVariable(index : number) : void {
     this.treeService.removeVariables([this.items.at(index).value.name])
     this.items.removeAt(index)
   }
@@ -79,7 +88,7 @@ export class VariablesComponent {
   /**
    * Clear the form
    */
-  removeAllVariables() : void {
+  public removeAllVariables() : void {
 
     for (let i = 0; i < this.items.length; i++) {
       this.treeService.removeVariables([this.items.at(i).value.name])
@@ -93,7 +102,7 @@ export class VariablesComponent {
    * Import variables on opening the file 
    * @param variables the variables to import
    */
-  importVariables(variables : string[]) {
+  public importVariables(variables : string[]) {
     for (const variable of variables) {
       const variableControl = this._fb.group({
         name: new FormControl(variable, [Validators.required])
@@ -104,7 +113,11 @@ export class VariablesComponent {
     }
   }
 
-  get items() : FormArray {
+  public get items() : FormArray {
     return this.variables.controls["items"] as FormArray
+  }
+
+  public get variables() : FormGroup {
+    return this._variables
   }
 }

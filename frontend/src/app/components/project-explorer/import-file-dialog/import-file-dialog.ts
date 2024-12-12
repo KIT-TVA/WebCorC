@@ -21,7 +21,7 @@ export class ImportFileDialogComponent {
   private fileName : string
   private fileType : ApiFileType
 
-  constructor(
+  public constructor(
     @Inject(MAT_DIALOG_DATA) public data : { parentURN : string },
     private _mapper: CbcFormulaMapperService, 
     private _projectService : ProjectService) {
@@ -32,6 +32,8 @@ export class ImportFileDialogComponent {
 
   private _accepted : boolean = false
 
+
+  /* eslint-disable  @typescript-eslint/no-explicit-any */
   public async onFileSelected(event : any) {
     this._accepted = false
     const file : File = event.target?.files[0]
@@ -40,7 +42,7 @@ export class ImportFileDialogComponent {
       return
     }
 
-    let nameSplitted = file.name.split(".")
+    const nameSplitted = file.name.split(".")
     if (nameSplitted.length < 3) {
       this._accepted = false
       return
@@ -54,9 +56,9 @@ export class ImportFileDialogComponent {
 
     this.fileType = nameSplitted[1] as ApiFileType
 
-    let content = await file.text()
+    const content = await file.text()
     if (this.fileType == "diagram") {
-      let parsed : ICBCFormula = JSON.parse(content)
+      const parsed : ICBCFormula = JSON.parse(content)
       this.fileContent =  this._mapper.importFormula(parsed)
     } else {
       this.fileContent = content
@@ -67,15 +69,13 @@ export class ImportFileDialogComponent {
   }
 
   public confirm() {
-    console.log(this.data.parentURN)
     if (!this._accepted) return
     this._projectService.addFile(this.data.parentURN, this.fileName, this.fileType)
     if (this.data.parentURN === "/") { this.data.parentURN = "" }
-    console.log(this.data.parentURN + this.fileName + "." + this.fileType)
     this._projectService.syncFileContent(this.data.parentURN + this.fileName + "." + this.fileType, this.fileContent)
   }
 
-  get accepted() : boolean {
+  public get accepted() : boolean {
     return this._accepted
   }
 }

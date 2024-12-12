@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
 import { CBCFormula } from '../../project/CBCFormula';
 import { Statement } from '../../../types/statements/statement';
 import { SimpleStatement } from '../../../types/statements/simple-statement';

@@ -26,37 +26,41 @@ import { MatButtonModule } from "@angular/material/button";
   styleUrl: './condition-editor.component.scss'
 })
 export class ConditionEditorComponent implements OnInit {
-  @Input() condition!: Condition;
-  @Input() editable = true;
-  @Output() conditionEditingFinished: EventEmitter<void> = new EventEmitter<void>();
+  @Input() public condition!: Condition;
+  @Input() public editable = true;
+  @Output() public conditionEditingFinished: EventEmitter<void> = new EventEmitter<void>();
 
-  @ViewChild("input", {read: MatInput}) input!: MatInput;
+  @ViewChild("input", {read: MatInput}) public input!: MatInput;
 
-  conditionGroup: FormGroup | undefined;
+  private _conditionGroup: FormGroup | undefined;
 
-  constructor(private fb: FormBuilder) {}
+  public constructor(private fb: FormBuilder) {}
 
   /**
    * Initialize the input on angular initalization
    */
-  ngOnInit() {
+  public ngOnInit() {
     // Set up form group on init, since here the @Inputs available
-    this.conditionGroup = this.fb.group({
+    this._conditionGroup = this.fb.group({
       condition: ""
     });
-    this.conditionGroup.get("condition")!.setValue(this.condition.content);
+    this._conditionGroup.get("condition")!.setValue(this.condition.content);
     if (!this.editable) {
-      this.conditionGroup.get("condition")!.disable();
+      this._conditionGroup.get("condition")!.disable();
     }
 
     // Update condition object's content if the input changes
-    this.conditionGroup.valueChanges.subscribe(value => this.condition.content = value.condition);
+    this._conditionGroup.valueChanges.subscribe(value => this.condition.content = value.condition);
 
     // Listen for updates from other input forms for this condition
     this.condition.contentChangeObservable.subscribe(value => {
-      if (value !== this.conditionGroup!.get("condition")!.value) {
-        this.conditionGroup!.get("condition")!.setValue(value);
+      if (value !== this._conditionGroup!.get("condition")!.value) {
+        this._conditionGroup!.get("condition")!.setValue(value);
       }
     });
+  }
+
+  public get conditionGroup() : FormGroup | undefined {
+    return this._conditionGroup
   }
 }

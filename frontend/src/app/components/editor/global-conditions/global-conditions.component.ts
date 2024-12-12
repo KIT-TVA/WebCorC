@@ -29,19 +29,21 @@ export class GlobalConditionsComponent {
   /**
    * Form template 
    */
-  conditions : FormGroup = this._fb.group({
+  private _conditions : FormGroup = this._fb.group({
     newCondition: new FormControl("", []),
     items: this._fb.array([])
   })
 
-  constructor(private _fb: FormBuilder, public treeService: TreeService) {}
+  public constructor(
+    private _fb: FormBuilder,
+    public treeService: TreeService
+  ) {}
 
   /**
    * Saves the content of the input with the id newCondition to the @see TreeService
    * And adds a new item to the form with the content of the new created condition 
    */
-  addCondition() : void {
-    
+  public addCondition() : void {
     const value : string = this.conditions.controls['newCondition'].value.trim()
 
     if (!value) {
@@ -63,12 +65,21 @@ export class GlobalConditionsComponent {
     this.conditions.controls['newCondition'].reset()
   }
 
-  onDelete(event : Event, index : number) {
+  /**
+   * Eventlistener for the delete key
+   * @param event The event of pressing the delete key
+   * @param index The index of the condition to remove
+   */
+  public onDelete(event : Event, index : number) {
     event.preventDefault()
     this.removeCondition(index)
   }
 
-  onEnter(event : Event) {
+  /**
+   * Eventlistene for the enter key
+   * @param event The event of pressing the enter key
+   */
+  public onEnter(event : Event) {
     event.preventDefault()
     this.addCondition()
   }
@@ -77,7 +88,7 @@ export class GlobalConditionsComponent {
    * Removes the condition at the index of the items array and syncs the changes to the @see TreeService
    * @param index The index of the condition to remove
    */
-  removeCondition(index : number) : void {
+  public removeCondition(index : number) : void {
     this.treeService.removeGlobalCondition(this.items.at(index).value.name)
     this.items.removeAt(index)
   }
@@ -85,7 +96,7 @@ export class GlobalConditionsComponent {
   /**
    * Remove all conditions from the form and @see TreeService
    */
-  removeAllConditions() {
+  public removeAllConditions() {
     for (let i = 0; i < this.items.length; i++) {
       this.treeService.removeGlobalCondition(this.items.at(i).value.name)
     }
@@ -99,7 +110,7 @@ export class GlobalConditionsComponent {
    * Import Condtions from the file state found in @see ProjectService
    * @param conditions The condtions to import
    */  
-  importConditions(conditions: ConditionDTO[]) {
+  public importConditions(conditions: ConditionDTO[]) {
     for (const condition of conditions) {
       const conditionControl = this._fb.group({
         name : new FormControl(condition.content, [Validators.required])
@@ -113,7 +124,11 @@ export class GlobalConditionsComponent {
   /**
    * Get the array of inputs for rendering the inputs
    */
-  get items() : FormArray {
+  public get items() : FormArray {
     return this.conditions.controls["items"] as FormArray
+  }
+
+  public get conditions() : FormGroup {
+    return this._conditions
   }
 }

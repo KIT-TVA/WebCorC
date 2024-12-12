@@ -5,41 +5,7 @@
     <p>{{refinement.getTitle()}} #{{refinement.id}}</p>
     <mat-icon *ngIf="!isRoot()" [style.cursor]="'pointer'" (click)="deleteRefinement()">delete</mat-icon>
   </div>
-
-  <div *ngIf="verificationResult && verificationResult.errors.length > 0">
-    <mat-list style="border-bottom: 1px solid rgb(173, 173, 173)">
-      <mat-list-item>
-        <mat-icon matListItemIcon style="color: rgb(201,73,73)">error</mat-icon>
-        <div>
-          Verification failed. <label style="text-decoration: underline; cursor: pointer" (keypress)="openVerificationResultDialog()"
-                                      (click)="openVerificationResultDialog()">See why</label>
-        </div>
-      </mat-list-item>
-    </mat-list>
-  </div>
-  <div *ngIf="verificationResult && verificationResult.correctnessCondition && verificationResult.correctnessCondition !== 'true'">
-    <mat-list style="border-bottom: 1px solid rgba(255,184,23,0.97)">
-      <mat-list-item>
-        <mat-icon matListItemIcon style="color: rgba(255,184,23,0.97)">warning</mat-icon>
-        <div>
-          Verified under circumstances. <label style="text-decoration: underline; cursor: pointer" (keypress)="openVerificationResultDialog()"
-                                      (click)="openVerificationResultDialog()">See conditions</label>
-        </div>
-      </mat-list-item>
-    </mat-list>
-  </div>
-  <div *ngIf="verificationResult && verificationResult.errors.length === 0 && verificationResult.prover[refinement.id] &&
-            (!verificationResult.correctnessCondition || verificationResult.correctnessCondition === 'true')">
-    <mat-list style="border-bottom: 1px solid rgb(46,171,63)">
-      <mat-list-item>
-        <mat-icon matListItemIcon style="color: rgb(46,171,63)">verified_user</mat-icon>
-        <div>
-          Verified with {{verificationResult.prover[refinement.id]}}
-        </div>
-      </mat-list-item>
-    </mat-list>
-  </div>
-
+  
   <div style="display: flex">
     <div appGtBorder="r" #preconditionDiv style="width: 50px; min-height: 140px">
       <mat-drawer-container class="example-container" autosize>

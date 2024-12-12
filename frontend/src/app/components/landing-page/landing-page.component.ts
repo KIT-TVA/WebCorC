@@ -21,11 +21,9 @@ export class LandingPageComponent implements OnInit {
 
   private _projectId : string | undefined
   
-  constructor(private route : ActivatedRoute, private projectService : ProjectService) {
-
-  }
+  public constructor(private route : ActivatedRoute, private projectService : ProjectService) {}
   
-  ngOnInit(): void {
+  public ngOnInit(): void {
     // read the query Params and setting them to the projectService
     this.route.queryParams
       .subscribe(params => {

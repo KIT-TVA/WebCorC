@@ -36,9 +36,9 @@ export class StrongWeakStatementComponent extends Refinement {
   private _statement : Refinement | undefined;
   private _statementRef : ElementRef | undefined;
 
-  @ViewChild("subComponentSpawn", {read: ViewContainerRef}) componentSpawn!: ViewContainerRef;
+  @ViewChild("subComponentSpawn", {read: ViewContainerRef}) private componentSpawn!: ViewContainerRef;
 
-  constructor(treeService : TreeService, private dialog : MatDialog) {
+  public constructor(treeService : TreeService, private dialog : MatDialog) {
     super(treeService);
     this._weakPreCondition = new Condition(this.id, "Weak precondition");
     this._strongPostCondition = new Condition(this.id, "Strong postcondition");
@@ -68,14 +68,14 @@ export class StrongWeakStatementComponent extends Refinement {
     })
   }
   
-  override getTitle(): string {
+  public override getTitle(): string {
     return "Strong-Weak"
   }
 
   /**
    * Open {@link ChooseRefinementComponent} and allow adding a child to this statement
    */
-  chooseRefinement() {
+  public chooseRefinement() {
     const dialogRef = this.dialog.open(ChooseRefinementComponent);
 
     dialogRef.afterClosed().subscribe(result => {
@@ -93,36 +93,13 @@ export class StrongWeakStatementComponent extends Refinement {
     })
   }
 
-  get statement() : Refinement | undefined {
-    return this._statement
-  }
 
-  set statement(statement : Refinement | undefined) {
-    this._statement = statement
-  }
-
-  get statementRef() : ElementRef | undefined {
-    return this._statementRef
-  }
-
-  set statementRef(ref : ElementRef | undefined) {
-    this._statementRef = ref
-  }
-
-
-  get weakPreCondition() : Condition {
-    return this._weakPreCondition
-  }
-
-  get strongPostCondition() : Condition {
-    return this._strongPostCondition;
-  }
 
   /**
    * Convert this Component to the data only {@link StrongWeakStatement}
    * @returns 
    */
-  override export() {
+  public override export() {
     return new StrongWeakStatement(
       this.getTitle(),
       this.id,
@@ -138,17 +115,42 @@ export class StrongWeakStatementComponent extends Refinement {
   /**
    * Refresh the link between this and the child statement
    */
-  override refreshLinkState(): void {
+  public override refreshLinkState(): void {
     super.refreshLinkState()
     if (!this._statement) return
     this.statement?.refreshLinkState()
   }
 
 
-  override resetPosition(position: Position, offset : Position): void {
+  public override resetPosition(position: Position, offset : Position): void {
       this.position.set(position)
       this.position.add(offset)
 
       this._statement?.resetPosition(this.position, new Position(100, 0))
+  }
+
+  public get statement() : Refinement | undefined {
+    return this._statement
+  }
+
+  public set statement(statement : Refinement | undefined) {
+    this._statement = statement
+  }
+
+  public get statementRef() : ElementRef | undefined {
+    return this._statementRef
+  }
+
+  public set statementRef(ref : ElementRef | undefined) {
+    this._statementRef = ref
+  }
+
+
+  public get weakPreCondition() : Condition {
+    return this._weakPreCondition
+  }
+
+  public get strongPostCondition() : Condition {
+    return this._strongPostCondition;
   }
 }

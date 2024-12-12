@@ -29,14 +29,14 @@ export class FileEditorComponent implements AfterViewInit,OnDestroy {
   //Todo: Fix / Inverstigate Flickering Issue when usuing getters and setters
   public code : string = '';
 
-  constructor(private projectService : ProjectService, private router : Router) {
+  public constructor(private projectService : ProjectService, private router : Router) {
     this.projectService.editorNotify.subscribe(() => {
       this.saveContentToFile()
     })
   }
 
   //Todo: make language configurable
-  editorOptions =  {
+  public editorOptions =  {
       theme: 'vs',
       language: 'java',
       scrollBeyondLastLine: false,
@@ -47,7 +47,7 @@ export class FileEditorComponent implements AfterViewInit,OnDestroy {
    * to this component 
    */
   @Input()
-  set urn(uniformRessourceName: string) {
+  public set urn(uniformRessourceName: string) {
     // prevent reloading the same context
     if (uniformRessourceName == this._urn) {
       return

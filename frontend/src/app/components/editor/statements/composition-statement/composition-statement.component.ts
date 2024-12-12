@@ -46,9 +46,9 @@ export class CompositionStatementComponent extends Refinement {
   private _rightStatementRef : ElementRef | undefined;
 
   // Element used to spawn the child statements in
-  @ViewChild("subComponentSpawn", {read: ViewContainerRef}) componentSpawn!: ViewContainerRef;
+  @ViewChild("subComponentSpawn", {read: ViewContainerRef}) private componentSpawn!: ViewContainerRef;
 
-  constructor(treeService : TreeService, private dialog : MatDialog) {
+  public constructor(treeService : TreeService, private dialog : MatDialog) {
     super(treeService);
     this._intermediateCondition = new Condition(this.id, "Intermediate Cond.")
 
@@ -101,7 +101,7 @@ export class CompositionStatementComponent extends Refinement {
 
   }
   
-  override getTitle(): string {
+  public override getTitle(): string {
     return "Composition"
   }
 
@@ -110,7 +110,7 @@ export class CompositionStatementComponent extends Refinement {
    * The new child statement then get created in component
    * @param side hardcoded string from the template to identify which button got used
    */
-  chooseRefinement(side : "left" | "right") : void {
+  public chooseRefinement(side : "left" | "right") : void {
     const dialogRef = this.dialog.open(ChooseRefinementComponent);
 
     dialogRef.afterClosed().subscribe(result => {
@@ -144,7 +144,7 @@ export class CompositionStatementComponent extends Refinement {
   /**
    * Refresh the Link State of this Statement and the left and right child statements
    */
-  override refreshLinkState(): void {
+  public override refreshLinkState(): void {
     super.refreshLinkState()
     
     if (this.leftStatement) {
@@ -156,7 +156,7 @@ export class CompositionStatementComponent extends Refinement {
     }
   }
 
-  override resetPosition(position : Position, offset : Position): void {
+  public override resetPosition(position : Position, offset : Position): void {
     this.position.set(position)
     this.position.add(offset)
 
@@ -165,19 +165,19 @@ export class CompositionStatementComponent extends Refinement {
   }
 
 
-  get leftStatement() : Refinement | undefined  {
+  public get leftStatement() : Refinement | undefined  {
     return this._leftStatement
   }
 
-  set leftStatement(statement : Refinement | undefined) {
+  public set leftStatement(statement : Refinement | undefined) {
     this._leftStatement = statement
   }
 
-  get leftStatementRef() : ElementRef | undefined {
+  public get leftStatementRef() : ElementRef | undefined {
     return this._leftStatementRef
   }
 
-  set leftStatementRef(ref : ElementRef | undefined) {
+  public set leftStatementRef(ref : ElementRef | undefined) {
     this._leftStatementRef = ref
   } 
 

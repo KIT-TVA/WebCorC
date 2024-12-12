@@ -36,9 +36,9 @@ export class RepetitionStatementComponent extends Refinement {
   private _loopStatement : Refinement | undefined;
   private _loopStatementRef : ElementRef | undefined;
 
-  @ViewChild("subComponentSpawn", {read: ViewContainerRef}) componentSpawn!: ViewContainerRef;
+  @ViewChild("subComponentSpawn", {read: ViewContainerRef}) private componentSpawn!: ViewContainerRef;
 
-  constructor(treeService : TreeService, private dialog : MatDialog) {
+  public constructor(treeService : TreeService, private dialog : MatDialog) {
     super(treeService);
     this._invariantCondition = new Condition(this.id, "Invariant");
     this._variantCondition = new Condition(this.id, "Variant");
@@ -94,14 +94,14 @@ export class RepetitionStatementComponent extends Refinement {
     })
   }
 
-  override getTitle(): string {
+  public override getTitle(): string {
     return "Repetition";
   }
 
   /**
    * Open {@link ChooseRefinementComponent} and add the child statement to the dom
    */
-  chooseRefinement() {
+  public chooseRefinement() {
     const dialogRef = this.dialog.open(ChooseRefinementComponent);
     
     dialogRef.afterClosed().subscribe(result => {
@@ -121,13 +121,13 @@ export class RepetitionStatementComponent extends Refinement {
     })
   }
 
-  override refreshLinkState(): void {
+  public override refreshLinkState(): void {
     super.refreshLinkState()
     if (!this.loopStatement) return
     this.loopStatement.refreshLinkState()
   }
 
-  override resetPosition(position: Position, offset : Position): void {
+  public override resetPosition(position: Position, offset : Position): void {
     if (offset.xinPx < 0) {
       offset.xinPx = offset.xinPx * 3.5 
     }
@@ -138,43 +138,43 @@ export class RepetitionStatementComponent extends Refinement {
     this._loopStatement?.resetPosition(this.position, new Position(200, 0))
   }
 
-  get loopStatement() : Refinement | undefined {
+  public get loopStatement() : Refinement | undefined {
     return this._loopStatement;
   }
 
-  set loopStatement(statement : Refinement | undefined) {
+  public set loopStatement(statement : Refinement | undefined) {
     this._loopStatement = statement
   } 
 
-  get loopStatementRef() : ElementRef | undefined {
+  public get loopStatementRef() : ElementRef | undefined {
     return this._loopStatementRef;
   }
 
-  set loopStatementRef(ref : ElementRef | undefined) {
+  public set loopStatementRef(ref : ElementRef | undefined) {
     this._loopStatementRef = ref
   } 
 
-  get invariantCondition() : Condition {
+  public get invariantCondition() : Condition {
     return this._invariantCondition;
   }
 
-  set invariantCondition(condition : Condition) {
+  public set invariantCondition(condition : Condition) {
     this._invariantCondition = condition
   }
 
-  get variantCondition() : Condition {
+  public get variantCondition() : Condition {
     return this._variantCondition;
   }
 
-  set variantCondition(condition : Condition) {
+  public set variantCondition(condition : Condition) {
     this._variantCondition = condition
   }
 
-  get guardCondition() : Condition {
+  public get guardCondition() : Condition {
     return this._guardCondition;
   }
 
-  set guardCondition(condition : Condition) {
+  public set guardCondition(condition : Condition) {
     this._guardCondition = condition
   }
 
@@ -183,7 +183,7 @@ export class RepetitionStatementComponent extends Refinement {
    * @see RepetitionStatement
    * @returns New Instance of data only Repetition Statement class
    */
-  override export() {
+  public override export() {
     return new RepetitionStatement(
       this.getTitle(),
       this.id,

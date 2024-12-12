@@ -13,7 +13,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { CreateProjectDialogComponent } from './create-project-dialog/create-project-dialog.component';
 import { ProjectElement, ProjectDirectory, CodeFile, DiagramFile } from '../../services/project/types/project-elements';
 import { ImportFileDialogComponent } from './import-file-dialog/import-file-dialog';
-import { MatMenu, MatMenuModule } from '@angular/material/menu';
+import { MatMenuModule } from '@angular/material/menu';
 
 class FlatNode {
   expandable: boolean;
@@ -60,7 +60,7 @@ export class ProjectExplorerComponent {
   private _dataSource = new MatTreeFlatDataSource(this.treeControl, this._treeFlatener);
 
 
-  constructor(public projectService : ProjectService, private router : Router, private dialog : MatDialog) {
+  public constructor(public projectService : ProjectService, private router : Router, private dialog : MatDialog) {
     this.dataSource.data = this.projectService.root.content;
 
     this.projectService.dataChange.subscribe((data) => {
@@ -207,5 +207,4 @@ export class ProjectExplorerComponent {
   public set dataSource(value) {
     this._dataSource = value;
   }
-
 }

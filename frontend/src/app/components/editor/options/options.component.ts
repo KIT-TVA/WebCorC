@@ -7,6 +7,10 @@ import { first } from 'rxjs';
 import { EditorService } from '../../../services/editor/editor.service';
 import { MatIconModule } from '@angular/material/icon';
 
+/**
+ * Options and Actions Component for the Editor Component
+ * shown in the expand panel
+ */
 @Component({
   selector: 'app-options',
   standalone: true,
@@ -22,7 +26,9 @@ export class OptionsComponent {
     private editorService : EditorService,
   ){}
 
-
+  /**
+   * Function executed on clicking Reset Positions
+   */
   public resetPositions() {
     this.treeService.resetPositions()
 
@@ -33,12 +39,11 @@ export class OptionsComponent {
     this.projectService.editorNotify.next()
   }
 
+  /**
+   * Function executed on clicking export Graph
+   */
   public exportGraph() {
     this.treeService.export()
-  }
-
-  public importGraph() {
-    
   }
 
 }

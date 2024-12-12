@@ -31,7 +31,10 @@ import { StrongWeakStatementComponent } from '../editor/statements/strong-weak-s
   styleUrl: './choose-refinement.component.scss'
 })
 export class ChooseRefinementComponent {
-  readonly REFINEMENT_WIDGETS: {name: string, icon: string, component: Type<Refinement>}[] = [
+  /**
+   * Constant for the displayed buttons, their icons and the spawned component
+   */
+  public readonly REFINEMENT_WIDGETS: {name: string, icon: string, component: Type<Refinement>}[] = [
     {name: "Statement", icon: "trending_flat", component: SimpleStatementComponent},
     {name: "Selection", icon: "vertical_split", component: SelectionStatementComponent},
     {name: "Composition", icon: "account_tree", component: CompositionStatementComponent},
@@ -39,12 +42,16 @@ export class ChooseRefinementComponent {
     {name: "Strong-Weak", icon: "priority_high", component: StrongWeakStatementComponent}
   ];
 
-  constructor(public dialogRef: MatDialogRef<ChooseRefinementComponent>) {}
+  /**
+   * Constructor for dependency injection of the dialog ref of this component
+   * @param dialogRef The MatDialogRef of this component, used to interact with the dialog form the inside of this component
+   */
+  public constructor(public dialogRef: MatDialogRef<ChooseRefinementComponent>) {}
 
   /**
    * Close the Dialog when clicking outside the dialog content
    */
-  onNoClick(): void {
+  public onNoClick(): void {
     this.dialogRef.close();
   }
 }
