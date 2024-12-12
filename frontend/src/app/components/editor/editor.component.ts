@@ -27,7 +27,7 @@ import { Position } from '../../types/position';
  */
 @Component({
     selector: 'app-editor',
-    imports: [CommonModule, RefinementWidgetComponent, MatButtonModule, AddRefinementWidgetComponent, MatIconModule, MatExpansionModule, VariablesComponent, MatTooltipModule, MatMenuModule, GlobalConditionsComponent, OptionsComponent],
+    imports: [CommonModule, MatButtonModule, MatIconModule, MatExpansionModule, VariablesComponent, MatTooltipModule, MatMenuModule, GlobalConditionsComponent, OptionsComponent],
     templateUrl: './editor.component.html',
     styleUrl: './editor.component.scss'
 })

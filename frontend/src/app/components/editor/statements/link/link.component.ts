@@ -16,10 +16,9 @@ import { TreeService } from '../../../../services/tree/tree.service';
     <mat-icon #linkIcon>link</mat-icon>
   `,
     styles: `
-    @import "../../../../../styles";
     mat-icon {
-      padding-left: $refinementBodyPadding;
-      padding-right: $refinementBodyPadding;
+      padding-left: 15px;
+      padding-right: 15px;
     }
   `
 })

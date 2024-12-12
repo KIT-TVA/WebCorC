@@ -34,7 +34,6 @@ $qbc_frontend-theme: mat.m2-define-light-theme((
 @include mat.all-component-themes($qbc_frontend-theme);
 
 /* You can add global styles to this file, and also import other style files */
-$refinementBodyPadding: 15px;
 
 h1 {
   font-family: "Inter Tight", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,

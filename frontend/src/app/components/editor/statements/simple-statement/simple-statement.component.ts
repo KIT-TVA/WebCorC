@@ -4,7 +4,6 @@ import { StatementComponent } from "../statement/statement.component";
 import { Refinement } from "../../../../types/refinement";
 import { TreeService } from "../../../../services/tree/tree.service";
 import { MatGridListModule } from "@angular/material/grid-list";
-import { GridTileBorderDirective } from "../../../../directives/grid-tile-border.directive";
 import { RefinementWidgetComponent } from "../../../../widgets/refinement-widget/refinement-widget.component";
 import { ConditionEditorComponent } from "../../condition/condition-editor/condition-editor.component";
 import { Condition, ConditionDTO } from "../../../../types/condition/condition";
@@ -24,7 +23,7 @@ import { Position } from '../../../../types/position';
  */
 @Component({
     selector: 'app-simple-statement',
-    imports: [CommonModule, StatementComponent, MatGridListModule, GridTileBorderDirective,
+    imports: [CommonModule, StatementComponent, MatGridListModule,
         RefinementWidgetComponent, ConditionEditorComponent, FormsModule, MatFormFieldModule, MatInputModule, MatIconModule, LinkComponent, ConditionEditorComponent],
     templateUrl: './simple-statement.component.html',
     styleUrl: './simple-statement.component.scss'

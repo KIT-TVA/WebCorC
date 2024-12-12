@@ -4,8 +4,6 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from "@angul
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInput, MatInputModule } from "@angular/material/input";
 import { Condition } from "../../../../types/condition/condition";
-import { GridTileBorderDirective } from "../../../../directives/grid-tile-border.directive";
-import { GridTileHeaderDirective } from "../../../../directives/grid-tile-header.directive";
 import { MatGridListModule } from "@angular/material/grid-list";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatMenuModule } from "@angular/material/menu";
@@ -18,8 +16,7 @@ import { MatButtonModule } from "@angular/material/button";
  */
 @Component({
     selector: 'app-condition-editor',
-    imports: [CommonModule, FormsModule, MatFormFieldModule, MatInputModule,
-        GridTileBorderDirective, GridTileHeaderDirective, MatGridListModule,
+    imports: [CommonModule, FormsModule, MatFormFieldModule, MatInputModule, MatGridListModule,
         ReactiveFormsModule, MatAutocompleteModule, MatMenuModule, MatButtonModule],
     templateUrl: './condition-editor.component.html',
     styleUrl: './condition-editor.component.scss'

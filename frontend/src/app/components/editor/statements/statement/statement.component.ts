@@ -6,7 +6,6 @@ import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
 import {FormsModule} from "@angular/forms";
 import {ConditionEditorComponent} from "../../condition/condition-editor/condition-editor.component";
-import {GridTileHeaderDirective} from "../../../../directives/grid-tile-header.directive";
 import {GridTileBorderDirective} from "../../../../directives/grid-tile-border.directive";
 import {CdkDrag, CdkDragEnd, CdkDragHandle, CdkDragMove, Point} from "@angular/cdk/drag-drop";
 import {TreeService} from "../../../../services/tree/tree.service";
@@ -14,7 +13,6 @@ import {MatIconModule} from "@angular/material/icon";
 import {MatDrawer, MatSidenavModule} from "@angular/material/sidenav";
 import {MatButtonModule} from "@angular/material/button";
 import {MatExpansionModule} from "@angular/material/expansion";
-import {VerificationErrorListComponent} from "../../../verification-error-list.component";
 import {MatListModule} from "@angular/material/list";
 import { Position } from '../../../../types/position';
 import { Statement } from '../../../../types/statements/statement';
@@ -28,9 +26,9 @@ import { Statement } from '../../../../types/statements/statement';
 @Component({
     selector: 'app-statement-base',
     imports: [CommonModule, MatGridListModule, MatFormFieldModule, MatInputModule, FormsModule,
-        ConditionEditorComponent, GridTileHeaderDirective, GridTileBorderDirective, CdkDrag,
+        ConditionEditorComponent, GridTileBorderDirective, CdkDrag,
         CdkDragHandle, MatIconModule, MatSidenavModule, MatButtonModule, MatExpansionModule,
-        VerificationErrorListComponent, MatListModule],
+        MatListModule],
     templateUrl: './statement.component.html',
     styleUrl: './statement.component.scss'
 })
