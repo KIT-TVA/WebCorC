@@ -86,7 +86,7 @@ export class FileEditorComponent implements AfterViewInit,OnDestroy {
     let newCode : string | undefined = undefined 
     try {
       newCode = await this.projectService.getFileContent(this._urn) as string
-    } catch (e) {
+    } catch {
       const projectId = this.router.parseUrl(this.router.url).queryParamMap.get("projectId")
       if (!this.projectService.projectId && projectId) {
         this.projectService.projectId = projectId

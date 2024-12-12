@@ -1,9 +1,7 @@
 import {AfterViewInit, Component, ElementRef, HostListener, Input, OnDestroy, Type, ViewChild, ViewContainerRef} from '@angular/core';
 import {CommonModule, NgComponentOutlet} from '@angular/common';
-import {RefinementWidgetComponent} from "../../widgets/refinement-widget/refinement-widget.component";
 import {Refinement} from "../../types/refinement";
 import {MatButtonModule} from "@angular/material/button";
-import {AddRefinementWidgetComponent} from "../../widgets/add-refinement-widget/add-refinement-widget.component";
 import {TreeService} from "../../services/tree/tree.service";
 import {MatIconModule} from "@angular/material/icon";
 import {MatExpansionModule} from "@angular/material/expansion";
@@ -190,7 +188,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     let newFormula : CBCFormula | undefined = undefined
     try {
       newFormula = await this.projectService.getFileContent(this._urn) as CBCFormula
-    } catch (e) {
+    } catch {
 
       const projectId = this.router.parseUrl(this.router.url).queryParamMap.get("projectId")
       if (!this.projectService.projectId && projectId) {
