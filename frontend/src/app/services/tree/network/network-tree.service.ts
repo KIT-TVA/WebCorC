@@ -9,6 +9,7 @@ import { Refinement } from '../../../types/refinement';
 import { ConditionDTO } from '../../../types/condition/condition';
 import { SimpleStatementComponent } from '../../../components/editor/statements/simple-statement/simple-statement.component';
 import { VerificationService } from '../verification/verification.service';
+import { NetworkStatusService } from '../../networkStatus/network-status.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,13 +18,13 @@ export class NetworkTreeService {
   private static readonly verifyPath = "/editor/verify"
   private static readonly generatePath = "/editor/generate"
 
-  private readonly _networkActivity = new Subject<boolean>()
   private readonly _generateStatus = new Subject<string>()
 
   constructor(
     private readonly http: HttpClient,
     private readonly mapper : EmfMapperService,
-    private readonly verificationService : VerificationService
+    private readonly verificationService : VerificationService,
+    private readonly networkStatusService : NetworkStatusService
   ) { }
 
   public verify(root : Refinement | undefined, javaVariables : string[], globalConditions : ConditionDTO[]) {
@@ -36,13 +37,13 @@ export class NetworkTreeService {
     formula.javaVariables = javaVariables
     formula.globalConditions = globalConditions
 
-    this._networkActivity.next(true)
+    this.networkStatusService.startNetworkRequest()
     //Todo: Websocket?
     this.http
       .post<EMFCbcFormula>(environment.apiUrl + NetworkTreeService.verifyPath, this.mapper.toEMFCbcFormula(formula))
       .subscribe((formula) => {
         this.verificationService.next(this.mapper.toCBCFormula(formula))
-        this._networkActivity.next(false)
+        this.networkStatusService.stopNetworkRequest()
       })
 
   }

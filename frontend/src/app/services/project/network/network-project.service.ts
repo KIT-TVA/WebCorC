@@ -7,6 +7,7 @@ import { HttpClient } from '@angular/common/http';
 import { NetProject } from './NetProject';
 import { ApiDiagrammFile, ApiDirectory, ApiTextFile, Inode } from '../types/api-elements';
 import { CbcFormulaMapperService } from '../mapper/cbc-formula-mapper.service';
+import { NetworkStatusService } from '../../networkStatus/network-status.service';
 
 /**
  * Service to interact with the backend for managing the project.
@@ -22,7 +23,11 @@ export class NetworkProjectService {
   private  _dataChange = new BehaviorSubject<ApiDirectory>(new ApiDirectory("", []))
   private _finishedRequest = new Subject<void>()
 
-  constructor(private http : HttpClient, private mapper : CbcFormulaMapperService , private consoleService : ConsoleService) { }
+  constructor(private http : HttpClient,
+    private mapper : CbcFormulaMapperService,
+    private consoleService : ConsoleService,
+    private networkStatusService : NetworkStatusService
+  ) { }
 
 
   /**
@@ -32,12 +37,14 @@ export class NetworkProjectService {
   public createProject(name : string) {
 
     if (!name) return
-
+    
+    this.networkStatusService.startNetworkRequest()
     this.http
       .post<NetProject>(environment.apiUrl + NetworkProjectService.projects, { name: name })
       .subscribe(project => {
         this.projectId = project.id
         this._finishedRequest.next()
+        this.networkStatusService.stopNetworkRequest()
       })
   }
 
@@ -48,11 +55,14 @@ export class NetworkProjectService {
   public readProject(projectId : string | undefined = this._projectId) {
     this._projectId = projectId
 
+    this.networkStatusService.startNetworkRequest()
+
     this.http
       .get<NetProject>(this.buildProjectURL())
       .subscribe(project => {
         this._projectname = project.name
         this._dataChange.next(new ApiDirectory(project.files.urn, project.files.content))
+        this.networkStatusService.stopNetworkRequest()
       })
   }
 
@@ -62,6 +72,7 @@ export class NetworkProjectService {
    * @param file The file to upload
    */
   public uploadFile(file : Inode) {
+    this.networkStatusService.startNetworkRequest()
     const formData = new FormData()
 
     const urn = file.urn 
@@ -81,13 +92,13 @@ export class NetworkProjectService {
     formData.append("fileUpload", realFile, urn)
 
     this.http.post(this.buildFileURL(urn), formData)
-      .subscribe(() => {})
+      .subscribe(() => this.networkStatusService.stopNetworkRequest())
     
   }
 
   public deleteFile(file : Inode) {
     this.http.delete(this.buildFileURL(file.urn))
-      .subscribe()
+      .subscribe(() => this.networkStatusService.startNetworkRequest())
   }
 
   /**
@@ -96,6 +107,7 @@ export class NetworkProjectService {
    * @param urn 
    */
   public async getFileContent(urn : string) :  Promise<string | CBCFormula> {
+    this.networkStatusService.startNetworkRequest()
     const request = new Request(this.buildFileURL(urn), {
       method : "GET"
     })
@@ -115,6 +127,7 @@ export class NetworkProjectService {
           return file
         }
 
+        this.networkStatusService.stopNetworkRequest()
         return this.mapper.importFormula(file)
       })
 
