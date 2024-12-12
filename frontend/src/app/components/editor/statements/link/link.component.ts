@@ -91,7 +91,7 @@ export class LinkComponent implements AfterViewInit, OnDestroy {
   drawLine(): void {
     const refinementBoundaries = this.linkedRefinement.nativeElement.children[0].children[0].getBoundingClientRect();
     const iconBoundaries = this.linkIcon._elementRef.nativeElement.getBoundingClientRect();
-
+    if (!this.lineContainerDOM.children[0] || !this.lineContainerDOM.children[0].children[0]) { return}
     const linkLine = this.lineContainerDOM.children[0].children[0];
 
     const refinementCenterX = refinementBoundaries.x + refinementBoundaries.width/2;

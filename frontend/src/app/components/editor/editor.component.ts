@@ -87,7 +87,9 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     // if the child is defined delete the child and all grandchildren and 
     if (child) {
       this.treeService.deletionNotifier.next(child)
-      this.examplesSpawn.clear()
+      if (this.examplesSpawn) {
+        this.examplesSpawn.clear()
+      }
     }
 
     if (this._viewInit) {
