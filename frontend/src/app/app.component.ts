@@ -71,8 +71,6 @@ export class AppComponent {
       wait = true 
     }
 
-    this.projectService.uploadWorkspace(wait)
-
     this.projectService.editorNotify.pipe(first()).subscribe(() => {
       navigator.clipboard.writeText(window.location.protocol + "//" +window.location.hostname + ":" + window.location.port + "?projectId=" + this.projectService.projectId)
       this.snackBar.open("Copied project url", "Dismiss", {
@@ -81,6 +79,10 @@ export class AppComponent {
         duration: 5000
       })
     })
+
+    this.projectService.uploadWorkspace(wait)
+
+    
   }
 
   public getLoadingState() : "indeterminate" | "determinate" {

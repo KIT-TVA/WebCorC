@@ -1,8 +1,8 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { CBCFormula } from '../../project/CBCFormula';
 import { environment } from '../../../../environments/environment';
-import { Subject } from 'rxjs';
+import { Observable, Subject, catchError, map, of } from 'rxjs';
 import { EMFCbcFormula } from '../emf/emf-cbc-formula';
 import { EmfMapperService } from '../emf/emf-mapper.service';
 import { Refinement } from '../../../types/refinement';
@@ -10,6 +10,7 @@ import { ConditionDTO } from '../../../types/condition/condition';
 import { SimpleStatementComponent } from '../../../components/editor/statements/simple-statement/simple-statement.component';
 import { VerificationService } from '../verification/verification.service';
 import { NetworkStatusService } from '../../networkStatus/network-status.service';
+import { ConsoleService } from '../../console/console.service';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +25,8 @@ export class NetworkTreeService {
     private readonly http: HttpClient,
     private readonly mapper : EmfMapperService,
     private readonly verificationService : VerificationService,
-    private readonly networkStatusService : NetworkStatusService
+    private readonly networkStatusService : NetworkStatusService,
+    private readonly consoleService : ConsoleService
   ) { }
 
   public verify(root : Refinement | undefined, javaVariables : string[], globalConditions : ConditionDTO[]) {
@@ -41,10 +43,15 @@ export class NetworkTreeService {
     //Todo: Websocket?
     this.http
       .post<EMFCbcFormula>(environment.apiUrl + NetworkTreeService.verifyPath, this.mapper.toEMFCbcFormula(formula))
-      .subscribe((formula) => {
-        this.verificationService.next(this.mapper.toCBCFormula(formula))
+      .pipe(map(formula => this.mapper.toCBCFormula(formula)))
+      .pipe(catchError((error : HttpErrorResponse, caught : Observable<CBCFormula>) : Observable<CBCFormula> => {
+        this.consoleService.addErrorResponse(error, "Verification failed")
+        this.networkStatusService.stopNetworkRequest()
+        return of()
+      }))
+      .subscribe((formula: CBCFormula) => {
+        this.verificationService.next(formula)
         this.networkStatusService.stopNetworkRequest()
       })
-
   }
 }

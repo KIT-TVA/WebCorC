@@ -4,9 +4,15 @@
         <button mat-icon-button (click)="clear()" > <mat-icon> delete </mat-icon> </button>
     </div>
     <form [formGroup]="console" class="form">
-        <mat-form-field class="field">
-            <textarea matInput formControlName="content" readonly="true"></textarea>
-        </mat-form-field>
+       <mat-list #logList [formControl]="logsControl" >
+        @for (line of loglines; track line) {
+            <mat-list-item>
+                <span matListItemTitle> {{ line.action }}  </span>
+                <span matListItemLine> {{ deconstructLogError(line) }} </span>
+            </mat-list-item>
+        }
+            
+       </mat-list>
     </form>
     
 </div>

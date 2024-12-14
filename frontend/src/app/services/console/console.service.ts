@@ -1,5 +1,6 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ReplaySubject } from 'rxjs';
+import { ConsoleLogLine } from './log';
 
 /**
  * Service to allow interaction with the console 
@@ -9,13 +10,23 @@ import { ReplaySubject } from 'rxjs';
   providedIn: 'root'
 })
 export class ConsoleService {
-  private _ttyChange = new ReplaySubject<string>()
+  private _logs : ConsoleLogLine[] = []
 
-  constructor() {
+  constructor() {}
 
+  public get logs() {
+    return this._logs
   }
 
-  get ttyChange() {
-    return this._ttyChange
+  public addErrorResponse(error : HttpErrorResponse, action : string = "") {
+    this._logs.push(new ConsoleLogLine(action, error))
+  }
+
+  public addStringError(error : string, action : string = "") {
+    this._logs.push(new ConsoleLogLine(action, error))
+  }
+
+  public clear() {
+    this._logs = []
   }
 }

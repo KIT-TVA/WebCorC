@@ -7,6 +7,8 @@ import { Subject } from 'rxjs';
 export class NetworkStatusService {
 
   private _status = new Subject<boolean>();
+  private _error = false
+
 
   constructor() { }
 

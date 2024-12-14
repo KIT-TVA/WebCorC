@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, catchError, of } from 'rxjs';
 import { ConsoleService } from '../../console/console.service';
 import { CBCFormula, ICBCFormula } from '../CBCFormula';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { NetProject } from './NetProject';
 import { ApiDiagrammFile, ApiDirectory, ApiTextFile, Inode } from '../types/api-elements';
 import { CbcFormulaMapperService } from '../mapper/cbc-formula-mapper.service';
@@ -41,6 +41,11 @@ export class NetworkProjectService {
     this.networkStatusService.startNetworkRequest()
     this.http
       .post<NetProject>(environment.apiUrl + NetworkProjectService.projects, { name: name })
+      .pipe(catchError((error : HttpErrorResponse, caught: Observable<NetProject>) : Observable<NetProject> => {
+        this.consoleService.addErrorResponse(error, "Creating Project")
+        this.networkStatusService.stopNetworkRequest()
+        return of()
+      }))
       .subscribe(project => {
         this.projectId = project.id
         this._finishedRequest.next()
@@ -59,6 +64,11 @@ export class NetworkProjectService {
 
     this.http
       .get<NetProject>(this.buildProjectURL())
+      .pipe(catchError((error : HttpErrorResponse, caught : Observable<NetProject>) : Observable<NetProject> => {
+        this.consoleService.addErrorResponse(error, "Reading Project")
+        this.networkStatusService.stopNetworkRequest()
+        return of()
+      }))
       .subscribe(project => {
         this._projectname = project.name
         this._dataChange.next(new ApiDirectory(project.files.urn, project.files.content))
@@ -92,12 +102,22 @@ export class NetworkProjectService {
     formData.append("fileUpload", realFile, urn)
 
     this.http.post(this.buildFileURL(urn), formData)
+      .pipe(catchError((error : HttpErrorResponse, caught : Observable<any>) : Observable<void> => {
+        this.consoleService.addErrorResponse(error, "Uploading file " + file.urn)
+        this.networkStatusService.stopNetworkRequest()
+        return of()
+      }))
       .subscribe(() => this.networkStatusService.stopNetworkRequest())
     
   }
 
   public deleteFile(file : Inode) {
     this.http.delete(this.buildFileURL(file.urn))
+      .pipe(catchError((error : HttpErrorResponse, caught : Observable<any>) : Observable<void> => {
+        this.consoleService.addErrorResponse(error, "Deleting file " + file.urn)
+        this.networkStatusService.stopNetworkRequest()
+        return of()
+      }))
       .subscribe(() => this.networkStatusService.startNetworkRequest())
   }
 
