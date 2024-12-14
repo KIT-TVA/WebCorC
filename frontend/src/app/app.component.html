@@ -17,8 +17,8 @@
     <app-project-explorer></app-project-explorer>
   </mat-drawer>
   <mat-drawer-content class="editor">
-      <mat-drawer-container class="consoleWindow">
-        <mat-drawer #console mode="over" position="end" [style.max-width]="'50%'" [style.min-width]="'30%'">
+      <mat-drawer-container class="consoleWindow" [hasBackdrop]="false">
+        <mat-drawer #console mode="over" position="end"  [style.max-width]="'50%'" [style.min-width]="'30%'">
           <app-console></app-console>
         </mat-drawer>
         <mat-drawer-content [style.overflow]="'hidden'">
