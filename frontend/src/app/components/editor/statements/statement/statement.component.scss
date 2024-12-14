@@ -28,16 +28,19 @@ $refinementBoxAccentColor: rgb(87, 87, 87);
 
 .example-container {
   height: 100%;
+  overflow: hidden;
 }
 .example-sidenav-content {
   display: flex;
   height: 100%;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 .verticalButton {
   position: absolute;
+  overflow: hidden;
 }
 .bottomRight {
   transform: rotate(-90deg);

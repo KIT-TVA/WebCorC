@@ -65,33 +65,33 @@ export class CompositionStatementComponent extends Refinement {
 
     // Propagate the changes from the precondition to the left statement
     // passtrough the originId
-    super.precondition.contentChangeObservable.subscribe(content => {
+    super.precondition.contentChangeObservable.subscribe(() => {
       if (!this._leftStatement) { return }
+      
 
-
-      this._leftStatement.precondition.content = content
+      this._leftStatement.precondition.content = super.precondition.content
       this._leftStatement.precondition.originId = super.precondition.originId
     })
 
     // Propagate the changes from the post condition to the right statement
     // passthrough the originId
-    super.postcondition.contentChangeObservable.subscribe(content => {
+    super.postcondition.contentChangeObservable.subscribe(() => {
       if (!this._rightStatement) { return }
 
-      this._rightStatement.postcondition.content = content
+      this._rightStatement.postcondition.content = super.postcondition.content
       this._rightStatement.postcondition.originId = super.postcondition.originId
     })
 
     // Propagate the changes from the intermediate condition to the pre- and postcondition
     // Set the origin id of the pre and post condition to the id of this statement
-    this._intermediateCondition.contentChangeObservable.subscribe(content => {
+    this._intermediateCondition.contentChangeObservable.subscribe(() => {
       if (this._leftStatement) {
-        this._leftStatement.postcondition.content = content
+        this._leftStatement.postcondition.content = this.intermediateCondition.content
         this._leftStatement.postcondition.originId = this.id
       }
 
       if (this._rightStatement) {
-        this._rightStatement.precondition.content = content
+        this._rightStatement.precondition.content = this.intermediateCondition.content
         this._rightStatement.precondition.originId = this.id
       }
       
