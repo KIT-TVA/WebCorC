@@ -35,6 +35,7 @@ export class ImportFileDialogComponent {
   /* eslint-disable  @typescript-eslint/no-explicit-any */
   public async onFileSelected(event : any) {
     this._accepted = false
+    console.log(this._accepted)
     const file : File = event.target?.files[0]
 
     if (!file) {
@@ -64,6 +65,7 @@ export class ImportFileDialogComponent {
     }
 
     this._accepted = true
+    console.log(this._accepted)
     this.fileName = nameSplitted[0]
   }
 

@@ -50,7 +50,6 @@ export class ConditionEditorComponent implements OnInit {
 
     // Listen for updates from other input forms for this condition
     this.condition.contentChangeObservable.subscribe(value => {
-      console.log("update condition id: " + this.condition.originId + " to content " + this.condition.content )
       if (value !== this._conditionGroup!.get("condition")!.value) {
         this._conditionGroup!.get("condition")!.setValue(value);
       }
