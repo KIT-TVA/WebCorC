@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CodeFile, DiagramFile, FakeProjectElement, ProjectDirectory, ProjectElement, fakeProjectElementName } from './project-elements';
-import { ApiDiagrammFile, ApiDirectory, ApiFile, ApiTextFile, Inode } from './api-elements';
+import { ApiDiagrammFile, ApiDirectory, ApiFile, ApiTextFile, Inode, SlimFile } from './api-elements';
 
 @Injectable({
   providedIn: 'root'
@@ -63,6 +63,28 @@ export class ProjectElementsMapperService {
     }
 
     return new ApiDirectory(directory.path, elements)
+  }
+
+  public exportTree(directory : ProjectDirectory) : ApiDirectory {
+    const elements : Inode[] = []
+
+    for (const element of directory.content) {
+      
+      if (element instanceof ProjectDirectory) {
+        elements.push(this.exportTree(element))
+      }
+
+      if (element instanceof CodeFile || element instanceof DiagramFile) {
+        elements.push(this.exportFileinSlimTree(element))
+      }
+
+    }
+
+    return new ApiDirectory(directory.path, elements)
+  }
+
+  public exportFileinSlimTree(file : ProjectElement) : Inode {
+    return new SlimFile(file.path)
   }
 
   public exportFile(file : ProjectElement) : Inode {

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, HostListener, Input, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NuMonacoEditorModule } from '@ng-util/monaco-editor';
 import { FormsModule } from '@angular/forms';
@@ -108,5 +108,19 @@ export class FileEditorComponent implements AfterViewInit,OnDestroy {
 
   private saveContentToFile() : void {
     this.projectService.syncFileContent(this._urn, this.code)
+  }
+
+
+  /**
+   * Saves the content of the editor to sessionStorage
+   * THis allows the user to refresh the page without losing 
+   * the current projectstate
+   * @returns the permission to close the tab
+   */
+  @HostListener('window:beforeunload', ['$event'])
+  public onClose() : boolean {
+    this.saveContentToFile()
+
+    return true
   }
 }

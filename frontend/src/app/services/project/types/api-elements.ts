@@ -64,3 +64,11 @@ export class ApiTextFile implements Inode {
         public inodeType : InodeType = "file",
     ) {}
 }
+
+export class SlimFile implements Inode {
+    public constructor(
+        public urn : string,
+        public content : string = "",
+        public inodeType : InodeType = "file"
+    ) {}
+}

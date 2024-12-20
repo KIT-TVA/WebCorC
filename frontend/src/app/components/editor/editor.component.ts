@@ -253,8 +253,21 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   }
 
   @HostListener('window:resize', ['event'])
-  onHostWindowResize() {
+  public onHostWindowResize() {
     this.treeService.editorWidth = this.editorContainer.nativeElement.offsetWidth
+  }
+
+    /**
+   * Saves the content of the editor to sessionStorage
+   * THis allows the user to refresh the page without losing 
+   * the current projectstate
+   * @returns the permission to close the tab
+   */
+  @HostListener('window:beforeunload', ['$event'])
+  public onClose() : boolean {
+    this.saveContentToFile()
+
+    return true
   }
 
   public get rootNode() {

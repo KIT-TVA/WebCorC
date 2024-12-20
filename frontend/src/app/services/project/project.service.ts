@@ -4,6 +4,7 @@ import { CBCFormula } from './CBCFormula';
 import { NetworkProjectService } from './network/network-project.service';
 import { CodeFile, DiagramFile, ProjectDirectory, ProjectElement } from './types/project-elements';
 import { ProjectElementsMapperService } from './types/project-elements-mapper.service';
+import { ProjectStorageService } from './storage/project-storage.service';
 
 /**
  * Service for project managment.
@@ -20,7 +21,10 @@ export class ProjectService {
   private _savedFinished = new Subject<void>()
   private _projectname: string = "";
 
-  constructor(private network : NetworkProjectService, private mapper : ProjectElementsMapperService) {
+  constructor(
+    private network : NetworkProjectService,
+    private mapper : ProjectElementsMapperService,
+    private storage : ProjectStorageService) {
 
     this.network.dataChange.subscribe((rootDir) => {
       this._rootDir = mapper.importDirectory(rootDir)
@@ -88,6 +92,7 @@ export class ProjectService {
     }
 
     this._dataChange.next(this._rootDir.content)
+    this.storage.setProjectTree(this.mapper.exportTree(this._rootDir))
     return dir;
   }
 
@@ -126,6 +131,7 @@ export class ProjectService {
       throw new Error("Could not add file, maybe you tried to create a duplicate?")
     }
 
+    this.storage.setProjectTree(this.mapper.exportTree(this._rootDir))
     this._dataChange.next(this._rootDir.content)
     return dir;
   }
@@ -188,6 +194,7 @@ export class ProjectService {
     const dir = parentDir as ProjectDirectory
     dir.removeElement(name);
     this._dataChange.next(this._rootDir.content)
+    this.storage.setProjectTree(this.mapper.exportTree(this._rootDir))
   }
 
   /**
@@ -202,6 +209,10 @@ export class ProjectService {
     }
 
     file.content = content
+    if (content instanceof CBCFormula) {
+      this.storage.setFileContent(urn, content)
+    }
+    this.storage.setFileContent(urn, content)
     this._savedFinished.next()
   }
 
@@ -211,9 +222,19 @@ export class ProjectService {
    * @returns The content of the file
    */
   public async getFileContent(urn : string) : Promise<string | CBCFormula> {
-    const file = this.findByPath(urn)
+    let file = this.findByPath(urn)
     if (!file) {
-      throw new Error("File not found")
+      let rootDir = this.storage.getProjectTree()
+      if (!rootDir) {
+        throw new Error("Empty session storage: File not found")
+      }
+
+      this._rootDir = this.mapper.importDirectory(rootDir)
+      this.dataChange.next(this._rootDir.content)
+      file = this.findByPath(urn)
+      if (!file) {
+        throw new Error("File not found")
+      }
     }
 
     let needstoBeFetched = false
@@ -224,10 +245,22 @@ export class ProjectService {
       needstoBeFetched = file.content === ""
     }
 
-    let content : string | CBCFormula = (file as CodeFile).content
+    let content : string | CBCFormula | null = (file as CodeFile).content
+
     // if file content is default value and projectId is set
     if (this.projectId && needstoBeFetched) {
-      content = await this.network.getFileContent(urn)
+      content = this.storage.getFileContent(urn)
+      if (!content) {
+        content = await this.network.getFileContent(urn)
+      }
+    }
+
+    // if no projectId is set try to 
+    if (!this.projectId && needstoBeFetched) {
+      let contentFromStorage = this.storage.getFileContent(urn)
+      if (contentFromStorage) {
+        content = contentFromStorage
+      }
     }
 
     return content
@@ -257,6 +290,7 @@ export class ProjectService {
       .subscribe(() => this.uploadFolder(this._rootDir))
 
     this.editorNotify.next()
+    this.storage.clear()
   }
 
 
@@ -285,11 +319,41 @@ export class ProjectService {
 
 
   public createProject() {
+    this.network.requestFinished.pipe(first()).subscribe(() => {
+      if (!this.network.projectId) return
+      this.storage.setProjectId(this.network.projectId)
+    })
+
     this.network.createProject(this._projectname)
   }
 
 
   public downloadWorkspace() {
+
+
+    if (this.storage.getProjectId() === this.network.projectId) {
+      let projectTree = this.storage.getProjectTree()
+      if (!projectTree) return
+      this._rootDir = this.mapper.importDirectory(projectTree)
+
+      let projectName = this.storage.getProjectName()
+      if (!projectName) return
+      this._projectname = projectName
+
+      return
+    } else {
+      //Todo: Create dialog asking for allowance to evict local staging differences
+    }
+
+
+    // if the project id is not defined in storage configure a observer, to save the id to storage
+    if (!this.storage.getProjectId()) {
+      this.network.dataChange.pipe(first()).subscribe(() => {
+        if (!this.network.projectId) return
+        this.storage.setProjectId(this.network.projectId)
+      }) 
+    }
+
     this.network.readProject()
   }
 
