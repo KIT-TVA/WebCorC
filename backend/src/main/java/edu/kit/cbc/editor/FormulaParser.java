@@ -87,6 +87,7 @@ public class FormulaParser {
     }
 
     CbCFormulaContainer fromXMLStringToCbC(String xmlString) throws IOException {
+        resource.unload();
         resource.load(new URIConverter.ReadableInputStream(xmlString), null);
 
         CbCFormula cbCFormula = null;
@@ -113,7 +114,6 @@ public class FormulaParser {
             }
         }
 
-        resource.unload();
         return new CbCFormulaContainer(cbCFormula, javaVariables, globalConditions, renaming);
     }
 
