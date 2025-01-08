@@ -35,6 +35,7 @@ public class FormulaParser {
 
     private static String JAVA_VARIABLES_NAME = "javaVariables";
     private static String GLOBAL_CONDITIONS_NAME = "globalConditions";
+    private static String RENAMING_NAME = "renaming";
 
     //This is necessary to initialize and register the package so
     //emfjson-jackson can actually use the generated classes
@@ -117,36 +118,39 @@ public class FormulaParser {
         return new CbCFormulaContainer(cbCFormula, javaVariables, globalConditions, renaming);
     }
 
-    CbCFormula fromJsonStringToCbC(String jsonString) throws JsonProcessingException {
+    CbCFormulaContainer fromJsonStringToCbC(String jsonString) throws JsonProcessingException {
         //TODO: consider setting parent fields of statements accordingly
         //TODO: consider checking pre and post conditions
-        return fromJsonString(jsonString, CbCFormula.class);
+        CbCFormula cbCFormula = fromJsonString(jsonString, CbCFormula.class);
+
+        JavaVariables javaVariables = fromJsonFieldStringOptional(jsonString, JAVA_VARIABLES_NAME, JavaVariables.class);
+        GlobalConditions globalConditions = fromJsonFieldStringOptional(jsonString, GLOBAL_CONDITIONS_NAME, GlobalConditions.class);
+        Renaming renaming = fromJsonFieldStringOptional(jsonString, RENAMING_NAME, Renaming.class);
+
+        return new CbCFormulaContainer(cbCFormula, javaVariables, globalConditions, renaming);
     }
 
-    JavaVariables fromJsonStringToJavaVariables(String jsonString) throws JsonProcessingException {
-        String javaVariablesString = mapper.readTree(jsonString)
-            .get(JAVA_VARIABLES_NAME)
-            .toString();
+    private <T> T fromJsonFieldStringOptional(String jsonString, String fieldName, Class<T> type) {
+        try {
+            String javaVariablesString = mapper.readTree(jsonString)
+                .get(fieldName)
+                .toString();
 
-        return fromJsonString(javaVariablesString, JavaVariables.class);
+            return fromJsonString(javaVariablesString, type);
+        } catch (JsonProcessingException | NullPointerException e) {
+            return null;
+        }
     }
 
-    GlobalConditions fromJsonStringToGlobalConditions(String jsonString) throws JsonProcessingException {
-        String globalConditionsString = mapper.readTree(jsonString)
-            .get(GLOBAL_CONDITIONS_NAME)
-            .toString();
-
-        return fromJsonString(globalConditionsString, GlobalConditions.class);
-    }
-
-    <T> T fromJsonString(String jsonString, Class<T> type) throws JsonProcessingException {
+    private <T> T fromJsonString(String jsonString, Class<T> type) throws JsonProcessingException {
         return mapper.readValue(jsonString, type);
     }
 
-    String toJsonString(CbCFormula formula, JavaVariables javaVariables, GlobalConditions globalConditions) throws JsonProcessingException {
-        ObjectNode result = (ObjectNode) mapper.valueToTree(formula);
+    String toJsonString(CbCFormula formula, JavaVariables javaVariables, GlobalConditions globalConditions, Renaming renaming) throws JsonProcessingException {
+        ObjectNode result = mapper.valueToTree(formula);
         result.putPOJO(JAVA_VARIABLES_NAME, mapper.valueToTree(javaVariables));
         result.putPOJO(GLOBAL_CONDITIONS_NAME, mapper.valueToTree(globalConditions));
+        result.putPOJO(RENAMING_NAME, mapper.valueToTree(renaming));
 
         return result.toString();
     }
