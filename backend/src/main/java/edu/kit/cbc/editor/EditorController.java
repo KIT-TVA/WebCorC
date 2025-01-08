@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import de.tu_bs.cs.isf.cbc.cbcmodel.CbCFormula;
 import de.tu_bs.cs.isf.cbc.cbcmodel.GlobalConditions;
 import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariables;
+import edu.kit.cbc.common.CbCFormulaContainer;
 import edu.kit.cbc.common.Problem;
 import edu.kit.cbc.common.corc.VerifyAllStatements;
 import io.micronaut.http.HttpResponse;
@@ -45,6 +46,18 @@ public class EditorController {
     @Consumes(MediaType.APPLICATION_JSON)
     public HttpResponse<String> generate() {
         return HttpResponse.serverError(String.format("NOT IMPLEMENTED"));
+    }
+
+    @Post(uri = "/xmltojson")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.ALL)
+    public HttpResponse<?> xmltojson(@Body String cbcFormulaString) {
+        try {
+            CbCFormulaContainer c = parser.fromXMLStringToCbC(cbcFormulaString);
+            return HttpResponse.ok(parser.toJsonString(c.cbCFormula(), c.javaVariables(), c.globalConditions()));
+        } catch (IOException e) {
+            return HttpResponse.serverError(Problem.PARSING_ERROR(e.getMessage()));
+        }
     }
 
     @Post(uri = "/verify")

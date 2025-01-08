@@ -1,6 +1,15 @@
 package edu.kit.cbc.editor;
 
+import java.io.IOException;
+
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.URIConverter;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.emfcloud.jackson.annotations.EcoreTypeInfo;
 import org.eclipse.emfcloud.jackson.module.EMFModule;
 import org.eclipse.emfcloud.jackson.module.EMFModule.Feature;
@@ -17,6 +26,8 @@ import de.tu_bs.cs.isf.cbc.cbcmodel.CbCFormula;
 import de.tu_bs.cs.isf.cbc.cbcmodel.CbcmodelPackage;
 import de.tu_bs.cs.isf.cbc.cbcmodel.GlobalConditions;
 import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariables;
+import de.tu_bs.cs.isf.cbc.cbcmodel.Renaming;
+import edu.kit.cbc.common.CbCFormulaContainer;
 import jakarta.inject.Singleton;
 
 @Singleton
@@ -25,13 +36,22 @@ public class FormulaParser {
     private static String JAVA_VARIABLES_NAME = "javaVariables";
     private static String GLOBAL_CONDITIONS_NAME = "globalConditions";
 
-    private ObjectMapper mapper;
-
     //This is necessary to initialize and register the package so
     //emfjson-jackson can actually use the generated classes
     private CbcmodelPackage cbcmodelPackage = CbcmodelPackage.eINSTANCE;
 
+    //Object Mapper responsible for json parsing and generation
+    private ObjectMapper mapper;
+
+    //EMF Resource responsible for XML parsing
+    private Resource resource;
+
     FormulaParser() {
+        setupJsonMapper();
+        setupXMLParser();
+    }
+
+    private void setupJsonMapper() {
         this.mapper = new ObjectMapper();
         EMFModule module = new EMFModule();
         module.configure(Feature.OPTION_SERIALIZE_DEFAULT_VALUE, true);
@@ -57,6 +77,44 @@ public class FormulaParser {
             )
         );
         mapper.registerModule(module);
+    }
+
+    private void setupXMLParser() {
+        ResourceSet resourceSet = new ResourceSetImpl();
+        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(Resource.Factory.Registry.DEFAULT_EXTENSION, new XMIResourceFactoryImpl());
+        resourceSet.getPackageRegistry().put(cbcmodelPackage.getNsURI(), cbcmodelPackage);
+        resource = resourceSet.createResource(URI.createURI("*.cbcmodel"));
+    }
+
+    CbCFormulaContainer fromXMLStringToCbC(String xmlString) throws IOException {
+        resource.load(new URIConverter.ReadableInputStream(xmlString), null);
+
+        CbCFormula cbCFormula = null;
+        JavaVariables javaVariables = null;
+        GlobalConditions globalConditions = null;
+        Renaming renaming = null;
+
+        for (EObject e : resource.getContents()) {
+            switch (e.eClass().getName()) {
+                case "CbCFormula":
+                    cbCFormula = (CbCFormula) e;
+                    break;
+                case "JavaVariables":
+                    javaVariables = (JavaVariables) e;
+                    break;
+                case "GlobalConditions":
+                    globalConditions = (GlobalConditions) e;
+                    break;
+                case "Renaming":
+                    renaming = (Renaming) e;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        resource.unload();
+        return new CbCFormulaContainer(cbCFormula, javaVariables, globalConditions, renaming);
     }
 
     CbCFormula fromJsonStringToCbC(String jsonString) throws JsonProcessingException {
