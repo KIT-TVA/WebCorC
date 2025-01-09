@@ -378,7 +378,7 @@ export class ProjectService {
   }
 
   public get isEmpty() : boolean {
-    return this._rootDir.content.length == 0
+    return this._rootDir.content.length == 0 && this.storage.isEmpty()
   }
 
   public get projectname(): string {

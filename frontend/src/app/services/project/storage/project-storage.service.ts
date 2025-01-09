@@ -8,24 +8,28 @@ import { CbcFormulaMapperService } from '../mapper/cbc-formula-mapper.service';
   providedIn: 'root'
 })
 export class ProjectStorageService {
+  private static readonly projectIdKey = "projectId"
+  private static readonly projectNameKey = "projectName"
+  private static readonly projectFileTreeKey = "fileTree"
+  private static readonly projectFileUrnPrefix = "_webCorc_"
 
   constructor(private mapper : CbcFormulaMapperService) { }
 
 
   public setProjectId(id : string) {
-    sessionStorage.setItem("projectId", id)
+    sessionStorage.setItem(ProjectStorageService.projectIdKey, id)
   }
 
   public getProjectId() : string | null {
-    return sessionStorage.getItem("projectId")
+    return sessionStorage.getItem(ProjectStorageService.projectIdKey)
   }
 
   public setProjectName(name : string) {
-    sessionStorage.setItem("projectName", name)
+    sessionStorage.setItem(ProjectStorageService.projectNameKey, name)
   }
 
   public getProjectName() : string | null {
-    return sessionStorage.getItem("projectName")
+    return sessionStorage.getItem(ProjectStorageService.projectNameKey)
   }
 
   public clear() {
@@ -34,11 +38,11 @@ export class ProjectStorageService {
 
 
   public setProjectTree(root : ApiDirectory) {
-    sessionStorage.setItem("root", JSON.stringify(root))
+    sessionStorage.setItem(ProjectStorageService.projectFileTreeKey, JSON.stringify(root))
   }
 
   public getProjectTree() : ApiDirectory | null {
-    let storageContent = sessionStorage.getItem("root")
+    let storageContent = sessionStorage.getItem(ProjectStorageService.projectFileTreeKey)
     if (!storageContent) return null
     let root : ApiDirectory = JSON.parse(storageContent)
     return new ApiDirectory("", root.content)
@@ -46,9 +50,9 @@ export class ProjectStorageService {
 
   public setFileContent(urn : string, content : string | CBCFormula) {
     if (content instanceof CBCFormula) {
-      sessionStorage.setItem(urn, JSON.stringify(content))
+      sessionStorage.setItem(ProjectStorageService.projectFileUrnPrefix + urn, JSON.stringify(content))
     } else {
-      sessionStorage.setItem(urn, content)
+      sessionStorage.setItem(ProjectStorageService.projectFileUrnPrefix + urn, content)
     }
   }
 
@@ -57,7 +61,7 @@ export class ProjectStorageService {
   }
 
   public getFileContent(urn : string) : string | CBCFormula | null {
-    let storageContent = sessionStorage.getItem(urn)
+    let storageContent = sessionStorage.getItem(ProjectStorageService.projectFileUrnPrefix + urn)
     if (!storageContent) return null
     let splittedUrnByDot = urn.split(".")
     if (splittedUrnByDot[splittedUrnByDot.length - 1] == "diagram") {
@@ -66,5 +70,16 @@ export class ProjectStorageService {
     } 
 
     return storageContent
+  }
+
+  public isEmpty() : boolean {
+    let countOfFilesInSessionStorage = 0
+    for (let i = 0; i < sessionStorage.length; i++ ) {
+      if (sessionStorage.key(i)?.startsWith(ProjectStorageService.projectFileUrnPrefix)) {
+        countOfFilesInSessionStorage += 1
+      }
+    }
+
+    return countOfFilesInSessionStorage == 0
   }
 }
