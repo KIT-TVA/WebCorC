@@ -18,8 +18,7 @@ public class VerifyAllStatements {
     public static void verify(CbCFormula formula, JavaVariables vars, GlobalConditions conds, Renaming renaming, URI proofFileUri) {
         AbstractStatement statement = formula.getStatement();
         boolean prove = false;
-        //TODO: pass statement.getRefinement() instead of just statement here
-        prove = proveStatement(statement, vars, conds, renaming, proofFileUri,
+        prove = proveStatement(statement.getRefinement(), vars, conds, renaming, proofFileUri,
                 ProofType.FullProof);
         if (prove) {
             statement.setProven(true);
@@ -208,11 +207,10 @@ public class VerifyAllStatements {
             GlobalConditions conds, Renaming renaming, URI uri) {
         SmallRepetitionStatement repStatement = (SmallRepetitionStatement) statement;
         boolean proven = true;
-        //TODO: consider using refinements of statements instead of statements themselves to stay compatible with CorC
-        //if (repStatement.getLoopStatement().getRefinement() != null) {
-            proven = (proveStatement(repStatement.getLoopStatement()/*.getRefinement()*/, vars, conds, renaming, uri)
+        if (repStatement.getLoopStatement().getRefinement() != null) {
+            proven = (proveStatement(repStatement.getLoopStatement().getRefinement(), vars, conds, renaming, uri)
                     && proven && true);
-        //}
+        }
         boolean provePre = repStatement.isPreProven();
         boolean provePost = repStatement.isPostProven();
         boolean proveVar = repStatement.isVariantProven();
