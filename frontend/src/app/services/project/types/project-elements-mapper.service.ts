@@ -43,7 +43,7 @@ export class ProjectElementsMapperService {
       case "java":    
       case "prove":
       case "other":
-      default : return new CodeFile(parentPath, name, file.type)
+      default : return new CodeFile(parentPath, name, fileType)
     }
   }
 

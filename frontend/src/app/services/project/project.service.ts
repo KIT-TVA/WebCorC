@@ -124,6 +124,7 @@ export class ProjectService {
     switch (type) {
       case "java" : newFile = this.mapper.constructCodeFile(relativePath, name, type); break;
       case "diagram" : newFile = this.mapper.constructDiagramFile(relativePath, name, type); break;
+      case "key" : newFile = this.mapper.constructCodeFile(relativePath, name, type); break;
       default: throw new Error("Could not add file, unknown type")
     }
     

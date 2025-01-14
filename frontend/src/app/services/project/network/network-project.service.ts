@@ -8,6 +8,7 @@ import { NetProject } from './NetProject';
 import { ApiDiagrammFile, ApiDirectory, ApiTextFile, Inode } from '../types/api-elements';
 import { CbcFormulaMapperService } from '../mapper/cbc-formula-mapper.service';
 import { NetworkStatusService } from '../../networkStatus/network-status.service';
+import { ProjectStorageService } from '../storage/project-storage.service';
 
 /**
  * Service to interact with the backend for managing the project.
@@ -26,7 +27,8 @@ export class NetworkProjectService {
   constructor(private http : HttpClient,
     private mapper : CbcFormulaMapperService,
     private consoleService : ConsoleService,
-    private networkStatusService : NetworkStatusService
+    private networkStatusService : NetworkStatusService,
+    private storage : ProjectStorageService
   ) { }
 
 
@@ -73,6 +75,7 @@ export class NetworkProjectService {
         this._projectname = project.name
         this._dataChange.next(new ApiDirectory(project.files.urn, project.files.content))
         this.networkStatusService.stopNetworkRequest()
+        this.storage.setProjectTree(new ApiDirectory(project.files.urn, project.files.content))
       })
   }
 

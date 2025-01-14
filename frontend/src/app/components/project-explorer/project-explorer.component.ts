@@ -181,6 +181,11 @@ export class ProjectExplorerComponent {
     this.projectService.notifyEditortoSave()
   }
 
+
+  public createHelperFile() {
+    this.projectService.addFile("/", "helper", "key")
+  }
+
   // identify the directories for the html template
   hasChild = (_: number, node: FlatNode) => node.expandable;
 
