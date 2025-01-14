@@ -27,6 +27,7 @@ export class RepetitionStatement extends Statement implements IRepetitionStateme
         name : string,
         id : number,
         proven : boolean,
+        tested : boolean,
         comment : string,
         preCondition : ConditionDTO,
         postCondition : ConditionDTO,
@@ -40,7 +41,7 @@ export class RepetitionStatement extends Statement implements IRepetitionStateme
         public loopStatement : Statement | undefined
 
     ) {
-        super(name, RepetitionStatement.TYPE, id, proven, comment, preCondition, postCondition, position)
+        super(name, RepetitionStatement.TYPE, id, proven, tested, comment, preCondition, postCondition, position)
     }
 
     

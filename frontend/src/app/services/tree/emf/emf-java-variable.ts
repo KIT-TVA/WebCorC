@@ -1,11 +1,11 @@
 export interface EMFVariables {
-    types : string 
+    type : string 
     variables: EMFVariable[]
 }
 
 export class EMFJavaVariables implements EMFVariables {
 
-    constructor(public types : string = "JavaVariables", public variables : EMFVariable[] = [] ) {}
+    constructor(public type : string = "JavaVariables", public variables : EMFVariable[] = [] ) {}
 }
 
 export interface EMFVariable {

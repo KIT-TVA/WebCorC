@@ -22,6 +22,7 @@ export class SimpleStatement extends Statement implements ISimpleStatement {
         name : string,
         id : number,
         proven : boolean,
+        tested: boolean,
         comment : string,
         preCondition : ConditionDTO,
         postCondition : ConditionDTO,
@@ -29,7 +30,7 @@ export class SimpleStatement extends Statement implements ISimpleStatement {
         public refinement : Statement | undefined
 
     ) {
-        super(name, SimpleStatement.TYPE , id, proven, comment, preCondition, postCondition, position)
+        super(name, SimpleStatement.TYPE , id, proven, tested, comment, preCondition, postCondition, position)
     }
 
     public override toComponent(spawn : ViewContainerRef): [ refinement : Refinement, ref : ComponentRef<Refinement>] {

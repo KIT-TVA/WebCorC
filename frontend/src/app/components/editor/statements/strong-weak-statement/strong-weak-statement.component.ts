@@ -101,6 +101,7 @@ export class StrongWeakStatementComponent extends Refinement {
     return new StrongWeakStatement(
       this.getTitle(),
       this.id,
+      this.proven,
       false, 
       "",
       this._weakPreCondition.export(),

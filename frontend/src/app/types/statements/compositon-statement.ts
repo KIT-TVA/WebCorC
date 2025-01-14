@@ -23,6 +23,7 @@ export class CompositionStatement extends Statement implements ICompositionState
         name : string,
         id : number,
         proven : boolean,
+        tested : boolean,
         comment : string,
         preCondition : ConditionDTO,
         postCondition : ConditionDTO,
@@ -31,7 +32,7 @@ export class CompositionStatement extends Statement implements ICompositionState
         public firstStatement : Statement | undefined,
         public secondStatement : Statement | undefined,
     ) {
-        super(name, CompositionStatement.TYPE ,id, proven, comment, preCondition, postCondition, position)
+        super(name, CompositionStatement.TYPE ,id, proven, tested, comment, preCondition, postCondition, position)
     }
 
 

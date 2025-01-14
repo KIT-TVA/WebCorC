@@ -8,6 +8,7 @@ export interface IStatement {
     type : string
     id : number
     proven : boolean
+    tested: boolean
     comment : string
     preCondition : IConditionDTO
     postCondition : IConditionDTO
@@ -22,6 +23,7 @@ export class Statement implements IStatement {
         public type : string,
         public id : number,
         public proven : boolean,
+        public tested : boolean,
         public comment : string,
         public preCondition : ConditionDTO,
         public postCondition : ConditionDTO,

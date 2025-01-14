@@ -30,6 +30,7 @@ export class EmfMapperService {
       emfCbcFormula.compositionTechnique,
       emfCbcFormula.className,
       emfCbcFormula.methodName,
+      emfCbcFormula.tested,
       this.toVariables(emfCbcFormula.javaVariables),
       this.toGlobalConditions(emfCbcFormula.globalConditions),
       this.toConditon(emfCbcFormula.preCondition),
@@ -48,6 +49,7 @@ export class EmfMapperService {
       compositionTechnique : cbcFormula.compositionTechnique,
       className : cbcFormula.className,
       methodName : cbcFormula.methodName,
+      tested : cbcFormula.tested,
       javaVariables : this.toEMFJavaVariables(cbcFormula.javaVariables),
       globalConditions : this.toEMFGlobalConditions(cbcFormula.globalConditions),
       preCondition : this.toEMFCondition(cbcFormula.preCondition),
@@ -66,10 +68,18 @@ export class EmfMapperService {
           type : statement.type,
           id : statement.id,
           proven : statement.proven,
+          tested : statement.tested,
           comment : statement.comment,
           preCondition : this.toEMFCondition(statement.preCondition),
           postCondition : this.toEMFCondition(statement.postCondition),
-          refinement : this.toEMFStatement((statement as SimpleStatement).refinement)
+          refinement : {
+            name : statement.name,
+            type : statement.type,
+            preCondition : this.toEMFCondition(statement.preCondition),
+            postCondition: this.toEMFCondition(statement.postCondition),
+            proven: statement.proven,
+            tested: statement.tested
+          } 
         } as EMFSimpleStatement
 
       case SelectionStatement.TYPE:
@@ -91,12 +101,22 @@ export class EmfMapperService {
           type : statement.type,
           id : statement.id,
           proven : statement.proven,
+          tested : statement.tested,
           comment : statement.comment,
           preCondition : this.toEMFCondition(statement.preCondition),
           postCondition : this.toEMFCondition(statement.postCondition),
-          preProven : (statement as SelectionStatement).preProven,
-          guards : guards,
-          commands : childs
+          refinement : {
+            name : statement.name,
+            type : statement.type,
+            preCondition : this.toEMFCondition(statement.preCondition),
+            postCondition: this.toEMFCondition(statement.postCondition),
+            proven: statement.proven,
+            tested: statement.tested,
+            guards : guards,
+            commands : childs,
+            preProven : (statement as SelectionStatement).preProven,
+          },
+          
         } as EMFSelectionStatement
 
       case RepetitionStatement.TYPE:
@@ -105,16 +125,25 @@ export class EmfMapperService {
           type : statement.type,
           id : statement.id,
           proven : statement.proven,
+          tested : statement.tested,
           comment : statement.comment,
           preCondition : this.toEMFCondition(statement.preCondition),
           postCondition : this.toEMFCondition(statement.postCondition),
-          postProven : (statement as RepetitionStatement).postProven,
-          preProven : (statement as RepetitionStatement).preProven,
-          variantProven : (statement as RepetitionStatement).variantProven,
-          invariant : this.toEMFCondition((statement as RepetitionStatement).invariant),
-          variant : this.toEMFCondition((statement as RepetitionStatement).variant),
-          guard : this.toEMFCondition((statement as RepetitionStatement).guard),
-          loopStatement : this.toEMFStatement((statement as RepetitionStatement).loopStatement)
+          refinement : {
+            name : statement.name,
+            type : statement.type,
+            preCondition : this.toEMFCondition(statement.preCondition),
+            postCondition: this.toEMFCondition(statement.postCondition),
+            proven: statement.proven,
+            tested: statement.tested,
+            postProven : (statement as RepetitionStatement).postProven,
+            preProven : (statement as RepetitionStatement).preProven,
+            variantProven : (statement as RepetitionStatement).variantProven,
+            invariant : this.toEMFCondition((statement as RepetitionStatement).invariant),
+            variant : this.toEMFCondition((statement as RepetitionStatement).variant),
+            guard : this.toEMFCondition((statement as RepetitionStatement).guard),
+            loopStatement : this.toEMFStatement((statement as RepetitionStatement).loopStatement),
+          }
         } as EMFRepetitionStatement
 
       case CompositionStatement.TYPE:
@@ -123,12 +152,21 @@ export class EmfMapperService {
           type : statement.type,
           id : statement.id,
           proven : statement.proven,
+          tested : statement.tested,
           comment : statement.comment,
           preCondition : this.toEMFCondition(statement.preCondition),
           postCondition : this.toEMFCondition(statement.postCondition),
-          intermediateCondition : this.toEMFCondition((statement as CompositionStatement).intermediateCondition),
-          firstStatement : this.toEMFStatement((statement as CompositionStatement).firstStatement),
-          secondStatement : this.toEMFStatement((statement as CompositionStatement).secondStatement)
+          refinement : {
+            name : statement.name,
+            type : statement.type,
+            preCondition : this.toEMFCondition(statement.preCondition),
+            postCondition: this.toEMFCondition(statement.postCondition),
+            proven: statement.proven,
+            tested: statement.tested,
+            intermediateCondition : this.toEMFCondition((statement as CompositionStatement).intermediateCondition),
+            firstStatement : this.toEMFStatement((statement as CompositionStatement).firstStatement),
+            secondStatement : this.toEMFStatement((statement as CompositionStatement).secondStatement),
+          } 
         } as EMFCompositionStatement
 
         case StrongWeakStatement.TYPE:
@@ -137,10 +175,18 @@ export class EmfMapperService {
             type : statement.type,
             id : statement.id,
             proven : statement.proven,
+            tested : statement.tested,
             comment : statement.comment,
             preCondition : this.toEMFCondition(statement.preCondition),
             postCondition : this.toEMFCondition(statement.postCondition),
-            refinement : this.toEMFStatement((statement as SimpleStatement).refinement)
+            refinement : {
+              name : statement.name,
+              type : statement.type,
+              preCondition : this.toEMFCondition(statement.preCondition),
+              postCondition: this.toEMFCondition(statement.postCondition),
+              proven: statement.proven,
+              tested: statement.tested
+            }
           } as EMFStrongWeakStatement
     }
 
@@ -189,24 +235,26 @@ export class EmfMapperService {
         return new SimpleStatement(
           emfStatement.name,
           emfStatement.id,
-          emfStatement.proven,
+          emfStatement.refinement.proven,
+          emfStatement.tested,
           emfStatement.comment,
           this.toConditon(emfStatement.preCondition),
           this.toConditon(emfStatement.postCondition),
           undefined,
-          this.toStatement((emfStatement as EMFSimpleStatement).refinement)
+          undefined
+          //this.toStatement((emfStatement as EMFSimpleStatement).refinement)
         )
       
       case SelectionStatement.TYPE: 
         const childs : (Statement | undefined)[] = []
-        for (const child of (emfStatement as EMFSelectionStatement).commands) {
+        for (const child of (emfStatement as EMFSelectionStatement).refinement.commands) {
           childs.push(
             this.toStatement(child)
           )
         }
 
         const guards : ConditionDTO[] = []
-        for (const guard of (emfStatement as EMFSelectionStatement).guards) {
+        for (const guard of (emfStatement as EMFSelectionStatement).refinement.guards) {
           guards.push(
             this.toConditon(guard)
           )
@@ -216,11 +264,12 @@ export class EmfMapperService {
           emfStatement.name,
           emfStatement.id,
           emfStatement.proven,
+          emfStatement.tested,
           emfStatement.comment,
           this.toConditon(emfStatement.preCondition),
           this.toConditon(emfStatement.postCondition),
           undefined,
-          (emfStatement as EMFSelectionStatement).preProven,
+          (emfStatement as EMFSelectionStatement).refinement.preProven,
           guards,
           childs
         )
@@ -230,17 +279,18 @@ export class EmfMapperService {
           emfStatement.name,
           emfStatement.id,
           emfStatement.proven,
+          emfStatement.tested,
           emfStatement.comment,
           this.toConditon(emfStatement.preCondition),
           this.toConditon(emfStatement.postCondition),
           undefined,
-          (emfStatement as EMFRepetitionStatement).postProven,
-          (emfStatement as EMFRepetitionStatement).preProven,
-          (emfStatement as EMFRepetitionStatement).variantProven,
-          this.toConditon((emfStatement as EMFRepetitionStatement).invariant),
-          this.toConditon((emfStatement as EMFRepetitionStatement).variant),
-          this.toConditon((emfStatement as EMFRepetitionStatement).guard),
-          this.toStatement((emfStatement as EMFRepetitionStatement).loopStatement)
+          (emfStatement as EMFRepetitionStatement).refinement.postProven,
+          (emfStatement as EMFRepetitionStatement).refinement.preProven,
+          (emfStatement as EMFRepetitionStatement).refinement.variantProven,
+          this.toConditon((emfStatement as EMFRepetitionStatement).refinement.invariant),
+          this.toConditon((emfStatement as EMFRepetitionStatement).refinement.variant),
+          this.toConditon((emfStatement as EMFRepetitionStatement).refinement.guard),
+          this.toStatement((emfStatement as EMFRepetitionStatement).refinement.loopStatement)
         )
 
       case CompositionStatement.TYPE:
@@ -248,13 +298,14 @@ export class EmfMapperService {
           emfStatement.name,
           emfStatement.id,
           emfStatement.proven,
+          emfStatement.tested,
           emfStatement.comment,
           this.toConditon(emfStatement.preCondition),
           this.toConditon(emfStatement.postCondition),
           undefined,
-          this.toConditon((emfStatement as EMFCompositionStatement).intermediateCondition),
-          this.toStatement((emfStatement as EMFCompositionStatement).firstStatement),
-          this.toStatement((emfStatement as EMFCompositionStatement).secondStatement),
+          this.toConditon((emfStatement as EMFCompositionStatement).refinement.intermediateCondition),
+          this.toStatement((emfStatement as EMFCompositionStatement).refinement.firstStatement),
+          this.toStatement((emfStatement as EMFCompositionStatement).refinement.secondStatement),
         )
 
       case StrongWeakStatement.TYPE:
@@ -262,23 +313,27 @@ export class EmfMapperService {
           emfStatement.name,
           emfStatement.id,
           emfStatement.proven,
+          emfStatement.tested,
           emfStatement.comment,
           this.toConditon(emfStatement.preCondition),
           this.toConditon(emfStatement.postCondition),
           undefined,
-          this.toStatement((emfStatement as EMFStrongWeakStatement).refinement)
+          undefined
+          //this.toStatement((emfStatement as EMFStrongWeakStatement).refinement)
         )
 
       default: 
         return new SimpleStatement(
           emfStatement.name,
           emfStatement.id,
-          emfStatement.proven,
+          emfStatement.refinement.proven,
+          emfStatement.tested,
           emfStatement.comment,
           this.toConditon(emfStatement.preCondition),
           this.toConditon(emfStatement.postCondition),
           undefined,
-          this.toStatement((emfStatement as EMFSimpleStatement).refinement)
+          undefined,
+          // this.toStatement((emfStatement as EMFSimpleStatement).refinement)
         )
     }
 

@@ -10,6 +10,7 @@ export interface EMFCbcFormula {
     compositionTechnique : string,
     className : string,
     methodName : string,
+    tested : boolean,
     javaVariables : EMFJavaVariables,
     globalConditions : EMFConditions,
     preCondition : EMFCondition,

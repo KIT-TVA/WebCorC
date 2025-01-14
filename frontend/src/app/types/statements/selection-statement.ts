@@ -23,6 +23,7 @@ export class SelectionStatement extends Statement implements ISelectionStatement
         name : string,
         id : number,
         proven : boolean,
+        tested : boolean,
         comment : string,
         preCondition : ConditionDTO,
         postCondition : ConditionDTO,
@@ -31,7 +32,7 @@ export class SelectionStatement extends Statement implements ISelectionStatement
         public guards : ConditionDTO[],
         public commands : (Statement | undefined)[]
     ) {
-        super(name, SelectionStatement.TYPE, id, proven, comment, preCondition, postCondition, position)
+        super(name, SelectionStatement.TYPE, id, proven, tested, comment, preCondition, postCondition, position)
     }
 
     

@@ -20,6 +20,7 @@ export class StrongWeakStatement extends Statement implements IStrongWeakStateme
         name : string,
         id : number,
         proven : boolean,
+        tested : boolean,
         comment : string,
         preCondition : ConditionDTO,
         postCondition : ConditionDTO,
@@ -27,7 +28,7 @@ export class StrongWeakStatement extends Statement implements IStrongWeakStateme
         public refinement : Statement | undefined 
 
     ) {
-        super(name, StrongWeakStatement.TYPE , id, proven, comment, preCondition, postCondition, position)
+        super(name, StrongWeakStatement.TYPE , id, proven, tested, comment, preCondition, postCondition, position)
     }
 
     public override toComponent(spawn: ViewContainerRef): [refinement: Refinement, ref: ComponentRef<Refinement>] | undefined {

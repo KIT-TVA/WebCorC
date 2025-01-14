@@ -114,6 +114,7 @@ export class SimpleStatementComponent extends Refinement {
       return new SimpleStatement(
         this._condition.content,
         this.id,
+        this.proven,
         false, 
         "",
         new ConditionDTO(this.precondition.originId, this.precondition.title, this.precondition.content),
@@ -127,6 +128,7 @@ export class SimpleStatementComponent extends Refinement {
       this._condition.content,
       this.id,
       this.proven, 
+      false,
       "",
       super.precondition.export(),
       super.postcondition.export(),
