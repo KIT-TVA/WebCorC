@@ -1,3 +1,3 @@
-<nu-monaco-editor [options]="editorOptions" [(ngModel)]="code" [height]="'100%'" ></nu-monaco-editor>
+<nu-monaco-editor [options]="editorOptions" [(ngModel)]="code" [height]="'100%'" [model]="model" (event)="handleEvent($event)" ></nu-monaco-editor>
 
 

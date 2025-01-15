@@ -1,10 +1,9 @@
-import { AfterViewInit, Component, HostListener, Input, OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NuMonacoEditorModule } from '@ng-util/monaco-editor';
+import { NuMonacoEditorEvent, NuMonacoEditorModel, NuMonacoEditorModule } from '@ng-util/monaco-editor';
 import { FormsModule } from '@angular/forms';
 import { ProjectService } from '../../services/project/project.service';
 import { Router } from '@angular/router';
-
 /**
  * Simple wrapper around the nu-monaco text editor, which saves and loads the file content from the {@link ProjectService}
  * This component is mapped under the url /editor/file/{urn}
@@ -25,8 +24,8 @@ export class FileEditorComponent implements AfterViewInit,OnDestroy {
   private _urn : string = ''
   private _viewInit : boolean = false
   
-  //Todo: Fix / Inverstigate Flickering Issue when usuing getters and setters
   public code : string = '';
+  public model!: NuMonacoEditorModel;
 
   public constructor(private projectService : ProjectService, private router : Router) {
     this.projectService.editorNotify.subscribe(() => {
@@ -77,6 +76,11 @@ export class FileEditorComponent implements AfterViewInit,OnDestroy {
   
   }
 
+  public handleEvent(event : NuMonacoEditorEvent) {
+    if (event.type === 'init' || event.type === 're-init') {
+    }
+  }
+
   public ngOnDestroy(): void {
     this.projectService.syncFileContent(this._urn, this.code)
     this._viewInit = false
@@ -99,11 +103,21 @@ export class FileEditorComponent implements AfterViewInit,OnDestroy {
         this.projectService.downloadWorkspace()
       }
     }
+
+    if (this._urn.endsWith(".java")) {
+      this.editorOptions = { theme : 'vs', language : 'java', scrollBeyondLastLine: false}
+    } else {
+      this.editorOptions = { theme : 'vs', language : 'plaintext', scrollBeyondLastLine: false}
+    }
+    
+    console.log(this.model.language)
+
     if (newCode) {
       this.code = newCode 
     } else {
       this.code = ""
     }
+
   }
 
   private saveContentToFile() : void {
