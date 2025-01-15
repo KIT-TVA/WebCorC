@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { ApiDiagrammFile, ApiDirectory, ApiTextFile, Inode } from '../types/api-elements';
-import { CBCFormula, ICBCFormula } from '../CBCFormula';
+import { ApiDirectory } from '../types/api-elements';
+import { CBCFormula } from '../CBCFormula';
 import { ProjectElement } from '../types/project-elements';
 import { CbcFormulaMapperService } from '../mapper/cbc-formula-mapper.service';
 
@@ -42,9 +42,9 @@ export class ProjectStorageService {
   }
 
   public getProjectTree() : ApiDirectory | null {
-    let storageContent = sessionStorage.getItem(ProjectStorageService.projectFileTreeKey)
+    const storageContent = sessionStorage.getItem(ProjectStorageService.projectFileTreeKey)
     if (!storageContent) return null
-    let root : ApiDirectory = JSON.parse(storageContent)
+    const root : ApiDirectory = JSON.parse(storageContent)
     return new ApiDirectory("", root.content)
   }
 
@@ -61,11 +61,11 @@ export class ProjectStorageService {
   }
 
   public getFileContent(urn : string) : string | CBCFormula | null {
-    let storageContent = sessionStorage.getItem(ProjectStorageService.projectFileUrnPrefix + urn)
+    const storageContent = sessionStorage.getItem(ProjectStorageService.projectFileUrnPrefix + urn)
     if (!storageContent) return null
-    let splittedUrnByDot = urn.split(".")
+    const splittedUrnByDot = urn.split(".")
     if (splittedUrnByDot[splittedUrnByDot.length - 1] == "diagram") {
-      let formula =  JSON.parse(storageContent)
+      const formula = JSON.parse(storageContent)
       return this.mapper.importFormula(formula)
     } 
 

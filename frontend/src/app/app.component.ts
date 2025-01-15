@@ -19,9 +19,8 @@ import { ConsoleComponent } from './components/console/console.component';
 import { ProjectService } from './services/project/project.service';
 import { NetworkTreeService } from './services/tree/network/network-tree.service';
 import { CreateProjectDialogComponent } from './components/project-explorer/create-project-dialog/create-project-dialog.component';
-import { delay, first, single, skip } from 'rxjs';
+import { first } from 'rxjs';
 import { NetworkStatusService } from './services/networkStatus/network-status.service';
-import { EditorService } from './services/editor/editor.service';
 
 /**
  * Top Component of this application, 

@@ -43,7 +43,7 @@ export class NetworkProjectService {
     this.networkStatusService.startNetworkRequest()
     this.http
       .post<NetProject>(environment.apiUrl + NetworkProjectService.projects, { name: name })
-      .pipe(catchError((error : HttpErrorResponse, caught: Observable<NetProject>) : Observable<NetProject> => {
+      .pipe(catchError((error : HttpErrorResponse) : Observable<NetProject> => {
         this.consoleService.addErrorResponse(error, "Creating Project")
         this.networkStatusService.stopNetworkRequest()
         return of()
@@ -66,7 +66,7 @@ export class NetworkProjectService {
 
     this.http
       .get<NetProject>(this.buildProjectURL())
-      .pipe(catchError((error : HttpErrorResponse, caught : Observable<NetProject>) : Observable<NetProject> => {
+      .pipe(catchError((error : HttpErrorResponse) : Observable<NetProject> => {
         this.consoleService.addErrorResponse(error, "Reading Project")
         this.networkStatusService.stopNetworkRequest()
         return of()
@@ -105,7 +105,7 @@ export class NetworkProjectService {
     formData.append("fileUpload", realFile, urn)
 
     this.http.post(this.buildFileURL(urn), formData)
-      .pipe(catchError((error : HttpErrorResponse, caught : Observable<any>) : Observable<void> => {
+      .pipe(catchError((error : HttpErrorResponse) : Observable<void> => {
         this.consoleService.addErrorResponse(error, "Uploading file " + file.urn)
         this.networkStatusService.stopNetworkRequest()
         return of()
@@ -116,7 +116,7 @@ export class NetworkProjectService {
 
   public deleteFile(file : Inode) {
     this.http.delete(this.buildFileURL(file.urn))
-      .pipe(catchError((error : HttpErrorResponse, caught : Observable<any>) : Observable<void> => {
+      .pipe(catchError((error : HttpErrorResponse) : Observable<void> => {
         this.consoleService.addErrorResponse(error, "Deleting file " + file.urn)
         this.networkStatusService.stopNetworkRequest()
         return of()

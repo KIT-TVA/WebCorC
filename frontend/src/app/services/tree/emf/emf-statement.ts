@@ -22,7 +22,7 @@ export interface EMFStatement {
 }
 
 export interface EMFSimpleStatement extends EMFStatement {
-    
+    refinement: EMFRefinement   
 }
 
 export interface EMFSelectionRefinement extends EMFRefinement {
@@ -60,5 +60,5 @@ export interface EMFCompositionStatement extends EMFStatement {
 }
 
 export interface EMFStrongWeakStatement extends EMFStatement {
-    
+    refinement: EMFRefinement
 }

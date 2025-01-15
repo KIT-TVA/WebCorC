@@ -226,7 +226,7 @@ export class ProjectService {
   public async getFileContent(urn : string) : Promise<string | CBCFormula> {
     let file = this.findByPath(urn)
     if (!file) {
-      let rootDir = this.storage.getProjectTree()
+      const rootDir = this.storage.getProjectTree()
       if (!rootDir) {
         throw new Error("Empty session storage: File not found")
       }
@@ -259,7 +259,7 @@ export class ProjectService {
 
     // if no projectId is set try to 
     if (!this.projectId && needstoBeFetched) {
-      let contentFromStorage = this.storage.getFileContent(urn)
+      const contentFromStorage = this.storage.getFileContent(urn)
       if (contentFromStorage) {
         content = contentFromStorage
       }
@@ -334,11 +334,11 @@ export class ProjectService {
 
 
     if (this.storage.getProjectId() === this.network.projectId) {
-      let projectTree = this.storage.getProjectTree()
+      const projectTree = this.storage.getProjectTree()
       if (!projectTree) return
       this._rootDir = this.mapper.importDirectory(projectTree)
 
-      let projectName = this.storage.getProjectName()
+      const projectName = this.storage.getProjectName()
       if (!projectName) return
       this._projectname = projectName
 

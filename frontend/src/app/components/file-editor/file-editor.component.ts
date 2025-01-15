@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NuMonacoEditorEvent, NuMonacoEditorModel, NuMonacoEditorModule } from '@ng-util/monaco-editor';
+import { NuMonacoEditorModule } from '@ng-util/monaco-editor';
 import { FormsModule } from '@angular/forms';
 import { ProjectService } from '../../services/project/project.service';
 import { Router } from '@angular/router';
@@ -24,8 +24,7 @@ export class FileEditorComponent implements AfterViewInit,OnDestroy {
   private _urn : string = ''
   private _viewInit : boolean = false
   
-  public code : string = '';
-  public model!: NuMonacoEditorModel;
+  public code : string = ''
 
   public constructor(private projectService : ProjectService, private router : Router) {
     this.projectService.editorNotify.subscribe(() => {
@@ -76,11 +75,6 @@ export class FileEditorComponent implements AfterViewInit,OnDestroy {
   
   }
 
-  public handleEvent(event : NuMonacoEditorEvent) {
-    if (event.type === 'init' || event.type === 're-init') {
-    }
-  }
-
   public ngOnDestroy(): void {
     this.projectService.syncFileContent(this._urn, this.code)
     this._viewInit = false
@@ -109,8 +103,6 @@ export class FileEditorComponent implements AfterViewInit,OnDestroy {
     } else {
       this.editorOptions = { theme : 'vs', language : 'plaintext', scrollBeyondLastLine: false}
     }
-    
-    console.log(this.model.language)
 
     if (newCode) {
       this.code = newCode 
