@@ -104,11 +104,8 @@ export class AppComponent {
   public onClose() : boolean {
     this.projectService.editorNotify.next()
     if (this.projectService.isEmpty) {
-      console.log('Project is Empty')
       return true
     }
-
-    console.log('Project is not Empty')
     
     
 

@@ -243,6 +243,8 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     root.postcondition.content = ""
     root.position = new Position(this.treeService.editorWidth / 2 - 450, 10)
     root.proven = false
+
+    this.treeService.resetPositions()
   }
 
   /**

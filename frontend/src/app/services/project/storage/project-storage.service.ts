@@ -80,8 +80,6 @@ export class ProjectStorageService {
       }
     }
 
-    console.log(countOfFilesInSessionStorage)
-
     return countOfFilesInSessionStorage <= 1
   }
 }
