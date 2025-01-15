@@ -19,8 +19,9 @@ import { ConsoleComponent } from './components/console/console.component';
 import { ProjectService } from './services/project/project.service';
 import { NetworkTreeService } from './services/tree/network/network-tree.service';
 import { CreateProjectDialogComponent } from './components/project-explorer/create-project-dialog/create-project-dialog.component';
-import { first } from 'rxjs';
+import { delay, first, single, skip } from 'rxjs';
 import { NetworkStatusService } from './services/networkStatus/network-status.service';
+import { EditorService } from './services/editor/editor.service';
 
 /**
  * Top Component of this application, 
@@ -43,7 +44,7 @@ export class AppComponent {
     private networkStatus : NetworkStatusService,
     private dialog: MatDialog,
     public projectService : ProjectService,
-    private snackBar : MatSnackBar
+    private snackBar : MatSnackBar,
   ) {
 
     this.networkStatus.status.subscribe((status) => {
@@ -61,28 +62,35 @@ export class AppComponent {
     this.dialog.open(CodegenComponent, {minWidth: "350px", height: "300px"});
   }
 
+  private writeURLintoClipboard() {
+    navigator.clipboard.writeText(window.origin + "?projectId=" + this.projectService.projectId)
+    this.snackBar.open("Copied project url", "Dismiss", {
+      horizontalPosition : "end",
+      verticalPosition: "bottom",
+      duration: 5000
+    })
+  }
+
   /**  
    * Write the url of the current project into the clipboard 
    */
   public share() {
     let wait = false 
     if (this.projectService.shouldCreateProject) {
+      this.projectService.requestFinished.pipe(first()).subscribe(() => {
+        this.writeURLintoClipboard()
+      })
       this.dialog.open(CreateProjectDialogComponent)
       wait = true 
     }
 
-    this.projectService.editorNotify.pipe(first()).subscribe(() => {
-      navigator.clipboard.writeText(window.location.protocol + "//" +window.location.hostname + ":" + window.location.port + "?projectId=" + this.projectService.projectId)
-      this.snackBar.open("Copied project url", "Dismiss", {
-        horizontalPosition : "end",
-        verticalPosition: "bottom",
-        duration: 5000
+    if (!wait) {
+      this.projectService.editorNotify.pipe(first()).subscribe(() => {
+        this.writeURLintoClipboard()
       })
-    })
+    }
 
     this.projectService.uploadWorkspace(wait)
-
-    
   }
 
   public getLoadingState() : "indeterminate" | "determinate" {
@@ -94,10 +102,15 @@ export class AppComponent {
    * @returns the permission to close the tab
    */
   @HostListener('window:beforeunload', ['$event'])
-  onClose() : boolean {
+  public onClose() : boolean {
+    this.projectService.editorNotify.next()
     if (this.projectService.isEmpty) {
+      console.log('Project is Empty')
       return true
     }
+
+    console.log('Project is not Empty')
+    
     
 
     if (confirm('Are you sure to want to leave this editor')) {

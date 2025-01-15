@@ -209,11 +209,12 @@ export class ProjectService {
       throw new Error("File not found")
     }
 
+    const oldcontent = file.content
     file.content = content
-    if (content instanceof CBCFormula) {
+    if (oldcontent != file.content) {
       this.storage.setFileContent(urn, content)
     }
-    this.storage.setFileContent(urn, content)
+
     this._savedFinished.next()
   }
 
@@ -379,7 +380,7 @@ export class ProjectService {
   }
 
   public get isEmpty() : boolean {
-    return this._rootDir.content.length == 0 && this.storage.isEmpty()
+    return this._rootDir.content.length == 0 || this.storage.isEmpty()
   }
 
   public get projectname(): string {
@@ -401,6 +402,10 @@ export class ProjectService {
 
   public get fakeElementName() {
     return this.mapper.fakeElementName
+  }
+
+  public get requestFinished() {
+    return this.network.requestFinished
   }
 
 }
