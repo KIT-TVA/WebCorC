@@ -18,8 +18,10 @@ import { ConsoleService } from '../../console/console.service';
 export class NetworkTreeService {
   private static readonly verifyPath = "/editor/verify"
   private static readonly generatePath = "/editor/generate"
+  private static readonly converstionPath = "/editor/xmltojson"
 
   private readonly _generateStatus = new Subject<string>()
+  private readonly _conversionResponse = new Subject<CBCFormula>()
 
   constructor(
     private readonly http: HttpClient,
@@ -53,5 +55,32 @@ export class NetworkTreeService {
         this.verificationService.next(formula)
         this.networkStatusService.stopNetworkRequest()
       })
+  }
+
+
+  public convertCBCModel(cbcmodel : string) {
+
+    this.networkStatusService.startNetworkRequest()
+
+    this.http
+    .post<EMFCbcFormula>(environment.apiUrl + NetworkTreeService.converstionPath, cbcmodel, {
+      headers : {
+        'Content-Type': 'application/xml'
+      }
+    })
+    .pipe(map(formula => this.mapper.toCBCFormula(formula)))
+    .pipe(catchError((error : HttpErrorResponse) : Observable<CBCFormula> => {
+      this.consoleService.addErrorResponse(error, "Converting .cbcmodel file to emf json")
+      this.networkStatusService.stopNetworkRequest()
+      return of()
+    }))
+    .subscribe((formula : CBCFormula) => {
+      this._conversionResponse.next(formula)
+      this.networkStatusService.stopNetworkRequest()
+    })
+  }
+
+  public get conversionResponse() {
+    return this._conversionResponse
   }
 }

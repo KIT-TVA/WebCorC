@@ -80,6 +80,6 @@ export class ProjectStorageService {
       }
     }
 
-    return countOfFilesInSessionStorage <= 1
+    return countOfFilesInSessionStorage <= 0
   }
 }

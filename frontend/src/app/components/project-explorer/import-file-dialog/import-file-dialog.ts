@@ -7,6 +7,7 @@ import { CBCFormula, ICBCFormula } from '../../../services/project/CBCFormula';
 import { ProjectService } from '../../../services/project/project.service';
 import { ApiFileType } from '../../../services/project/types/api-elements';
 import { MatButtonModule } from '@angular/material/button';
+import { NetworkTreeService } from '../../../services/tree/network/network-tree.service';
 
 @Component({
     selector: 'app-import-graph-dialog',
@@ -23,7 +24,8 @@ export class ImportFileDialogComponent {
   public constructor(
     @Inject(MAT_DIALOG_DATA) public data : { parentURN : string },
     private _mapper: CbcFormulaMapperService, 
-    private _projectService : ProjectService) {
+    private _projectService : ProjectService,
+    private _treeNetworkService : NetworkTreeService) {
     this.fileContent = ""
     this.fileName = ""
     this.fileType = "other"
@@ -31,27 +33,7 @@ export class ImportFileDialogComponent {
 
   private _accepted : boolean = false
 
-
-  /* eslint-disable  @typescript-eslint/no-explicit-any */
-  public async onFileSelected(event : any) {
-    this._accepted = false
-    const file : File = event.target?.files[0]
-
-    if (!file) {
-      return
-    }
-
-    const nameSplitted = file.name.split(".")
-    if (nameSplitted.length < 3) {
-      this._accepted = false
-      return
-    }
-
-    const types = ["java", "key", "prove", "diagram", "other"]
-    if (!(types.includes(nameSplitted[1]))) {
-        this._accepted = false
-        return
-    }
+  private async handleWebCorcFile(file : File, nameSplitted : string[]) {
 
     this.fileType = nameSplitted[1] as ApiFileType
 
@@ -64,7 +46,55 @@ export class ImportFileDialogComponent {
     }
 
     this._accepted = true
-    this.fileName = nameSplitted[0]
+    this.fileName = nameSplitted[0]      
+
+  }
+
+  private async handleCbcModelFile(file : File, nameSplitted : string[]) {
+
+    this.fileType = "diagram"
+
+    this._accepted = false
+    const content = await file.text()
+
+    this._treeNetworkService.conversionResponse.subscribe((formula : CBCFormula) => {
+      this.fileName = nameSplitted[0]
+      this.fileContent = formula
+      this._accepted = true
+    })
+
+    this._treeNetworkService.convertCBCModel(content)
+  }
+
+
+  /* eslint-disable  @typescript-eslint/no-explicit-any */
+  public async onFileSelected(event : any) {
+    this._accepted = false
+    const file : File = event.target?.files[0]
+
+    if (!file) {
+      return
+    }
+
+    const nameSplitted = file.name.split(".")
+
+    if (nameSplitted.length == 2 && nameSplitted[1] == "cbcmodel") {
+      this.handleCbcModelFile(file , nameSplitted)
+      return
+    }
+
+    if (nameSplitted.length < 3) {
+      this._accepted = false
+      return
+    }
+
+    const types = ["java", "key", "prove", "diagram", "other"]
+    if (!(types.includes(nameSplitted[1]))) {
+        this._accepted = false
+        return
+    }
+
+    this.handleWebCorcFile(file, nameSplitted)
   }
 
   public confirm() {
