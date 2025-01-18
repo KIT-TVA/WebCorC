@@ -2,7 +2,19 @@
 
 <mat-dialog-content>
     <p> Import .json files from other projects or .cbcmodel files from Corc </p>
-    <input type="file" class="fileInput" accept="json, cbcmodel" (change)="onFileSelected($event)" #fileUpload />
+    <div class="customFileInput" >
+        <button mat-flat-button (click)="fileUpload.click()"> Choose File </button>
+        <mat-form-field>
+            <input matInput type="text" id="filename" placeholder="Filename" [(ngModel)] = "fileName" />
+        </mat-form-field>
+        <p> {{ fileType }}</p>
+        
+        <input type="file" id="fileUpload" class="fileInput" accept="json, cbcmodel" (change)="onFileSelected($event)" #fileUpload />
+    </div>
+    <div>
+        
+    </div>
+    
 </mat-dialog-content>
 <mat-dialog-actions>
     <button mat-button mat-dialog-close> Abort </button>

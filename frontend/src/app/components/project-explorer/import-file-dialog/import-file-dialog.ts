@@ -8,58 +8,61 @@ import { ProjectService } from '../../../services/project/project.service';
 import { ApiFileType } from '../../../services/project/types/api-elements';
 import { MatButtonModule } from '@angular/material/button';
 import { NetworkTreeService } from '../../../services/tree/network/network-tree.service';
+import { MatInputModule } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
+import { MatDividerModule } from '@angular/material/divider';
 
 @Component({
     selector: 'app-import-graph-dialog',
-    imports: [CommonModule, MatDialogModule, MatFormFieldModule, MatButtonModule],
+    imports: [CommonModule, MatDialogModule, MatFormFieldModule, MatButtonModule, MatInputModule, FormsModule, MatDividerModule],
     templateUrl: './import-file-dialog.component.html',
     styleUrl: './import-file-dialog.component.scss'
 })
 export class ImportFileDialogComponent {
 
-  private fileContent : CBCFormula | string
-  private fileName : string
-  private fileType : ApiFileType
+  private _fileContent : CBCFormula | string
+  private _fileName : string
+  private _fileType : ApiFileType
 
   public constructor(
     @Inject(MAT_DIALOG_DATA) public data : { parentURN : string },
     private _mapper: CbcFormulaMapperService, 
     private _projectService : ProjectService,
     private _treeNetworkService : NetworkTreeService) {
-    this.fileContent = ""
-    this.fileName = ""
-    this.fileType = "other"
+    this._fileContent = ""
+    this._fileName = ""
+    this._fileType = "other"
   }
 
   private _accepted : boolean = false
 
   private async handleWebCorcFile(file : File, nameSplitted : string[]) {
 
-    this.fileType = nameSplitted[1] as ApiFileType
+    this._fileType = nameSplitted[1] as ApiFileType
 
     const content = await file.text()
-    if (this.fileType == "diagram") {
+    if (this._fileType == "diagram") {
       const parsed : ICBCFormula = JSON.parse(content)
-      this.fileContent =  this._mapper.importFormula(parsed)
+      this._fileContent =  this._mapper.importFormula(parsed)
     } else {
-      this.fileContent = content
+      this._fileContent = content
     }
 
     this._accepted = true
-    this.fileName = nameSplitted[0]      
+    this._fileName = nameSplitted[0]      
 
   }
 
   private async handleCbcModelFile(file : File, nameSplitted : string[]) {
 
-    this.fileType = "diagram"
+    this._fileType = "diagram"
 
     this._accepted = false
     const content = await file.text()
 
     this._treeNetworkService.conversionResponse.subscribe((formula : CBCFormula) => {
-      this.fileName = nameSplitted[0]
-      this.fileContent = formula
+      this._fileName = nameSplitted[0]
+      this._fileContent = formula
       this._accepted = true
     })
 
@@ -99,12 +102,27 @@ export class ImportFileDialogComponent {
 
   public confirm() {
     if (!this._accepted) return
-    this._projectService.addFile(this.data.parentURN, this.fileName, this.fileType)
+    this._projectService.addFile(this.data.parentURN, this.fileName, this._fileType)
     if (this.data.parentURN === "/") { this.data.parentURN = "" }
-    this._projectService.syncFileContent(this.data.parentURN + this.fileName + "." + this.fileType, this.fileContent)
+    this._projectService.syncFileContent(this.data.parentURN + this.fileName + "." + this._fileType, this._fileContent)
   }
 
   public get accepted() : boolean {
     return this._accepted
+  }
+
+  public get fileName() : string {
+    return this._fileName
+  }
+
+  public set fileName(name : string) {
+    this._fileName = name
+  }
+
+  public get fileType() : string {
+    if (this._fileName == "" && this._fileType == "other") {
+      return ""
+    }
+    return "." + this._fileType
   }
 }

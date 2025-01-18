@@ -6,3 +6,17 @@ mat-dialog-actions {
         margin-left: auto;
     }
 }
+
+.fileInput {
+    display: none;
+}
+
+.customFileInput {
+    display: flex;
+    flex-direction: row;
+
+    button {
+        margin-top: 10px;
+        margin-right: 1.5rem;
+    }
+}
