@@ -1,0 +1,13 @@
+<h2 mat-dialog-title> Open Project </h2>
+
+<mat-dialog-content>
+    <p> Open Project by its id </p>
+    <mat-form-field appearance="fill">
+        <input matInput [(ngModel)]="projectId" placeholder="ProjectId" />
+    </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+    <button mat-button mat-dialog-close> Abort </button>
+    <button mat-button mat-dialog-close (click)="confirm()" class="confirm"> Confirm </button>
+</mat-dialog-actions>
