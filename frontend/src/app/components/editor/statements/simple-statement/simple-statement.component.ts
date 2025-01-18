@@ -53,7 +53,8 @@ export class SimpleStatementComponent extends Refinement {
 
       treeService.verificationResultNotifier.subscribe((statement) => {
         if (statement.id == this._statement?.id) {
-          
+          this.proven = true 
+          this.treeService.verificationResultNotifier.next(this.export())
         }
       })
     }
