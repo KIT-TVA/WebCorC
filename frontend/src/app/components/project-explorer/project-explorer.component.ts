@@ -14,6 +14,7 @@ import { CreateProjectDialogComponent } from './create-project-dialog/create-pro
 import { ProjectElement, ProjectDirectory, CodeFile, DiagramFile } from '../../services/project/types/project-elements';
 import { ImportFileDialogComponent } from './import-file-dialog/import-file-dialog';
 import { MatMenuModule } from '@angular/material/menu';
+import { ImportProjectDialogComponent } from '../landing-page/import-project-dialog/import-project-dialog.component';
 
 class FlatNode {
   expandable: boolean;
@@ -174,7 +175,7 @@ export class ProjectExplorerComponent {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "program.json";
+      a.download = this.projectService.projectname + ".json";
       a.click();
       window.URL.revokeObjectURL(url);
     })
@@ -184,6 +185,10 @@ export class ProjectExplorerComponent {
 
   public createHelperFile() {
     this.projectService.addFile("/", "helper", "key")
+  }
+
+  public importProject() {
+    this.dialog.open(ImportProjectDialogComponent)
   }
 
   // identify the directories for the html template
