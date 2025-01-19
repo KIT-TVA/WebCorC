@@ -104,7 +104,7 @@ export class ProjectElementsMapperService {
     const childs : ProjectElement[] = []
 
     let path = parentPath + directory.urn + "/"
-    if (parentPath == "" && directory.urn == "") {
+    if (directory.urn == "/") {
       path = ""
     }
 
@@ -120,7 +120,7 @@ export class ProjectElementsMapperService {
       }
     }
 
-    return new ProjectDirectory(parentPath, directory.urn, childs)
+    return new ProjectDirectory(parentPath, path, childs)
   }
   
   private importFileInProject(file : Inode, parentPath : string = "") : DiagramFile | CodeFile {
