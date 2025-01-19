@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ImportProjectDialogComponent } from './import-project-dialog.component';
+import { provideHttpClient } from '@angular/common/http';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
 describe('ImportProjectDialogComponent', () => {
   let component: ImportProjectDialogComponent;
@@ -8,7 +10,8 @@ describe('ImportProjectDialogComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ImportProjectDialogComponent]
+      imports: [ImportProjectDialogComponent],
+      providers: [provideAnimations(),provideHttpClient()]
     })
     .compileComponents();
 

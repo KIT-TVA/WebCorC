@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { OptionsComponent } from './options.component';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideHttpClient } from '@angular/common/http';
 
 describe('OptionsComponent', () => {
   let component: OptionsComponent;
@@ -8,7 +10,8 @@ describe('OptionsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [OptionsComponent]
+      imports: [OptionsComponent],
+      providers: [provideAnimations(), provideHttpClient()]
     })
     .compileComponents();
     
