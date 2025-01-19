@@ -18,6 +18,7 @@ export class TreeService {
   private readonly _deletionNotifier: ReplaySubject<Refinement>;
   private readonly _verifyNotifier: Subject<void>;
   private readonly _exportNotifier: Subject<void>;
+  private readonly _resetVerifyNotifier : Subject<void>;
 
   private _title: string = "";
   private _rootNode: Refinement | undefined;
@@ -35,6 +36,7 @@ export class TreeService {
     this._verificationResultNotifier = new Subject<Statement>();
     this._verifyNotifier = new Subject<void>();
     this._exportNotifier = new Subject<void>();
+    this._resetVerifyNotifier = new Subject<void>();
   }
 
   public generateCode(language : string, options : any): void {
@@ -158,6 +160,10 @@ export class TreeService {
 
   get verifyNotifier()  {
     return this._verifyNotifier
+  }
+
+  public get resetVerifyNotifier() {
+    return this._resetVerifyNotifier
   }
 
   set title(value: string) {
