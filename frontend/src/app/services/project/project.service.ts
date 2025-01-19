@@ -5,6 +5,7 @@ import { NetworkProjectService } from './network/network-project.service';
 import { CodeFile, DiagramFile, ProjectDirectory, ProjectElement } from './types/project-elements';
 import { ProjectElementsMapperService } from './types/project-elements-mapper.service';
 import { ProjectStorageService } from './storage/project-storage.service';
+import { ApiDirectory } from './types/api-elements';
 
 /**
  * Service for project managment.
@@ -274,6 +275,12 @@ export class ProjectService {
    */
   public export() {
     return this.mapper.exportDirectory(this._rootDir)
+  }
+
+  public import(rootDir : ApiDirectory, projectname : string) {
+    this._rootDir = this.mapper.importProject(rootDir)
+    this._projectname = projectname
+    this._dataChange.next(this._rootDir.content)
   }
 
   public uploadWorkspace(wait : boolean = false) {

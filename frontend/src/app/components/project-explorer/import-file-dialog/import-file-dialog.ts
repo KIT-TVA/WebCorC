@@ -10,11 +10,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { NetworkTreeService } from '../../../services/tree/network/network-tree.service';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
-import { MatDividerModule } from '@angular/material/divider';
 
 @Component({
     selector: 'app-import-graph-dialog',
-    imports: [CommonModule, MatDialogModule, MatFormFieldModule, MatButtonModule, MatInputModule, FormsModule, MatDividerModule],
+    imports: [CommonModule, MatDialogModule, MatFormFieldModule, MatButtonModule, MatInputModule, FormsModule],
     templateUrl: './import-file-dialog.component.html',
     styleUrl: './import-file-dialog.component.scss'
 })

@@ -1,0 +1,15 @@
+<h2 mat-dialog-title> Import Project </h2>
+<mat-dialog-content>
+    <p> Import project from .json file </p>
+    <div class="customFileInput">
+        <button mat-flat-button (click)="fileUpload.click()"> Choose File </button>
+        <mat-form-field>
+            <input matInput type="text" id="projectname" placeholder="Projectname" [(ngModel)]="projectname" />
+        </mat-form-field>
+        <input type="file" id="fileUpload" class="fileInput" accept="json" (change)="onFileSelected($event)" #fileUpload />
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button mat-dialog-close> Abort</button>
+    <button mat-button mat-dialog-close (click)="confirm()" class="confirm" [disabled]="!accepted"> Confirm </button>
+</mat-dialog-actions>
