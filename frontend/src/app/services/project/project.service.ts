@@ -98,7 +98,7 @@ export class ProjectService {
   }
 
   /**
-   * Add a file to the filr tree.
+   * Add a file to the file tree.
    * Sideeffect: triggers refresh of file tree
    * Sideeffect: removes the input for the file name
    * @param parentPath The path of the direct parent to add the file under
@@ -281,6 +281,7 @@ export class ProjectService {
     this._rootDir = this.mapper.importProject(rootDir)
     this._projectname = projectname
     this._dataChange.next(this._rootDir.content)
+    this.storage.import(this.mapper.exportDirectory(this._rootDir), projectname)
   }
 
   public uploadWorkspace(wait : boolean = false) {
