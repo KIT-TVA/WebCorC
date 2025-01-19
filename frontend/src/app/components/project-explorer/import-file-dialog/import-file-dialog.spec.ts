@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ImportFileDialogComponent } from './import-file-dialog';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideHttpClient } from '@angular/common/http';
+import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 
 describe('ImportFileDialogComponent', () => {
   let component: ImportFileDialogComponent;
@@ -10,8 +11,8 @@ describe('ImportFileDialogComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ImportFileDialogComponent],
-      providers: [provideAnimations(), provideHttpClient()]
+      imports: [ImportFileDialogComponent, MatDialogModule],
+      providers: [provideAnimations(), provideHttpClient(), { provide : MAT_DIALOG_DATA, useValue : {} }]
     })
     .compileComponents();
     

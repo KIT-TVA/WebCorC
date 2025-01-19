@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { StatementComponent } from './statement.component';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { MatDialogModule } from '@angular/material/dialog';
 
 describe('StatementComponent', () => {
   let component: StatementComponent;

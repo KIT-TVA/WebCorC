@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ChooseRefinementComponent } from './choose-refinement.component';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 
 describe('ChooseRefinementComponent', () => {
   let component: ChooseRefinementComponent;
@@ -12,8 +12,13 @@ describe('ChooseRefinementComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ChooseRefinementComponent],
-      providers: [provideAnimations()]
+      imports: [ChooseRefinementComponent, MatDialogModule],
+      providers: [
+        provideAnimations()
+      , {
+        provide: MatDialogRef,
+        useValue: {}
+      }]
     })
     .compileComponents();
 
