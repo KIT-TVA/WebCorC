@@ -10,6 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { NetworkTreeService } from '../../../services/tree/network/network-tree.service';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
+import { ConsoleService } from '../../../services/console/console.service';
 
 @Component({
     selector: 'app-import-graph-dialog',
@@ -27,7 +28,8 @@ export class ImportFileDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data : { parentURN : string },
     private _mapper: CbcFormulaMapperService, 
     private _projectService : ProjectService,
-    private _treeNetworkService : NetworkTreeService) {
+    private _treeNetworkService : NetworkTreeService,
+    private _consoleService : ConsoleService) {
     this._fileContent = ""
     this._fileName = ""
     this._fileType = "other"
@@ -38,17 +40,21 @@ export class ImportFileDialogComponent {
   private async handleWebCorcFile(file : File, nameSplitted : string[]) {
 
     this._fileType = nameSplitted[1] as ApiFileType
-
-    const content = await file.text()
-    if (this._fileType == "diagram") {
-      const parsed : ICBCFormula = JSON.parse(content)
-      this._fileContent =  this._mapper.importFormula(parsed)
-    } else {
-      this._fileContent = content
+    try {
+      const content = await file.text()
+      if (this._fileType == "diagram") {
+        const parsed : ICBCFormula = JSON.parse(content)
+        this._fileContent =  this._mapper.importFormula(parsed)
+      } else {
+        this._fileContent = content
+      }
+  
+      this._accepted = true
+      this._fileName = nameSplitted[0]
+    } catch {
+      this._consoleService.addStringError("no valid corc file", "import file into project")
     }
-
-    this._accepted = true
-    this._fileName = nameSplitted[0]      
+      
 
   }
 

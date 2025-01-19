@@ -7,6 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ProjectService } from '../../../services/project/project.service';
 import { ApiDirectory } from '../../../services/project/types/api-elements';
+import { ConsoleService } from '../../../services/console/console.service';
 
 @Component({
   selector: 'app-import-project-dialog',
@@ -20,7 +21,9 @@ export class ImportProjectDialogComponent {
   private _projectname : string = ""
   private _rootDir : ApiDirectory = new ApiDirectory("", [])
 
-  public constructor(private projectService : ProjectService) {
+  public constructor(
+    private projectService : ProjectService,
+    private consoleService : ConsoleService) {
 
   }
 
@@ -34,13 +37,15 @@ export class ImportProjectDialogComponent {
       return
     }
 
-    this._rootDir = JSON.parse(await file.text())
-
-    const nameSplitted = file.name.split(".")
-
-    this._projectname = nameSplitted[0]
-    
-    this._accepted = true
+    try {
+      this._rootDir = JSON.parse(await file.text())
+      const nameSplitted = file.name.split(".")
+      this._projectname = nameSplitted[0]
+      this._accepted = true
+    } catch {
+      this.consoleService.addStringError("no project file", "import project from file")
+      this._accepted = false
+    }
   }
 
   public confirm() {
