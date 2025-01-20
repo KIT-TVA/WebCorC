@@ -4,7 +4,7 @@
         <button mat-icon-button (click)="clear()" > <mat-icon> delete </mat-icon> </button>
     </div>
     <form [formGroup]="console" class="form">
-       <mat-list #logList [formControl]="logsControl" >
+       <mat-list #logList  >
         @for (line of loglines; track line) {
             <mat-list-item>
                 <span matListItemTitle> {{ line.action }}  </span>

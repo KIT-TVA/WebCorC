@@ -3,7 +3,7 @@
         <button mat-button (click)="save()" > <mat-icon> save </mat-icon> Save </button>
         <button mat-button [matMenuTriggerFor]="importMenu" id="import"> <mat-icon> publish</mat-icon> Import </button>
         <mat-menu #importMenu="matMenu">
-            <button mat-menu-item> Import Project </button>
+            <button mat-menu-item (click)="importProject()"> Import Project </button>
             <button mat-menu-item (click)="import()" > Import File </button>
         </mat-menu>
         <button mat-button (click)="export()"> <mat-icon> download </mat-icon> Export </button>

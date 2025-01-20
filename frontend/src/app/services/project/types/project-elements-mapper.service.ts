@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { CodeFile, DiagramFile, FakeProjectElement, ProjectDirectory, ProjectElement, fakeProjectElementName } from './project-elements';
 import { ApiDiagrammFile, ApiDirectory, ApiFile, ApiTextFile, Inode, SlimFile } from './api-elements';
+import { CbcFormulaMapperService } from '../mapper/cbc-formula-mapper.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProjectElementsMapperService {
 
-  constructor() {}
+  constructor(private cbcformulaMapper : CbcFormulaMapperService) {}
 
   public importDirectory(directory : ApiDirectory, parentPath : string = "") : ProjectDirectory {
     const childs : ProjectElement[] = []
@@ -40,7 +41,8 @@ export class ProjectElementsMapperService {
 
     switch (fileType) {
       case "diagram" : return new DiagramFile(parentPath, name, file.type)
-      case "java":    
+      case "java":
+      case "key":    
       case "prove":
       case "other":
       default : return new CodeFile(parentPath, name, fileType)
@@ -96,6 +98,44 @@ export class ProjectElementsMapperService {
     }
 
     return inode
+  }
+
+  public importProject(directory : ApiDirectory, parentPath : string = "") : ProjectDirectory {
+    const childs : ProjectElement[] = []
+
+    let path = parentPath + directory.urn + "/"
+    if (directory.urn == "/") {
+      path = ""
+    }
+
+    for (const child of directory.content) {
+      if (child.inodeType == "directory") {
+        childs.push(
+          this.importProject((child as ApiDirectory), path)
+        )
+      } else if (child.inodeType == "file") {
+        childs.push(
+          this.importFileInProject(child, parentPath)
+        )
+      }
+    }
+
+    return new ProjectDirectory(parentPath, path, childs)
+  }
+  
+  private importFileInProject(file : Inode, parentPath : string = "") : DiagramFile | CodeFile {
+    const lastIndexofPoint = file.urn.lastIndexOf(".")
+    const name = file.urn.substring(0, lastIndexofPoint)
+    const fileType = file.urn.substring(lastIndexofPoint + 1)
+
+    switch (fileType) {
+      case "diagram": return new DiagramFile(parentPath, name, fileType, this.cbcformulaMapper.importFormula((file as ApiDiagrammFile).content))
+      case "java": 
+      case "key":
+      case "prove":
+      case "other":
+      default: return new CodeFile(parentPath, name, fileType, (file as ApiTextFile).content)
+    }
   }
 
   public constructFakeElement(path : string) : FakeProjectElement {

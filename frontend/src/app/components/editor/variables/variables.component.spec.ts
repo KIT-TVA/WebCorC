@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { VariablesComponent } from './variables.component';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
 describe('VariablesComponent', () => {
   let component: VariablesComponent;
@@ -8,7 +9,8 @@ describe('VariablesComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [VariablesComponent]
+      imports: [VariablesComponent],
+      providers: [provideAnimations()]
     })
     .compileComponents();
     
