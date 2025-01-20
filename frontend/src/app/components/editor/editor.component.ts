@@ -34,7 +34,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   @ViewChild(NgComponentOutlet, {static: false}) private rootNodeOutlet!: NgComponentOutlet
   @ViewChild("variables") private variables! : VariablesComponent
   @ViewChild("conditions") private conditions! : GlobalConditionsComponent
-  @ViewChild("editorContainer") private editorContainer!: ElementRef
+  @ViewChild("editorContainer", {static : false}) private editorContainer!: ElementRef
 
   private _rootNode: Type<SimpleStatementComponent> | undefined
 
@@ -266,6 +266,6 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   }
 
   public get rootNode() {
-    return this._rootNode
+    return  this._rootNode ? this._rootNode : null
   }
 }
