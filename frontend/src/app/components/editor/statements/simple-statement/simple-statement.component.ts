@@ -16,6 +16,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { LinkComponent } from "../link/link.component";
 import { SimpleStatement } from '../../../../types/statements/simple-statement';
 import { Position } from '../../../../types/position';
+import { delay } from 'rxjs';
 
 /**
  * Component representing an instande of {@link SimpleStatement} in the grahical editor.
@@ -51,9 +52,9 @@ export class SimpleStatementComponent extends Refinement {
         }
       })
 
-      treeService.verificationResultNotifier.subscribe((statement) => {
+      treeService.verificationResultNotifier.pipe(delay(10)).subscribe((statement) => {
         if (statement.id == this._statement?.id) {
-          this.proven = this._statement.proven 
+          this.proven = this._statement?.proven ? true : false
           this.treeService.verificationResultNotifier.next(this.export())
         }
       })
