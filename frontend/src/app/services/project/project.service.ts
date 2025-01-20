@@ -5,6 +5,7 @@ import { NetworkProjectService } from './network/network-project.service';
 import { CodeFile, DiagramFile, ProjectDirectory, ProjectElement } from './types/project-elements';
 import { ProjectElementsMapperService } from './types/project-elements-mapper.service';
 import { ProjectStorageService } from './storage/project-storage.service';
+import { ApiDirectory } from './types/api-elements';
 
 /**
  * Service for project managment.
@@ -97,7 +98,7 @@ export class ProjectService {
   }
 
   /**
-   * Add a file to the filr tree.
+   * Add a file to the file tree.
    * Sideeffect: triggers refresh of file tree
    * Sideeffect: removes the input for the file name
    * @param parentPath The path of the direct parent to add the file under
@@ -274,6 +275,13 @@ export class ProjectService {
    */
   public export() {
     return this.mapper.exportDirectory(this._rootDir)
+  }
+
+  public import(rootDir : ApiDirectory, projectname : string) {
+    this._rootDir = this.mapper.importProject(rootDir)
+    this._projectname = projectname
+    this._dataChange.next(this._rootDir.content)
+    this.storage.import(this.mapper.exportDirectory(this._rootDir), projectname)
   }
 
   public uploadWorkspace(wait : boolean = false) {

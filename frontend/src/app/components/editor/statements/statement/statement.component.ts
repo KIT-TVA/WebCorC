@@ -69,6 +69,13 @@ export class StatementComponent implements AfterViewInit {
       this.refinement.getRedrawNotifier().subscribe(() => {
         this.refreshDragPosition()
       })
+
+      this.treeService.resetVerifyNotifier.subscribe(() => {
+        if (!this.refinement.proven) {
+          this.boxTitleRef.nativeElement.style.backgroundColor = "rgb(87, 87, 87)";
+          this.refinementBoxRef.nativeElement.style.borderColor = "rgb(87, 87, 87)";
+        }
+      })
     }
 
     if (this.refinement.proven) {

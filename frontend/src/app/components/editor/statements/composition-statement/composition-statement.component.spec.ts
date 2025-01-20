@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CompositionStatementComponent } from './composition-statement.component';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
 describe('CompositionStatementComponent', () => {
   let component: CompositionStatementComponent;
@@ -8,7 +9,8 @@ describe('CompositionStatementComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CompositionStatementComponent]
+      imports: [CompositionStatementComponent],
+      providers: [provideAnimations()]
     })
     .compileComponents();
     

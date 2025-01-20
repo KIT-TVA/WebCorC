@@ -1,0 +1,19 @@
+mat-dialog-actions {
+    display: flex;
+
+    width: 100%;
+
+    .confirm {
+        margin-left: auto;
+    }
+}
+
+mat-dialog-content {
+
+    mat-form-field {
+        width: 50rem;
+        input {
+            width: 50rem;
+        }
+    }
+}

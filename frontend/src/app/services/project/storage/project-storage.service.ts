@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ApiDirectory } from '../types/api-elements';
+import { ApiDiagrammFile, ApiDirectory, ApiTextFile } from '../types/api-elements';
 import { CBCFormula } from '../CBCFormula';
 import { ProjectElement } from '../types/project-elements';
 import { CbcFormulaMapperService } from '../mapper/cbc-formula-mapper.service';
@@ -81,5 +81,25 @@ export class ProjectStorageService {
     }
 
     return countOfFilesInSessionStorage <= 0
+  }
+
+  private importFileContent(directory : ApiDirectory) {
+    for (const child of directory.content) {
+      if (child instanceof ApiDirectory) {
+        this.importFileContent((child as ApiDirectory))
+      } else {
+        if (child instanceof ApiDiagrammFile) {
+          this.setFileContent(child.urn, (child as ApiDiagrammFile).content)
+        } else if (child instanceof ApiTextFile) {
+          this.setFileContent(child.urn, (child as ApiTextFile).content)
+        }
+      }
+    }
+  }
+
+  public import(root : ApiDirectory, projectname : string) {
+    this.setProjectName(projectname)
+    this.setProjectTree(root)
+    this.importFileContent(root)
   }
 }

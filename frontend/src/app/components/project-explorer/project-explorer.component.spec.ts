@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ProjectExplorerComponent } from './project-explorer.component';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideHttpClient } from '@angular/common/http';
 
 describe('ProjectExplorerComponent', () => {
   let component: ProjectExplorerComponent;
@@ -8,7 +10,8 @@ describe('ProjectExplorerComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ProjectExplorerComponent]
+      imports: [ProjectExplorerComponent],
+      providers: [provideAnimations(), provideHttpClient()]
     })
     .compileComponents();
     

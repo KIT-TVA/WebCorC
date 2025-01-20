@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { RepetitionStatementComponent } from './repetition-statement.component';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
 describe('RepetitionStatementComponent', () => {
   let component: RepetitionStatementComponent;
@@ -8,7 +9,8 @@ describe('RepetitionStatementComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RepetitionStatementComponent]
+      imports: [RepetitionStatementComponent],
+      providers: [provideAnimations()]
     })
     .compileComponents();
     

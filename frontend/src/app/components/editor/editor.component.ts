@@ -227,6 +227,11 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
         root.statementElementRef = newChild?.[1].location
       }
 
+      if (root.statement?.proven) {
+        root.proven = root.statement.proven
+        this.treeService.verificationResultNotifier.next(root.export())
+      }
+
       // redraw all links between the components
       setTimeout(() => root.refreshLinkState(), 5)
 
@@ -245,6 +250,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     root.proven = false
 
     this.treeService.resetPositions()
+    this.treeService.resetVerifyNotifier.next()
   }
 
   /**
