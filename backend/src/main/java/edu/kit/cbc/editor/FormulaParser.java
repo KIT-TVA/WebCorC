@@ -146,11 +146,11 @@ public class FormulaParser {
         return mapper.readValue(jsonString, type);
     }
 
-    String toJsonString(CbCFormula formula, JavaVariables javaVariables, GlobalConditions globalConditions, Renaming renaming) throws JsonProcessingException {
-        ObjectNode result = mapper.valueToTree(formula);
-        result.putPOJO(JAVA_VARIABLES_NAME, mapper.valueToTree(javaVariables));
-        result.putPOJO(GLOBAL_CONDITIONS_NAME, mapper.valueToTree(globalConditions));
-        result.putPOJO(RENAMING_NAME, mapper.valueToTree(renaming));
+    String toJsonString(CbCFormulaContainer formula) throws JsonProcessingException {
+        ObjectNode result = mapper.valueToTree(formula.cbCFormula());
+        result.putPOJO(JAVA_VARIABLES_NAME, mapper.valueToTree(formula.javaVariables()));
+        result.putPOJO(GLOBAL_CONDITIONS_NAME, mapper.valueToTree(formula.globalConditions()));
+        result.putPOJO(RENAMING_NAME, mapper.valueToTree(formula.renaming()));
 
         return result.toString();
     }

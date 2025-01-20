@@ -51,7 +51,7 @@ public class EditorController {
     public HttpResponse<?> xmltojson(@Body String cbcFormulaString) {
         try {
             CbCFormulaContainer c = parser.fromXMLStringToCbC(cbcFormulaString);
-            return HttpResponse.ok(parser.toJsonString(c.cbCFormula(), c.javaVariables(), c.globalConditions(), c.renaming()));
+            return HttpResponse.ok(parser.toJsonString(c));
         } catch (IOException e) {
             return HttpResponse.serverError(Problem.PARSING_ERROR(e.getMessage()));
         }
@@ -70,7 +70,7 @@ public class EditorController {
                 return HttpResponse.serverError(e.getMessage());
             }
             //TODO: upload generated files from key proof to object storage
-            return HttpResponse.ok(parser.toJsonString(formula.cbCFormula(), formula.javaVariables(), formula.globalConditions(), formula.renaming()));
+            return HttpResponse.ok(parser.toJsonString(formula));
         } catch (JsonProcessingException e) {
             return HttpResponse.serverError(Problem.PARSING_ERROR(e.getMessage()));
         }
