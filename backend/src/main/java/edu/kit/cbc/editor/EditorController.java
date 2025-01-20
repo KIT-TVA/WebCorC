@@ -1,14 +1,18 @@
 package edu.kit.cbc.editor;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import edu.kit.cbc.common.CbCFormulaContainer;
 import edu.kit.cbc.common.Problem;
 import edu.kit.cbc.common.corc.VerifyAllStatements;
+import edu.kit.cbc.projects.files.controller.FilesController;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
@@ -17,6 +21,8 @@ import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Produces;
+import io.micronaut.http.annotation.QueryValue;
+import io.micronaut.http.server.types.files.StreamedFile;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 
@@ -25,9 +31,11 @@ import io.micronaut.scheduling.annotation.ExecuteOn;
 @ExecuteOn(TaskExecutors.BLOCKING)
 public class EditorController {
 
+    private final FilesController filesController;
     private final FormulaParser parser;
 
-    EditorController(FormulaParser parser) {
+    EditorController(FilesController filesController, FormulaParser parser) {
+        this.filesController = filesController;
         this.parser = parser;
     }
 
@@ -60,11 +68,20 @@ public class EditorController {
     @Post(uri = "/verify")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public HttpResponse<?> verify(@Body String cbcFormulaString) {
+    public HttpResponse<?> verify(@QueryValue Optional<String> projectId, @Body String cbcFormulaString) {
         try {
             CbCFormulaContainer formula = parser.fromJsonStringToCbC(cbcFormulaString);
             try {
-                Path p = Files.createTempDirectory("proof");
+                Path p = Files.createTempDirectory("proof_");
+                if (projectId.isPresent()) {
+                    //TODO: fetch java files from object storage
+                    Optional<HttpResponse<StreamedFile>> response = filesController.getFile(projectId.get(), URI.create("helper.key"));
+                    if (response.isPresent()) {
+                        Path fullPath = Files.createDirectory(p.resolve("prove_"));
+                        InputStream e = response.get().body().getInputStream();
+                        Files.copy(e, fullPath.resolve("helper.key"));
+                    }
+                }
                 VerifyAllStatements.verify(formula.cbCFormula(), formula.javaVariables(), formula.globalConditions(), formula.renaming(), p.toUri());
             } catch (IOException e) {
                 return HttpResponse.serverError(e.getMessage());
