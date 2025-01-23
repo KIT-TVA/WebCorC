@@ -5,7 +5,6 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideHttpClient } from '@angular/common/http';
 import { SimpleStatementComponent } from './statements/simple-statement/simple-statement.component';
 import { TreeService } from '../../services/tree/tree.service';
-import { Refinement } from '../../types/refinement';
 import { MatDialog } from '@angular/material/dialog';
 
 describe('EditorComponent', () => {

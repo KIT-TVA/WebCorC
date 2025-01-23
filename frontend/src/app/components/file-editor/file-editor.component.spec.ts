@@ -1,10 +1,10 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+/*import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { FileEditorComponent } from './file-editor.component';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideHttpClient } from '@angular/common/http';
 
-/*describe('FileEditorComponent', () => {
+describe('FileEditorComponent', () => {
   let component: FileEditorComponent;
   let fixture: ComponentFixture<FileEditorComponent>;
 

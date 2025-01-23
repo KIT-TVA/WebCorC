@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ChooseRefinementComponent } from './choose-refinement.component';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 
 describe('ChooseRefinementComponent', () => {
   let component: ChooseRefinementComponent;

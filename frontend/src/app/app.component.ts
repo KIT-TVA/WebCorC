@@ -54,8 +54,6 @@ export class AppComponent {
   }
 
   public verify(): void {
-    let wait = true
-    console.log(this.projectService.findByPath('helper.key'))
     if (this.projectService.findByPath('helper.key') && this.projectService.shouldCreateProject) {
       this.projectService.requestFinished.pipe(first()).subscribe(() => {
 

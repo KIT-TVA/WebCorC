@@ -11,7 +11,6 @@ import { SimpleStatementComponent } from '../../../components/editor/statements/
 import { VerificationService } from '../verification/verification.service';
 import { NetworkStatusService } from '../../networkStatus/network-status.service';
 import { ConsoleService } from '../../console/console.service';
-import { query } from '@angular/animations';
 
 @Injectable({
   providedIn: 'root'

@@ -5,7 +5,6 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { HarnessLoader } from '@angular/cdk/testing';
 import {TestbedHarnessEnvironment} from '@angular/cdk/testing/testbed';
 import {MatButtonHarness} from '@angular/material/button/testing';
-import {MatDialogHarness} from '@angular/material/dialog/testing';
 import { ProjectService } from './services/project/project.service';
 
 describe('AppComponent', () => {
@@ -21,7 +20,6 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent)
     loader = TestbedHarnessEnvironment.loader(fixture)
     fixture.autoDetectChanges()
-    const component = fixture.componentInstance
   });
 
   it('should create the app', () => {
@@ -52,13 +50,5 @@ describe('AppComponent', () => {
     
     const projectService = fixture.debugElement.injector.get(ProjectService)
     expect(projectService.projectId).toBe(undefined)
-
-    /*shareButton?.click()
-    fixture.detectChanges()
-
-    const dialogs = await loader.getAllHarnesses(MatDialogHarness)
-    console.log(dialogs)
-    expect(dialogs.length).toBe(1)
-    expect(await dialogs[0].getTitleText() == 'Create Project')*/
   })
 });
