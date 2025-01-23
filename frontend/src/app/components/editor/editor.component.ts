@@ -117,8 +117,8 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       
       if (child) {
         this.treeService.deletionNotifier.next(child)
-        this.examplesSpawn.clear()
       }
+      this.examplesSpawn.clear()
       this.loadFileContent()
     })
   }
