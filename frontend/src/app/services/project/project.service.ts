@@ -27,6 +27,14 @@ export class ProjectService {
     private mapper : ProjectElementsMapperService,
     private storage : ProjectStorageService) {
 
+    const projectIdFromStorage = storage.getProjectId()
+    
+    if (projectIdFromStorage) {
+      this.network.projectId = projectIdFromStorage
+      const nameFromStorage = storage.getProjectName()
+      this.projectname= nameFromStorage ? nameFromStorage : ""
+    }
+
     this.network.dataChange.subscribe((rootDir) => {
       this._rootDir = mapper.importDirectory(rootDir)
       this._projectname = network.projectName ? network.projectName : ""

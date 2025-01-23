@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { CBCFormula } from '../../project/CBCFormula';
 import { environment } from '../../../../environments/environment';
@@ -11,6 +11,7 @@ import { SimpleStatementComponent } from '../../../components/editor/statements/
 import { VerificationService } from '../verification/verification.service';
 import { NetworkStatusService } from '../../networkStatus/network-status.service';
 import { ConsoleService } from '../../console/console.service';
+import { query } from '@angular/animations';
 
 @Injectable({
   providedIn: 'root'
@@ -31,7 +32,7 @@ export class NetworkTreeService {
     private readonly consoleService : ConsoleService
   ) { }
 
-  public verify(root : Refinement | undefined, javaVariables : string[], globalConditions : ConditionDTO[]) {
+  public verify(root : Refinement | undefined, javaVariables : string[], globalConditions : ConditionDTO[], projectId? : string | undefined) {
 
     const rootNode = (root as SimpleStatementComponent).export()
     const formula = new CBCFormula()
@@ -41,10 +42,17 @@ export class NetworkTreeService {
     formula.javaVariables = javaVariables
     formula.globalConditions = globalConditions
 
+    let params =  new HttpParams()
+
+    if (projectId) {
+      params = params.set('projectId', projectId)
+    }
+
+
     this.networkStatusService.startNetworkRequest()
     //Todo: Websocket?
     this.http
-      .post<EMFCbcFormula>(environment.apiUrl + NetworkTreeService.verifyPath, this.mapper.toEMFCbcFormula(formula))
+      .post<EMFCbcFormula>(environment.apiUrl + NetworkTreeService.verifyPath, this.mapper.toEMFCbcFormula(formula), { params: params })
       .pipe(map(formula => this.mapper.toCBCFormula(formula)))
       .pipe(catchError((error : HttpErrorResponse) : Observable<CBCFormula> => {
         this.consoleService.addErrorResponse(error, "Verification failed")
