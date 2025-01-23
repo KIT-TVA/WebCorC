@@ -22,6 +22,19 @@ export class EmfMapperService {
 
   public toCBCFormula(emfCbcFormula : EMFCbcFormula) : CBCFormula {
 
+    const statement = this.toStatement(emfCbcFormula.statement)
+    let precondition = this.toConditon(emfCbcFormula.preCondition)
+
+    if (precondition.originId  == -1) {
+      precondition = statement?.preCondition ? statement.preCondition : new ConditionDTO(0)
+    }
+
+    let postcondition = this.toConditon(emfCbcFormula.postCondition)
+
+    if (postcondition.originId == -1) {
+      postcondition = statement?.postCondition ? statement.postCondition : new ConditionDTO(0)
+    }
+
     return new CBCFormula(
       emfCbcFormula.type,
       emfCbcFormula.name,
@@ -33,9 +46,9 @@ export class EmfMapperService {
       emfCbcFormula.tested,
       this.toVariables(emfCbcFormula.javaVariables),
       this.toGlobalConditions(emfCbcFormula.globalConditions),
-      this.toConditon(emfCbcFormula.preCondition),
-      this.toConditon(emfCbcFormula.postCondition),
-      this.toStatement(emfCbcFormula.statement)
+      precondition,
+      postcondition,
+      statement
     )
 
   }
@@ -342,7 +355,7 @@ export class EmfMapperService {
 
 
   private toConditon(emfCondition : EMFCondition) : ConditionDTO {
-    return new ConditionDTO(0, "", emfCondition.name)
+    return emfCondition ? new ConditionDTO(0, "", emfCondition.name) : new ConditionDTO(-1)
   }
 
   private toVariables(emfJavaVariables : EMFJavaVariables) : string[] {
@@ -354,8 +367,9 @@ export class EmfMapperService {
     return variables
   }
 
-  private toGlobalConditions(emfConditions : EMFConditions) : ConditionDTO[] {
+  private toGlobalConditions(emfConditions : EMFConditions | null) : ConditionDTO[] {
     const conditions : ConditionDTO[] = []
+    if (!emfConditions) { return conditions }
     if (!emfConditions.conditions) { return conditions}
     for (const condition of emfConditions.conditions) {
       conditions.push(this.toConditon(condition))

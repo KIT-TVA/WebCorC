@@ -135,7 +135,7 @@ export class CbcFormulaMapperService {
     return
   }
 
-  private importGlobalConditions(conditions : IConditionDTO[]) : ConditionDTO[] {
+  private importGlobalConditions(conditions : IConditionDTO[] | null) : ConditionDTO[] {
     const newConditions : ConditionDTO[] = []
 
     if (!conditions) {

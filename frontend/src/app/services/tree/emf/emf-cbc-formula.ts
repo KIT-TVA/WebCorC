@@ -12,7 +12,7 @@ export interface EMFCbcFormula {
     methodName : string,
     tested : boolean,
     javaVariables : EMFJavaVariables,
-    globalConditions : EMFConditions,
+    globalConditions : EMFConditions | null,
     preCondition : EMFCondition,
     postCondition : EMFCondition,
     statement : EMFStatement | undefined
