@@ -8,6 +8,7 @@ import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFo
 import { MatDividerModule} from "@angular/material/divider";
 import { MatFormFieldModule} from "@angular/material/form-field";
 import { MatListModule} from "@angular/material/list";
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 /**
  * Component to edit the variables of the file.
@@ -17,7 +18,7 @@ import { MatListModule} from "@angular/material/list";
  */
 @Component({
     selector: 'app-variables',
-    imports: [CommonModule, FormsModule, MatButtonModule, MatDividerModule, MatFormFieldModule, MatInputModule, MatListModule, ReactiveFormsModule, MatIconModule],
+    imports: [CommonModule, FormsModule, MatButtonModule, MatDividerModule, MatFormFieldModule, MatInputModule, MatListModule, ReactiveFormsModule, MatIconModule, MatTooltipModule],
     templateUrl: './variables.component.html',
     styleUrl: './variables.component.scss'
 })
@@ -118,5 +119,9 @@ export class VariablesComponent {
 
   public get variables() : FormGroup {
     return this._variables
+  }
+
+  public get dirtyState() : boolean {
+    return !(this._variables.controls['newVariable'].value == null || this._variables.controls['newVariable'].value == '')
   }
 }

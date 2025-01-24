@@ -4,7 +4,7 @@
           <mat-form-field [style.width]="'100%'" (keydown.delete)="onDelete($event, i)">
             <mat-label>Condition</mat-label>
             <input matInput formControlName="name">
-            <button matSuffix mat-icon-button aria-label="Remove" (click)="removeCondition(i)" (keydown.enter)="$event.preventDefault()">
+            <button matSuffix mat-icon-button aria-label="Remove" (click)="removeCondition(i)" (keydown.enter)="$event.preventDefault()" #tooltip="matTooltip" matTooltip="Remove Condition" matTooltipPosition="left">
               <mat-icon>remove</mat-icon>
             </button>
           </mat-form-field>
@@ -13,8 +13,11 @@
     <mat-form-field [style.width]="'100%'" (keydown.enter)="onEnter($event)">
       <mat-label>Add Condition</mat-label>
       <input matInput formControlName="newCondition" >
-        <button matSuffix mat-icon-button aria-label="Add" (click)="addCondition()">
+        <button matSuffix mat-icon-button aria-label="Add" (click)="addCondition()" #tooltip="matTooltip" matTooltip="Add Condition" matTooltipPosition="left">
           <mat-icon>add</mat-icon>
         </button>
+        @if (dirtyState) {
+          <mat-hint [style.color]="'rgb(186, 26, 26)'"> Press enter or click the plus to add the condition  </mat-hint>
+        }
     </mat-form-field>
   </form>

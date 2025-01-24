@@ -10,6 +10,7 @@ import { MatDividerModule} from "@angular/material/divider";
 import { MatFormFieldModule} from "@angular/material/form-field";
 import { MatListModule} from "@angular/material/list";
 import { ConditionDTO } from '../../../types/condition/condition';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 /**
  * Component for the user to manage the global conditions in a cbc formula.
@@ -19,7 +20,7 @@ import { ConditionDTO } from '../../../types/condition/condition';
  */
 @Component({
     selector: 'app-global-conditions',
-    imports: [CommonModule, FormsModule, MatButtonModule, MatDividerModule, MatFormFieldModule, MatInputModule, MatListModule, ReactiveFormsModule, MatIconModule],
+    imports: [CommonModule, FormsModule, MatButtonModule, MatDividerModule, MatFormFieldModule, MatInputModule, MatListModule, ReactiveFormsModule, MatIconModule, MatTooltipModule],
     templateUrl: './global-conditions.component.html',
     styleUrl: './global-conditions.component.scss'
 })
@@ -129,5 +130,9 @@ export class GlobalConditionsComponent {
 
   public get conditions() : FormGroup {
     return this._conditions
+  }
+
+  public get dirtyState() : boolean {
+    return !(this._conditions.controls['newCondition'].value == null || this._conditions.controls['newCondition'].value == '') 
   }
 }

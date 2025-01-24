@@ -4,7 +4,7 @@
         <mat-form-field [style.width]="'100%'" (keydown.delete)="onDelete($event, i)" (keydown.enter)="$event.preventDefault()" >
           <mat-label>Variable</mat-label>
           <input matInput formControlName="name">
-          <button matSuffix mat-icon-button aria-label="Remove" (click)="removeVariable(i)">
+          <button matSuffix mat-icon-button aria-label="Remove" (click)="removeVariable(i)" #tooltip="matTooltip" matTooltip="Remove Variable" matTooltipPosition="left" >
             <mat-icon>remove</mat-icon>
           </button>
         </mat-form-field>
@@ -12,9 +12,13 @@
   </ng-container>
   <mat-form-field [style.width]="'100%'" (keydown.enter)="onEnter($event)">
     <mat-label>Add Variable</mat-label>
-    <input matInput formControlName="newVariable" >
-      <button matSuffix mat-icon-button aria-label="Add" (click)="addVariable()"  (keydown.enter)="$event.preventDefault()">
+    <input matInput formControlName="newVariable"/>
+      <button matSuffix mat-icon-button aria-label="Add" (click)="addVariable()"  (keydown.enter)="$event.preventDefault()" #tooltip="matTooltip" matTooltip="Add Variable" matTooltipPosition="left">
         <mat-icon>add</mat-icon>
       </button>
+      @if (dirtyState) {
+        <mat-hint [style.color]="'rgb(186, 26, 26)'"> Press enter or click the plus to add the variable </mat-hint>
+      }
   </mat-form-field>
+  
 </form>
