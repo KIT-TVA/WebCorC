@@ -1,6 +1,7 @@
 import { ConditionDTO, IConditionDTO } from "../../types/condition/condition";
 import { Position } from "../../types/position";
 import { IStatement, Statement } from "../../types/statements/statement";
+import { Renaming } from "../tree/Renaming";
 
 export interface ICBCFormula {
     type : string
@@ -16,6 +17,8 @@ export interface ICBCFormula {
     preCondition : IConditionDTO
     postCondition : IConditionDTO
     statement : IStatement | undefined
+    renaming : Renaming[] | null
+    position : Position
 }
 
 /**
@@ -38,7 +41,8 @@ export class CBCFormula implements ICBCFormula {
         public preCondition : ConditionDTO = new ConditionDTO(1),
         public postCondition : ConditionDTO = new ConditionDTO(1),
         public statement : Statement | undefined = undefined,
-        public position : Position = new Position(0,0)
+        public renaming : Renaming[] | null = null,
+        public position : Position = new Position(0,0),
     ) {}
 }
 

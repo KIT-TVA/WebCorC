@@ -58,14 +58,14 @@ export class AppComponent {
       this.projectService.requestFinished.pipe(first()).subscribe(() => {
 
         this.projectService.editorNotify.pipe(first()).subscribe(() => {
-          this.networkTreeService.verify(this.treeService.rootNode, this.treeService.variables, this.treeService.conditions, this.projectService.projectId)
+          this.networkTreeService.verify(this.treeService.rootNode, this.treeService.variables, this.treeService.conditions, this.treeService.renaming ,this.projectService.projectId)
         })
 
         this.projectService.uploadWorkspace()
       })
       this.dialog.open(CreateProjectDialogComponent)
     } else {
-      this.networkTreeService.verify(this.treeService.rootNode, this.treeService.variables, this.treeService.conditions,this.projectService.projectId)
+      this.networkTreeService.verify(this.treeService.rootNode, this.treeService.variables, this.treeService.conditions, this.treeService.renaming ,this.projectService.projectId)
     }
 
   }

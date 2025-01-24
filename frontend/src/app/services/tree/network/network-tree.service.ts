@@ -11,6 +11,7 @@ import { SimpleStatementComponent } from '../../../components/editor/statements/
 import { VerificationService } from '../verification/verification.service';
 import { NetworkStatusService } from '../../networkStatus/network-status.service';
 import { ConsoleService } from '../../console/console.service';
+import { Renaming } from '../Renaming';
 
 @Injectable({
   providedIn: 'root'
@@ -31,7 +32,7 @@ export class NetworkTreeService {
     private readonly consoleService : ConsoleService
   ) { }
 
-  public verify(root : Refinement | undefined, javaVariables : string[], globalConditions : ConditionDTO[], projectId? : string | undefined) {
+  public verify(root : Refinement | undefined, javaVariables : string[], globalConditions : ConditionDTO[], renaming : Renaming[], projectId? : string | undefined) {
 
     const rootNode = (root as SimpleStatementComponent).export()
     const formula = new CBCFormula()
@@ -40,6 +41,7 @@ export class NetworkTreeService {
     formula.postCondition = rootNode.postCondition
     formula.javaVariables = javaVariables
     formula.globalConditions = globalConditions
+    formula.renaming = renaming
 
     let params =  new HttpParams()
 

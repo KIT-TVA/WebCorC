@@ -5,6 +5,7 @@ import { JavaVariable } from './JavaVariable';
 import { ConditionDTO } from '../../types/condition/condition';
 import { Position } from '../../types/position';
 import { Statement } from '../../types/statements/statement';
+import { Renaming } from './Renaming';
 
 /**
  * Service for the context of the tree in the graphical editor.
@@ -28,6 +29,7 @@ export class TreeService {
   
   private _variables : JavaVariable[] = []
   private _globalConditions : string[] = []
+  private _renames : Renaming[] = []
   variablesChangedNotifier: Subject<void> = new Subject<void>();
 
   constructor() {
@@ -122,6 +124,16 @@ export class TreeService {
     this._globalConditions = this._globalConditions.filter(val => val !== name)
   }
 
+  public addRenaming(type : string, original : string, newName : string) {
+    this._renames.push(new Renaming(type, original, newName))
+    console.log(this._renames)
+  }
+
+  public removeRenaming(type : string, original : string, newName : string) {
+    this._renames = this._renames.filter(val => !val.equal(new Renaming(type, original, newName)))
+    console.log(this._renames)
+  }
+
   get deletionNotifier(): ReplaySubject<Refinement> {
     return this._deletionNotifier;
   }
@@ -152,6 +164,10 @@ export class TreeService {
     const conditionsArray : ConditionDTO[] = []
     this._globalConditions.forEach((condition) => conditionsArray.push(new ConditionDTO(0, "globalCondition", condition)))
     return conditionsArray
+  }
+
+  public get renaming() : Renaming[] {
+    return this._renames
   }
 
   get verificationResultNotifier() {

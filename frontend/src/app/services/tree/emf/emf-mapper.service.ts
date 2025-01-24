@@ -11,6 +11,7 @@ import { Statement } from '../../../types/statements/statement';
 import { RepetitionStatement } from '../../../types/statements/repetition-statement';
 import { CompositionStatement } from '../../../types/statements/compositon-statement';
 import { StrongWeakStatement } from '../../../types/statements/strong-weak-statement';
+import { IRenaming, Renaming } from '../Renaming';
 
 @Injectable({
   providedIn: 'root'
@@ -48,7 +49,8 @@ export class EmfMapperService {
       this.toGlobalConditions(emfCbcFormula.globalConditions),
       precondition,
       postcondition,
-      statement
+      statement,
+      this.importRenaming(emfCbcFormula.renaming)
     )
 
   }
@@ -67,7 +69,8 @@ export class EmfMapperService {
       globalConditions : this.toEMFGlobalConditions(cbcFormula.globalConditions),
       preCondition : this.toEMFCondition(cbcFormula.preCondition),
       postCondition : this.toEMFCondition(cbcFormula.postCondition),
-      statement : this.toEMFStatement(cbcFormula.statement)
+      statement : this.toEMFStatement(cbcFormula.statement),
+      renaming : cbcFormula.renaming
     }
   }
 
@@ -375,5 +378,21 @@ export class EmfMapperService {
       conditions.push(this.toConditon(condition))
     }
     return conditions
+  }
+
+  private importRenaming(renaming : IRenaming[] | null) {
+    const newRenames : Renaming[] = []
+
+    if (!renaming) {
+      return newRenames
+    }
+
+    for (const rename of renaming) {
+      newRenames.push(
+        new Renaming(rename.type, rename.function, rename.newName)
+      )
+    }
+
+    return newRenames
   }
 }

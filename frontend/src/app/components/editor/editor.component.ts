@@ -17,6 +17,7 @@ import { OptionsComponent } from './options/options.component';
 import { Router } from '@angular/router';
 import { EditorService } from '../../services/editor/editor.service';
 import { Position } from '../../types/position';
+import { RenamingComponent } from "./renaming/renaming.component";
 
 /**
  * Component to edit {@link CBCFormula} by editing a grahical representation based of the statement components like {@link SimpleStatementComponent}.
@@ -25,7 +26,7 @@ import { Position } from '../../types/position';
  */
 @Component({
     selector: 'app-editor',
-    imports: [CommonModule, MatButtonModule, MatIconModule, MatExpansionModule, VariablesComponent, MatTooltipModule, MatMenuModule, GlobalConditionsComponent, OptionsComponent],
+    imports: [CommonModule, MatButtonModule, MatIconModule, MatExpansionModule, VariablesComponent, MatTooltipModule, MatMenuModule, GlobalConditionsComponent, OptionsComponent, RenamingComponent],
     templateUrl: './editor.component.html',
     styleUrl: './editor.component.scss'
 })
@@ -144,6 +145,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       formula.globalConditions = this.treeService.conditions
       formula.position = rootNode.position
       formula.proven = rootNode.proven
+      formula.renaming = this.treeService.renaming
     }
 
     if (this._urn !== '' && this.treeService.rootNode) {
@@ -163,6 +165,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       formula.globalConditions = this.treeService.conditions
       formula.position = rootNode.position
       formula.proven = rootNode.proven
+      formula.renaming = this.treeService.renaming
     }
 
     const urnSplit = this._urn.split("/")

@@ -8,6 +8,7 @@ import { IRepetitionStatement, RepetitionStatement } from '../../../types/statem
 import { ISelectionStatement, SelectionStatement } from '../../../types/statements/selection-statement';
 import { ISimpleStatement, SimpleStatement } from '../../../types/statements/simple-statement';
 import { CBCFormula, ICBCFormula } from '../CBCFormula';
+import { IRenaming, Renaming } from '../../tree/Renaming';
 
 @Injectable({
   providedIn: 'root'
@@ -31,7 +32,9 @@ export class CbcFormulaMapperService {
       this.importGlobalConditions(formula.globalConditions),
       this.importCondition(formula.preCondition),
       this.importCondition(formula.postCondition),
-      this.importStatement(formula.statement)
+      this.importStatement(formula.statement),
+      this.importRenaming(formula.renaming),
+      this.importPosition(formula.position)
     )
   }
 
@@ -157,6 +160,22 @@ export class CbcFormulaMapperService {
 
   private importPosition(position : IPosition) : Position {
     return new Position(position.xinPx, position.yinPx)
+  }
+
+  private importRenaming(renaming : IRenaming[] | null) {
+    const newRenames : Renaming[] = []
+
+    if (!renaming) {
+      return newRenames
+    }
+
+    for (const rename of renaming) {
+      newRenames.push(
+        new Renaming(rename.type, rename.function, rename.newName)
+      )
+    }
+
+    return newRenames
   }
 
 }
