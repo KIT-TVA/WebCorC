@@ -126,12 +126,10 @@ export class TreeService {
 
   public addRenaming(type : string, original : string, newName : string) {
     this._renames.push(new Renaming(type, original, newName))
-    console.log(this._renames)
   }
 
   public removeRenaming(type : string, original : string, newName : string) {
     this._renames = this._renames.filter(val => !val.equal(new Renaming(type, original, newName)))
-    console.log(this._renames)
   }
 
   get deletionNotifier(): ReplaySubject<Refinement> {
@@ -167,7 +165,9 @@ export class TreeService {
   }
 
   public get renaming() : Renaming[] {
-    return this._renames
+    const renames : Renaming[] = []
+    this._renames.forEach((rename) => renames.push(new Renaming(rename.type, rename.function, rename.newName)))
+    return renames
   }
 
   get verificationResultNotifier() {

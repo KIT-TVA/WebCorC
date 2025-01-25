@@ -35,6 +35,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   @ViewChild(NgComponentOutlet, {static: false}) private rootNodeOutlet!: NgComponentOutlet
   @ViewChild("variables") private variables! : VariablesComponent
   @ViewChild("conditions") private conditions! : GlobalConditionsComponent
+  @ViewChild("renaming") private renaming! : RenamingComponent
   @ViewChild("editorContainer", {static : false}) private editorContainer!: ElementRef
 
   private _rootNode: Type<SimpleStatementComponent> | undefined
@@ -187,6 +188,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
 
     this.variables.removeAllVariables()
     this.conditions.removeAllConditions()
+    this.renaming.removeAllRenaming()
 
     Refinement.resetIDs(2)
 
@@ -240,6 +242,8 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
 
       this.variables.importVariables(newFormula.javaVariables)
       this.conditions.importConditions(newFormula.globalConditions)
+      console.log(newFormula.renaming)
+      this.renaming.importRenaming(newFormula.renaming)
 
       return
     }

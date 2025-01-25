@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TreeService } from '../../../services/tree/tree.service';
+import { Renaming } from '../../../services/tree/Renaming';
 
 @Component({
   selector: 'app-renaming',
@@ -54,17 +55,11 @@ export class RenamingComponent {
   }
 
   public removeRenaming(index : number) : void {
-
-
     const group : FormGroup = this.items.at(index) as FormGroup
 
     const type : string | null =  group.get('type')?.value
     const original : string | null = group.get('original')?.value
     const newName : string | null = group.get('newName')?.value
-
-    console.log(type)
-    console.log(original)
-    console.log(newName)
 
     if (!type || !original || !newName) {
       return
@@ -77,6 +72,7 @@ export class RenamingComponent {
 
   public onDelete(event : Event, i : number) {
     event.preventDefault()
+    this.removeRenaming(i)
   }
 
   public onEnter(event : Event) {
@@ -84,6 +80,45 @@ export class RenamingComponent {
     this.addRenaming()
   }
 
+  public removeAllRenaming() {
+    for (let i = 0; i < this.items.length; i++) {
+      const group = this.items.at(i) as FormGroup
+
+      const type : string | null =  group.get('type')?.value
+      const original : string | null = group.get('original')?.value
+      const newName : string | null = group.get('newName')?.value
+  
+      if (!type || !original || !newName) {
+        continue
+      }
+  
+      this.treeService.removeRenaming(type, original, newName)
+    }
+
+    this.items.clear()
+    this._newType.reset()
+    this._newOriginal.reset()
+    this._newName.reset()
+  }
+
+  public importRenaming(renames : Renaming[] | null) {
+    if (!renames) {
+      return
+    }
+
+    for (const rename of renames) {
+      const renaming = this._fb.group({
+        type : new FormControl(rename.type, [Validators.required]),
+        original : new FormControl(rename.function, [Validators.required]),
+        newName : new FormControl(rename.newName, [Validators.required])
+      })
+      
+      this.items.push(renaming)
+      this.treeService.addRenaming(rename.type, rename.function, rename.newName)
+    }
+
+  }
+ 
 
   public get renames() : FormGroup {
     return this._renames
