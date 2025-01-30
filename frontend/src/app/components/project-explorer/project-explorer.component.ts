@@ -15,6 +15,7 @@ import { ProjectElement, ProjectDirectory, CodeFile, DiagramFile } from '../../s
 import { ImportFileDialogComponent } from './import-file-dialog/import-file-dialog';
 import { MatMenuModule } from '@angular/material/menu';
 import { ImportProjectDialogComponent } from '../landing-page/import-project-dialog/import-project-dialog.component';
+import { CdkDrag, CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop';
 
 class FlatNode {
   expandable: boolean;
@@ -35,7 +36,7 @@ class FlatNode {
  */
 @Component({
     selector: 'app-project-explorer',
-    imports: [CommonModule, MatTreeModule, MatIconModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatMenuModule],
+    imports: [CommonModule, MatTreeModule, MatIconModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatMenuModule, CdkDrag, CdkDropList],
     templateUrl: './project-explorer.component.html',
     styleUrl: './project-explorer.component.scss'
 })
@@ -58,6 +59,8 @@ export class ProjectExplorerComponent {
   private _treeControl = new FlatTreeControl<FlatNode>(node => node.level, node => node.expandable);
 
   private _dataSource = new MatTreeFlatDataSource(this.treeControl, this._treeFlatener);
+
+  private _dragging : boolean = false
 
 
   public constructor(public projectService : ProjectService, private router : Router, private dialog : MatDialog) {
@@ -182,6 +185,47 @@ export class ProjectExplorerComponent {
     this.projectService.notifyEditortoSave()
   }
 
+  public dragStart() {
+    this._dragging = true
+  }
+
+  public dragEnd() {
+    this._dragging = false
+  }
+
+  public dragHover(node : FlatNode) {
+    if (!this._dragging) return
+
+    this._treeControl.expand(node)
+  }
+
+  public dropNode(event : CdkDragDrop<string[]>) {
+    if (!event.isPointerOverContainer) return;
+
+    console.log(event)
+
+    const node = this.nodeToElementMap.get(event.item.data)
+    if (!node) return
+
+
+    let target = this.dataSource.data[event.currentIndex - 1] 
+    if (event.currentIndex < 0) {
+      target = this._dataSource.data[0]
+    } else if (event.currentIndex >= this._dataSource.data.length) {
+      target = this.projectService.root
+    }
+
+    // add file to root folder if the element gets dragged to the beginning or end of the flat tree
+    if (target instanceof ProjectDirectory) {
+      this.projectService.moveElement(node, target)
+    }
+
+    //this.treeControl.dataNodes.forEach((node : FlatNode) )
+    console.log(this._dataSource.data)
+
+    console.log(node)
+  }
+
 
   public createHelperFile() {
     this.projectService.addFile("/", "helper", "key")
@@ -197,7 +241,7 @@ export class ProjectExplorerComponent {
   // identify the fakeProjectElement for the html template
   isTypeLessAndHasNoName = (_ : number, node : FlatNode) => node.name === this.projectService.fakeElementName;
 
-  get root() {
+  public get root() {
     return new FlatNode(this.projectService.root, -1)
   }
 

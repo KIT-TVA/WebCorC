@@ -21,6 +21,11 @@ export abstract class ProjectElement implements IProjectElement {
 
     delete(): void {  }
 
+    move(target : ProjectDirectory) : void {
+        this._path = target.path + this.name
+        target.addElement(this)
+    }
+
     get path(): string {
         return this._path
     }
@@ -78,6 +83,12 @@ export class ProjectDirectory extends ProjectElement {
 
     override get content() : (ProjectElement[]) {
         return this._elements
+    }
+
+    override move(target: ProjectDirectory): void {
+        super.move(target)
+
+        //this._elements.forEach((child : ProjectElement) => child.move(this))
     }
 }
 
