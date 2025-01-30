@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedList;
 import java.util.Optional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -74,13 +75,19 @@ public class EditorController {
             CbCFormulaContainer formula = parser.fromJsonStringToCbC(cbcFormulaString);
             try {
                 Path p = Files.createTempDirectory("proof_");
+                Path proofPath = Files.createDirectory(p.resolve("prove_"));
                 if (projectId.isPresent()) {
-                    //TODO: fetch java files from object storage
-                    Optional<HttpResponse<StreamedFile>> response = filesController.getFile(projectId.get(), URI.create("helper.key"));
-                    if (response.isPresent()) {
-                        Path fullPath = Files.createDirectory(p.resolve("prove_"));
-                        InputStream e = response.get().body().getInputStream();
-                        Files.copy(e, fullPath.resolve("helper.key"));
+                    //obtaining java files and helper.key from project before verification
+                    LinkedList<String> filePaths = new LinkedList<>(filesController.findJavaFilesOfProject(projectId.get()));
+                    filePaths.add("helper.key");
+                    for (String filePath : filePaths) {
+                        Optional<HttpResponse<StreamedFile>> response = filesController.getFile(projectId.get(), URI.create(filePath));
+                        if (response.isPresent()) {
+                            InputStream e = response.get().body().getInputStream();
+                            Path fullPath = proofPath.resolve(filePath);
+                            Files.createDirectories(fullPath.getParent());
+                            Files.copy(e, fullPath);
+                        }
                     }
                 }
                 VerifyAllStatements.verify(formula.cbCFormula(), formula.javaVariables(), formula.globalConditions(), formula.renaming(), p.toUri());

@@ -1,8 +1,10 @@
 package edu.kit.cbc.projects.files.controller;
 
+import java.util.List;
 import java.util.Optional;
 import java.net.URI;
 
+import edu.kit.cbc.projects.files.S3ClientProvider;
 import edu.kit.cbc.projects.files.dto.DirectoryDto;
 import edu.kit.cbc.projects.ProjectService;
 import edu.kit.cbc.common.Problem;
@@ -30,6 +32,8 @@ import io.micronaut.objectstorage.response.UploadResponse;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
@@ -40,11 +44,13 @@ public class FilesController {
 
     private final ProjectService projectService;
     private final AwsS3Operations objectStorage;
+    private final S3ClientProvider s3ClientProvider;
     private final HttpHostResolver httpHostResolver;
 
-    FilesController(ProjectService projectService, AwsS3Operations objectStorage, HttpHostResolver httpHostResolver) {
+    FilesController(ProjectService projectService, AwsS3Operations objectStorage, S3ClientProvider s3ClientProvider, HttpHostResolver httpHostResolver) {
         this.projectService = projectService;
         this.objectStorage = objectStorage;
+        this.s3ClientProvider = s3ClientProvider;
         this.httpHostResolver = httpHostResolver;
     }
 
@@ -52,6 +58,24 @@ public class FilesController {
     @Produces(MediaType.APPLICATION_JSON)
     public HttpResponse<DirectoryDto> getDirectories(@PathVariable String id) {
         return HttpResponse.ok(projectService.findById(id).files());
+    }
+
+    public List<String> findJavaFilesOfProject(String id) {
+        String bucketName = s3ClientProvider.getBucketName();
+
+        ListObjectsV2Request request = ListObjectsV2Request.builder()
+            .bucket(bucketName)
+            .prefix(id)
+            .build();
+
+        ListObjectsV2Response response = s3ClientProvider.getClient().listObjectsV2(request);
+
+        List<String> keys = response.contents().stream()
+            .filter(obj -> {return obj.key().endsWith(".java");})
+            .map(obj -> {return obj.key().substring(id.concat("/files/").length());})
+            .toList();
+
+        return keys;
     }
 
     @Get(uri = "/{urn:.*}")
