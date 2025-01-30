@@ -21,13 +21,17 @@ export abstract class ProjectElement implements IProjectElement {
 
     delete(): void {  }
 
-    move(target : ProjectDirectory) : void {
+    move(target : ProjectDirectory, name : string = this._name) : boolean {
         if (target.path == '/') {
-            this._path = this.name
+            this._path = name
         } else {
-            this._path = target.path + this.name
+            this._path = target.path + name
+
+            if (this instanceof ProjectDirectory) {
+                this._path = this._path + "/"
+            }
         }
-        target.addElement(this)
+        return target.addElement(this)
     }
 
     get path(): string {
@@ -89,10 +93,12 @@ export class ProjectDirectory extends ProjectElement {
         return this._elements
     }
 
-    override move(target: ProjectDirectory): void {
-        super.move(target)
+    override move(target: ProjectDirectory, name : string = super.name): boolean {
+        const result = super.move(target)
 
-        //this._elements.forEach((child : ProjectElement) => child.move(this))
+        this._elements.forEach((child : ProjectElement) => child.move(this))
+
+        return result
     }
 }
 

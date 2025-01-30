@@ -393,25 +393,25 @@ export class ProjectService {
     let oldParentPath = file.path.substring(0, file.path.lastIndexOf('/') + 1)
     const newParentPath = target.path.substring(0, target.path.lastIndexOf('/') + 1)
 
-    console.log(this._rootDir)
-
-    console.log(oldParentPath)
-
     if (oldParentPath != newParentPath) {
       this.deleteElement(oldPath, file.name)
     }
 
+    let result : boolean = false
+
     if (target instanceof ProjectDirectory) {
-      file.move(target)
+      result = file.move(target)
     } else {
       const parentTarget = this.findByPath(newParentPath)
-      file.move(parentTarget as ProjectDirectory) 
+      result = file.move(parentTarget as ProjectDirectory) 
     }
 
 
     this._movedHistory.set(oldPath, file.path)
 
     this._dataChange.next(this._rootDir.content)
+
+    return result
   }
 
   public notifyEditortoSave() {

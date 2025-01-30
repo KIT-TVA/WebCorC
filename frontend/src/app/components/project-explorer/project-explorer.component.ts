@@ -22,12 +22,14 @@ class FlatNode {
   name : string;
   path : string;
   level : number;
+  rename : boolean
 
   constructor(node : ProjectElement, level : number) {
     this.level = level
     this.name = node.name
     this.path = node.path
     this.expandable = node instanceof ProjectDirectory
+    this.rename = false
   }
 }
 /**
@@ -202,8 +204,6 @@ export class ProjectExplorerComponent {
   public dropNode(event : CdkDragDrop<string[]>) {
     if (!event.isPointerOverContainer) return;
 
-    console.log(event)
-
     const node = this.nodeToElementMap.get(event.item.data)
     if (!node) return
 
@@ -215,15 +215,30 @@ export class ProjectExplorerComponent {
       target = this.projectService.root
     }
 
-    // add file to root folder if the element gets dragged to the beginning or end of the flat tree
-    if (target instanceof ProjectDirectory) {
-      this.projectService.moveElement(node, target)
+    const gotmoved = this.projectService.moveElement(node, target)
+    
+    if (!gotmoved) {
+      // Todo: rename the element to fix name collision 
     }
+  }
 
-    //this.treeControl.dataNodes.forEach((node : FlatNode) )
-    console.log(this._dataSource.data)
+  // Todo: Fix User Interface to rename a element name
+  public toggleRename(node : FlatNode) {
+    node.rename = true
 
     console.log(node)
+    //this.projectService.dataChange.next(this.projectService.root.content)
+  }
+
+  public renameElement(node : FlatNode, newName : string) {
+    const element = this.nodeToElementMap.get(node)
+    if (!element) return
+    
+    const parentpath = element.path.replace(element.name, '')
+    const parent = this.projectService.findByPath(parentpath)
+    
+    if (!parent) return
+    element.move(parent as ProjectDirectory, newName)
   }
 
 
@@ -240,6 +255,8 @@ export class ProjectExplorerComponent {
 
   // identify the fakeProjectElement for the html template
   isTypeLessAndHasNoName = (_ : number, node : FlatNode) => node.name === this.projectService.fakeElementName;
+
+  isRenaming = (_ : number, node : FlatNode) => node.rename;
 
   public get root() {
     return new FlatNode(this.projectService.root, -1)
