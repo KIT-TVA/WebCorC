@@ -12,6 +12,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.kit.cbc.common.CbCFormulaContainer;
 import edu.kit.cbc.common.Problem;
 import edu.kit.cbc.common.corc.VerifyAllStatements;
+import edu.kit.cbc.common.corc.codeGen.CodeGenerator;
 import edu.kit.cbc.projects.files.controller.FilesController;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -88,6 +89,19 @@ public class EditorController {
             }
             //TODO: upload generated files from key proof to object storage
             return HttpResponse.ok(parser.toJsonString(formula));
+        } catch (JsonProcessingException e) {
+            return HttpResponse.serverError(Problem.PARSING_ERROR(e.getMessage()));
+        }
+    }
+
+    @Post(uri = "/javaGen")
+    @Produces(MediaType.TEXT_PLAIN)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public HttpResponse<?> javaGen(@QueryValue Optional<String> projectId, @Body String cbcFormulaString) {
+        try {
+            CbCFormulaContainer formula = parser.fromJsonStringToCbC(cbcFormulaString);
+
+            return HttpResponse.ok(CodeGenerator.instance.generateCodeFor(formula));
         } catch (JsonProcessingException e) {
             return HttpResponse.serverError(Problem.PARSING_ERROR(e.getMessage()));
         }
