@@ -22,7 +22,11 @@ export abstract class ProjectElement implements IProjectElement {
     delete(): void {  }
 
     move(target : ProjectDirectory) : void {
-        this._path = target.path + this.name
+        if (target.path == '/') {
+            this._path = this.name
+        } else {
+            this._path = target.path + this.name
+        }
         target.addElement(this)
     }
 

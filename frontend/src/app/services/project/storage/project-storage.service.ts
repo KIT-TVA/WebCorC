@@ -41,11 +41,21 @@ export class ProjectStorageService {
     sessionStorage.setItem(ProjectStorageService.projectFileTreeKey, JSON.stringify(root))
   }
 
+  private fixDirectoryNames(directory : ApiDirectory) {
+    for (const child of directory.content) {
+      if (child.inodeType === "directory") {
+        child.urn = child.urn.substring(0, child.urn.length - 1)
+      }
+    }
+
+    return directory
+  }
+
   public getProjectTree() : ApiDirectory | null {
     const storageContent = sessionStorage.getItem(ProjectStorageService.projectFileTreeKey)
     if (!storageContent) return null
     const root : ApiDirectory = JSON.parse(storageContent)
-    return new ApiDirectory("", root.content)
+    return this.fixDirectoryNames(new ApiDirectory("", root.content))
   }
 
   public setFileContent(urn : string, content : string | CBCFormula) {
