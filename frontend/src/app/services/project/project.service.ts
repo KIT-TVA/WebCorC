@@ -20,7 +20,8 @@ export class ProjectService {
   private _dataChange = new BehaviorSubject<ProjectElement[]>(this._rootDir.content)
   private _saveNotify = new Subject<void>()
   private _savedFinished = new Subject<void>()
-  private _projectname: string = "";
+  private _movedHistory = new Map<string, string>()
+  private _projectname: string = ""
 
   constructor(
     private network : NetworkProjectService,
@@ -213,9 +214,21 @@ export class ProjectService {
    * @param content The content to save in the file identified by the urn
    */
   public syncFileContent(urn : string, content : string | CBCFormula) {
-    const file = this.findByPath(urn)
+    let file = this.findByPath(urn)
     if (!file) {
-      throw new Error("File not found")
+      const historyEntry = this._movedHistory.get(urn)
+
+      if (!historyEntry) {
+        throw new Error("File not found")
+      }
+
+      file = this.findByPath(historyEntry)
+
+      if (!file) {
+        throw new Error("File not found")
+      }
+
+      this._movedHistory.delete(historyEntry)
     }
 
     const oldcontent = file.content
@@ -396,7 +409,7 @@ export class ProjectService {
     }
 
 
-    
+    this._movedHistory.set(oldPath, file.path)
 
     this._dataChange.next(this._rootDir.content)
   }

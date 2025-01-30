@@ -71,6 +71,7 @@ export class ProjectStorageService {
   }
 
   public getFileContent(urn : string) : string | CBCFormula | null {
+    console.log(urn)
     const storageContent = sessionStorage.getItem(ProjectStorageService.projectFileUrnPrefix + urn)
     if (!storageContent) return null
     const splittedUrnByDot = urn.split(".")
