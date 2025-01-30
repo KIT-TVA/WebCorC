@@ -86,7 +86,7 @@ export class ProjectElementsMapperService {
   }
 
   public exportFileinSlimTree(file : ProjectElement) : Inode {
-    return new SlimFile(file.path)
+    return new SlimFile(file.name)
   }
 
   public exportFile(file : ProjectElement) : Inode {
@@ -103,10 +103,8 @@ export class ProjectElementsMapperService {
   public importProject(directory : ApiDirectory, parentPath : string = "") : ProjectDirectory {
     const childs : ProjectElement[] = []
 
-    let path = parentPath + directory.urn + "/"
-    if (directory.urn == "/") {
-      path = ""
-    }
+    let path = parentPath + directory.urn
+    path = path.substring(0, path.length -1)
 
     for (const child of directory.content) {
       if (child.inodeType == "directory") {

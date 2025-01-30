@@ -14,12 +14,13 @@
             <button mat-icon-button (click)="addElement(root)"> <mat-icon [style.color]="'green'"> add</mat-icon> </button>
         </div>
     </div>
-    <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+    <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" cdkDropList (cdkDropListDropped)="dropNode($event)">
 
-        <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
+        <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding cdkDrag [cdkDragData]="node" (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()">
             <button mat-icon-button> <mat-icon> description </mat-icon> </button>
             <button mat-button (click)="navigate(node)" > {{ node.name }} </button>
             <div class="node-actions">
+                <button mat-icon-button (click)="toggleRename(node)"> <mat-icon> edit </mat-icon> </button>
                 <button mat-icon-button (click)="deleteElement(node)"><mat-icon [style.color]="'red'"> delete </mat-icon></button>
             </div>
         </mat-tree-node>
@@ -35,7 +36,15 @@
             </mat-form-field>
         </mat-tree-node>
 
-        <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
+        <mat-tree-node *matTreeNodeDef="let node, when: isRenaming" matTreeNodePadding>
+            <mat-form-field [style.width]="'100%'" [style.margin-left]="'5px'" [style.margin-right]="'5px'">
+                <mat-label> Rename Element </mat-label>
+                <input matInput #renamingElement [style.width]="'100%'" />
+                <button matSuffix mat-icon-button aria-label="Rename" (click)="renameElement(node, renamingElement.value)"> <mat-icon> check </mat-icon> </button>
+            </mat-form-field>
+        </mat-tree-node>
+
+        <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding cdkDrag [cdkDragData]="node" (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (mouseenter)="dragHover(node)">
             <button  mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle' + node.name" >
                 <mat-icon class="mat-icon-rtl-mirror"> {{treeControl.isExpanded(node) ? 'folder_open' : 'folder'}} 
                 </mat-icon>
