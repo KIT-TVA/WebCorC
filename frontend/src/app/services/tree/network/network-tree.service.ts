@@ -56,6 +56,7 @@ export class NetworkTreeService {
       .post<EMFCbcFormula>(environment.apiUrl + NetworkTreeService.verifyPath, this.mapper.toEMFCbcFormula(formula), { params: params })
       .pipe(map(formula => this.mapper.toCBCFormula(formula)))
       .pipe(catchError((error : HttpErrorResponse) : Observable<CBCFormula> => {
+        console.log(error)
         this.consoleService.addErrorResponse(error, "Verification failed")
         this.networkStatusService.stopNetworkRequest()
         return of()

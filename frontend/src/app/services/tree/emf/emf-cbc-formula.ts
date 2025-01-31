@@ -1,6 +1,7 @@
 import { Renaming } from "../Renaming";
 import { EMFCondition, EMFConditions } from "./emf-condition";
 import { EMFJavaVariables } from "./emf-java-variable";
+import { EMFRenaming } from "./emf-renaming";
 import { EMFStatement } from "./emf-statement";
 
 export interface EMFCbcFormula {
@@ -17,5 +18,5 @@ export interface EMFCbcFormula {
     preCondition : EMFCondition,
     postCondition : EMFCondition,
     statement : EMFStatement | undefined
-    renaming : Renaming[] | null
+    renaming : EMFRenaming | null
 }
