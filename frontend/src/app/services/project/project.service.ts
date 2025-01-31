@@ -313,6 +313,8 @@ export class ProjectService {
         
       this._saveNotify.next()
       
+      this.editorNotify.next()
+      this.storage.clear()
       return
     }
 
@@ -360,14 +362,14 @@ export class ProjectService {
 
 
   public downloadWorkspace() {
+    const projectTree = this.storage.getProjectTree()
+    const projectName = this.storage.getProjectName()
+    const projectId = this.storage.getProjectId()
 
-
-    if (this.storage.getProjectId() === this.network.projectId) {
-      const projectTree = this.storage.getProjectTree()
+    if (projectId === this.projectId) {
       if (!projectTree) return
       this._rootDir = this.mapper.importDirectory(projectTree)
-
-      const projectName = this.storage.getProjectName()
+      this.dataChange.next(this._rootDir.content)
       if (!projectName) return
       this._projectname = projectName
 
@@ -376,16 +378,23 @@ export class ProjectService {
       //Todo: Create dialog asking for allowance to evict local staging differences
     }
 
-
-    // if the project id is not defined in storage configure a observer, to save the id to storage
-    if (!this.storage.getProjectId()) {
-      this.network.dataChange.pipe(first()).subscribe(() => {
-        if (!this.network.projectId) return
-        this.storage.setProjectId(this.network.projectId)
-      }) 
+    if (!projectId && !this.projectId && !!projectTree) {
+      this._rootDir = this.mapper.importDirectory(projectTree)
+      this.dataChange.next(this._rootDir.content)
+      return
     }
 
-    this.network.readProject()
+    console.log(this.projectId)
+    console.log(this.storage.getProjectId())
+    console.log(!this.storage.getProjectId() && !this.projectId && projectTree)
+
+    // if the project id is not defined in storage configure a observer, to save the id to storage
+    if (!this.projectId && projectId) {
+      this.projectId = projectId
+      this.network.readProject()
+    }
+
+    
   }
 
   public moveElement(file : ProjectElement, target : ProjectElement) {

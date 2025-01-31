@@ -37,11 +37,9 @@ export class LandingPageComponent implements OnInit {
         this.projectService.projectId = params['projectId']
         this._projectId = params['projectId']
       })
-      
-    if (this._projectId) {
+    
       // if the projectId is not undefined load the project from the backend
-      this.projectService.downloadWorkspace()
-    }
+    this.projectService.downloadWorkspace()
   }
 
   public openProjectDialog() {
