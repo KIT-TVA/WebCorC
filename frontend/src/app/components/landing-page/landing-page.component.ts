@@ -7,6 +7,7 @@ import { ProjectService } from '../../services/project/project.service';
 import { MatDialog } from '@angular/material/dialog';
 import { OpenProjectDialogComponent } from './open-project-dialog/open-project-dialog.component';
 import { ImportProjectDialogComponent } from './import-project-dialog/import-project-dialog.component';
+import { ImportFileDialogComponent } from '../project-explorer/import-file-dialog/import-file-dialog';
 
 /**
  * Landingpage infront of the editors to prevent file not found errors,
@@ -49,6 +50,10 @@ export class LandingPageComponent implements OnInit {
 
   public importProjectDialog() {
     this.dialog.open(ImportProjectDialogComponent)
+  }
+
+  public importFileDialog() {
+    this.dialog.open(ImportFileDialogComponent, { data: { parentURN: "/" } })
   }
 
 }
