@@ -77,6 +77,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       this.saveContentToFile()
     }
     this._urn = uniformRessourceName
+    this.editorService.currentFileName = uniformRessourceName.substring(uniformRessourceName.lastIndexOf('/'))
     let child : Refinement | undefined
     
     // get the child of the root element

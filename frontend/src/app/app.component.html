@@ -7,7 +7,7 @@
   </mat-form-field>
   <span class="spacer"></span>
   <button mat-raised-button style="margin-right: 10px;" (click)="share()"> <mat-icon> share </mat-icon> Share </button>
-  <button mat-raised-button (click)="openGenerateCodeDialog()" style="margin-right: 10px" [disabled]="!treeService.rootNode"> <mat-icon> code </mat-icon> Generate Code</button>
+  <button mat-raised-button (click)="generateCode()" style="margin-right: 10px" [disabled]="!treeService.rootNode"> <mat-icon> code </mat-icon> Generate Code</button>
   <button mat-raised-button (click)="verify()" [disabled]="!treeService.rootNode"> <mat-icon> check_circle</mat-icon> Verify</button>
   <button mat-icon-button style="margin-left: 10px;" [style.background-color]="consoleButtonColor" (click)="console.toggle()"> <mat-icon>terminal</mat-icon> </button>
 </mat-toolbar>

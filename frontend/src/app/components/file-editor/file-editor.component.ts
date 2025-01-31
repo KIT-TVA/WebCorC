@@ -4,6 +4,7 @@ import { NuMonacoEditorModule } from '@ng-util/monaco-editor';
 import { FormsModule } from '@angular/forms';
 import { ProjectService } from '../../services/project/project.service';
 import { Router } from '@angular/router';
+import { EditorService } from '../../services/editor/editor.service';
 /**
  * Simple wrapper around the nu-monaco text editor, which saves and loads the file content from the {@link ProjectService}
  * This component is mapped under the url /editor/file/{urn}
@@ -26,7 +27,7 @@ export class FileEditorComponent implements AfterViewInit,OnDestroy {
   
   public code : string = ''
 
-  public constructor(private projectService : ProjectService, private router : Router) {
+  public constructor(private projectService : ProjectService, private editorService : EditorService, private router : Router) {
     this.projectService.editorNotify.subscribe(() => {
       this.saveContentToFile()
     })
@@ -63,6 +64,7 @@ export class FileEditorComponent implements AfterViewInit,OnDestroy {
     // finally override the old urn 
 
     this._urn = uniformRessourceName
+    this.editorService.currentFileName = uniformRessourceName.substring(uniformRessourceName.lastIndexOf('/'))
     this.loadContentFromFile()
   }
 

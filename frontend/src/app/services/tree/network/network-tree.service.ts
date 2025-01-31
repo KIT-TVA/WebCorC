@@ -18,7 +18,7 @@ import { Renaming } from '../Renaming';
 })
 export class NetworkTreeService {
   private static readonly verifyPath = "/editor/verify"
-  private static readonly generatePath = "/editor/generate"
+  private static readonly generatePath = "/editor/javaGen"
   private static readonly converstionPath = "/editor/xmltojson"
 
   private readonly _generateStatus = new Subject<string>()
@@ -64,6 +64,44 @@ export class NetworkTreeService {
         this.verificationService.next(formula)
         this.networkStatusService.stopNetworkRequest()
       })
+  }
+
+  public generateCode(root: Refinement | undefined, javaVariables : string[], globalConditions : ConditionDTO[], renaming : Renaming[], name : string ,  projectId?: string | undefined) {
+    const filename = name.substring(0, name.lastIndexOf('.'))
+    const rootNode = (root as SimpleStatementComponent).export()
+    const formula = new CBCFormula()
+    formula.statement = rootNode.refinement
+    formula.preCondition = rootNode.preCondition
+    formula.postCondition = rootNode.postCondition
+    formula.javaVariables = javaVariables
+    formula.globalConditions = globalConditions
+    formula.renaming = renaming
+    formula.name = filename
+
+    let params =  new HttpParams()
+
+    if (projectId) {
+      params = params.set('projectId', projectId)
+    }
+
+    this.networkStatusService.startNetworkRequest()
+    this.http.post(environment.apiUrl + NetworkTreeService.generatePath, this.mapper.toEMFCbcFormula(formula), {params : params, responseType: 'text' as const})
+    .pipe(map(string => string))
+    .pipe(catchError((error : HttpErrorResponse) : Observable<string> => {
+      this.consoleService.addErrorResponse(error, "Java code generation failed")
+      this.networkStatusService.stopNetworkRequest()
+      return of()
+    }))
+    .subscribe((code) => {
+      const blob = new Blob([code], {type: "text/plain"})
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement("a")
+      a.href = url
+      a.download = filename  + ".java"
+      a.click()
+      window.URL.revokeObjectURL(url)
+      this.networkStatusService.stopNetworkRequest()
+    })
   }
 
 

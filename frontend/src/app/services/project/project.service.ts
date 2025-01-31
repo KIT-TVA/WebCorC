@@ -232,6 +232,11 @@ export class ProjectService {
     }
 
     const oldcontent = file.content
+
+    if (content instanceof CBCFormula) {
+      content.name = file.name.substring(0, file.name.lastIndexOf('.'))
+    }
+
     file.content = content
     if (oldcontent != file.content) {
       this.storage.setFileContent(urn, content)

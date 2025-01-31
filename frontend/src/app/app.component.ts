@@ -23,6 +23,7 @@ import { CreateProjectDialogComponent } from './components/project-explorer/crea
 import { first } from 'rxjs';
 import { NetworkStatusService } from './services/networkStatus/network-status.service';
 import { ConsoleService } from './services/console/console.service';
+import { EditorService } from './services/editor/editor.service';
 
 /**
  * Top Component of this application, 
@@ -46,7 +47,8 @@ export class AppComponent {
     private dialog: MatDialog,
     public projectService : ProjectService,
     private snackBar : MatSnackBar,
-    private consoleService : ConsoleService
+    private consoleService : ConsoleService,
+    private editorService : EditorService
   ) {
 
     this.networkStatus.status.subscribe((status) => {
@@ -71,6 +73,23 @@ export class AppComponent {
       this.networkTreeService.verify(this.treeService.rootNode, this.treeService.variables, this.treeService.conditions, this.treeService.renaming ,this.projectService.projectId)
     }
 
+  }
+
+  public generateCode() : void {
+    if (this.projectService.findByPath('helper.key') && this.projectService.shouldCreateProject) {
+      this.projectService.requestFinished.pipe(first()).subscribe(() => {
+
+        this.projectService.editorNotify.pipe(first()).subscribe(() => {
+          this.networkTreeService.generateCode(this.treeService.rootNode, this.treeService.variables, this.treeService.conditions, this.treeService.renaming, this.editorService.currentFileName ,this.projectService.projectId)
+        })
+
+        this.projectService.uploadWorkspace()
+      })
+
+      this.dialog.open(CreateProjectDialogComponent)
+    } else {
+      this.networkTreeService.generateCode(this.treeService.rootNode, this.treeService.variables, this.treeService.conditions, this.treeService.renaming, this.editorService.currentFileName ,this.projectService.projectId)
+    }
   }
 
   public openGenerateCodeDialog(): void {
