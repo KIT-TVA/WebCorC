@@ -48,7 +48,6 @@ export class ProjectExplorerComponent {
   private _transformer = (element : ProjectElement, level : number) : FlatNode => {
     const existingNode = this.elementToNodeMap.get(element);
     const flatNode = existingNode && existingNode.path === element.path ? existingNode : new FlatNode(element, level);
-    console.log(flatNode)
     this.elementToNodeMap.set(element, flatNode);
     this.nodeToElementMap.set(flatNode, element);
     return flatNode
@@ -240,7 +239,6 @@ export class ProjectExplorerComponent {
     const parent = this.projectService.findByPath(parentpath)
     
     if (!parent) return
-    console.log(parent)
     this.projectService.moveElement(element, (parent as ProjectDirectory))
   }
 
@@ -260,7 +258,6 @@ export class ProjectExplorerComponent {
   isTypeLessAndHasNoName = (_ : number, node : FlatNode) => node.name === this.projectService.fakeElementName && !node.getsRenamed;
 
   public getsRenamed(_ : number, node : FlatNode) {
-    console.log("trigger")
     return node.getsRenamed
   }
 
