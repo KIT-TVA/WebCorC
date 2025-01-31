@@ -11,6 +11,7 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
 import { TreeService } from "./services/tree/tree.service";
 import { MatButtonModule } from "@angular/material/button";
 import { MatDialog } from "@angular/material/dialog";
+import {MatBadgeModule} from '@angular/material/badge';
 import { CodegenComponent } from "./dialogs/codegen.component";
 import { ProjectExplorerComponent } from "./components/project-explorer/project-explorer.component";
 import { MatIconModule } from '@angular/material/icon';
@@ -21,6 +22,7 @@ import { NetworkTreeService } from './services/tree/network/network-tree.service
 import { CreateProjectDialogComponent } from './components/project-explorer/create-project-dialog/create-project-dialog.component';
 import { first } from 'rxjs';
 import { NetworkStatusService } from './services/networkStatus/network-status.service';
+import { ConsoleService } from './services/console/console.service';
 
 /**
  * Top Component of this application, 
@@ -29,7 +31,7 @@ import { NetworkStatusService } from './services/networkStatus/network-status.se
  */
 @Component({
     selector: 'app-root',
-    imports: [CommonModule, RouterOutlet, MatToolbarModule, MatSidenavModule, FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, ProjectExplorerComponent, MatIconModule, NuMonacoEditorModule, ConsoleComponent, MatProgressBarModule],
+    imports: [CommonModule, RouterOutlet, MatToolbarModule, MatSidenavModule, FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, ProjectExplorerComponent, MatIconModule, NuMonacoEditorModule, ConsoleComponent, MatProgressBarModule, MatBadgeModule],
     templateUrl: './app.component.html',
     styleUrl: './app.component.scss'
 })
@@ -44,6 +46,7 @@ export class AppComponent {
     private dialog: MatDialog,
     public projectService : ProjectService,
     private snackBar : MatSnackBar,
+    private consoleService : ConsoleService
   ) {
 
     this.networkStatus.status.subscribe((status) => {
@@ -103,6 +106,11 @@ export class AppComponent {
     }
 
     this.projectService.uploadWorkspace(wait)
+  }
+
+
+  public get consoleButtonColor() {
+    return this.consoleService.numberOfLogs > 0 ? 'rgb(186, 26, 26)' : ''
   }
 
   public getLoadingState() : "indeterminate" | "determinate" {

@@ -242,7 +242,6 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
 
       this.variables.importVariables(newFormula.javaVariables)
       this.conditions.importConditions(newFormula.globalConditions)
-      console.log(newFormula.renaming)
       this.renaming.importRenaming(newFormula.renaming)
 
       return

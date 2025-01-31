@@ -19,17 +19,17 @@ import { CdkDrag, CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop';
 
 class FlatNode {
   expandable: boolean;
-  name : string;
-  path : string;
-  level : number;
-  rename : boolean
+  name : string
+  path : string
+  level : number
+  getsRenamed : boolean
 
   constructor(node : ProjectElement, level : number) {
     this.level = level
     this.name = node.name
     this.path = node.path
     this.expandable = node instanceof ProjectDirectory
-    this.rename = false
+    this.getsRenamed = node.getsRenamed
   }
 }
 /**
@@ -48,6 +48,7 @@ export class ProjectExplorerComponent {
   private _transformer = (element : ProjectElement, level : number) : FlatNode => {
     const existingNode = this.elementToNodeMap.get(element);
     const flatNode = existingNode && existingNode.path === element.path ? existingNode : new FlatNode(element, level);
+    console.log(flatNode)
     this.elementToNodeMap.set(element, flatNode);
     this.nodeToElementMap.set(flatNode, element);
     return flatNode
@@ -224,10 +225,11 @@ export class ProjectExplorerComponent {
 
   // Todo: Fix User Interface to rename a element name
   public toggleRename(node : FlatNode) {
-    node.rename = true
-
-    console.log(node)
-    //this.projectService.dataChange.next(this.projectService.root.content)
+    
+    const element = this.nodeToElementMap.get(node)
+    if (!element) return
+    
+    this.projectService.toggleRename(element)
   }
 
   public renameElement(node : FlatNode, newName : string) {
@@ -238,7 +240,8 @@ export class ProjectExplorerComponent {
     const parent = this.projectService.findByPath(parentpath)
     
     if (!parent) return
-    element.move(parent as ProjectDirectory, newName)
+    console.log(parent)
+    this.projectService.moveElement(element, (parent as ProjectDirectory))
   }
 
 
@@ -251,12 +254,15 @@ export class ProjectExplorerComponent {
   }
 
   // identify the directories for the html template
-  hasChild = (_: number, node: FlatNode) => node.expandable;
+  hasChild = (_: number, node: FlatNode) => node.expandable && !node.getsRenamed;
 
   // identify the fakeProjectElement for the html template
-  isTypeLessAndHasNoName = (_ : number, node : FlatNode) => node.name === this.projectService.fakeElementName;
+  isTypeLessAndHasNoName = (_ : number, node : FlatNode) => node.name === this.projectService.fakeElementName && !node.getsRenamed;
 
-  isRenaming = (_ : number, node : FlatNode) => node.rename;
+  public getsRenamed(_ : number, node : FlatNode) {
+    console.log("trigger")
+    return node.getsRenamed
+  }
 
   public get root() {
     return new FlatNode(this.projectService.root, -1)

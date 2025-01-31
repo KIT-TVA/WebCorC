@@ -18,6 +18,10 @@ export class ConsoleService {
     return this._logs
   }
 
+  public get numberOfLogs () {
+    return this._logs.length
+  }
+
   public addErrorResponse(error : HttpErrorResponse, action : string = "") {
     this._logs.push(new ConsoleLogLine(action, error))
   }
