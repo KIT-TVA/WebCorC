@@ -12,6 +12,7 @@ import { RepetitionStatement } from '../../../types/statements/repetition-statem
 import { CompositionStatement } from '../../../types/statements/compositon-statement';
 import { StrongWeakStatement } from '../../../types/statements/strong-weak-statement';
 import { IRenaming, Renaming } from '../Renaming';
+import { EMFRename, EMFRenaming, IEMFRenaming } from './emf-renaming';
 
 @Injectable({
   providedIn: 'root'
@@ -70,7 +71,7 @@ export class EmfMapperService {
       preCondition : this.toEMFCondition(cbcFormula.preCondition),
       postCondition : this.toEMFCondition(cbcFormula.postCondition),
       statement : this.toEMFStatement(cbcFormula.statement),
-      renaming : cbcFormula.renaming
+      renaming : this.toRenaming(cbcFormula.renaming)
     }
   }
 
@@ -380,19 +381,37 @@ export class EmfMapperService {
     return conditions
   }
 
-  private importRenaming(renaming : IRenaming[] | null) {
+  private importRenaming(renaming : IEMFRenaming | null) {
     const newRenames : Renaming[] = []
 
-    if (!renaming) {
+    if (!renaming || !renaming.rename) {
       return newRenames
     }
 
-    for (const rename of renaming) {
+    for (const rename of renaming.rename) {
       newRenames.push(
         new Renaming(rename.type, rename.function, rename.newName)
       )
     }
 
     return newRenames
+  }
+
+  private toRenaming(renaming : IRenaming[] | null) : IEMFRenaming {
+    const emfRename : EMFRename[] = []
+
+    if (!renaming) return new EMFRenaming(emfRename)
+
+    for (const rename of renaming) {
+      emfRename.push(
+        {
+          type : rename.type,
+          function : rename.function,
+          newName : rename.newName
+        }
+      )
+    }
+
+    return new EMFRenaming(emfRename)
   }
 }
