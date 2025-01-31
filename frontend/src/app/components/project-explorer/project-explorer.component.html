@@ -20,7 +20,7 @@
             <button mat-icon-button> <mat-icon> description </mat-icon> </button>
             <button mat-button (click)="navigate(node)" > {{ node.name }} </button>
             <div class="node-actions">
-                <button mat-icon-button (click)="toggleRename(node)"> <mat-icon> edit </mat-icon> </button>
+               <!-- <button mat-icon-button (click)="toggleRename(node)"> <mat-icon> edit </mat-icon> </button> -->
                 <button mat-icon-button (click)="deleteElement(node)"><mat-icon [style.color]="'red'"> delete </mat-icon></button>
             </div>
         </mat-tree-node>
@@ -36,7 +36,7 @@
             </mat-form-field>
         </mat-tree-node>
 
-        <mat-tree-node *matTreeNodeDef="let node, when: isRenaming" matTreeNodePadding>
+        <mat-tree-node *matTreeNodeDef="let node; when: getsRenamed" matTreeNodePadding>
             <mat-form-field [style.width]="'100%'" [style.margin-left]="'5px'" [style.margin-right]="'5px'">
                 <mat-label> Rename Element </mat-label>
                 <input matInput #renamingElement [style.width]="'100%'" />

@@ -406,12 +406,28 @@ export class ProjectService {
       result = file.move(parentTarget as ProjectDirectory) 
     }
 
-
     this._movedHistory.set(oldPath, file.path)
 
     this._dataChange.next(this._rootDir.content)
 
     return result
+  }
+
+  public toggleRename(element : ProjectElement) {
+    element.toggleRename()
+
+    const parentPath = element.path.replace(element.name, '')
+    let parentdir = this.findByPath(parentPath) as ProjectDirectory
+    if (parentPath == '') parentdir = this._rootDir
+    if (!parentdir) return
+
+    if (!parentdir.addElement(this.mapper.constructRenameElement(parentPath, element))) {
+      throw new Error("Could not add rename element")
+    }
+  
+    this._dataChange.next(this._rootDir.content)
+
+    console.log(this._rootDir.content)
   }
 
   public notifyEditortoSave() {

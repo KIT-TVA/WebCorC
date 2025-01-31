@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CodeFile, DiagramFile, FakeProjectElement, ProjectDirectory, ProjectElement, fakeProjectElementName } from './project-elements';
+import { CodeFile, DiagramFile, FakeProjectElement, ProjectDirectory, ProjectElement, RenameProjectElement, fakeProjectElementName, renameProjectElementName } from './project-elements';
 import { ApiDiagrammFile, ApiDirectory, ApiFile, ApiTextFile, Inode, SlimFile } from './api-elements';
 import { CbcFormulaMapperService } from '../mapper/cbc-formula-mapper.service';
 
@@ -140,6 +140,10 @@ export class ProjectElementsMapperService {
     return new FakeProjectElement(path)
   }
 
+  public constructRenameElement(path : string, element : ProjectElement) : RenameProjectElement {
+    return new RenameProjectElement(path, element)
+  }
+
   public constructCodeFile(relativePath : string, name : string, type : string) : CodeFile {
     return new CodeFile(relativePath, name, type)
   }
@@ -151,5 +155,9 @@ export class ProjectElementsMapperService {
 
   public get fakeElementName() {
     return fakeProjectElementName
+  }
+
+  public get renameElementName() {
+    return renameProjectElementName
   }
 }

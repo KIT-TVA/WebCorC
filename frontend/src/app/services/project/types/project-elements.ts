@@ -5,10 +5,13 @@ import { CBCFormula } from "../CBCFormula";
  */
 export interface IProjectElement {
     delete() : void
+    move(target : ProjectDirectory, name : string) : boolean
+    toggleRename() : void
     get name() : string
     get path() : string
     get content() : (IProjectElement[] | CBCFormula | string)
     set content(content : CBCFormula | string)
+    get getsRenamed() : boolean
     
 }
 
@@ -16,12 +19,13 @@ export interface IProjectElement {
  * Default implementation of @see IProjectElement
  */
 export abstract class ProjectElement implements IProjectElement {
+    private _rename : boolean = false
 
-    constructor(private _path : string, private _name : string) {}
+    public constructor(private _path : string, private _name : string) {}
 
-    delete(): void {  }
+    public delete(): void {  }
 
-    move(target : ProjectDirectory, name : string = this._name) : boolean {
+    public move(target : ProjectDirectory, name : string = this._name) : boolean {
         if (target.path == '/') {
             this._path = name
         } else {
@@ -34,20 +38,28 @@ export abstract class ProjectElement implements IProjectElement {
         return target.addElement(this)
     }
 
-    get path(): string {
+    public toggleRename(): void {
+        this._rename = !this._rename
+    }
+
+    public get path(): string {
         return this._path
     }
 
-    get content(): string | CBCFormula | IProjectElement[] {
+    public get content(): string | CBCFormula | IProjectElement[] {
         return ""
     }
 
-    set content(content : CBCFormula | string) {
+    public set content(content : CBCFormula | string) {
         
     }
 
-    get name() {
+    public get name() {
         return this._name;
+    }
+
+    public get getsRenamed(): boolean {
+        return this._rename    
     }
 
 }
@@ -58,12 +70,11 @@ export abstract class ProjectElement implements IProjectElement {
  */
 export class ProjectDirectory extends ProjectElement {
 
-
-    constructor(_parentpath : string, name : string, private _elements : ProjectElement[] = []) {
+    public constructor(_parentpath : string, name : string, private _elements : ProjectElement[] = []) {
         super(_parentpath + name + "/", name)
     }
 
-    override delete(): void {
+    public override delete(): void {
         this._elements.forEach(element => {
             element.delete()
         })
@@ -71,7 +82,7 @@ export class ProjectDirectory extends ProjectElement {
         this._elements = []
     }
 
-    addElement(element : ProjectElement) : boolean  {
+    public addElement(element : ProjectElement) : boolean  {
         for (const existingElement of this._elements) {
             if (existingElement.name == element.name) {return false;}
         }
@@ -85,15 +96,15 @@ export class ProjectDirectory extends ProjectElement {
         return true;
     }
 
-    removeElement(elementName : string) {
+    public removeElement(elementName : string) {
         this._elements = this._elements.filter(val => val.name != elementName)
     }
 
-    override get content() : (ProjectElement[]) {
+    public override get content() : (ProjectElement[]) {
         return this._elements
     }
 
-    override move(target: ProjectDirectory, name : string = super.name): boolean {
+    public override move(target: ProjectDirectory, name : string = super.name): boolean {
         const result = super.move(target)
 
         this._elements.forEach((child : ProjectElement) => child.move(this))
@@ -104,6 +115,7 @@ export class ProjectDirectory extends ProjectElement {
 
 
 export const fakeProjectElementName = "...new"
+export const renameProjectElementName = "...rename"
 
 /**
  * This Child of the Projectelement is used to display new file input in the tree at the desired 
@@ -111,10 +123,25 @@ export const fakeProjectElementName = "...new"
  */
 export class FakeProjectElement extends ProjectElement {
 
-    constructor(_parentpath : string) {
+    public constructor(_parentpath : string) {
         super(_parentpath, fakeProjectElementName)
     }
 
+}
+
+
+export class RenameProjectElement extends ProjectElement {
+
+    private element : ProjectElement
+
+    public constructor(_parentpath : string, element : ProjectElement) {
+        super(_parentpath, renameProjectElementName)
+        this.element = element
+    }
+
+    public override get getsRenamed(): boolean {
+        return true
+    }
 }
 
 /**
@@ -123,15 +150,15 @@ export class FakeProjectElement extends ProjectElement {
  */
 export class CodeFile extends ProjectElement {
 
-    constructor(_parentpath : string, name : string, public type : string = "java", private _content : string = "") {
+    public constructor(_parentpath : string, name : string, public type : string = "java", private _content : string = "") {
         super(_parentpath + name + "." + type, name + "." + type)
     }
 
-    override get content() : string {
+    public override get content() : string {
         return this._content
     }
 
-    override set content(content : string) {
+    public override set content(content : string) {
         this._content = content
     }
 }
@@ -142,15 +169,15 @@ export class CodeFile extends ProjectElement {
 export class DiagramFile extends ProjectElement {
 
 
-    constructor(private _parentpath : string, name : string, public type : string = "diagram", private _content : CBCFormula = new CBCFormula() ) {
+    public constructor(private _parentpath : string, name : string, public type : string = "diagram", private _content : CBCFormula = new CBCFormula() ) {
         super(_parentpath + name + "." + type, name + "." + type)
     }
 
-    override get content() : CBCFormula {
+    public override get content() : CBCFormula {
         return this._content
     }
 
-    override set content(content : CBCFormula) {
+    public override set content(content : CBCFormula) {
         this._content = content
     }
 }
