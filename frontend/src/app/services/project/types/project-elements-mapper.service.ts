@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CodeFile, DiagramFile, FakeProjectElement, ProjectDirectory, ProjectElement, RenameProjectElement, fakeProjectElementName, renameProjectElementName } from './project-elements';
+import { CodeFile, DiagramFile, FakeProjectElement, ProjectDirectory, ProjectElement, ProjectFile, RenameProjectElement, fakeProjectElementName, renameProjectElementName } from './project-elements';
 import { ApiDiagrammFile, ApiDirectory, ApiFile, ApiTextFile, Inode, SlimFile } from './api-elements';
 import { CbcFormulaMapperService } from '../mapper/cbc-formula-mapper.service';
 
@@ -58,7 +58,7 @@ export class ProjectElementsMapperService {
         elements.push(this.exportDirectory(element))
       }
 
-      if (element instanceof CodeFile || element instanceof DiagramFile) {
+      if (element instanceof ProjectFile) {
         elements.push(this.exportFile(element))
       }
 
@@ -76,7 +76,7 @@ export class ProjectElementsMapperService {
         elements.push(this.exportTree(element))
       }
 
-      if (element instanceof CodeFile || element instanceof DiagramFile) {
+      if (element instanceof ProjectFile) {
         elements.push(this.exportFileinSlimTree(element))
       }
 

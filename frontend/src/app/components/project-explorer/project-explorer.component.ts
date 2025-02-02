@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
 import { first } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateProjectDialogComponent } from './create-project-dialog/create-project-dialog.component';
-import { ProjectElement, ProjectDirectory, CodeFile, DiagramFile } from '../../services/project/types/project-elements';
+import { ProjectElement, ProjectDirectory, CodeFile, DiagramFile, RenameProjectElement } from '../../services/project/types/project-elements';
 import { ImportFileDialogComponent } from './import-file-dialog/import-file-dialog';
 import { MatMenuModule } from '@angular/material/menu';
 import { ImportProjectDialogComponent } from '../landing-page/import-project-dialog/import-project-dialog.component';
@@ -98,6 +98,11 @@ export class ProjectExplorerComponent {
   public addFile(node : FlatNode, name : string, type : string) {
     
     if (!name) {
+      return;
+    }
+
+    const parent = this.nodeToElementMap.get(node)
+    if (!parent) {
       return;
     }
 
@@ -232,14 +237,12 @@ export class ProjectExplorerComponent {
   }
 
   public renameElement(node : FlatNode, newName : string) {
+    if (!newName) return
+
     const element = this.nodeToElementMap.get(node)
     if (!element) return
-    
-    const parentpath = element.path.replace(element.name, '')
-    const parent = this.projectService.findByPath(parentpath)
-    
-    if (!parent) return
-    this.projectService.moveElement(element, (parent as ProjectDirectory))
+
+    this.projectService.renameElement(element, newName)
   }
 
 
@@ -249,6 +252,10 @@ export class ProjectExplorerComponent {
 
   public importProject() {
     this.dialog.open(ImportProjectDialogComponent)
+  }
+
+  public getRenameName(node : FlatNode) {
+    return (this.nodeToElementMap.get(node) as RenameProjectElement).elementName
   }
 
   // identify the directories for the html template

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subject, first} from 'rxjs';
 import { CBCFormula } from './CBCFormula';
 import { NetworkProjectService } from './network/network-project.service';
-import { CodeFile, DiagramFile, ProjectDirectory, ProjectElement } from './types/project-elements';
+import { CodeFile, DiagramFile, ProjectDirectory, ProjectElement, ProjectFile, RenameProjectElement } from './types/project-elements';
 import { ProjectElementsMapperService } from './types/project-elements-mapper.service';
 import { ProjectStorageService } from './storage/project-storage.service';
 import { ApiDirectory } from './types/api-elements';
@@ -41,6 +41,10 @@ export class ProjectService {
       this._projectname = network.projectName ? network.projectName : ""
       this._dataChange.next(this._rootDir.content)
     })
+
+    this.dataChange.subscribe((rootDir) => {
+      this.storage.setProjectTree(this.mapper.exportDirectory(this._rootDir))
+    })
   }
 
   /**
@@ -51,6 +55,11 @@ export class ProjectService {
    * @see ProjectElement
    */
   public findByPath(path : string, directory : ProjectDirectory = this._rootDir) : ProjectElement | null {
+
+    if (path == '') {
+      return this._rootDir
+    }
+
     if (directory.path === path) {
       return directory
     }
@@ -102,7 +111,6 @@ export class ProjectService {
     }
 
     this._dataChange.next(this._rootDir.content)
-    this.storage.setProjectTree(this.mapper.exportTree(this._rootDir))
     return dir;
   }
 
@@ -142,8 +150,8 @@ export class ProjectService {
       throw new Error("Could not add file, maybe you tried to create a duplicate?")
     }
 
-    this.storage.setProjectTree(this.mapper.exportTree(this._rootDir))
     this._dataChange.next(this._rootDir.content)
+    this._movedHistory.forEach((newPath, oldPath) => oldPath == newFile.path ? this._movedHistory.delete(newPath) : false)
     return dir;
   }
 
@@ -204,8 +212,8 @@ export class ProjectService {
 
     const dir = parentDir as ProjectDirectory
     dir.removeElement(name);
+    this.storage.deleteFileContent(elementToDelete)
     this._dataChange.next(this._rootDir.content)
-    this.storage.setProjectTree(this.mapper.exportTree(this._rootDir))
   }
 
   /**
@@ -214,9 +222,11 @@ export class ProjectService {
    * @param content The content to save in the file identified by the urn
    */
   public syncFileContent(urn : string, content : string | CBCFormula) {
+    let urnMoved = false
     let file = this.findByPath(urn)
     if (!file) {
       const historyEntry = this._movedHistory.get(urn)
+      this.storage.deleteFileContent(file)
 
       if (!historyEntry) {
         throw new Error("File not found")
@@ -224,11 +234,14 @@ export class ProjectService {
 
       file = this.findByPath(historyEntry)
 
+
+      this._movedHistory.delete(urn)
+      this.storage.deleteFileContentByPath(urn)
+      urnMoved = true
+
       if (!file) {
         throw new Error("File not found")
       }
-
-      this._movedHistory.delete(historyEntry)
     }
 
     const oldcontent = file.content
@@ -238,7 +251,7 @@ export class ProjectService {
     }
 
     file.content = content
-    if (oldcontent != file.content) {
+    if (oldcontent != file.content && !urnMoved) {
       this.storage.setFileContent(urn, content)
     }
 
@@ -253,6 +266,7 @@ export class ProjectService {
   public async getFileContent(urn : string) : Promise<string | CBCFormula> {
     let file = this.findByPath(urn)
     if (!file) {
+
       const rootDir = this.storage.getProjectTree()
       if (!rootDir) {
         throw new Error("Empty session storage: File not found")
@@ -389,10 +403,6 @@ export class ProjectService {
       return
     }
 
-    console.log(this.projectId)
-    console.log(this.storage.getProjectId())
-    console.log(!this.storage.getProjectId() && !this.projectId && projectTree)
-
     // if the project id is not defined in storage configure a observer, to save the id to storage
     if (!this.projectId && projectId) {
       this.projectId = projectId
@@ -402,46 +412,59 @@ export class ProjectService {
     
   }
 
-  public moveElement(file : ProjectElement, target : ProjectElement) {
+  public moveElement(file : ProjectElement, target : ProjectElement, name?: string, shouldDelete : boolean = true) {
     let oldPath = file.path
-    let oldParentPath = file.path.substring(0, file.path.lastIndexOf('/') + 1)
-    const newParentPath = target.path.substring(0, target.path.lastIndexOf('/') + 1)
+    let oldParentPath = file.parentPath
+    const newParentPath = target.path
 
-    if (oldParentPath != newParentPath) {
+    if (oldParentPath != newParentPath && shouldDelete) {
       this.deleteElement(oldPath, file.name)
+      this.storage.deleteFileContent(file)
     }
 
-    let result : boolean = false
+    let history : Map<string, string> = new Map()
 
     if (target instanceof ProjectDirectory) {
-      result = file.move(target)
+      history = file.move(target, name)
     } else {
-      const parentTarget = this.findByPath(newParentPath)
-      result = file.move(parentTarget as ProjectDirectory) 
+      const parentTarget = this.findByPath(target.parentPath)
+      history = file.move(parentTarget as ProjectDirectory, name) 
     }
 
-    this._movedHistory.set(oldPath, file.path)
+    this.storage.setFileContent(file.path, (file as ProjectFile).content)
 
+    history.forEach((newPath, oldPath) => this._movedHistory.set(newPath, oldPath))
     this._dataChange.next(this._rootDir.content)
-
-    return result
+    return history.size > 0
   }
 
   public toggleRename(element : ProjectElement) {
-    element.toggleRename()
-
-    const parentPath = element.path.replace(element.name, '')
+    const parentPath = element.parentPath
     let parentdir = this.findByPath(parentPath) as ProjectDirectory
-    if (parentPath == '') parentdir = this._rootDir
-    if (!parentdir) return
-
     if (!parentdir.addElement(this.mapper.constructRenameElement(parentPath, element))) {
       throw new Error("Could not add rename element")
     }
+
+    element.toggleRename()
+
+    parentdir.removeElement(element.name)
   
     this._dataChange.next(this._rootDir.content)
+  }
 
-    console.log(this._rootDir.content)
+  public renameElement(element : ProjectElement, name : string) {
+    if (!(element instanceof RenameProjectElement)) return
+
+    const toBeMoved = (element as RenameProjectElement).element
+    const parent = this.findByPath(toBeMoved.parentPath)
+
+    if (!parent || !(parent instanceof ProjectDirectory)) return
+
+    const parentdir = parent as ProjectDirectory
+
+    toBeMoved.toggleRename()
+    parentdir.removeElement(element.name)
+    this.moveElement(toBeMoved, parentdir, name, false)
   }
 
   public notifyEditortoSave() {

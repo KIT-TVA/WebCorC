@@ -16,11 +16,11 @@
     </div>
     <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" cdkDropList (cdkDropListDropped)="dropNode($event)">
 
-        <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding cdkDrag [cdkDragData]="node" (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()">
+        <mat-tree-node *matTreeNodeDef="let node; when: !getsRenamed" matTreeNodePadding cdkDrag [cdkDragData]="node" (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()">
             <button mat-icon-button> <mat-icon> description </mat-icon> </button>
             <button mat-button (click)="navigate(node)" > {{ node.name }} </button>
             <div class="node-actions">
-               <!-- <button mat-icon-button (click)="toggleRename(node)"> <mat-icon> edit </mat-icon> </button> -->
+               <button mat-icon-button (click)="toggleRename(node)"> <mat-icon> edit </mat-icon> </button>
                 <button mat-icon-button (click)="deleteElement(node)"><mat-icon [style.color]="'red'"> delete </mat-icon></button>
             </div>
         </mat-tree-node>
@@ -39,7 +39,7 @@
         <mat-tree-node *matTreeNodeDef="let node; when: getsRenamed" matTreeNodePadding>
             <mat-form-field [style.width]="'100%'" [style.margin-left]="'5px'" [style.margin-right]="'5px'">
                 <mat-label> Rename Element </mat-label>
-                <input matInput #renamingElement [style.width]="'100%'" />
+                <input matInput #renamingElement [value]="getRenameName(node)" [style.width]="'100%'" />
                 <button matSuffix mat-icon-button aria-label="Rename" (click)="renameElement(node, renamingElement.value)"> <mat-icon> check </mat-icon> </button>
             </mat-form-field>
         </mat-tree-node>
@@ -52,6 +52,7 @@
             {{ node.name }}
             <div class="node-actions">
                 <button mat-icon-button (click)="importElement(node)"> <mat-icon> publish </mat-icon> </button>
+                <button mat-icon-button (click)="toggleRename(node)"> <mat-icon> edit </mat-icon> </button>
                 <button mat-icon-button (click)="addElement(node)"> <mat-icon [style.color]="'green'"> add</mat-icon> </button>
                 <button mat-icon-button (click)="deleteElement(node)"><mat-icon [style.color]="'red'"> delete </mat-icon></button>
             </div>

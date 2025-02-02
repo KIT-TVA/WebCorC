@@ -68,6 +68,11 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   @Input()
   public set urn(uniformRessourceName : string) {
 
+    console.log(this.urn, " ->", uniformRessourceName)
+
+    console.log(this.projectService)
+    console.log(this.treeService.rootNode)
+
     // prevent reloading the same context
     if (uniformRessourceName == this._urn) {
       return
@@ -89,8 +94,10 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
 
     // if the child is defined delete the child and all grandchildren and 
     if (child) {
+      console.log("delete tree")
       this.treeService.deletionNotifier.next(child)
       if (this.examplesSpawn) {
+        console.log("clear background")
         this.examplesSpawn.clear()
       }
     }
@@ -98,6 +105,9 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     if (this._viewInit) {
       this.loadFileContent()
     }
+
+    console.log(this.projectService.root)
+    console.log(this.treeService.rootNode)
   }
 
   
@@ -192,6 +202,8 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     this.renaming.removeAllRenaming()
 
     Refinement.resetIDs(2)
+
+    console.log("load file from ",this._urn)
 
     let newFormula : CBCFormula | undefined = undefined
     try {

@@ -71,8 +71,12 @@ export class ProjectStorageService {
     }
   }
 
-  public deleteFileContent(file : ProjectElement) {
-    sessionStorage.removeItem(file.path)
+  public deleteFileContent(file : ProjectElement | null) {
+    sessionStorage.removeItem(ProjectStorageService.projectFileUrnPrefix + file?.path)
+  }
+
+  public deleteFileContentByPath(path : string) {
+    sessionStorage.removeItem(ProjectStorageService.projectFileTreeKey + path)
   }
 
   public getFileContent(urn : string) : string | CBCFormula | null {
