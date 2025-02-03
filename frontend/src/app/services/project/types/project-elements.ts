@@ -33,10 +33,9 @@ export abstract class ProjectElement implements IProjectElement {
 
     public move(target : ProjectDirectory, name : string = this._name) : Map<string, string> {
         const oldPath = this.path
-        this._name = name
 
         if (target.path == '/') {
-            this.setPath(name)
+            this.setPath(name, "")
         } else {
             this.setPath(name, target.path)
         }
@@ -185,6 +184,12 @@ export class RenameProjectElement extends ProjectElement {
 
     public get element() {
         return this._element
+    }
+
+    public override get content(): IProjectElement[] {
+        if (this.element instanceof ProjectDirectory) return this.element.content
+
+        return []
     }
 }
 

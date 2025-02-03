@@ -16,8 +16,19 @@
     </div>
     <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" cdkDropList (cdkDropListDropped)="dropNode($event)">
 
-        <mat-tree-node *matTreeNodeDef="let node; when: !getsRenamed" matTreeNodePadding cdkDrag [cdkDragData]="node" (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()">
-            <button mat-icon-button> <mat-icon> description </mat-icon> </button>
+        <mat-tree-node *matTreeNodeDef="let node; when: isFakeElement" matTreeNodePadding>
+            <mat-form-field [style.width]="'100%'" [style.margin-left]="'5px'" [style.margin-right]="'5px'">
+                <mat-label>New Element</mat-label>
+                <input matInput #newElement [style.width]="'100%'">
+                <button matSuffix mat-icon-button aria-label="File"      (click)="deleteElement(node)"> <mat-icon [style.color]="'red'" > close      </mat-icon> </button>
+                <button matSuffix mat-icon-button aria-label="File"      (click)="addFile(node, newElement.value, 'diagram')"  > <mat-icon> schema      </mat-icon> </button>
+                <button matSuffix mat-icon-button aria-label="File"      (click)="addFile(node, newElement.value, 'java')"  > <mat-icon> code              </mat-icon> </button>
+                <button matSuffix mat-icon-button aria-label="Directory" (click)="addFolder(node, newElement.value)"> <mat-icon> create_new_folder </mat-icon> </button>
+            </mat-form-field>
+        </mat-tree-node>
+
+        <mat-tree-node *matTreeNodeDef="let node; when: isFile" matTreeNodePadding cdkDrag [cdkDragData]="node" (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()">
+            <button mat-icon-button> <mat-icon> {{getFileIcon(node)}} </mat-icon> </button>
             <button mat-button (click)="navigate(node)" > {{ node.name }} </button>
             <div class="node-actions">
                <button mat-icon-button (click)="toggleRename(node)"> <mat-icon> edit </mat-icon> </button>
@@ -25,28 +36,19 @@
             </div>
         </mat-tree-node>
 
-        <mat-tree-node *matTreeNodeDef="let node; when: isTypeLessAndHasNoName" matTreeNodePadding>
+        <mat-tree-node *matTreeNodeDef="let node; when: isElementToRenameFile" matTreeNodePadding>
             <mat-form-field [style.width]="'100%'" [style.margin-left]="'5px'" [style.margin-right]="'5px'">
-                <mat-label>New Element</mat-label>
-                <input matInput #newElement [style.width]="'100%'">
-                <button matSuffix mat-icon-button aria-label="File"      (click)="deleteElement(node)"> <mat-icon [style.color]="'red'" > close      </mat-icon> </button>
-                <button matSuffix mat-icon-button aria-label="File"      (click)="addFile(node, newElement.value, 'diagram')"  > <mat-icon> note_add      </mat-icon> </button>
-                <button matSuffix mat-icon-button aria-label="File"      (click)="addFile(node, newElement.value, 'java')"  > <mat-icon> code              </mat-icon> </button>
-                <button matSuffix mat-icon-button aria-label="Directory" (click)="addFolder(node, newElement.value)"> <mat-icon> create_new_folder </mat-icon> </button>
-            </mat-form-field>
-        </mat-tree-node>
-
-        <mat-tree-node *matTreeNodeDef="let node; when: getsRenamed" matTreeNodePadding>
-            <mat-form-field [style.width]="'100%'" [style.margin-left]="'5px'" [style.margin-right]="'5px'">
-                <mat-label> Rename Element </mat-label>
+                <mat-label> Rename File </mat-label>
                 <input matInput #renamingElement [value]="getRenameName(node)" [style.width]="'100%'" />
+                <button matPrefix mat-icon-button aria-label="File icon"> <mat-icon> {{getFileIcon(node)}} </mat-icon>  </button>
                 <button matSuffix mat-icon-button aria-label="Rename" (click)="renameElement(node, renamingElement.value)"> <mat-icon> check </mat-icon> </button>
             </mat-form-field>
         </mat-tree-node>
 
-        <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding cdkDrag [cdkDragData]="node" (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (mouseenter)="dragHover(node)">
+        <mat-tree-node *matTreeNodeDef="let node; when: isFolder" matTreeNodePadding cdkDrag [cdkDragData]="node" (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (mouseenter)="dragHover(node)">
             <button  mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle' + node.name" >
-                <mat-icon class="mat-icon-rtl-mirror"> {{treeControl.isExpanded(node) ? 'folder_open' : 'folder'}} 
+                <mat-icon class="mat-icon-rtl-mirror"> 
+                    {{treeControl.isExpanded(node) ? 'folder_open' : 'folder'}} 
                 </mat-icon>
             </button>
             {{ node.name }}
@@ -57,6 +59,22 @@
                 <button mat-icon-button (click)="deleteElement(node)"><mat-icon [style.color]="'red'"> delete </mat-icon></button>
             </div>
         </mat-tree-node>
+
+        <mat-tree-node *matTreeNodeDef="let node; when: isElementToRenameFolder" matTreeNodePadding>
+            <mat-form-field [style.width]="'100%'" [style.margin-left]="'5px'" [style.margin-right]="'5px'">
+                <mat-label> Rename Folder </mat-label>
+                <input matInput #renamingElement [value]="getRenameName(node)" [style.width]="'100%'" />
+                <button matPrefix mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle' + node.name"> 
+                    <mat-icon class="mat-icon-rtl-mirror"> 
+                        {{treeControl.isExpanded(node) ? 'folder_open' : 'folder'}} 
+                    </mat-icon> 
+                </button>
+                <button matSuffix mat-icon-button aria-label="Rename" (click)="renameElement(node, renamingElement.value)"> <mat-icon> check </mat-icon> </button>
+            </mat-form-field>
+        </mat-tree-node>
+
+
+
     </mat-tree>
     <div class="bottom">
         <button mat-raised-button (click)="createHelperFile()">  <mat-icon> help </mat-icon>  Create helper-file  </button>

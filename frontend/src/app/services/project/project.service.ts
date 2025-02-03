@@ -36,14 +36,16 @@ export class ProjectService {
       this.projectname= nameFromStorage ? nameFromStorage : ""
     }
 
+    const projectFileTree = storage.getProjectTree()
+
+    if (projectFileTree) {
+      this._rootDir = mapper.importDirectory(projectFileTree)
+    }
+
     this.network.dataChange.subscribe((rootDir) => {
       this._rootDir = mapper.importDirectory(rootDir)
       this._projectname = network.projectName ? network.projectName : ""
       this._dataChange.next(this._rootDir.content)
-    })
-
-    this.dataChange.subscribe((rootDir) => {
-      this.storage.setProjectTree(this.mapper.exportDirectory(this._rootDir))
     })
   }
 
@@ -152,6 +154,7 @@ export class ProjectService {
 
     this._dataChange.next(this._rootDir.content)
     this._movedHistory.forEach((newPath, oldPath) => oldPath == newFile.path ? this._movedHistory.delete(newPath) : false)
+    this.storage.setProjectTree(this.mapper.exportDirectory(this._rootDir))
     return dir;
   }
 
@@ -166,8 +169,8 @@ export class ProjectService {
       throw new Error("Parent dir of new element not found")
     }
 
-    const dir = parentDir as ProjectDirectory;
-    const newElement = this.mapper.constructFakeElement(path);
+    const dir = parentDir as ProjectDirectory
+    const newElement = this.mapper.constructFakeElement(path)
     if (!dir.addElement(newElement)) {
       throw new Error("Could not add fake element")
     }
@@ -211,7 +214,8 @@ export class ProjectService {
     }
 
     const dir = parentDir as ProjectDirectory
-    dir.removeElement(name);
+    dir.removeElement(name)
+    this.storage.setProjectTree(this.mapper.exportDirectory(this._rootDir))
     this.storage.deleteFileContent(elementToDelete)
     this._dataChange.next(this._rootDir.content)
   }

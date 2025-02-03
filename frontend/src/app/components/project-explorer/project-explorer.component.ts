@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
 import { first } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateProjectDialogComponent } from './create-project-dialog/create-project-dialog.component';
-import { ProjectElement, ProjectDirectory, CodeFile, DiagramFile, RenameProjectElement } from '../../services/project/types/project-elements';
+import { ProjectElement, ProjectDirectory, CodeFile, DiagramFile, RenameProjectElement, ProjectFile } from '../../services/project/types/project-elements';
 import { ImportFileDialogComponent } from './import-file-dialog/import-file-dialog';
 import { MatMenuModule } from '@angular/material/menu';
 import { ImportProjectDialogComponent } from '../landing-page/import-project-dialog/import-project-dialog.component';
@@ -29,6 +29,9 @@ class FlatNode {
     this.name = node.name
     this.path = node.path
     this.expandable = node instanceof ProjectDirectory
+    if (node instanceof RenameProjectElement) {
+      this.expandable = node.element instanceof ProjectDirectory
+    }
     this.getsRenamed = node.getsRenamed
   }
 }
@@ -63,6 +66,7 @@ export class ProjectExplorerComponent {
   private _dataSource = new MatTreeFlatDataSource(this.treeControl, this._treeFlatener);
 
   private _dragging : boolean = false
+  private _renaming : boolean = false
 
 
   public constructor(public projectService : ProjectService, private router : Router, private dialog : MatDialog) {
@@ -128,6 +132,7 @@ export class ProjectExplorerComponent {
    * @param node The node to be opened
    */
   public navigate(node : FlatNode) {
+    if (this._dragging || this._renaming) return
     const element = this.nodeToElementMap.get(node) 
     if (!element) {
       return
@@ -206,22 +211,34 @@ export class ProjectExplorerComponent {
     this._treeControl.expand(node)
   }
 
+  private flattenTree(element : ProjectElement = this.projectService.root) : ProjectElement[] {
+    const elements : ProjectElement[] = []
+
+    if (element.path != "/") elements.push(element)
+
+    if (element instanceof ProjectDirectory) {
+      for (const child of element.content) {
+        elements.push(...this.flattenTree(child))
+      }
+    }
+
+    return elements
+  }
+
   public dropNode(event : CdkDragDrop<string[]>) {
     if (!event.isPointerOverContainer) return;
-
     const node = this.nodeToElementMap.get(event.item.data)
     if (!node) return
 
-
-    let target = this.dataSource.data[event.currentIndex - 1] 
-    if (event.currentIndex < 0) {
-      target = this._dataSource.data[0]
-    } else if (event.currentIndex >= this._dataSource.data.length) {
+    const flattendTree= this.flattenTree()
+    let target = flattendTree[event.currentIndex - 1] 
+    if (event.currentIndex - 1 < 0 || event.currentIndex >= flattendTree.length) {
       target = this.projectService.root
-    }
+    } 
+    
+    console.log(target)
 
     const gotmoved = this.projectService.moveElement(node, target)
-    
     if (!gotmoved) {
       // Todo: rename the element to fix name collision 
     }
@@ -232,15 +249,16 @@ export class ProjectExplorerComponent {
     
     const element = this.nodeToElementMap.get(node)
     if (!element) return
+    this._renaming = true
     
     this.projectService.toggleRename(element)
   }
 
   public renameElement(node : FlatNode, newName : string) {
     if (!newName) return
-
     const element = this.nodeToElementMap.get(node)
     if (!element) return
+    this._renaming = false
 
     this.projectService.renameElement(element, newName)
   }
@@ -258,14 +276,39 @@ export class ProjectExplorerComponent {
     return (this.nodeToElementMap.get(node) as RenameProjectElement).elementName
   }
 
-  // identify the directories for the html template
-  hasChild = (_: number, node: FlatNode) => node.expandable && !node.getsRenamed;
+  public isFolder(_ : number, node : FlatNode) : boolean {
+    return node.expandable && !node.getsRenamed
+  }
 
-  // identify the fakeProjectElement for the html template
-  isTypeLessAndHasNoName = (_ : number, node : FlatNode) => node.name === this.projectService.fakeElementName && !node.getsRenamed;
+  public isFile(_ : number, node : FlatNode) : boolean {
+    return !node.expandable && !node.getsRenamed && node.name !== "...new"
+  }
 
-  public getsRenamed(_ : number, node : FlatNode) {
-    return node.getsRenamed
+  public isFakeElement(_ : number, node : FlatNode) : boolean {
+    return node.name === "...new"
+  }
+
+  public isElementToRenameFile(_ : number, node : FlatNode) : boolean {
+    return node.getsRenamed && !node.expandable
+  }
+
+  public isElementToRenameFolder(_ : number, node : FlatNode) : boolean {
+    return node.getsRenamed && node.expandable
+  }
+
+  public getFileIcon(node : FlatNode) : string {
+    let element = this.nodeToElementMap.get(node) 
+    
+    if (element instanceof RenameProjectElement) {
+      element = element.element
+    }
+
+    switch((element as ProjectFile).type) {
+      case "diagram" : return "schema"
+      case "java":
+      case "key":
+      default: return "code"
+    }
   }
 
   public get root() {

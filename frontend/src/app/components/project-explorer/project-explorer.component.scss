@@ -57,6 +57,7 @@
   cursor: move;
   &.cdk-drag-preview { // while dragging
     @include mat.elevation(12);
+    border-top: 1px solid green;
   }
   &.cdk-drag-placeholder { // potential drop area
     opacity: 0;
