@@ -92,10 +92,6 @@ export class AppComponent {
     }
   }
 
-  public openGenerateCodeDialog(): void {
-    this.dialog.open(CodegenComponent, {minWidth: "350px", height: "300px"});
-  }
-
   private writeURLintoClipboard() {
     navigator.clipboard.writeText(window.origin + "?projectId=" + this.projectService.projectId)
     this.snackBar.open("Copied project url", "Dismiss", {
