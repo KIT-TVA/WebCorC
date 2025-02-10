@@ -12,7 +12,6 @@ import { TreeService } from "./services/tree/tree.service";
 import { MatButtonModule } from "@angular/material/button";
 import { MatDialog } from "@angular/material/dialog";
 import {MatBadgeModule} from '@angular/material/badge';
-import { CodegenComponent } from "./dialogs/codegen.component";
 import { ProjectExplorerComponent } from "./components/project-explorer/project-explorer.component";
 import { MatIconModule } from '@angular/material/icon';
 import { NuMonacoEditorModule } from '@ng-util/monaco-editor';

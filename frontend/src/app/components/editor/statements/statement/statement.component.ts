@@ -79,8 +79,8 @@ export class StatementComponent implements AfterViewInit {
     }
 
     if (this.refinement.proven) {
-      this.boxTitleRef.nativeElement.style.backgroundColor = "rgb(46,171,63)";
-      this.refinementBoxRef.nativeElement.style.borderColor = "rgb(46,171,63)";
+      this.boxTitleRef.nativeElement.style.backgroundColor = "rgb(140,182,60)";
+      this.refinementBoxRef.nativeElement.style.borderColor = "rgb(140,182,60)";
     }
   }
 
@@ -142,11 +142,11 @@ export class StatementComponent implements AfterViewInit {
     if (this.refinement.id == statement.id) {
       this.refinement.proven = statement.proven
       if (this.refinement.proven) {
-        this.boxTitleRef.nativeElement.style.backgroundColor = "rgb(46,171,63)";
-        this.refinementBoxRef.nativeElement.style.borderColor = "rgb(46,171,63)";
+        this.boxTitleRef.nativeElement.style.backgroundColor = "rgb(140,182,60)";
+        this.refinementBoxRef.nativeElement.style.borderColor = "rgb(140,182,60)";
       } else {
-        this.boxTitleRef.nativeElement.style.backgroundColor = "rgb(201,73,73)";
-        this.refinementBoxRef.nativeElement.style.borderColor = "rgb(201,73,73)";
+        this.boxTitleRef.nativeElement.style.backgroundColor = "rgb(163,34,35)";
+        this.refinementBoxRef.nativeElement.style.borderColor = "rgb(163,34,35)";
       }
     }
   }
