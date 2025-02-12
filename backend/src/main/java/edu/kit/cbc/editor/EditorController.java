@@ -6,6 +6,7 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -73,9 +74,11 @@ public class EditorController {
     public HttpResponse<?> verify(@QueryValue Optional<String> projectId, @Body String cbcFormulaString) {
         try {
             CbCFormulaContainer formula = parser.fromJsonStringToCbC(cbcFormulaString);
+            Path p;
+            Path proofPath;
             try {
-                Path p = Files.createTempDirectory("proof_");
-                Path proofPath = Files.createDirectory(p.resolve("prove_"));
+                p = Files.createTempDirectory("proof_");
+                proofPath = Files.createDirectory(p.resolve("prove_"));
                 if (projectId.isPresent()) {
                     //obtaining java files and helper.key from project before verification
                     LinkedList<String> filePaths = new LinkedList<>(filesController.findJavaFilesOfProject(projectId.get()));
@@ -94,7 +97,30 @@ public class EditorController {
             } catch (IOException e) {
                 return HttpResponse.serverError(e.getMessage());
             }
-            //TODO: upload generated files from key proof to object storage
+
+            //find all key files except helper.key
+            List<Path> keyFiles;
+            try {
+                keyFiles = Files.find(proofPath, 30, (path, attributes) -> {
+                    String pathStr = path.toString();
+                    return 
+                        pathStr.endsWith(".key")
+                        && !pathStr.endsWith("helper.key");
+                }).toList();
+            } catch (IOException e) {
+                return HttpResponse.serverError(e.getMessage());
+            }
+
+            //upload found files to project
+            if (projectId.isPresent()) {
+                keyFiles.forEach(path -> {
+                    URI urn = URI.create(p.getFileName() + path.toString().replace(proofPath.toString(), ""));
+                    try {
+                        filesController.uploadBytes(Files.readAllBytes(path), projectId.get(), urn);
+                    } catch (IOException e) { }
+                });
+            }
+
             return HttpResponse.ok(parser.toJsonString(formula));
         } catch (JsonProcessingException e) {
             return HttpResponse.serverError(Problem.PARSING_ERROR(e.getMessage()));
