@@ -6,12 +6,6 @@ mat-toolbar > h1 {
   color: white;
   letter-spacing: -1px;
   font-weight: bold;
-  
-
-  @include mat.badge-overrides((
-    background-color: #009682,
-    //text-color: red,
-  ));
 }
 
 .spacer {

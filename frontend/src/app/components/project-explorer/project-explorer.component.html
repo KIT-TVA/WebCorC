@@ -20,7 +20,7 @@
             <mat-form-field [style.width]="'100%'" [style.margin-left]="'5px'" [style.margin-right]="'5px'">
                 <mat-label>New Element</mat-label>
                 <input matInput #newElement [style.width]="'100%'">
-                <button matSuffix mat-icon-button aria-label="File"      (click)="deleteElement(node)"> <mat-icon [style.color]="'red'" > close      </mat-icon> </button>
+                <button matSuffix mat-icon-button aria-label="File"      (click)="deleteElement(node)"> <mat-icon [style.color]="'rgb(162,34,35)'" > close      </mat-icon> </button>
                 <button matSuffix mat-icon-button aria-label="File"      (click)="addFile(node, newElement.value, 'diagram')"  > <mat-icon> schema      </mat-icon> </button>
                 <button matSuffix mat-icon-button aria-label="File"      (click)="addFile(node, newElement.value, 'java')"  > <mat-icon> code              </mat-icon> </button>
                 <button matSuffix mat-icon-button aria-label="Directory" (click)="addFolder(node, newElement.value)"> <mat-icon> create_new_folder </mat-icon> </button>
@@ -32,7 +32,7 @@
             <button mat-button (click)="navigate(node)" > {{ node.name }} </button>
             <div class="node-actions">
                <button mat-icon-button (click)="toggleRename(node)"> <mat-icon> edit </mat-icon> </button>
-                <button mat-icon-button (click)="deleteElement(node)"><mat-icon [style.color]="'red'"> delete </mat-icon></button>
+                <button mat-icon-button (click)="deleteElement(node)"><mat-icon [style.color]="'rgb(162,34,35)'"> delete </mat-icon></button>
             </div>
         </mat-tree-node>
 
@@ -55,8 +55,8 @@
             <div class="node-actions">
                 <button mat-icon-button (click)="importElement(node)"> <mat-icon> publish </mat-icon> </button>
                 <button mat-icon-button (click)="toggleRename(node)"> <mat-icon> edit </mat-icon> </button>
-                <button mat-icon-button (click)="addElement(node)"> <mat-icon [style.color]="'green'"> add</mat-icon> </button>
-                <button mat-icon-button (click)="deleteElement(node)"><mat-icon [style.color]="'red'"> delete </mat-icon></button>
+                <button mat-icon-button (click)="addElement(node)"> <mat-icon [style.color]="'rgb(140,182,60)'"> add</mat-icon> </button>
+                <button mat-icon-button (click)="deleteElement(node)"><mat-icon [style.color]="'rgb(162,34,35)'"> delete </mat-icon></button>
             </div>
         </mat-tree-node>
 
