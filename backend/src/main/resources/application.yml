@@ -29,3 +29,5 @@ aws:
     enabled: true
     path-style-access-enabled: true
   services.s3.endpoint-override: "${MINIO_URL:`http://localhost:9000`}"
+
+development: '${DEVELOPMENT:false}'
