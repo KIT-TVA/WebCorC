@@ -389,6 +389,12 @@ export class ProjectService {
     const projectName = this.storage.getProjectName()
     const projectId = this.storage.getProjectId()
 
+    console.log("download workspace")
+    console.log(this.projectId)
+    console.log(projectId)
+    console.log()
+
+
     if (projectId === this.projectId) {
       if (!projectTree) return
       this._rootDir = this.mapper.importDirectory(projectTree)
@@ -404,15 +410,20 @@ export class ProjectService {
     if (!projectId && !this.projectId && !!projectTree) {
       this._rootDir = this.mapper.importDirectory(projectTree)
       this.dataChange.next(this._rootDir.content)
+      this.network.readProject()
       return
     }
 
-    // if the project id is not defined in storage configure a observer, to save the id to storage
+    // if the project id is defined in storage and not by the query parameter
     if (!this.projectId && projectId) {
       this.projectId = projectId
       this.network.readProject()
     }
 
+    if (this.projectId && !projectId) {
+      this.storage.setProjectId(this.projectId)
+      this.network.readProject()
+    }
     
   }
 

@@ -12,6 +12,7 @@ import { VerificationService } from '../verification/verification.service';
 import { NetworkStatusService } from '../../networkStatus/network-status.service';
 import { ConsoleService } from '../../console/console.service';
 import { Renaming } from '../Renaming';
+import { ProjectService } from '../../project/project.service';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +22,7 @@ export class NetworkTreeService {
   private static readonly generatePath = "/editor/javaGen"
   private static readonly converstionPath = "/editor/xmltojson"
 
-  private readonly _generateStatus = new Subject<string>()
+
   private readonly _conversionResponse = new Subject<CBCFormula>()
 
   constructor(
@@ -29,7 +30,8 @@ export class NetworkTreeService {
     private readonly mapper : EmfMapperService,
     private readonly verificationService : VerificationService,
     private readonly networkStatusService : NetworkStatusService,
-    private readonly consoleService : ConsoleService
+    private readonly consoleService : ConsoleService,
+    private readonly projectService : ProjectService,
   ) { }
 
   public verify(root : Refinement | undefined, javaVariables : string[], globalConditions : ConditionDTO[], renaming : Renaming[], projectId? : string | undefined) {
@@ -63,6 +65,7 @@ export class NetworkTreeService {
       .subscribe((formula: CBCFormula) => {
         this.verificationService.next(formula)
         this.networkStatusService.stopNetworkRequest()
+        this.projectService.downloadWorkspace()
       })
   }
 

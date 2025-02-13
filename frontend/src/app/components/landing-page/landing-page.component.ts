@@ -34,6 +34,7 @@ export class LandingPageComponent implements OnInit {
     // read the query Params and setting them to the projectService
     this.route.queryParams
       .subscribe(params => {
+        console.log("get query params")
         this.projectService.projectId = params['projectId']
         this._projectId = params['projectId']
       })
