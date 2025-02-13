@@ -396,12 +396,19 @@ export class ProjectService {
 
 
     if (projectId === this.projectId) {
-      if (!projectTree) return
+      if (!projectTree) {
+        this.network.readProject()
+        return
+      }
       this._rootDir = this.mapper.importDirectory(projectTree)
       this.dataChange.next(this._rootDir.content)
-      if (!projectName) return
+      if (!projectName) {
+        this.network.readProject()
+        return
+      }
       this._projectname = projectName
-
+      console.log("download for real")
+      this.network.readProject()
       return
     } else {
       //Todo: Create dialog asking for allowance to evict local staging differences
@@ -410,7 +417,6 @@ export class ProjectService {
     if (!projectId && !this.projectId && !!projectTree) {
       this._rootDir = this.mapper.importDirectory(projectTree)
       this.dataChange.next(this._rootDir.content)
-      this.network.readProject()
       return
     }
 
