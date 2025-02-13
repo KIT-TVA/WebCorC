@@ -2,6 +2,7 @@ package edu.kit.cbc.projects.files.controller;
 
 import java.util.List;
 import java.util.Optional;
+import java.io.IOException;
 import java.net.URI;
 
 import edu.kit.cbc.projects.files.S3ClientProvider;
@@ -110,11 +111,7 @@ public class FilesController {
         String path = String.format(pathFormat, id, urn);
 
         UploadRequest objectStorageUpload = UploadRequest.fromCompletedFileUpload(fileUpload, path);
-        UploadResponse<PutObjectResponse> response = objectStorage.upload(objectStorageUpload, builder -> {
-            builder.acl(ObjectCannedACL.PUBLIC_READ);
-        });
-
-        projectService.addFilePathToId(id, urn);
+        UploadResponse<PutObjectResponse> response = performUpload(objectStorageUpload, id, urn);
 
         return HttpResponse
             .created(UriBuilder.of(httpHostResolver.resolve(request))
@@ -122,6 +119,25 @@ public class FilesController {
                 .path(path)
                 .build())
             .header(HttpHeaders.ETAG, response.getETag());
+    }
+
+    public void uploadBytes(byte[] bytes, String id, URI urn) throws IOException {
+        if (!projectService.existsById(id)) {
+            return;
+        }
+
+        String path = String.format(pathFormat, id, urn);
+
+        UploadRequest objectStorageUpload = UploadRequest.fromBytes(bytes, path);
+        performUpload(objectStorageUpload, id, urn);
+    }
+
+    private UploadResponse<PutObjectResponse> performUpload(UploadRequest uploadRequest, String id, URI urn) {
+        UploadResponse<PutObjectResponse> response = objectStorage.upload(uploadRequest, builder -> {
+            builder.acl(ObjectCannedACL.PUBLIC_READ);
+        });
+        projectService.addFilePathToId(id, urn);
+        return response;
     }
 
     @Put(uri = "/{urn:.*}")

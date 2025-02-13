@@ -23,6 +23,8 @@ services:
       dockerfile: dev.Dockerfile
     env_file:
       - docker-compose.env
+    environment:
+      DEVELOPMENT: true
     ports:
       - "8081:8080"
     volumes: 
