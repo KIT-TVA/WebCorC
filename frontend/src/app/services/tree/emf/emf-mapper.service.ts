@@ -79,136 +79,147 @@ export class EmfMapperService {
     if (!statement) return
 
     switch (statement.type) {
-      case SimpleStatement.TYPE:
-        return {
-          name : statement.name,
-          type : statement.type,
-          id : statement.id,
-          proven : statement.proven,
-          tested : statement.tested,
-          comment : statement.comment,
-          preCondition : this.toEMFCondition(statement.preCondition),
-          postCondition : this.toEMFCondition(statement.postCondition),
-          refinement : {
-            name : statement.name,
-            type : statement.type,
-            preCondition : this.toEMFCondition(statement.preCondition),
-            postCondition: this.toEMFCondition(statement.postCondition),
-            proven: statement.proven,
-            tested: statement.tested
-          } 
-        } as EMFSimpleStatement
-
-      case SelectionStatement.TYPE:
-        const childs : (EMFStatement | undefined)[] = []
-        for (const child of (statement as SelectionStatement).commands) {
-          childs.push(
-            this.toEMFStatement(child)
-          )
-        }
-
-        const guards : EMFCondition[] = []
-        for (const guard of (statement as SelectionStatement).guards) {
-          guards.push(
-            this.toEMFCondition(guard)
-          )
-        }
-        return {
-          name : statement.name,
-          type : statement.type,
-          id : statement.id,
-          proven : statement.proven,
-          tested : statement.tested,
-          comment : statement.comment,
-          preCondition : this.toEMFCondition(statement.preCondition),
-          postCondition : this.toEMFCondition(statement.postCondition),
-          refinement : {
-            name : statement.name,
-            type : statement.type,
-            preCondition : this.toEMFCondition(statement.preCondition),
-            postCondition: this.toEMFCondition(statement.postCondition),
-            proven: statement.proven,
-            tested: statement.tested,
-            guards : guards,
-            commands : childs,
-            preProven : (statement as SelectionStatement).preProven,
-          },
-          
-        } as EMFSelectionStatement
-
-      case RepetitionStatement.TYPE:
-        return {
-          name : statement.name,
-          type : statement.type,
-          id : statement.id,
-          proven : statement.proven,
-          tested : statement.tested,
-          comment : statement.comment,
-          preCondition : this.toEMFCondition(statement.preCondition),
-          postCondition : this.toEMFCondition(statement.postCondition),
-          refinement : {
-            name : statement.name,
-            type : statement.type,
-            preCondition : this.toEMFCondition(statement.preCondition),
-            postCondition: this.toEMFCondition(statement.postCondition),
-            proven: statement.proven,
-            tested: statement.tested,
-            postProven : (statement as RepetitionStatement).postProven,
-            preProven : (statement as RepetitionStatement).preProven,
-            variantProven : (statement as RepetitionStatement).variantProven,
-            invariant : this.toEMFCondition((statement as RepetitionStatement).invariant),
-            variant : this.toEMFCondition((statement as RepetitionStatement).variant),
-            guard : this.toEMFCondition((statement as RepetitionStatement).guard),
-            loopStatement : this.toEMFStatement((statement as RepetitionStatement).loopStatement),
-          }
-        } as EMFRepetitionStatement
-
-      case CompositionStatement.TYPE:
-        return {
-          name : statement.name,
-          type : statement.type,
-          id : statement.id,
-          proven : statement.proven,
-          tested : statement.tested,
-          comment : statement.comment,
-          preCondition : this.toEMFCondition(statement.preCondition),
-          postCondition : this.toEMFCondition(statement.postCondition),
-          refinement : {
-            name : statement.name,
-            type : statement.type,
-            preCondition : this.toEMFCondition(statement.preCondition),
-            postCondition: this.toEMFCondition(statement.postCondition),
-            proven: statement.proven,
-            tested: statement.tested,
-            intermediateCondition : this.toEMFCondition((statement as CompositionStatement).intermediateCondition),
-            firstStatement : this.toEMFStatement((statement as CompositionStatement).firstStatement),
-            secondStatement : this.toEMFStatement((statement as CompositionStatement).secondStatement),
-          } 
-        } as EMFCompositionStatement
-
-        case StrongWeakStatement.TYPE:
-          return {
-            name : statement.name,
-            type : statement.type,
-            id : statement.id,
-            proven : statement.proven,
-            tested : statement.tested,
-            comment : statement.comment,
-            preCondition : this.toEMFCondition(statement.preCondition),
-            postCondition : this.toEMFCondition(statement.postCondition),
-            refinement : {
-              name : statement.name,
-              type : statement.type,
-              preCondition : this.toEMFCondition(statement.preCondition),
-              postCondition: this.toEMFCondition(statement.postCondition),
-              proven: statement.proven,
-              tested: statement.tested
-            }
-          } as EMFStrongWeakStatement
+      case SimpleStatement.TYPE: return this.toEMFSimpleStatement(statement)
+      case SelectionStatement.TYPE: return this.toEMFSelectionStatement(statement)
+      case RepetitionStatement.TYPE: return this.toEMFRepetitionStatement(statement)
+      case CompositionStatement.TYPE: return this.toEMFCompositonStatement(statement)
+      case StrongWeakStatement.TYPE: return this.toEMFStrongWeakStatement(statement)
     }
 
     return
-  } 
+  }
+  
+  private toEMFSimpleStatement(statement : Statement) : EMFSimpleStatement {
+    return {
+      name : statement.name,
+      type : statement.type,
+      id : statement.id,
+      proven : statement.proven,
+      tested : statement.tested,
+      comment : statement.comment,
+      preCondition : this.toEMFCondition(statement.preCondition),
+      postCondition : this.toEMFCondition(statement.postCondition),
+      refinement : {
+        name : statement.name,
+        type : statement.type,
+        preCondition : this.toEMFCondition(statement.preCondition),
+        postCondition: this.toEMFCondition(statement.postCondition),
+        proven: statement.proven,
+        tested: statement.tested
+      } 
+    } as EMFSimpleStatement
+  }
+
+  private toEMFSelectionStatement(statement : Statement) : EMFSelectionStatement {
+    const childs : (EMFStatement | undefined)[] = []
+    for (const child of (statement as SelectionStatement).commands) {
+      childs.push(
+        this.toEMFStatement(child)
+      )
+    }
+
+    const guards : EMFCondition[] = []
+    for (const guard of (statement as SelectionStatement).guards) {
+      guards.push(
+        this.toEMFCondition(guard)
+      )
+    }
+    return {
+      name : statement.name,
+      type : statement.type,
+      id : statement.id,
+      proven : statement.proven,
+      tested : statement.tested,
+      comment : statement.comment,
+      preCondition : this.toEMFCondition(statement.preCondition),
+      postCondition : this.toEMFCondition(statement.postCondition),
+      refinement : {
+        name : statement.name,
+        type : statement.type,
+        preCondition : this.toEMFCondition(statement.preCondition),
+        postCondition: this.toEMFCondition(statement.postCondition),
+        proven: statement.proven,
+        tested: statement.tested,
+        guards : guards,
+        commands : childs,
+        preProven : (statement as SelectionStatement).preProven,
+      },
+      
+    } as EMFSelectionStatement
+  }
+
+  private toEMFRepetitionStatement(statement : Statement) : EMFRepetitionStatement {
+    return {
+      name : statement.name,
+      type : statement.type,
+      id : statement.id,
+      proven : statement.proven,
+      tested : statement.tested,
+      comment : statement.comment,
+      preCondition : this.toEMFCondition(statement.preCondition),
+      postCondition : this.toEMFCondition(statement.postCondition),
+      refinement : {
+        name : statement.name,
+        type : statement.type,
+        preCondition : this.toEMFCondition(statement.preCondition),
+        postCondition: this.toEMFCondition(statement.postCondition),
+        proven: statement.proven,
+        tested: statement.tested,
+        postProven : (statement as RepetitionStatement).postProven,
+        preProven : (statement as RepetitionStatement).preProven,
+        variantProven : (statement as RepetitionStatement).variantProven,
+        invariant : this.toEMFCondition((statement as RepetitionStatement).invariant),
+        variant : this.toEMFCondition((statement as RepetitionStatement).variant),
+        guard : this.toEMFCondition((statement as RepetitionStatement).guard),
+        loopStatement : this.toEMFStatement((statement as RepetitionStatement).loopStatement),
+      }
+    } as EMFRepetitionStatement
+  }
+
+  private toEMFCompositonStatement(statement : Statement) : EMFCompositionStatement {
+    return {
+      name : statement.name,
+      type : statement.type,
+      id : statement.id,
+      proven : statement.proven,
+      tested : statement.tested,
+      comment : statement.comment,
+      preCondition : this.toEMFCondition(statement.preCondition),
+      postCondition : this.toEMFCondition(statement.postCondition),
+      refinement : {
+        name : statement.name,
+        type : statement.type,
+        preCondition : this.toEMFCondition(statement.preCondition),
+        postCondition: this.toEMFCondition(statement.postCondition),
+        proven: statement.proven,
+        tested: statement.tested,
+        intermediateCondition : this.toEMFCondition((statement as CompositionStatement).intermediateCondition),
+        firstStatement : this.toEMFStatement((statement as CompositionStatement).firstStatement),
+        secondStatement : this.toEMFStatement((statement as CompositionStatement).secondStatement),
+      } 
+    } as EMFCompositionStatement
+  }
+
+  private toEMFStrongWeakStatement(statement : Statement) : EMFStrongWeakStatement {
+    return {
+      name : statement.name,
+      type : statement.type,
+      id : statement.id,
+      proven : statement.proven,
+      tested : statement.tested,
+      comment : statement.comment,
+      preCondition : this.toEMFCondition(statement.preCondition),
+      postCondition : this.toEMFCondition(statement.postCondition),
+      refinement : {
+        name : statement.name,
+        type : statement.type,
+        preCondition : this.toEMFCondition(statement.preCondition),
+        postCondition: this.toEMFCondition(statement.postCondition),
+        proven: statement.proven,
+        tested: statement.tested
+      }
+    } as EMFStrongWeakStatement
+  }
 
   private toEMFGlobalConditions(conditions : ConditionDTO[]) : EMFConditions {
     const emfCondtions : EMFConditions = new GlobalEMFConditions()
@@ -248,115 +259,111 @@ export class EmfMapperService {
     }
 
     switch (emfStatement.type) {
-      case SimpleStatement.TYPE:
-        return new SimpleStatement(
-          emfStatement.refinement.name,
-          emfStatement.id,
-          emfStatement.refinement.proven,
-          emfStatement.tested,
-          emfStatement.comment,
-          this.toConditon(emfStatement.preCondition),
-          this.toConditon(emfStatement.postCondition),
-          undefined,
-          undefined
-          //this.toStatement((emfStatement as EMFSimpleStatement).refinement)
-        )
-      
-      case SelectionStatement.TYPE: 
-        const childs : (Statement | undefined)[] = []
-        for (const child of (emfStatement as EMFSelectionStatement).refinement.commands) {
-          childs.push(
-            this.toStatement(child)
-          )
-        }
-
-        const guards : ConditionDTO[] = []
-        for (const guard of (emfStatement as EMFSelectionStatement).refinement.guards) {
-          guards.push(
-            this.toConditon(guard)
-          )
-        }
-
-        return new SelectionStatement(
-          emfStatement.refinement.name,
-          emfStatement.id,
-          emfStatement.proven,
-          emfStatement.tested,
-          emfStatement.comment,
-          this.toConditon(emfStatement.preCondition),
-          this.toConditon(emfStatement.postCondition),
-          undefined,
-          (emfStatement as EMFSelectionStatement).refinement.preProven,
-          guards,
-          childs
-        )
-      
-      case RepetitionStatement.TYPE:
-        return new RepetitionStatement(
-          emfStatement.refinement.name,
-          emfStatement.id,
-          emfStatement.proven,
-          emfStatement.tested,
-          emfStatement.comment,
-          this.toConditon(emfStatement.preCondition),
-          this.toConditon(emfStatement.postCondition),
-          undefined,
-          (emfStatement as EMFRepetitionStatement).refinement.postProven,
-          (emfStatement as EMFRepetitionStatement).refinement.preProven,
-          (emfStatement as EMFRepetitionStatement).refinement.variantProven,
-          this.toConditon((emfStatement as EMFRepetitionStatement).refinement.invariant),
-          this.toConditon((emfStatement as EMFRepetitionStatement).refinement.variant),
-          this.toConditon((emfStatement as EMFRepetitionStatement).refinement.guard),
-          this.toStatement((emfStatement as EMFRepetitionStatement).refinement.loopStatement)
-        )
-
-      case CompositionStatement.TYPE:
-        return new CompositionStatement(
-          emfStatement.refinement.name,
-          emfStatement.id,
-          emfStatement.proven,
-          emfStatement.tested,
-          emfStatement.comment,
-          this.toConditon(emfStatement.preCondition),
-          this.toConditon(emfStatement.postCondition),
-          undefined,
-          this.toConditon((emfStatement as EMFCompositionStatement).refinement.intermediateCondition),
-          this.toStatement((emfStatement as EMFCompositionStatement).refinement.firstStatement),
-          this.toStatement((emfStatement as EMFCompositionStatement).refinement.secondStatement),
-        )
-
-      case StrongWeakStatement.TYPE:
-        return new StrongWeakStatement(
-          emfStatement.refinement.name,
-          emfStatement.id,
-          emfStatement.proven,
-          emfStatement.tested,
-          emfStatement.comment,
-          this.toConditon(emfStatement.preCondition),
-          this.toConditon(emfStatement.postCondition),
-          undefined,
-          undefined
-          //this.toStatement((emfStatement as EMFStrongWeakStatement).refinement)
-        )
-
-      default: 
-        return new SimpleStatement(
-          emfStatement.refinement.name,
-          emfStatement.id,
-          emfStatement.refinement.proven,
-          emfStatement.tested,
-          emfStatement.comment,
-          this.toConditon(emfStatement.preCondition),
-          this.toConditon(emfStatement.postCondition),
-          undefined,
-          undefined,
-          // this.toStatement((emfStatement as EMFSimpleStatement).refinement)
-        )
+      case SimpleStatement.TYPE: return this.toSimpleStatement(emfStatement)
+      case SelectionStatement.TYPE: return this.toSelectionStatement(emfStatement)
+      case RepetitionStatement.TYPE: return this.toRepetitionStatement(emfStatement)
+      case CompositionStatement.TYPE: return this.toCompositionStatement(emfStatement)
+      case StrongWeakStatement.TYPE: return this.toStrongWeakStatement(emfStatement)
     }
 
     return
   }
 
+  private toSimpleStatement(emfStatement : EMFStatement) : SimpleStatement {
+    return new SimpleStatement(
+      emfStatement.refinement.name,
+      emfStatement.id,
+      emfStatement.refinement.proven,
+      emfStatement.tested,
+      emfStatement.comment,
+      this.toConditon(emfStatement.preCondition),
+      this.toConditon(emfStatement.postCondition),
+      undefined,
+      undefined
+    )
+  }
+
+  private toSelectionStatement(emfStatement : EMFStatement) : SelectionStatement {
+    const childs : (Statement | undefined)[] = []
+    for (const child of (emfStatement as EMFSelectionStatement).refinement.commands) {
+      childs.push(
+        this.toStatement(child)
+      )
+    }
+
+    const guards : ConditionDTO[] = []
+    for (const guard of (emfStatement as EMFSelectionStatement).refinement.guards) {
+      guards.push(
+        this.toConditon(guard)
+      )
+    }
+
+    return new SelectionStatement(
+      emfStatement.refinement.name,
+      emfStatement.id,
+      emfStatement.proven,
+      emfStatement.tested,
+      emfStatement.comment,
+      this.toConditon(emfStatement.preCondition),
+      this.toConditon(emfStatement.postCondition),
+      undefined,
+      (emfStatement as EMFSelectionStatement).refinement.preProven,
+      guards,
+      childs
+    )
+  }
+
+  private toRepetitionStatement(emfStatement : EMFStatement) : RepetitionStatement {
+    return new RepetitionStatement(
+      emfStatement.refinement.name,
+      emfStatement.id,
+      emfStatement.proven,
+      emfStatement.tested,
+      emfStatement.comment,
+      this.toConditon(emfStatement.preCondition),
+      this.toConditon(emfStatement.postCondition),
+      undefined,
+      (emfStatement as EMFRepetitionStatement).refinement.postProven,
+      (emfStatement as EMFRepetitionStatement).refinement.preProven,
+      (emfStatement as EMFRepetitionStatement).refinement.variantProven,
+      this.toConditon((emfStatement as EMFRepetitionStatement).refinement.invariant),
+      this.toConditon((emfStatement as EMFRepetitionStatement).refinement.variant),
+      this.toConditon((emfStatement as EMFRepetitionStatement).refinement.guard),
+      this.toStatement((emfStatement as EMFRepetitionStatement).refinement.loopStatement)
+    )
+  }
+
+  private toCompositionStatement(emfStatement : EMFStatement) : CompositionStatement {
+    return new CompositionStatement(
+      emfStatement.refinement.name,
+      emfStatement.id,
+      emfStatement.proven,
+      emfStatement.tested,
+      emfStatement.comment,
+      this.toConditon(emfStatement.preCondition),
+      this.toConditon(emfStatement.postCondition),
+      undefined,
+      this.toConditon((emfStatement as EMFCompositionStatement).refinement.intermediateCondition),
+      this.toStatement((emfStatement as EMFCompositionStatement).refinement.firstStatement),
+      this.toStatement((emfStatement as EMFCompositionStatement).refinement.secondStatement),
+    )
+  }
+
+  private toStrongWeakStatement(emfStatement : EMFStatement) : StrongWeakStatement {
+    return new StrongWeakStatement(
+      emfStatement.refinement.name,
+      emfStatement.id,
+      emfStatement.proven,
+      emfStatement.tested,
+      emfStatement.comment,
+      this.toConditon(emfStatement.preCondition),
+      this.toConditon(emfStatement.postCondition),
+      undefined,
+      undefined
+      //this.toStatement((emfStatement as EMFStrongWeakStatement).refinement)
+    )
+  }
+ 
 
   private toConditon(emfCondition : EMFCondition) : ConditionDTO {
     return emfCondition ? new ConditionDTO(0, "", emfCondition.name) : new ConditionDTO(-1)

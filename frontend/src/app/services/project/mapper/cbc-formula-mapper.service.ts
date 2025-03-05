@@ -45,97 +45,107 @@ export class CbcFormulaMapperService {
     }
 
     switch (statement.type) {
-      case SimpleStatement.TYPE:
-          return new SimpleStatement(
-              statement.name,
-              statement.id,
-              statement.proven,
-              statement.tested,
-              statement.comment,
-              this.importCondition(statement.preCondition),
-              this.importCondition(statement.postCondition),
-              this.importPosition(statement.position),
-              this.importStatement((statement as ISimpleStatement).refinement)
-          )
+      case SimpleStatement.TYPE: return this.importSimpleStatement(statement)
+      case SelectionStatement.TYPE: return this.importSelectionStatement(statement)
+      case RepetitionStatement.TYPE: return this.importRepetitionStatement(statement)
+      case CompositionStatement.TYPE: return this.importCompositionStatement(statement)
+      case StrongWeakStatement.TYPE: return this.importStrongWeakStatement(statement)
+    }
+    return
+  }
 
-      case SelectionStatement.TYPE:
-          const childs : (Statement | undefined)[] = []
-          for (const child of (statement as ISelectionStatement).commands) {
-              childs.push(
-                  this.importStatement(child)
-              )
-          }
+  private importSimpleStatement(statement : IStatement) : SimpleStatement {
+    return new SimpleStatement(
+      statement.name,
+      statement.id,
+      statement.proven,
+      statement.tested,
+      statement.comment,
+      this.importCondition(statement.preCondition),
+      this.importCondition(statement.postCondition),
+      this.importPosition(statement.position),
+      this.importStatement((statement as ISimpleStatement).refinement)
+    )
+  }
 
-          const guards : ConditionDTO[] = []
-          for (const guard of (statement as ISelectionStatement).guards) {
-              guards.push(
-                  this.importCondition(guard)
-              )
-          }
-
-          return new SelectionStatement(
-              statement.name,
-              statement.id,
-              statement.proven,
-              statement.tested,
-              statement.comment,
-              this.importCondition(statement.preCondition),
-              this.importCondition(statement.postCondition),
-              this.importPosition(statement.position),
-              (statement as ISelectionStatement).preProven,
-              guards,
-              childs
-          )
-      
-      case RepetitionStatement.TYPE:
-          return new RepetitionStatement(
-              statement.name,
-              statement.id,
-              statement.proven,
-              statement.tested,
-              statement.comment,
-              this.importCondition(statement.preCondition),
-              this.importCondition(statement.postCondition),
-              this.importPosition(statement.position),
-              (statement as IRepetitionStatement).postProven,
-              (statement as IRepetitionStatement).preProven,
-              (statement as IRepetitionStatement).variantProven,
-              this.importCondition((statement as IRepetitionStatement).invariant),
-              this.importCondition((statement as IRepetitionStatement).variant),
-              this.importCondition((statement as IRepetitionStatement).guard),
-              this.importStatement((statement as IRepetitionStatement).loopStatement)
-          )
-  
-      case CompositionStatement.TYPE:
-          return new CompositionStatement(
-              statement.name,
-              statement.id,
-              statement.proven,
-              statement.tested,
-              statement.comment,
-              this.importCondition(statement.preCondition),
-              this.importCondition(statement.postCondition),
-              this.importPosition(statement.position),
-              this.importCondition((statement as ICompositionStatement).intermediateCondition),
-              this.importStatement((statement as ICompositionStatement).firstStatement),
-              this.importStatement((statement as ICompositionStatement).secondStatement)
-          )
-  
-      case StrongWeakStatement.TYPE:
-          return new StrongWeakStatement(
-              statement.name,
-              statement.id,
-              statement.proven,
-              statement.tested,
-              statement.comment,
-              this.importCondition(statement.preCondition),
-              this.importCondition(statement.postCondition),
-              this.importPosition(statement.position),
-              this.importStatement((statement as IStrongWeakStatement).refinement)
-          )    
+  private importSelectionStatement(statement : IStatement) : SelectionStatement {
+    const childs : (Statement | undefined)[] = []
+    for (const child of (statement as ISelectionStatement).commands) {
+        childs.push(
+            this.importStatement(child)
+        )
     }
 
-    return
+    const guards : ConditionDTO[] = []
+    for (const guard of (statement as ISelectionStatement).guards) {
+        guards.push(
+            this.importCondition(guard)
+        )
+    }
+
+    return new SelectionStatement(
+        statement.name,
+        statement.id,
+        statement.proven,
+        statement.tested,
+        statement.comment,
+        this.importCondition(statement.preCondition),
+        this.importCondition(statement.postCondition),
+        this.importPosition(statement.position),
+        (statement as ISelectionStatement).preProven,
+        guards,
+        childs
+    )
+  }
+
+  private importRepetitionStatement(statement : IStatement) : RepetitionStatement {
+    return new RepetitionStatement(
+      statement.name,
+      statement.id,
+      statement.proven,
+      statement.tested,
+      statement.comment,
+      this.importCondition(statement.preCondition),
+      this.importCondition(statement.postCondition),
+      this.importPosition(statement.position),
+      (statement as IRepetitionStatement).postProven,
+      (statement as IRepetitionStatement).preProven,
+      (statement as IRepetitionStatement).variantProven,
+      this.importCondition((statement as IRepetitionStatement).invariant),
+      this.importCondition((statement as IRepetitionStatement).variant),
+      this.importCondition((statement as IRepetitionStatement).guard),
+      this.importStatement((statement as IRepetitionStatement).loopStatement)
+    )
+  }
+
+  private importCompositionStatement(statement : IStatement) : CompositionStatement {
+    return new CompositionStatement(
+      statement.name,
+      statement.id,
+      statement.proven,
+      statement.tested,
+      statement.comment,
+      this.importCondition(statement.preCondition),
+      this.importCondition(statement.postCondition),
+      this.importPosition(statement.position),
+      this.importCondition((statement as ICompositionStatement).intermediateCondition),
+      this.importStatement((statement as ICompositionStatement).firstStatement),
+      this.importStatement((statement as ICompositionStatement).secondStatement)
+    )
+  }
+
+  private importStrongWeakStatement(statement : IStatement) : StrongWeakStatement {
+    return new StrongWeakStatement(
+      statement.name,
+      statement.id,
+      statement.proven,
+      statement.tested,
+      statement.comment,
+      this.importCondition(statement.preCondition),
+      this.importCondition(statement.postCondition),
+      this.importPosition(statement.position),
+      this.importStatement((statement as IStrongWeakStatement).refinement)
+    )    
   }
 
   private importGlobalConditions(conditions : IConditionDTO[] | null) : ConditionDTO[] {
