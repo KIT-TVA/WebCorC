@@ -258,15 +258,16 @@ export class EmfMapperService {
       return
     }
 
+    console.log(emfStatement)
+
     switch (emfStatement.type) {
       case SimpleStatement.TYPE: return this.toSimpleStatement(emfStatement)
       case SelectionStatement.TYPE: return this.toSelectionStatement(emfStatement)
       case RepetitionStatement.TYPE: return this.toRepetitionStatement(emfStatement)
       case CompositionStatement.TYPE: return this.toCompositionStatement(emfStatement)
       case StrongWeakStatement.TYPE: return this.toStrongWeakStatement(emfStatement)
+      default: return this.toSimpleStatement(emfStatement)
     }
-
-    return
   }
 
   private toSimpleStatement(emfStatement : EMFStatement) : SimpleStatement {
