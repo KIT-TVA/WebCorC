@@ -434,8 +434,8 @@ export class ProjectService {
   }
 
   public moveElement(file : ProjectElement, target : ProjectElement, name?: string, shouldDelete : boolean = true) {
-    let oldPath = file.path
-    let oldParentPath = file.parentPath
+    const oldPath = file.path
+    const oldParentPath = file.parentPath
     const newParentPath = target.path
 
     if (oldParentPath != newParentPath && shouldDelete) {
@@ -461,7 +461,7 @@ export class ProjectService {
 
   public toggleRename(element : ProjectElement) {
     const parentPath = element.parentPath
-    let parentdir = this.findByPath(parentPath) as ProjectDirectory
+    const parentdir = this.findByPath(parentPath) as ProjectDirectory
     if (!parentdir.addElement(this.mapper.constructRenameElement(parentPath, element))) {
       throw new Error("Could not add rename element")
     }

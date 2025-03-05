@@ -250,7 +250,7 @@ export class EmfMapperService {
     switch (emfStatement.type) {
       case SimpleStatement.TYPE:
         return new SimpleStatement(
-          emfStatement.name,
+          emfStatement.refinement.name,
           emfStatement.id,
           emfStatement.refinement.proven,
           emfStatement.tested,
@@ -278,7 +278,7 @@ export class EmfMapperService {
         }
 
         return new SelectionStatement(
-          emfStatement.name,
+          emfStatement.refinement.name,
           emfStatement.id,
           emfStatement.proven,
           emfStatement.tested,
@@ -293,7 +293,7 @@ export class EmfMapperService {
       
       case RepetitionStatement.TYPE:
         return new RepetitionStatement(
-          emfStatement.name,
+          emfStatement.refinement.name,
           emfStatement.id,
           emfStatement.proven,
           emfStatement.tested,
@@ -312,7 +312,7 @@ export class EmfMapperService {
 
       case CompositionStatement.TYPE:
         return new CompositionStatement(
-          emfStatement.name,
+          emfStatement.refinement.name,
           emfStatement.id,
           emfStatement.proven,
           emfStatement.tested,
@@ -327,7 +327,7 @@ export class EmfMapperService {
 
       case StrongWeakStatement.TYPE:
         return new StrongWeakStatement(
-          emfStatement.name,
+          emfStatement.refinement.name,
           emfStatement.id,
           emfStatement.proven,
           emfStatement.tested,
@@ -341,7 +341,7 @@ export class EmfMapperService {
 
       default: 
         return new SimpleStatement(
-          emfStatement.name,
+          emfStatement.refinement.name,
           emfStatement.id,
           emfStatement.refinement.proven,
           emfStatement.tested,

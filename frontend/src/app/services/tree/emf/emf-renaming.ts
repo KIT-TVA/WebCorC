@@ -1,5 +1,3 @@
-import { Renaming } from "../Renaming"
-
 export interface EMFRename {
     type : string
     function : string

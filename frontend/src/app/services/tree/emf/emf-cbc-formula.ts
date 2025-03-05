@@ -1,4 +1,3 @@
-import { Renaming } from "../Renaming";
 import { EMFCondition, EMFConditions } from "./emf-condition";
 import { EMFJavaVariables } from "./emf-java-variable";
 import { EMFRenaming } from "./emf-renaming";

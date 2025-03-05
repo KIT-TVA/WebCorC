@@ -41,9 +41,6 @@ export class TreeService {
     this._resetVerifyNotifier = new Subject<void>();
   }
 
-  public generateCode(language : string, options : any): void {
-  }
-
   public resetPositions() : void {
     this._rootNode?.resetPosition(new Position(this._editorWidth / 2, 0), new Position( -450, 10))
     this._redrawNotifier.next()

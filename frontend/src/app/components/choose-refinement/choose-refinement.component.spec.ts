@@ -8,8 +8,6 @@ describe('ChooseRefinementComponent', () => {
   let component: ChooseRefinementComponent;
   let fixture: ComponentFixture<ChooseRefinementComponent>;
 
-  let matDialogRef : MatDialogRef<ChooseRefinementComponent> 
-
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ChooseRefinementComponent, MatDialogModule],
@@ -21,8 +19,6 @@ describe('ChooseRefinementComponent', () => {
       }]
     })
     .compileComponents();
-
-    matDialogRef = TestBed.inject(MatDialogRef<ChooseRefinementComponent>)
     
     fixture = TestBed.createComponent(ChooseRefinementComponent);
     component = fixture.componentInstance;
