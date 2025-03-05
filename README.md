@@ -17,10 +17,23 @@ You can then debug `WebCorCApplication` as a Spring Boot application.
 ----
 #### Frontend development
 
-All frontend files are located in `src/main/resources/static`.  Use
-your favorite web development editor to open the files and start
-developing. The required JavaScript dependencies are vendored. Do not
-use the `package.json` to resolve dependencies.
+The frontend is a SPA developed in Angular 19 with Angular Material as the component framework.
+For the development dependencies use the devcontainers.json or install the project dependencies with
+
+```
+npm install
+```
+
+For running the development server and linting use the angular cli.
+```
+ng serve
+```
+
+
+- https://angular.dev/
+- https://angular.dev/tools/cli
+- https://material.angular.io/
+
 
 ---
 #### Troubleshooting
