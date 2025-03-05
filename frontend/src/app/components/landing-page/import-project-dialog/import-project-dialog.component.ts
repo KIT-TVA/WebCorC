@@ -9,6 +9,10 @@ import { ProjectService } from '../../../services/project/project.service';
 import { ApiDirectory } from '../../../services/project/types/api-elements';
 import { ConsoleService } from '../../../services/console/console.service';
 
+/**
+ * Dialog for importing a project created with this editor
+ * {@link https://material.angular.io/components/dialog/overview}
+ */
 @Component({
   selector: 'app-import-project-dialog',
   imports: [CommonModule, MatDialogModule, MatButtonModule, MatFormFieldModule, MatInputModule, FormsModule],

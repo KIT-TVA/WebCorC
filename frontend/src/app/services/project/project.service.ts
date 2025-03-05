@@ -389,11 +389,6 @@ export class ProjectService {
     const projectName = this.storage.getProjectName()
     const projectId = this.storage.getProjectId()
 
-    console.log("download workspace")
-    console.log(this.projectId)
-    console.log(projectId)
-    console.log()
-
 
     if (projectId === this.projectId) {
       if (!projectTree) {
@@ -407,7 +402,6 @@ export class ProjectService {
         return
       }
       this._projectname = projectName
-      console.log("download for real")
       this.network.readProject()
       return
     } else {

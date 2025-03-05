@@ -12,6 +12,10 @@ import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { ConsoleService } from '../../../services/console/console.service';
 
+/**
+ * Dialog for importing files created with this editor or cbcmodels created with the corc editor
+ * {@link https://material.angular.io/components/dialog/overview}
+ */
 @Component({
     selector: 'app-import-graph-dialog',
     imports: [CommonModule, MatDialogModule, MatFormFieldModule, MatButtonModule, MatInputModule, FormsModule],

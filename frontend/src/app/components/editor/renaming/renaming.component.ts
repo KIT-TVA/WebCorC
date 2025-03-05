@@ -11,6 +11,12 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { TreeService } from '../../../services/tree/tree.service';
 import { Renaming } from '../../../services/tree/Renaming';
 
+/**
+ * Component to allow renaming, each renaming includes the original name, new name and the type of the operation to rename.
+ * These attributes map one to one to a input which are group together and added or removed together.
+ * @link https://material.angular.io/components/form-field/overview
+ * @link https://angular.dev/guide/forms/reactive-forms
+ */
 @Component({
   selector: 'app-renaming',
   imports: [CommonModule, FormsModule, MatButtonModule, MatDividerModule, MatFormFieldModule, MatInputModule, MatListModule, ReactiveFormsModule, MatIconModule, MatTooltipModule],

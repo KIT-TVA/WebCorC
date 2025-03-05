@@ -12,7 +12,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 
 
 /**
- * Currently very minimal textarea for showing the logs of the verification or generation services
+ * Visual representation of the errors in the application.
  * @link https://material.angular.io/components/form-field/overview
  * @link https://angular.dev/guide/forms/reactive-forms
  */
@@ -40,6 +40,7 @@ export class ConsoleComponent {
     this.service.clear()
   }
 
+
   public deconstructLogError(line : ConsoleLogLine) : string {
     if (line.error instanceof HttpErrorResponse) {
       return "(" + line.error.status + ") " + line.error.statusText  
@@ -59,6 +60,4 @@ export class ConsoleComponent {
   public get loglines() {
     return this.service.logs
   }
-   
-  
 }

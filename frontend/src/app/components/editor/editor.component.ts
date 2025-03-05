@@ -9,20 +9,21 @@ import {VariablesComponent} from "./variables/variables.component";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {MatMenuModule} from "@angular/material/menu";
 import { GlobalConditionsComponent } from './global-conditions/global-conditions.component';
-import { SimpleStatementComponent } from './statements/simple-statement/simple-statement.component';
 import { ProjectService } from '../../services/project/project.service';
 import { CBCFormula } from '../../services/project/CBCFormula';
-import { SimpleStatement } from '../../types/statements/simple-statement';
-import { OptionsComponent } from './options/options.component';
 import { Router } from '@angular/router';
-import { EditorService } from '../../services/editor/editor.service';
 import { Position } from '../../types/position';
-import { RenamingComponent } from "./renaming/renaming.component";
+import { OptionsComponent } from './options/options.component';
+import { EditorService } from '../../services/editor/editor.service';
+import { SimpleStatement } from '../../types/statements/simple-statement';
+import { RenamingComponent } from './renaming/renaming.component';
+import { SimpleStatementComponent } from './statements/simple-statement/simple-statement.component';
 
 /**
  * Component to edit {@link CBCFormula} by editing a grahical representation based of the statement components like {@link SimpleStatementComponent}.
  * This Component is opened when the user clicks on the .diagram files in the project explorer.
  * The path of the component is /editor/diagram/{file.urn}
+ * {@link https://material.angular.io/cdk/drag-drop/overview}
  */
 @Component({
     selector: 'app-editor',

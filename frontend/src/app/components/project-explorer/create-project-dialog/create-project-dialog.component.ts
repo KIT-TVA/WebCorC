@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 
 /**
  * Dialog for creating a new project, when pressing the save button in the project explorer without a known projectId
+ * {@link https://material.angular.io/components/dialog/overview}
  */
 @Component({
     selector: 'app-create-project-dialog',

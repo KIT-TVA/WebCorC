@@ -21,9 +21,6 @@ import { ImportFileDialogComponent } from '../project-explorer/import-file-dialo
     styleUrl: './landing-page.component.scss'
 })
 export class LandingPageComponent implements OnInit {
-
-  private _projectId : string | undefined
-  
   public constructor(
     private route : ActivatedRoute, 
     private projectService : ProjectService,
@@ -34,9 +31,7 @@ export class LandingPageComponent implements OnInit {
     // read the query Params and setting them to the projectService
     this.route.queryParams
       .subscribe(params => {
-        console.log("get query params")
         this.projectService.projectId = params['projectId']
-        this._projectId = params['projectId']
       })
     
       // if the projectId is not undefined load the project from the backend

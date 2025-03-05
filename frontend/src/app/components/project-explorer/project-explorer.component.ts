@@ -59,10 +59,9 @@ export class ProjectExplorerComponent {
 
   private elementToNodeMap : Map<ProjectElement, FlatNode> = new Map<ProjectElement, FlatNode>();
   private nodeToElementMap : Map<FlatNode, ProjectElement> = new Map<FlatNode, ProjectElement>();
+  // marked as deprecated but issue https://github.com/angular/components/issues/29959 prevents matching functionality under new api
   private _treeFlatener = new MatTreeFlattener(this._transformer, node => node.level, node => node.expandable, node => (node as ProjectDirectory).content)
-
   private _treeControl = new FlatTreeControl<FlatNode>(node => node.level, node => node.expandable);
-
   private _dataSource = new MatTreeFlatDataSource(this.treeControl, this._treeFlatener);
 
   private _dragging : boolean = false
@@ -115,12 +114,19 @@ export class ProjectExplorerComponent {
   }
 
 
-
+  /**
+   * Delete a project element based on the node selected by the user
+   * @param node the node 
+   */
   public deleteElement(node : FlatNode) {
     this.projectService.deleteElement(node.path, node.name)
   }
 
 
+  /**
+   * Add fake element to project tree
+   * @param node the parent node of the new node
+   */
   public addElement(node : FlatNode) {
     this.projectService.addFakeElement(node.path)
     this.treeControl.expand(node)
@@ -167,6 +173,10 @@ export class ProjectExplorerComponent {
     this.projectService.uploadWorkspace(wait)
   }
 
+  /**
+   * Import file with the given node as a parent
+   * @param node the parent node of the new file
+   */
   public importElement(node : FlatNode) {
     const element = this.nodeToElementMap.get(node)
     if (!element) {
@@ -176,6 +186,9 @@ export class ProjectExplorerComponent {
     this.dialog.open(ImportFileDialogComponent, { data: { parentURN: path } })
   }
 
+  /**
+   * Import file with under the root node
+   */
   public import() {
     this.dialog.open(ImportFileDialogComponent, { data: { parentURN: "/" }})
   }
@@ -205,12 +218,22 @@ export class ProjectExplorerComponent {
     this._dragging = false
   }
 
+
+  /**
+   * Expand folders on dragging and hovering over them
+   * @param node the node to expand
+   */
   public dragHover(node : FlatNode) {
     if (!this._dragging) return
 
     this._treeControl.expand(node)
   }
 
+  /**
+   * flatten the tree to a single array for getting the new position 
+   * @param element the element of the subtree to start from
+   * @returns array of elements
+   */
   private flattenTree(element : ProjectElement = this.projectService.root) : ProjectElement[] {
     const elements : ProjectElement[] = []
 
@@ -225,6 +248,10 @@ export class ProjectExplorerComponent {
     return elements
   }
 
+  /**
+   * On Dropping the project element
+   * @param event event emitted on dropping the node
+   */
   public dropNode(event : CdkDragDrop<string[]>) {
     if (!event.isPointerOverContainer) return;
     const node = this.nodeToElementMap.get(event.item.data)
@@ -234,9 +261,7 @@ export class ProjectExplorerComponent {
     let target = flattendTree[event.currentIndex - 1] 
     if (event.currentIndex - 1 < 0 || event.currentIndex >= flattendTree.length) {
       target = this.projectService.root
-    } 
-    
-    console.log(target)
+    }
 
     const gotmoved = this.projectService.moveElement(node, target)
     if (!gotmoved) {
@@ -254,6 +279,11 @@ export class ProjectExplorerComponent {
     this.projectService.toggleRename(element)
   }
 
+  /**
+   * Rename element
+   * @param node The node to rename
+   * @param newName the new name of the node
+   */
   public renameElement(node : FlatNode, newName : string) {
     if (!newName) return
     const element = this.nodeToElementMap.get(node)

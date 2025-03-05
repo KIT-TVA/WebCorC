@@ -8,6 +8,10 @@ import { MatInputModule } from '@angular/material/input';
 import { Router } from '@angular/router';
 import { ProjectService } from '../../../services/project/project.service';
 
+/**
+ * Dialog for opening a project based on the project id 
+ * {@link https://material.angular.io/components/dialog/overview}
+ */
 @Component({
   selector: 'app-open-project-dialog',
   imports: [CommonModule, MatDialogModule, FormsModule, MatFormFieldModule, MatButtonModule, MatInputModule],
