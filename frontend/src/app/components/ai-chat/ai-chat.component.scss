@@ -1,0 +1,48 @@
+.aiChatWindow {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    overflow: hidden;
+    flex-direction: column;
+
+    .aiChatHistory {
+        width: calc(100% - 5px - 2px);
+        margin-left: 5px;
+        margin-right: 2px;
+        overflow-y: scroll;
+
+        .message {
+            margin-top: 5px;
+            position: relative;
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+
+            .inContext {
+                color: #009682;
+            }
+        }
+
+
+        .response {
+            left: 0;
+            max-width: 98%;
+        }
+
+        .question {
+            margin-left: auto;
+            margin-right: 5px;
+            max-width: 98%;
+            background-color: #5c79bc;
+        }
+        
+        .emptyMessage {
+            text-align: center;
+        }
+    }
+
+    .aiQuestion {
+        margin-top: auto;
+        width: 100%;
+    }
+}

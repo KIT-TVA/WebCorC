@@ -23,6 +23,8 @@ import { first } from 'rxjs';
 import { NetworkStatusService } from './services/networkStatus/network-status.service';
 import { ConsoleService } from './services/console/console.service';
 import { EditorService } from './services/editor/editor.service';
+import { AiChatComponent } from "./components/ai-chat/ai-chat.component";
+import { AiChatService } from './services/ai-chat/ai-chat.service';
 
 /**
  * Top Component of this application, 
@@ -31,7 +33,7 @@ import { EditorService } from './services/editor/editor.service';
  */
 @Component({
     selector: 'app-root',
-    imports: [CommonModule, RouterOutlet, MatToolbarModule, MatSidenavModule, FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, ProjectExplorerComponent, MatIconModule, NuMonacoEditorModule, ConsoleComponent, MatProgressBarModule, MatBadgeModule],
+    imports: [CommonModule, RouterOutlet, MatToolbarModule, MatSidenavModule, FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, ProjectExplorerComponent, MatIconModule, NuMonacoEditorModule, ConsoleComponent, MatProgressBarModule, MatBadgeModule, AiChatComponent],
     templateUrl: './app.component.html',
     styleUrl: './app.component.scss'
 })
@@ -47,7 +49,8 @@ export class AppComponent {
     public projectService : ProjectService,
     private snackBar : MatSnackBar,
     private consoleService : ConsoleService,
-    private editorService : EditorService
+    private editorService : EditorService,
+    private aiChatService : AiChatService
   ) {
 
     this.networkStatus.status.subscribe((status) => {
@@ -125,6 +128,10 @@ export class AppComponent {
 
   public get consoleButtonColor() {
     return this.consoleService.numberOfLogs > 0 ? 'rgb(186, 26, 26)' : ''
+  }
+
+  public get aiButtonColor() {
+    return this.aiChatService.newMessages ? 'rgb(186, 26, 26)' : ''
   }
 
   public getLoadingState() : "indeterminate" | "determinate" {

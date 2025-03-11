@@ -8,6 +8,8 @@ import { MatGridListModule } from "@angular/material/grid-list";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from '@angular/material/icon';
+import { AiChatService } from '../../../../services/ai-chat/ai-chat.service';
 
 /**
  * Editor in the statements for the {@link Condition}
@@ -17,7 +19,7 @@ import { MatButtonModule } from "@angular/material/button";
 @Component({
     selector: 'app-condition-editor',
     imports: [CommonModule, FormsModule, MatFormFieldModule, MatInputModule, MatGridListModule,
-        ReactiveFormsModule, MatAutocompleteModule, MatMenuModule, MatButtonModule],
+        ReactiveFormsModule, MatAutocompleteModule, MatMenuModule, MatButtonModule, MatIconModule],
     templateUrl: './condition-editor.component.html',
     styleUrl: './condition-editor.component.scss'
 })
@@ -30,7 +32,7 @@ export class ConditionEditorComponent implements OnInit {
 
   private _conditionGroup: FormGroup | undefined;
 
-  public constructor(private fb: FormBuilder) {}
+  public constructor(private fb: FormBuilder, private _aiChatService : AiChatService) {}
 
   /**
    * Initialize the input on angular initalization
@@ -58,5 +60,9 @@ export class ConditionEditorComponent implements OnInit {
 
   public get conditionGroup() : FormGroup | undefined {
     return this._conditionGroup
+  }
+
+  public askAi() : void {
+    this._aiChatService.addCondition(this.condition)
   }
 }

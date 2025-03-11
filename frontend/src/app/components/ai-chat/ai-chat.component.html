@@ -1,0 +1,34 @@
+<div class="aiChatWindow">
+    <div class="aiChatHistory">
+        @for (message of messages; track message.content) {
+            <div class="message">
+                <mat-card appearance="outlined" [class]="getClasses(message)">
+                    <mat-card-content>
+                        {{message.content}}
+                    </mat-card-content>
+                    <mat-card-actions align="end">
+                        <button mat-icon-button matTooltip="Include as context in next question" [class]="getContextStatus(message)" (click)="addMessageToContext(message)"> <mat-icon> history</mat-icon> </button>
+                        <button mat-icon-button matTooltip="" [style.color]="'rgb(162,34,35)'" (click)="deleteMessage(message)" > <mat-icon> delete</mat-icon></button>
+                    </mat-card-actions>
+                 </mat-card>
+            </div>
+            
+        } @empty {
+            <div class="emptyMessage">
+               <p>No Messages</p>
+            </div>
+        }
+    </div>
+    <div class="aiQuestion">
+        <mat-form-field appearance="fill" [style.width]="'100%'" [formGroup]="questionGroup" (keydown.enter)="onEnter($event)" >
+            <textarea formControlName="question" matNativeControl cdkTextareaAutosize="'false'" placeholder="Ask me in the context" [style.width]="'100%'"></textarea>
+            <button matSuffix mat-icon-button (click)="addMessage()">
+                <mat-icon>send</mat-icon>
+            </button>
+            
+        </mat-form-field>
+        
+    </div>
+
+</div>
+
