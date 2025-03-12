@@ -1,8 +1,11 @@
 <app-statement-base [refinement]="this">
-    <app-condition-editor *ngIf="!isRoot()" 
+    <div style="position: relative; height: 100%; width: 230px;">
+        <app-condition-editor *ngIf="!isRoot()" 
                       [condition]="condition"
                       [editable]="true">
-    </app-condition-editor>
+        </app-condition-editor>
+    </div>
+    
    <div *ngIf="isRoot()" class="rootEnabledDiv">
         <app-refinement-widget  *ngIf="!statement"
                             text="Statement"

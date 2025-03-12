@@ -1,5 +1,8 @@
-<app-statement-base [refinement]="this" >
-    <app-condition-editor [condition]="weakPreCondition" ></app-condition-editor>
+<app-statement-base [refinement]="this">
+    <div style="position: relative; height: 100%; width: 230px;">
+        <app-condition-editor [condition]="weakPreCondition" ></app-condition-editor>
+    </div>
+    
 
     <app-refinement-widget *ngIf="!statement"
                        text="Statement"
@@ -15,8 +18,9 @@
                      [scrollNotifier]="statement.getRedrawNotifier()"
                      [style.margin-top]="'auto'">
     </app-refinement-link>
-
-    <app-condition-editor [condition]="strongPostCondition"></app-condition-editor>
+    <div style="position: relative; height: 100%; width: 230px;">
+        <app-condition-editor [condition]="strongPostCondition"></app-condition-editor>
+    </div>
 </app-statement-base>
 
 <div style="height: 30px; width: 100%"></div>

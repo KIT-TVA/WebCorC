@@ -63,6 +63,7 @@ export class ConditionEditorComponent implements OnInit {
   }
 
   public askAi() : void {
+    if (!this.condition.content) return
     this._aiChatService.addCondition(this.condition)
   }
 }
