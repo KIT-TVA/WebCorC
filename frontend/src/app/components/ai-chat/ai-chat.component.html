@@ -7,7 +7,7 @@
                         {{message.content}}
                     </mat-card-content>
                     <mat-card-actions align="end">
-                        <button mat-icon-button matTooltip="Include as context in next question" [class]="getContextStatus(message)" (click)="addMessageToContext(message)"> <mat-icon> history</mat-icon> </button>
+                        <button mat-icon-button [matTooltip]="getContextStatus(message) === 'inContext' ? 'Exclude from context in next question' : 'Include as context in next question'" [class]="getContextStatus(message)" (click)="addMessageToContext(message)"> <mat-icon> history</mat-icon> </button>
                         <button mat-icon-button matTooltip="" [style.color]="'rgb(162,34,35)'" (click)="deleteMessage(message)" > <mat-icon> delete</mat-icon></button>
                     </mat-card-actions>
                  </mat-card>

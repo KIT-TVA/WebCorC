@@ -11,9 +11,11 @@ export class AiChatService {
 
   private _messages : AiMessage[] = []
   private _context : AiMessage[] = []
+  private _freeId : number = 0
 
   public addMessage(content : string) : boolean  {
-    const message = new AiMessage(content, false)
+    const message = new AiMessage(this._freeId, content, false)
+    this._freeId += 1 
 
     let sumOfTokens = 0
     for (const _message of this._context) {
@@ -25,11 +27,19 @@ export class AiChatService {
     }
 
     this._messages.push(message)
+    this.echo(content)
     return true
   }
 
+  private echo(content : string) {
+    const message = new AiMessage(this._freeId, content, true)
+    this._freeId += 1
+
+    this._messages.push(message)
+  }
+
   public deleteMessage(message : AiMessage) : void {
-    this._messages = this._messages.filter(_message => _message.content !== message.content)
+    this._messages = this._messages.filter(_message => _message.id !== message.id)
     this.removeMessageFromContext(message)
   }
 
@@ -44,7 +54,7 @@ export class AiChatService {
   }
 
   public removeMessageFromContext(message : AiMessage) {
-    this._context = this._context.filter(_message => _message.content !== message.content)
+    this._context = this._context.filter(_message => _message.id !== message.id)
   }
 
   public isMessageinContext(message : AiMessage) {

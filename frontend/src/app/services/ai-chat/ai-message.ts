@@ -3,14 +3,14 @@
 type messageRoles = "developer" | "user" | "assistant"
 
 export class AiMessage {
+    private _id : number
     private _content : string
     private _role : messageRoles
-    private _includedInContext : boolean
 
-    constructor(content : string, isResponse : boolean = false) {
+    constructor(id : number,content : string, isResponse : boolean = false) {
+        this._id = id
         this._content = content
         this._role = isResponse ? "assistant" : "user"
-        this._includedInContext = false
     }
 
     public get content() : string {
@@ -19,6 +19,10 @@ export class AiMessage {
 
     public get isResponse() : boolean {
         return this._role === "assistant"
+    }
+
+    public get id() : number {
+        return this._id
     }
 }
 
