@@ -1,18 +1,22 @@
 # WebCorC
 
-#### Launch server
+Webbased Editor for CbC to replace the Eclipse based <a href="https://github.com/KIT-TVA/CorC">CorC</a>.
 
-Simply run `mvn spring-boot:run`. The web interface can then be accessed under `localhost:8080/edu.kit.cbc.web`.
-If you do not have a local Maven installation, use the Maven wrapper (`mvnw`).
+Cbc is an approach to create correct programs incrementally. 
+Guided by pre-/postcondition specifications, a program is developed using refinement rules, guaranteeing the implementation is correct.
+With <a href="https://github.com/KIT-TVA/CorC/wiki">CorC</a> we implemented a graphical and textual IDE to create programs following the CbC approach. Starting with an abstract specification, CorC supports CbC developers in refining a program by a sequence of refinement steps and in verifying the correctness of these refinement steps using a deductive verifier.
+
+Learn more information around CorC and the underlying concepts in the <a href="https://github.com/KIT-TVA/CorC/wiki">wiki</a>.
 
 ---
-#### Backend development with Eclipse IDE
+#### Backend development
 
-##### Required plugins
-* Spring Tools (aka Spring Tool Suite) *installation via the Eclipse Marketplace*
-* [M2Eclipse](https://www.eclipse.org/m2e/) *should come pre-installed with Eclipse IDE for Java Developers*
+The backend is a REST API developed in Micronaut.
+To run the project from cli ensure you have a JDK 21 installed and run:
 
-You can then debug `WebCorCApplication` as a Spring Boot application.
+```bash
+./mvnw mn:run 
+```
 
 ----
 #### Frontend development
@@ -20,12 +24,12 @@ You can then debug `WebCorCApplication` as a Spring Boot application.
 The frontend is a SPA developed in Angular 19 with Angular Material as the component framework.
 For the development dependencies use the devcontainers.json or install the project dependencies with
 
-```
+```bash
 npm install
 ```
 
 For running the development server and linting use the angular cli.
-```
+```bash
 ng serve
 ```
 
@@ -34,26 +38,56 @@ ng serve
 - https://angular.dev/tools/cli
 - https://material.angular.io/
 
+#### Docker
 
----
-#### Troubleshooting
+This repository contains Dockerfiles for the backend and frontend.
+The Dockerfiles prefixed with dev. are for development purposes.
+For the full deployment of backend and frontend for development via docker-compose files are also included.
+To run the stack in development:
+```bash
+docker compose up -d -f docker-compose.dev.yml
+```
 
-* WebCorC requires Java 11. Maven will ensure that WebCorC is built with Java 11.
-* If Maven appears to be stuck, try fetching a fresh Maven wrapper (`mvn -N wrapper:wrapper`) or use a local Maven installation to build WebCorC.
+For production:
+Ensure to change the default values in the `docker-compose.env` file and run:
+```bash
+docker compose up -d 
+```
 
----
-#### Dockerfile
+#### Reverse Proxy (nginx)
 
-This repository contains three Dockerfiles:
+To ensure proper working communication between the frontend and backend the production deployment should be deployed behind a reverse proxy.
+Following minimal config works with nginx. For production you should add a ssl certificate: 
 
-- `Dockerfile`: Fetches upstream code and builds it into a standalone WAR file. This WAR file is then used as the entry point of the resulting container.
-- `Dockerfile.alt`: Does not fetch upstream, uses the local code to build a standalone WAR file.
-- `Dockerfile.live`: Fetches upstream code. No WAR file is built, the container uses `mvn spring-boot:run` as its entry point.
+```nginx
+upstream webcorc-frontend {
+   server 127.0.0.1:8080;
+}
 
-After building a Docker image with any of the supplied Dockerfiles, run WebCorC with the following command:
-`sudo docker run -p 8080:8080 -d -v /tmp/WebCorC:/tmp/WebCorC webcorc:latest`
-(assuming that the built image is called "webcorc")
+upstream webcorc-backend {
+   server 127.0.0.1:<port>;
+}
 
-Now navigate to `localhost:8080/edu.kit.cbc.web`. You might need to disable your firewall.
-The working directory of the WebCorC instance inside the container can be accessed by the host through the `/tmp/WebCorC` directory.
-You can redirect the container's 8080 port to another port on the host by changing the `-p` option.
+server {
+    listen       80;
+    listen       [::]:80;
+
+    access_log  /var/log/nginx/corc.informatik.kit.edu.access.log  main;
+    error_log   /var/log/nginx/corc.informatik.kit.edu.error.log;
+
+    location / {
+        proxy_pass http://webcorc-frontend/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    location /api {
+        rewrite ^/api(.*)$ $1 break;
+        proxy_pass http://webcorc-backend;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
+```
