@@ -24,14 +24,18 @@ export class AiMessage {
     public get id() : number {
         return this._id
     }
+
+    public export() : OpenAiMessage {
+        return {role : this._role, content: this._content}
+    }
 }
 
-interface OpenAiMessage {
+export interface OpenAiMessage {
     role : string
     content : string
 }
 
-interface OpenAiRequest {
+export interface OpenAiRequest {
     model : string
     messages : OpenAiMessage[]
     temperature : number

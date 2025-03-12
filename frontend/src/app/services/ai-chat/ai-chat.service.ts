@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AiMessage } from './ai-message';
 import { Condition } from '../../types/condition/condition';
+import { AiChatStorageService } from './storage/ai-chat-storage.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,10 @@ export class AiChatService {
   private _messages : AiMessage[] = []
   private _context : AiMessage[] = []
   private _freeId : number = 0
+
+  constructor(private storage : AiChatStorageService) {
+    this._messages = this.storage.readHistory()
+  }
 
   public addMessage(content : string) : boolean  {
     const message = new AiMessage(this._freeId, content, false)
@@ -28,6 +33,7 @@ export class AiChatService {
 
     this._messages.push(message)
     this.echo(content)
+    this.storage.persistHistory(this._messages)
     return true
   }
 
@@ -41,13 +47,12 @@ export class AiChatService {
   public deleteMessage(message : AiMessage) : void {
     this._messages = this._messages.filter(_message => _message.id !== message.id)
     this.removeMessageFromContext(message)
+    this.storage.persistHistory(this._messages)
   }
 
   public addCondition(condition : Condition) {
     this.addMessage("In one sentence explain the following formal specification: " + condition.content )
   }
-
-
 
   public addMessageToContext(message : AiMessage) {
     this._context.push(message)

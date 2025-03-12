@@ -1,6 +1,6 @@
 <div class="aiChatWindow">
     <div class="aiChatHistory">
-        @for (message of messages; track message.content) {
+        @for (message of messages; track message.id) {
             <div class="message">
                 <mat-card appearance="outlined" [class]="getClasses(message)">
                     <mat-card-content>
