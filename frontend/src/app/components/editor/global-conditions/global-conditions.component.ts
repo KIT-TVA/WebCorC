@@ -9,8 +9,9 @@ import { FormArray, FormBuilder, FormControl, FormGroup,
 import { MatDividerModule} from "@angular/material/divider";
 import { MatFormFieldModule} from "@angular/material/form-field";
 import { MatListModule} from "@angular/material/list";
-import { ConditionDTO } from '../../../types/condition/condition';
+import { Condition, ConditionDTO } from '../../../types/condition/condition';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { AiChatService } from '../../../services/ai-chat/ai-chat.service';
 
 /**
  * Component for the user to manage the global conditions in a cbc formula.
@@ -36,7 +37,8 @@ export class GlobalConditionsComponent {
 
   public constructor(
     private _fb: FormBuilder,
-    public treeService: TreeService
+    public treeService: TreeService,
+    private aiChatService: AiChatService
   ) {}
 
   /**
@@ -91,6 +93,10 @@ export class GlobalConditionsComponent {
   public removeCondition(index : number) : void {
     this.treeService.removeGlobalCondition(this.items.at(index).value.name)
     this.items.removeAt(index)
+  }
+
+  public askAi(index : number) : void {
+    this.aiChatService.addCondition(new Condition(0, "", this.items.at(index).value.name))
   }
 
   /**

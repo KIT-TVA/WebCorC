@@ -4,7 +4,8 @@
           <mat-form-field [style.width]="'100%'" (keydown.delete)="onDelete($event, i)">
             <mat-label>Condition</mat-label>
             <input matInput formControlName="name">
-            <button matSuffix mat-icon-button aria-label="Remove" (click)="removeCondition(i)" (keydown.enter)="$event.preventDefault()" #tooltip="matTooltip" matTooltip="Remove Condition" matTooltipPosition="left">
+            <button matSuffix mat-icon-button aria-label="Ask ai" (click)="askAi(i)" (keydown.enter)="$event.preventDefault()" matTooltip="Explain with Ai" matTooltipPosition="before"><mat-icon>psychology_alt</mat-icon></button>
+            <button matSuffix mat-icon-button aria-label="Remove" (click)="removeCondition(i)" (keydown.enter)="$event.preventDefault()" matTooltip="Remove Condition" matTooltipPosition="left">
               <mat-icon>remove</mat-icon>
             </button>
           </mat-form-field>
