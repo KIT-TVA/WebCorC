@@ -1,0 +1,12 @@
+corc.informatik.kit.edu {
+    log {
+        output file /logs/corc.informatik.kit.edu.log
+    }
+
+    #header Strict-Transport-Security max-age=31536000
+
+    handle_path /api/* {
+        reverse_proxy http://webcorc-backend:8080
+    }
+    reverse_proxy http://webcorc-frontend:80
+}

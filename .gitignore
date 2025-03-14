@@ -130,3 +130,6 @@ replay_pid*
 frontend/node_modules
 frontend/package-lock.json
 frontend/.angular
+
+# Data from docker production deployment
+data/

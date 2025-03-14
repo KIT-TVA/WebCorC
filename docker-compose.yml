@@ -8,17 +8,19 @@ services:
       - ':9001'
     env_file:
       - docker-compose.env
+    volume:
+      - ./data/minio/:/data
 
   mongo:
     image: mongo
+    volume:
+      - ./data/mongo/:/data/db
 
   webcorc-backend:
     build:
       context: backend
     env_file:
       - docker-compose.env
-    ports:
-      - "80:8080"
     depends_on:
       minio:
         condition: service_started
@@ -28,5 +30,14 @@ services:
   webcorc-frontend:
     build:
       context: frontend
+
+  webserver:
+    image: caddy
     ports:
-      - "8080:80"
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./data/caddy/caddyfile:/etc/caddy
+      - ./data/caddy/data:/data
+      - ./data/caddy/logs:/logs/
