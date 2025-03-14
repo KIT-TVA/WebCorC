@@ -8,12 +8,12 @@ services:
       - ':9001'
     env_file:
       - docker-compose.env
-    volume:
+    volumes:
       - ./data/minio/:/data
 
   mongo:
     image: mongo
-    volume:
+    volumes:
       - ./data/mongo/:/data/db
 
   webcorc-backend:
