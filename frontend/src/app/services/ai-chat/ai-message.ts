@@ -37,6 +37,38 @@ export interface OpenAiMessage {
 
 export interface OpenAiRequest {
     model : string
-    messages : OpenAiMessage[]
-    temperature : number
+    input : OpenAiMessage[]
+}
+
+export interface OpenAiOutputContent {
+    type : string
+    text : string
+    annotations : []
+}
+
+export interface OpenAiOutput {
+    type : string
+    id : string
+    status : string
+    role : messageRoles
+    content : OpenAiOutputContent[]
+}
+
+export interface OpenAiUsage {
+    prompt_tokens : number
+    completion_tokens : number
+    total_tokens : number
+}
+
+export interface OpenAiResponse {
+    id : string
+    object : string
+    created : number
+    status : string
+    error : string | null
+    incomplete_details : string | null
+    instructions : string | null
+    max_output_tokens : null
+    model : string
+    output : OpenAiOutput[]
 }

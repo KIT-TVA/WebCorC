@@ -37,15 +37,6 @@ export class AiChatComponent {
     this._chatservice = aichatservice
   }
 
-  public addMessageToContext(message : AiMessage) {
-    if (this._chatservice.isMessageinContext(message)) {
-      this._chatservice.removeMessageFromContext(message)
-    } else {
-      this._chatservice.addMessageToContext(message)
-    }
-    
-  }
-
   public onEnter(event : Event) {
     event.preventDefault()
     this.addMessage()
@@ -58,16 +49,12 @@ export class AiChatComponent {
     
   }
 
-  public deleteMessage(message : AiMessage) : void {
-    this._chatservice.deleteMessage(message)
+  public deleteHistory() : void {
+    this._chatservice.deleteHistory()
   }
 
   public getClasses(message : AiMessage) : string {
     return message.isResponse ? "response" : "question"
-  }
-
-  public getContextStatus(message : AiMessage) : string {
-    return this._chatservice.isMessageinContext(message) ? "inContext" : ""
   }
 
   public get messages() : AiMessage[] {
