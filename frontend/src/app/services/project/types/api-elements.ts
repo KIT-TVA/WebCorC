@@ -1,5 +1,8 @@
 import { CBCFormula } from "../CBCFormula"
 
+/**
+ * Enum of inode type
+ */
 export type InodeType = "directory" | "file"
 
 /**
@@ -42,7 +45,6 @@ export class ApiFile implements Inode {
 
 /**
  * See openapi/schema/file/diagramm.yml 
- * if (this.type === "java" || this.type === "key" || this.type === "prove") {
  */
 export class ApiDiagrammFile implements Inode {
 
@@ -65,6 +67,9 @@ export class ApiTextFile implements Inode {
     ) {}
 }
 
+/**
+ * SlimFile without content
+ */
 export class SlimFile implements Inode {
     public constructor(
         public urn : string,

@@ -179,27 +179,27 @@ export class CompositionStatementComponent extends Refinement {
     this._leftStatementRef = ref
   } 
 
-  get rightStatement() : Refinement | undefined {
+  public get rightStatement() : Refinement | undefined {
     return this._rightStatement
   }
 
-  set rightStatement(statement : Refinement | undefined) {
+  public set rightStatement(statement : Refinement | undefined) {
     this._rightStatement = statement
   } 
 
-  get rightStatementRef() : ElementRef | undefined {
+  public get rightStatementRef() : ElementRef | undefined {
     return this._rightStatementRef
   }
 
-  set rightStatementRef(ref : ElementRef | undefined) {
+  public set rightStatementRef(ref : ElementRef | undefined) {
     this._rightStatementRef = ref
   }
 
-  get intermediateCondition() : Condition {
+  public get intermediateCondition() : Condition {
     return this._intermediateCondition
   }
   
-  set intermediateCondition(condition : Condition) {
+  public set intermediateCondition(condition : Condition) {
     this._intermediateCondition = condition
   } 
  
@@ -207,7 +207,7 @@ export class CompositionStatementComponent extends Refinement {
    * Converts this component to the data only CompositionStatment {@link CompositionStatement}
    * @returns a new Instance of CompositionStatment
    */
-  override export() : Statement | undefined {
+  public override export() : Statement | undefined {
     return new CompositionStatement(
       this.getTitle(),
       this.id,

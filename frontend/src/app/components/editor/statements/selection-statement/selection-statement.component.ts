@@ -256,6 +256,4 @@ export class SelectionStatementComponent extends Refinement {
   set guards(guards : Condition[]) {
     this._guards = guards
   }
-
-
 }

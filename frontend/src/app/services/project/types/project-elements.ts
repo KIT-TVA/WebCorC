@@ -24,13 +24,27 @@ export abstract class ProjectElement implements IProjectElement {
 
     public constructor(private _path : string, private _name : string) {}
 
+    /**
+     * Set the path of the element
+     * @param name The name of the element
+     * @param parentPath The path of the parent element
+     */
     public setPath(name: string, parentPath: string = this.parentPath): void {
         this._path = parentPath + name
         this.name = name
     }
 
+    /**
+     * Only used in child classes to implement custom deletion rules
+     */
     public delete(): void {  }
 
+    /**
+     * Move the element to the new target
+     * @param target The target to move the element to 
+     * @param name The new name of the element, default doesnt change the name of the element
+     * @returns A map to represent the moving history in which the key is the new path and the value is the oldpath
+     */
     public move(target : ProjectDirectory, name : string = this._name) : Map<string, string> {
         const oldPath = this.path
 
@@ -128,6 +142,13 @@ export class ProjectDirectory extends ProjectElement {
         return this._elements
     }
 
+    /**
+     * Move all children of the directory
+     * @param target The parent path of this element
+     * @param name The name of this directory
+     * @param history The history of moving actions
+     * @returns full history of all moving operations
+     */
     public override move(target: ProjectDirectory, name : string = super.name, history = new Map<string, string>()): Map<string, string> {
         super.move(target, name)
 
@@ -160,7 +181,9 @@ export class FakeProjectElement extends ProjectElement {
 
 }
 
-
+/**
+ * Element used to rename an exisiting element, which includes the element to rename and has a hardcoded name to show in the rename name.
+ */
 export class RenameProjectElement extends ProjectElement {
 
     private _element : ProjectElement

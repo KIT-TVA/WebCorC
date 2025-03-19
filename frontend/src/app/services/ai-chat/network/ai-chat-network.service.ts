@@ -6,6 +6,11 @@ import { Observable, Subject, catchError, of } from 'rxjs';
 import { AiMessage, OpenAiMessage, OpenAiRequest, OpenAiResponse } from '../ai-message';
 import { environment } from '../../../../environments/environment';
 
+/**
+ * Service for sending the message in the ai chat to the backend to get a answer answered by a llm.
+ * This service expects a request and response in the format of the openai response api.
+ * {@see https://platform.openai.com/docs/api-reference/responses/create}
+ */
 @Injectable({
   providedIn: 'root'
 })
@@ -13,16 +18,19 @@ export class AiChatNetworkService {
 
   private static readonly path = "/editor/askquestion"
   private static readonly model = "gpt-4-turbo"
-
   private _answer = new Subject<string>
 
-  constructor(private http : HttpClient,
+
+  public constructor(private http : HttpClient,
     private consoleService : ConsoleService,
     private networkStatusService : NetworkStatusService,
   ) { }
 
-
-  public sendContext(messages : AiMessage[]) : void {
+  /**
+   * Send the history to the backend to get a response from the llm.
+   * @param messages The messages to include in the context for the answer.
+   */
+  public sendHistory(messages : AiMessage[]) : void {
 
     const context : OpenAiMessage[] = []
 

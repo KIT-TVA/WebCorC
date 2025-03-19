@@ -10,6 +10,11 @@ import { ISimpleStatement, SimpleStatement } from '../../../types/statements/sim
 import { CBCFormula, ICBCFormula } from '../CBCFormula';
 import { IRenaming, Renaming } from '../../tree/Renaming';
 
+/**
+ * Service for importing the cbcformula from the interface {@see ICBCFormula } to the only implementation {@see CBCFormula }.
+ * This service is necessary because only a object in form of the interface ICBCFormula is returned of the network call of the api.
+ * To properly use the class the mapping in the importFormula function is needed.
+ */
 @Injectable({
   providedIn: 'root'
 })
@@ -17,6 +22,11 @@ export class CbcFormulaMapperService {
 
   constructor() {}
 
+  /**
+   * Map a object in form of the interface ICBCFormula to the only implementation CBCFormula
+   * @param formula The formula to import.
+   * @returns The class with the same content of the passed interface.
+   */
   public importFormula(formula : ICBCFormula) : CBCFormula {
     
     return new CBCFormula(

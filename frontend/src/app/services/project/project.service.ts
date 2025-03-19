@@ -368,12 +368,17 @@ export class ProjectService {
     }
   }
 
-
+  /**
+   * Flag to decide to create a new project in the backend
+   */
   public get shouldCreateProject() : boolean {
     return this.network.projectId === undefined
   }
 
 
+  /**
+   * Create a new project in the backend
+   */
   public createProject() {
     this.network.requestFinished.pipe(first()).subscribe(() => {
       if (!this.network.projectId) return
@@ -384,6 +389,9 @@ export class ProjectService {
   }
 
 
+  /**
+   * Get the project state from the backend
+   */
   public downloadWorkspace() {
     const projectTree = this.storage.getProjectTree()
     const projectName = this.storage.getProjectName()
@@ -427,6 +435,14 @@ export class ProjectService {
     
   }
 
+  /**
+   * Move a element in the project 
+   * @param file the file to move
+   * @param target the new parent of the file
+   * @param name the new name
+   * @param shouldDelete toggle deletion of the file in the origin
+   * @returns success
+   */
   public moveElement(file : ProjectElement, target : ProjectElement, name?: string, shouldDelete : boolean = true) {
     const oldPath = file.path
     const oldParentPath = file.parentPath
@@ -453,6 +469,10 @@ export class ProjectService {
     return history.size > 0
   }
 
+  /**
+   * Toggle the renaming of a element
+   * @param element the element to rename
+   */
   public toggleRename(element : ProjectElement) {
     const parentPath = element.parentPath
     const parentdir = this.findByPath(parentPath) as ProjectDirectory
@@ -467,6 +487,11 @@ export class ProjectService {
     this._dataChange.next(this._rootDir.content)
   }
 
+  /**
+   * Rename the element
+   * @param element The element to rename
+   * @param name The new name
+   */
   public renameElement(element : ProjectElement, name : string) {
     if (!(element instanceof RenameProjectElement)) return
 

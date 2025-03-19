@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 
+/**
+ * Service to share the network status between the different network services.
+ * 
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class NetworkStatusService {
 
   private _status = new Subject<boolean>();
-  private _error = false
-
-
-  constructor() { }
 
   public startNetworkRequest() {
     this._status.next(true)

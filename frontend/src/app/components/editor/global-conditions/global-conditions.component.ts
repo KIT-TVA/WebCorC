@@ -95,6 +95,10 @@ export class GlobalConditionsComponent {
     this.items.removeAt(index)
   }
 
+  /**
+   * Send the condition content to the ai chat service
+   * @param index The index to identify the conditon to send the condition to the ai chat service
+   */
   public askAi(index : number) : void {
     this.aiChatService.addCondition(new Condition(0, "", this.items.at(index).value.name))
   }
@@ -134,10 +138,16 @@ export class GlobalConditionsComponent {
     return this.conditions.controls["items"] as FormArray
   }
 
+  /**
+   * Getter for the form group
+   */
   public get conditions() : FormGroup {
     return this._conditions
   }
 
+  /**
+   * Getter to show error state for the new condition input asking the user to add the condition to the conditions
+   */
   public get dirtyState() : boolean {
     return !(this._conditions.controls['newCondition'].value == null || this._conditions.controls['newCondition'].value == '') 
   }

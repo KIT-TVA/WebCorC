@@ -11,7 +11,7 @@ import { NetworkStatusService } from '../../networkStatus/network-status.service
 import { ProjectStorageService } from '../storage/project-storage.service';
 
 /**
- * Service to interact with the backend for managing the project.
+ * Service to interact with the backend for managing the project via hhtp rest calls.
  */
 @Injectable({
   providedIn: 'root'
@@ -114,6 +114,10 @@ export class NetworkProjectService {
     
   }
 
+  /**
+   * Delete the given file in the backend 
+   * @param file The file to delete
+   */
   public deleteFile(file : Inode) {
     this.http.delete(this.buildFileURL(file.urn))
       .pipe(catchError((error : HttpErrorResponse) : Observable<void> => {
@@ -165,23 +169,23 @@ export class NetworkProjectService {
   }
 
 
-  get projectId() {
+  public get projectId() {
     return this._projectId
   }
 
-  get projectName() {
+  public get projectName() {
     return this._projectname
   }
 
-  set projectId(value : string | undefined) {
+  public set projectId(value : string | undefined) {
     this._projectId = value
   }
 
-  get dataChange() {
+  public get dataChange() {
     return this._dataChange
   }
 
-  get requestFinished() {
+  public get requestFinished() {
     return this._finishedRequest
   }
 

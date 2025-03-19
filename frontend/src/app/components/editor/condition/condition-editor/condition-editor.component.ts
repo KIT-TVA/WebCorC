@@ -58,12 +58,21 @@ export class ConditionEditorComponent implements OnInit {
     });
   }
 
+    /**
+   * 
+   * @returns 
+   */
+    public askAi() : void {
+      if (!this.condition.content) return
+      this._aiChatService.addCondition(this.condition)
+    }
+
+  /**
+   * Getter for the FormGroup for management of the 
+   */
   public get conditionGroup() : FormGroup | undefined {
     return this._conditionGroup
   }
 
-  public askAi() : void {
-    if (!this.condition.content) return
-    this._aiChatService.addCondition(this.condition)
-  }
+
 }

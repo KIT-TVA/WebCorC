@@ -3,16 +3,13 @@
         <h3> Console </h3>
         <button mat-icon-button (click)="clear()" > <mat-icon> delete </mat-icon> </button>
     </div>
-    <form [formGroup]="console" class="form">
-       <mat-list #logList  >
-        @for (line of loglines; track line) {
-            <mat-list-item>
-                <span matListItemTitle> {{ line.action }}  </span>
-                <span matListItemLine> {{ deconstructLogError(line) }} </span>
-            </mat-list-item>
-        }
-            
-       </mat-list>
-    </form>
-    
+    <mat-list #logList  >
+    @for (line of loglines; track line) {
+        <mat-list-item>
+            <span matListItemTitle> {{ line.action }}  </span>
+            <span matListItemLine> {{ deconstructLogError(line) }} </span>
+        </mat-list-item>
+    }
+        
+    </mat-list>
 </div>

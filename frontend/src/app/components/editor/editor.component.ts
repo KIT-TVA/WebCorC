@@ -63,7 +63,8 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   }
   
   /**
-   * Input for the urn of the file to edit
+   * Input for the urn of the file to edit.
+   * On input the file content of the current opened file gets saved and the file content of the file to be opened read and loaded into the editor.
    * @param uniformRessourceName The path variable of the file to edit
    */
   @Input()
@@ -100,7 +101,9 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  
+  /**
+   * Function to be triggered after the view got initalized.
+   */
   public ngAfterViewInit(): void {
     this._viewInit = true
     // workaround to ensure proper loading of file content on switch between files
@@ -264,7 +267,10 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   public onEditorContainerScrolled(): void {
     this.treeService.onEditorContainerScrolled();
   }
-
+  /**
+   * Event listener for resizing the browser window.
+   * The editorwidth is so used in the Reset Poisiton action to prevent overlapping of the statements.
+   */
   @HostListener('window:resize', ['event'])
   public onHostWindowResize() {
     this.treeService.editorWidth = this.editorContainer.nativeElement.offsetWidth

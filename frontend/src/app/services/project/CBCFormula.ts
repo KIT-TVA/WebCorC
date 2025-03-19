@@ -3,6 +3,10 @@ import { Position } from "../../types/position";
 import { IStatement, Statement } from "../../types/statements/statement";
 import { Renaming } from "../tree/Renaming";
 
+/**
+ * The representation of the data in the graphical editor in a json object.
+ * Used for communication with the backend.
+ */
 export interface ICBCFormula {
     type : string
     name : string
@@ -23,7 +27,7 @@ export interface ICBCFormula {
 
 /**
  * The representation of the data in the graphical editor in a json object.
- * Used for saving state and communicate with the backend.
+ * Used for saving state.
  */
 export class CBCFormula implements ICBCFormula {
 

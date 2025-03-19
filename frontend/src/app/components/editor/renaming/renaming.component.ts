@@ -36,6 +36,10 @@ export class RenamingComponent {
 
   public constructor (private _fb : FormBuilder, public treeService : TreeService) {}
 
+  /**
+   * Add renaming by reading the value of the contents of the inputs in the new renaming group.
+   * Resets the content of the inputs of the new renaming group.
+   */
   public addRenaming() : void {
     const type : string = this._newType.value
     const original : string = this._newOriginal.value
@@ -60,6 +64,10 @@ export class RenamingComponent {
     this._newName.reset()
   }
 
+  /**
+   * Delete renaming by the index
+   * @param index The index of the renaimg in the from items to remove
+   */
   public removeRenaming(index : number) : void {
     const group : FormGroup = this.items.at(index) as FormGroup
 
@@ -76,16 +84,28 @@ export class RenamingComponent {
     this.items.removeAt(index)
   }
 
-  public onDelete(event : Event, i : number) {
+  /**
+   * Function to remove the renaming on pressing delete in the input.
+   * @param event The event which triggers this function. Default action is prevented.
+   * @param i The index of the renaming in the items in the renaming form
+   */
+  public onDelete(event : Event, i : number) : void {
     event.preventDefault()
     this.removeRenaming(i)
   }
 
-  public onEnter(event : Event) {
+  /**
+   * Function to add the new renaming group of inputs to the renaming input
+   * @param event The event to trigger this function. Default action is prevented.
+   */
+  public onEnter(event : Event) : void {
     event.preventDefault()
     this.addRenaming()
   }
 
+  /**
+   * Reset the this component by deleting all renaming
+   */
   public removeAllRenaming() {
     for (let i = 0; i < this.items.length; i++) {
       const group = this.items.at(i) as FormGroup
@@ -107,6 +127,10 @@ export class RenamingComponent {
     this._newName.reset()
   }
 
+  /**
+   * Import renamings into this component
+   * @param renames Array of renamings to import
+   */
   public importRenaming(renames : Renaming[] | null) {
     if (!renames) {
       return
@@ -125,11 +149,16 @@ export class RenamingComponent {
 
   }
  
-
+  /**
+   * Getter for the form
+   */
   public get renames() : FormGroup {
     return this._renames
   }
 
+  /**
+   * Getter for the items of the form, which represent a renaming
+   */
   public get items() : FormArray {
     return this._renames.controls['items'] as FormArray
   }
