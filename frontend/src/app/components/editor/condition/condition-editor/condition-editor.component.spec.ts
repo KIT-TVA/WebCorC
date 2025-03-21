@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ConditionEditorComponent } from './condition-editor.component';
 import { Condition } from '../../../../types/condition/condition';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideHttpClient } from '@angular/common/http';
 
 describe('ConditionEditorComponent', () => {
   let component: ConditionEditorComponent;
@@ -11,7 +12,7 @@ describe('ConditionEditorComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ConditionEditorComponent],
-      providers: [provideAnimations()]
+      providers: [provideHttpClient(),provideAnimations()]
     })
     .compileComponents();
     

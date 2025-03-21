@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AiChatComponent } from './ai-chat.component';
+import { provideHttpClient } from '@angular/common/http';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
 describe('AiChatComponent', () => {
   let component: AiChatComponent;
@@ -8,7 +10,8 @@ describe('AiChatComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AiChatComponent]
+      imports: [AiChatComponent],
+      providers: [provideHttpClient(), provideAnimations()]
     })
     .compileComponents();
 

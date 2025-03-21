@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { StatementComponent } from './statement.component';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { SimpleStatementComponent } from '../simple-statement/simple-statement.component';
+import { provideHttpClient } from '@angular/common/http';
 
 describe('StatementComponent', () => {
   let component: StatementComponent;
@@ -11,7 +12,7 @@ describe('StatementComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [StatementComponent],
-      providers: [provideAnimations()]
+      providers: [provideHttpClient(),provideAnimations()]
     })
     .compileComponents();
     

@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { StrongWeakStatementComponent } from './strong-weak-statement.component';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideHttpClient } from '@angular/common/http';
 
 describe('StrongWeakStatementComponent', () => {
   let component: StrongWeakStatementComponent;
@@ -10,7 +11,7 @@ describe('StrongWeakStatementComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [StrongWeakStatementComponent],
-      providers: [provideAnimations()]
+      providers: [provideHttpClient(),provideAnimations()]
     })
     .compileComponents();
     
