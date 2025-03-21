@@ -29,6 +29,12 @@ npm install
 ```
 
 For running the development server and linting use the angular cli.
+Install the angular cli via npm:
+```bash
+npm install -g @angular/cli@19
+```
+
+And use the serve command in the angular cli to run the development server:
 ```bash
 ng serve
 ```
@@ -37,6 +43,7 @@ ng serve
 - https://angular.dev/
 - https://angular.dev/tools/cli
 - https://material.angular.io/
+
 
 #### Docker
 
@@ -48,24 +55,36 @@ To run the stack in development:
 docker compose up -d -f docker-compose.dev.yml
 ```
 
-For production:
+##### Production:
+
+Clone this repository for example into /opt/WebCorC:
+
+```bash
+git clone https://github.com/KIT-TVA/WebCorC.git /opt/WebCorC
+```
+
+
 Ensure to change the default values in the `docker-compose.env` file and run:
 ```bash
 docker compose up -d 
 ```
 
+The production docker compose file includes a caddy webserver for proper deployment.
+
+
 #### Reverse Proxy (nginx)
 
-To ensure proper working communication between the frontend and backend the production deployment should be deployed behind a reverse proxy.
-Following minimal config works with nginx. For production you should add a ssl certificate: 
+If you already have a webserver on the host deployed you must edit the docker compose file:
+You need to add port mapping to the frontend and backend services and replace the ports in the upstream blocks.
+The following bare configuration is tested but lacks the configuration for certificates for https:
 
 ```nginx
 upstream webcorc-frontend {
-   server 127.0.0.1:8080;
+   server 127.0.0.1:<frontend_port>;
 }
 
 upstream webcorc-backend {
-   server 127.0.0.1:<port>;
+   server 127.0.0.1:<backend_port>;
 }
 
 server {
