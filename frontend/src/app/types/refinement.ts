@@ -41,15 +41,15 @@ export abstract class Refinement {
     this.NEXT_ID = next
   }
 
-  isConditionEditable(condition: Condition): boolean {
+  public isConditionEditable(condition: Condition): boolean {
     return this._id === condition.originId
   }
 
-  isPreconditionEditable(): boolean {
+  public isPreconditionEditable(): boolean {
     return  this._preconditionEditable && this.isConditionEditable(this._precondition)
   }
 
-  isPostConditionEditable(): boolean {
+  public isPostConditionEditable(): boolean {
     return this._postconditionEditable && this.isConditionEditable(this._postcondition)
   }
 
@@ -58,55 +58,55 @@ export abstract class Refinement {
     this._postconditionEditable = !this._postconditionEditable
   }
 
-  getRedrawNotifier(): ReplaySubject<void> {
+  public getRedrawNotifier(): ReplaySubject<void> {
     return this.treeService.redrawNotifier;
   }
 
-  get id(): number {
+  public get id(): number {
     return this._id;
   }
 
-  get precondition(): Condition {
+  public get precondition(): Condition {
     return this._precondition;
   }
 
-  get postcondition(): Condition {
+  public get postcondition(): Condition {
     return this._postcondition;
   }
 
-  get onDragMoveEmitter(): ReplaySubject<void> {
+  public get onDragMoveEmitter(): ReplaySubject<void> {
     return this._onDragMoveEmitter;
   }
 
-  get onDragEndEmitter(): ReplaySubject<CdkDragEnd> {
+  public get onDragEndEmitter(): ReplaySubject<CdkDragEnd> {
     return this._onDragEndEmitter;
   }
 
-  set precondition(value: Condition) {
+  public set precondition(value: Condition) {
     this._precondition = value;
   }
 
-  set postcondition(value: Condition) {
+  public set postcondition(value: Condition) {
     this._postcondition = value;
   }
 
-  set position(position : Position) {
+  public set position(position : Position) {
     this._position = position
   }
 
-  get position() : Position {
+  public get position() : Position {
     return this._position
   }
 
-  set proven(value : boolean) {
+  public set proven(value : boolean) {
     this._proven = value
   }
 
-  get proven() {
+  public get proven() {
     return this._proven
   }
 
-  abstract getTitle(): string;
+  public abstract getTitle(): string;
 
   /**
    * Creates a new Instance of a data only class for persisting the state
@@ -116,23 +116,18 @@ export abstract class Refinement {
 
   abstract resetPosition(position : Position, offset : Position) : void
 
-  /**
-   * Removes variable usages of this refinement on deletion.
-   */
-  removeVariableUsages(): void {}
 
-
-  refreshLinkState() : void {
+  public refreshLinkState() : void {
     this._onDragMoveEmitter.next()
   }
 
 
 
-  getBoxRowHeight(): string {
+  public getBoxRowHeight(): string {
     return "120px";
   }
 
-  getBoxWidth(): string {
+  public getBoxWidth(): string {
     return "650px";
   }
 }

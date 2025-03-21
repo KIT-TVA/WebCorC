@@ -3,6 +3,10 @@ import { EMFJavaVariables } from "./emf-java-variable";
 import { EMFRenaming } from "./emf-renaming";
 import { EMFStatement } from "./emf-statement";
 
+/**
+ * EMF json compatible Cbcformula.
+ * @see CBCFormula
+ */
 export interface EMFCbcFormula {
     type : string,
     name : string,

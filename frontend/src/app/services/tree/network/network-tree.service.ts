@@ -14,6 +14,11 @@ import { ConsoleService } from '../../console/console.service';
 import { Renaming } from '../Renaming';
 import { ProjectService } from '../../project/project.service';
 
+/**
+ * The Service to send the editor contents over the network to the backend for verification, code generation or converting the xml files from CorC to emfjson compatible struture.
+ * @see AppComponent
+ * @see EditorComponent
+ */
 @Injectable({
   providedIn: 'root'
 })
@@ -34,6 +39,14 @@ export class NetworkTreeService {
     private readonly projectService : ProjectService,
   ) { }
 
+  /**
+   * Verify the given arguments via the backend with key
+   * @param root The root refinement to verify
+   * @param javaVariables The Java variables used to verify
+   * @param globalConditions The global conditions used to verify 
+   * @param renaming The renaming used to verify
+   * @param projectId The id of the project, is used to give backend more context in form of the helper.key in the project
+   */
   public verify(root : Refinement | undefined, javaVariables : string[], globalConditions : ConditionDTO[], renaming : Renaming[], projectId? : string | undefined) {
 
     const rootNode = (root as SimpleStatementComponent).export()
@@ -69,6 +82,16 @@ export class NetworkTreeService {
       })
   }
 
+
+  /**
+   * Use the backend to generate code based on the refinements
+   * @param root The root refinement used to generate the code
+   * @param javaVariables The variables used to generate the code
+   * @param globalConditions The global conditions used to generate the code
+   * @param renaming The renamings used to generate the code
+   * @param name The name of the file to generate the code in
+   * @param projectId The id of the project, is used to give backend more context in form of the helper.key in the project
+   */
   public generateCode(root: Refinement | undefined, javaVariables : string[], globalConditions : ConditionDTO[], renaming : Renaming[], name : string ,  projectId?: string | undefined) {
     const filename = name.substring(0, name.lastIndexOf('.'))
     const rootNode = (root as SimpleStatementComponent).export()
@@ -107,9 +130,11 @@ export class NetworkTreeService {
     })
   }
 
-
+  /**
+   * Convert a file from CorC editor from xml to emfjson compatible file. 
+   * @param cbcmodel The model to convert.
+   */
   public convertCBCModel(cbcmodel : string) {
-
     this.networkStatusService.startNetworkRequest()
 
     this.http

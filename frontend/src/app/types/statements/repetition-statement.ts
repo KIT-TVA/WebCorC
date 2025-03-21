@@ -5,6 +5,10 @@ import { ViewContainerRef, ComponentRef } from "@angular/core";
 import { Refinement } from "../refinement";
 import { RepetitionStatementComponent } from "../../components/editor/statements/repetition-statement/repetition-statement.component";
 
+/**
+ * Data only representation of {@link RepetitionStatementComponent}
+ * Compatible with the api calls.
+ */
 export interface IRepetitionStatement extends IStatement {
     postProven : boolean
     preProven : boolean
@@ -18,6 +22,7 @@ export interface IRepetitionStatement extends IStatement {
 
 /**
  * Data only representation of {@link RepetitionStatementComponent}
+ * @see IRepetitionStatement
  */
 export class RepetitionStatement extends Statement implements IRepetitionStatement {
 

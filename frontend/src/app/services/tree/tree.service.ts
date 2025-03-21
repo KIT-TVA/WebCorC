@@ -9,7 +9,7 @@ import { Renaming } from './Renaming';
 
 /**
  * Service for the context of the tree in the graphical editor.
- * The context includes the global conditions and the variables
+ * The context includes the global conditions and the variables.
  */
 @Injectable({
   providedIn: 'root'
@@ -30,9 +30,8 @@ export class TreeService {
   private _variables : JavaVariable[] = []
   private _globalConditions : string[] = []
   private _renames : Renaming[] = []
-  variablesChangedNotifier: Subject<void> = new Subject<void>();
 
-  constructor() {
+  public constructor() {
     this._redrawNotifier = new ReplaySubject();
     this._deletionNotifier = new ReplaySubject();
     this._verificationResultNotifier = new Subject<Statement>();
@@ -46,18 +45,27 @@ export class TreeService {
     this._redrawNotifier.next()
   }
 
+  /**
+   * Export the content of the tree service.
+   * Including the statements, variables, global conditions and renames.
+   */
   public export(): void {
     this._exportNotifier.next()
   }
 
 
   /**
-   * Redraw the links between the statements on scrolling in the editor
+   * Redraw the links between the statements on scrolling in the editor.
    */
   public onEditorContainerScrolled(): void {
     this._redrawNotifier.next();
   }
 
+  /**
+   * Check for given refinement if the statement is the root node 
+   * @param refinement The refinement to check for root node attributes
+   * @returns true, if refinement is root node else false
+   */
   public isRootNode(refinement: Refinement): boolean {
     return refinement.id == 1;
   }
@@ -84,7 +92,7 @@ export class TreeService {
 
   /**
    * Remove a variable by name from the variables of the context
-   * @param names 
+   * @param names The names of the variables to remove
    */
   public removeVariables(names: string[]) : void {
     const variablesToBeRemoved : string[] = []
@@ -96,7 +104,7 @@ export class TreeService {
 
   /**
    * Add a global condition to the context,
-   * checks for duplicates
+   * checks for duplicates.
    * @param name the string representation of the condition
    * @returns true, if added else false
    */
@@ -121,41 +129,54 @@ export class TreeService {
     this._globalConditions = this._globalConditions.filter(val => val !== name)
   }
 
-  public addRenaming(type : string, original : string, newName : string) {
+  /**
+   * Add renaming to the tree service
+   * @param type The type of the renaming
+   * @param original The original name of the renaming
+   * @param newName The new name of the renaming
+   */
+  public addRenaming(type : string, original : string, newName : string) : void {
     this._renames.push(new Renaming(type, original, newName))
   }
 
-  public removeRenaming(type : string, original : string, newName : string) {
+  /**
+   * Remove renaming from the tree service
+   * @param type The type of the renaming
+   * @param original The original name of the renaming
+   * @param newName The new name of the renaming
+   */
+  public removeRenaming(type : string, original : string, newName : string) : void {
     this._renames = this._renames.filter(val => !val.equal(new Renaming(type, original, newName)))
   }
 
-  get deletionNotifier(): ReplaySubject<Refinement> {
+  
+  public get deletionNotifier(): ReplaySubject<Refinement> {
     return this._deletionNotifier;
   }
 
-  get exportNotifier() : Subject<void> {
+  public get exportNotifier() : Subject<void> {
     return this._exportNotifier
   }
 
-  get title(): string {
+  public get title(): string {
     return this._title;
   }
 
-  get rootNode(): Refinement | undefined {
+  public get rootNode(): Refinement | undefined {
     return this._rootNode;
   }
 
-  get redrawNotifier(): ReplaySubject<void> {
+  public get redrawNotifier(): ReplaySubject<void> {
     return this._redrawNotifier;
   }
 
-  get variables() : string[] {
+  public get variables() : string[] {
     const variablesArray : string[] = []
     this._variables.forEach((javaVariable) => variablesArray.push(javaVariable.toString()))
     return variablesArray;
   }
 
-  get conditions() : ConditionDTO[] {
+  public get conditions() : ConditionDTO[] {
     const conditionsArray : ConditionDTO[] = []
     this._globalConditions.forEach((condition) => conditionsArray.push(new ConditionDTO(0, "globalCondition", condition)))
     return conditionsArray
@@ -167,11 +188,11 @@ export class TreeService {
     return renames
   }
 
-  get verificationResultNotifier() {
+  public get verificationResultNotifier() {
     return this._verificationResultNotifier;
   }
 
-  get verifyNotifier()  {
+  public get verifyNotifier()  {
     return this._verifyNotifier
   }
 
@@ -179,15 +200,15 @@ export class TreeService {
     return this._resetVerifyNotifier
   }
 
-  set title(value: string) {
+  public set title(value: string) {
     this._title = value;
   }
 
-  set rootNode(value: Refinement | undefined) {
+  public set rootNode(value: Refinement | undefined) {
     this._rootNode = value;
   }
 
-  set editorWidth(editorWidth : number) {
+  public set editorWidth(editorWidth : number) {
     this._editorWidth = editorWidth
   }
 }

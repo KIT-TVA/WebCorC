@@ -5,6 +5,10 @@ import { Refinement } from "../refinement";
 import { IStatement, Statement } from "./statement";
 import { SelectionStatementComponent } from "../../components/editor/statements/selection-statement/selection-statement.component";
 
+/**
+ * Data only representation of {@link SelectionStatementComponent}.
+ * Compatible with the api calls.
+ */
 export interface ISelectionStatement extends IStatement {
     preProven : boolean
     guards : IConditionDTO[]
@@ -14,6 +18,7 @@ export interface ISelectionStatement extends IStatement {
 
 /**
  * Data only representation of {@link SelectionStatementComponent}
+ * @see ISelectionStatement
  */
 export class SelectionStatement extends Statement implements ISelectionStatement {
 

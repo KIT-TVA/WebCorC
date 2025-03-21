@@ -1,11 +1,14 @@
 
+/**
+ * Simple Interface for defining a position on the screen
+ */
 export interface IPosition {
     xinPx : number
     yinPx : number
 }
 
 /**
- * Class for persisting the position of the statements in the graphical editor
+ * Class for persisting the position of the statements in the graphical editor.
  */
 export class Position implements IPosition {
 

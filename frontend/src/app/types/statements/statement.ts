@@ -3,6 +3,9 @@ import { IPosition, Position } from "../position";
 import { Refinement } from "../refinement";
 import { ConditionDTO, IConditionDTO } from "../condition/condition";
 
+/**
+ * Data only representation of the statements edited in the editor
+ */
 export interface IStatement {
     name : string
     type : string
@@ -15,7 +18,10 @@ export interface IStatement {
     position : IPosition
 }
 
-
+/**
+ * Data only representation of the statements edited in the editor.
+ * @see IStatement
+ */
 export class Statement implements IStatement {
 
     constructor(

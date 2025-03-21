@@ -1,11 +1,16 @@
-
+/**
+ * Data only representation of renaming object.
+ */
 export interface IRenaming {
     type : string
     function : string
     newName : string
 }
 
-
+/**
+ * Data only representation of renaming object.
+ * @see IRenaming
+ */
 export class Renaming implements IRenaming {
     public type: string
     public function: string

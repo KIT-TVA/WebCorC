@@ -11,5 +11,8 @@ export const routes: Routes = [
   {path: "", component: LandingPageComponent},
   {path: "editor/diagram/:urn", component: EditorComponent},
   {path: "editor/file/:urn", component: FileEditorComponent},
+  /**
+   * Fallback for paths not mapped
+   */
   {path: "**", pathMatch: "full" ,component: NotFoundErrorPageComponent}
 ];

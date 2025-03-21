@@ -14,14 +14,22 @@ import { StrongWeakStatement } from '../../../types/statements/strong-weak-state
 import { IRenaming, Renaming } from '../Renaming';
 import { EMFRename, EMFRenaming, IEMFRenaming } from './emf-renaming';
 
+
+/**
+ * Service for mapping the internal structure for cbc formula and statements to emf json compatible structure.
+ * @see CBCFormula
+ * @see EMFCbcFormula
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class EmfMapperService {
 
-  constructor() { }
-
-
+  /**
+   * Convert EmfCbcFormula to new cbcformula with same content
+   * @param emfCbcFormula The formula to convert
+   * @returns The converted formula
+   */
   public toCBCFormula(emfCbcFormula : EMFCbcFormula) : CBCFormula {
 
     const statement = this.toStatement(emfCbcFormula.statement)
@@ -56,6 +64,11 @@ export class EmfMapperService {
 
   }
 
+  /**
+   * Convert CBCFormula to new Instance of EMFCbcFormula with the same content
+   * @param cbcFormula The CBCFormula to convert
+   * @returns The converted formula
+   */
   public toEMFCbcFormula(cbcFormula : CBCFormula) : EMFCbcFormula {
     return {
       type : cbcFormula.type,

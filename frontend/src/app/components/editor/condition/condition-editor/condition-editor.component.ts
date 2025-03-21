@@ -24,10 +24,25 @@ import { AiChatService } from '../../../../services/ai-chat/ai-chat.service';
     styleUrl: './condition-editor.component.scss'
 })
 export class ConditionEditorComponent implements OnInit {
+
+  /**
+   * Condition to edit
+   */
   @Input() public condition!: Condition;
+
+  /**
+   * Flag to allow editing the condition content
+   */
   @Input() public editable = true;
+
+  /**
+   * Emitter to emit the the condition
+   */
   @Output() public conditionEditingFinished: EventEmitter<void> = new EventEmitter<void>();
 
+  /**
+   * The input to edit the condition content
+   */
   @ViewChild("input", {read: MatInput}) public input!: MatInput;
 
   private _conditionGroup: FormGroup | undefined;
@@ -58,9 +73,9 @@ export class ConditionEditorComponent implements OnInit {
     });
   }
 
-    /**
-   * 
-   * @returns 
+  /**
+   * Function for sending the condition content to the ai chat 
+   * @see AiChatService
    */
     public askAi() : void {
       if (!this.condition.content) return

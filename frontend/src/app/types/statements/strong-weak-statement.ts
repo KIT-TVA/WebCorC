@@ -5,12 +5,17 @@ import { IStatement, Statement } from "./statement";
 import { StrongWeakStatementComponent } from "../../components/editor/statements/strong-weak-statement/strong-weak-statement.component";
 import { ConditionDTO } from "../condition/condition";
 
+/**
+ * Data only representation of {@link StrongWeakStatementComponent}.
+ * Compatible with the api calls.
+ */
 export interface IStrongWeakStatement extends IStatement {
     refinement : Statement | undefined 
 }
 
 /**
  * Data only representation of {@link StrongWeakStatementComponent}
+ * @see IStrongWeakStatement
  */
 export class StrongWeakStatement extends Statement implements IStrongWeakStatement {
 

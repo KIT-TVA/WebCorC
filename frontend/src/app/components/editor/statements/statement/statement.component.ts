@@ -85,7 +85,6 @@ export class StatementComponent implements AfterViewInit {
   }
 
   public deleteRefinement(): void {
-    this.refinement.removeVariableUsages();
     this.treeService.deletionNotifier.next(this.refinement);
   }
 

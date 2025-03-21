@@ -60,6 +60,11 @@ export class AppComponent {
     })
   }
 
+  /**
+   * Triggered on pressing the verify Button in the Top Bar.
+   * Sideeffect: When the helper.key exists and no backend project connected prompt user to create project in the backend.
+   * This is needed for the backend to use the contents of helper.key
+   */
   public verify(): void {
     if (this.projectService.findByPath('helper.key') && this.projectService.shouldCreateProject) {
       this.projectService.requestFinished.pipe(first()).subscribe(() => {
@@ -77,6 +82,11 @@ export class AppComponent {
 
   }
 
+  /**
+   * Triggered on pressing the generate Button in the Top Bar.
+   * Sideeffect: When the helper.key exists and no backend project connected prompt user to create project in the backend.
+   * This is needed for the backend to use the contents of helper.key
+   */
   public generateCode() : void {
     if (this.projectService.findByPath('helper.key') && this.projectService.shouldCreateProject) {
       this.projectService.requestFinished.pipe(first()).subscribe(() => {
@@ -104,7 +114,8 @@ export class AppComponent {
   }
 
   /**  
-   * Write the url of the current project into the clipboard 
+   * Write the url of the current project into the clipboard.
+   * Sideeffect: When no project id defined create project and upload current content to backend.
    */
   public share() {
     let wait = false 

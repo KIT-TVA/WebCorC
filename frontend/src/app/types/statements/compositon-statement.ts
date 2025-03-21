@@ -5,6 +5,10 @@ import { Refinement } from "../refinement";
 import { IStatement, Statement } from "./statement";
 import { CompositionStatementComponent } from "../../components/editor/statements/composition-statement/composition-statement.component";
 
+/**
+ * Data only representation of {@link CompositionStatementComponent}.
+ * Compatible with the api calls.
+ */
 export interface ICompositionStatement extends IStatement {
     intermediateCondition : ConditionDTO
     firstStatement : Statement | undefined
@@ -13,7 +17,7 @@ export interface ICompositionStatement extends IStatement {
 
 /**
  * Data only representation of {@link CompositionStatementComponent}.
- * Compatible with the api calls.
+ * @see ICompositionStatement
  */
 export class CompositionStatement extends Statement implements ICompositionStatement {
 

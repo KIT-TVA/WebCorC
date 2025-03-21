@@ -8,12 +8,22 @@ import { CompositionStatement } from '../../../types/statements/compositon-state
 import { StrongWeakStatement } from '../../../types/statements/strong-weak-statement';
 import { TreeService } from '../tree.service';
 
+/**
+ * Service to distribute the verification result from the http response to the tree service.
+ * @see TreeService
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class VerificationService {
 
   constructor(private treeService : TreeService) { }
+  
+  public next(formula : CBCFormula) {
+    if (formula.statement) {
+      this.traverseStatements(formula.statement)
+    }
+  }
 
   private traverseStatements(statement : Statement) {
 
@@ -67,15 +77,6 @@ export class VerificationService {
 
     if (statement.secondStatement) {
       this.traverseStatements(statement.secondStatement)
-    }
-  }
-
- 
-
-
-  public next(formula : CBCFormula) {
-    if (formula.statement) {
-      this.traverseStatements(formula.statement)
     }
   }
 }
