@@ -2,10 +2,12 @@ import { AfterViewInit, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProjectService } from '../../services/project/project.service';
 import { Router } from '@angular/router';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
     selector: 'app-not-found-error-page',
-    imports: [CommonModule],
+    imports: [CommonModule, MatCardModule, MatIconModule],
     templateUrl: './not-found-error-page.component.html',
     styleUrl: './not-found-error-page.component.scss'
 })
