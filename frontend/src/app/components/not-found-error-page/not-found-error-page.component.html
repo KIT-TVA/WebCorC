@@ -1,1 +1,19 @@
-<p>not-found-error-page works!</p>
+<div class="page">
+    <mat-card appearance="raised" class="card">
+        <mat-card-content class="centerItems">
+            <mat-icon [style.color]="'red'">error</mat-icon>
+        </mat-card-content>
+        <mat-card-header class="centerItems">
+            
+            <mat-card-title>
+                Page not found 
+            </mat-card-title>
+            <mat-card-subtitle>
+                {{ message }}
+            </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content class="centerItems bottomLink">
+            <a href="/"> Back </a>
+        </mat-card-content>
+    </mat-card>
+</div>

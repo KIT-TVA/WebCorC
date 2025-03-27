@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SimpleStatementComponent } from './simple-statement.component';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideHttpClient } from '@angular/common/http';
 
 describe('SimpleStatementComponent', () => {
   let component: SimpleStatementComponent;
@@ -10,7 +11,7 @@ describe('SimpleStatementComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [SimpleStatementComponent],
-      providers: [provideAnimations()]
+      providers: [provideHttpClient(),provideAnimations()]
     })
     .compileComponents();
     

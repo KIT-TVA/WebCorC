@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { RenamingComponent } from './renaming.component';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideHttpClient } from '@angular/common/http';
 
 describe('RenamingComponent', () => {
   let component: RenamingComponent;
@@ -8,7 +10,8 @@ describe('RenamingComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RenamingComponent]
+      imports: [RenamingComponent],
+      providers: [provideHttpClient(),provideAnimations()]
     })
     .compileComponents();
 

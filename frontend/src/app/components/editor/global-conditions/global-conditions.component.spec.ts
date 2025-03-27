@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { GlobalConditionsComponent } from './global-conditions.component';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideHttpClient } from '@angular/common/http';
 
 describe('GlobalConditionsComponent', () => {
   let component: GlobalConditionsComponent;
@@ -10,7 +11,7 @@ describe('GlobalConditionsComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [GlobalConditionsComponent],
-      providers: [provideAnimations()]
+      providers: [provideHttpClient(),provideAnimations()]
     })
     .compileComponents();
     
