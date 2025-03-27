@@ -30,4 +30,6 @@ aws:
     path-style-access-enabled: true
   services.s3.endpoint-override: "${MINIO_URL:`http://localhost:9000`}"
 
+openai.accessToken: '${OPENAI_ACCESS_TOKEN:changeme}'
+
 development: '${DEVELOPMENT:false}'

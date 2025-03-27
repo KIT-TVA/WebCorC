@@ -15,6 +15,9 @@ import edu.kit.cbc.common.CbCFormulaContainer;
 import edu.kit.cbc.common.Problem;
 import edu.kit.cbc.common.corc.VerifyAllStatements;
 import edu.kit.cbc.common.corc.codeGen.CodeGenerator;
+import edu.kit.cbc.editor.llm.OpenAIClient;
+import edu.kit.cbc.editor.llm.LLMQueryDto;
+import edu.kit.cbc.editor.llm.LLMResponse;
 import edu.kit.cbc.projects.files.controller.FilesController;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -28,6 +31,7 @@ import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.http.server.types.files.StreamedFile;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
+import jakarta.validation.Valid;
 
 
 @Controller("/editor")
@@ -36,10 +40,12 @@ public class EditorController {
 
     private final FilesController filesController;
     private final FormulaParser parser;
+    private final OpenAIClient openai;
 
-    EditorController(FilesController filesController, FormulaParser parser) {
+    EditorController(FilesController filesController, FormulaParser parser, OpenAIClient openai) {
         this.filesController = filesController;
         this.parser = parser;
+        this.openai = openai;
     }
 
     @Post(uri = "/export")
@@ -145,5 +151,12 @@ public class EditorController {
     public HttpResponse<String> getJobs(long id) {
         //TODO: Websocket
         return HttpResponse.serverError(String.format("NOT IMPLEMENTED %d", id));
+    }
+
+    @Post(uri = "/askquestion")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public HttpResponse<LLMResponse> askQuestion(@Body @Valid LLMQueryDto query) {
+        return HttpResponse.ok(openai.sendQuery(query));
     }
 }
