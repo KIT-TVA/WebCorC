@@ -51,6 +51,7 @@ export class AiChatNetworkService {
       }))
       .subscribe(response => {
         this._answer.next(response.output[0].content[0].text)
+        this.networkStatusService.stopNetworkRequest()
       })
 
     

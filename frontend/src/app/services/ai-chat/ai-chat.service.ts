@@ -33,7 +33,7 @@ export class AiChatService {
    * @returns success
    */
   public addMessage(content : string, getAnswer : boolean = true) : boolean  {
-    const message = new AiMessage(this._freeId, content, false)
+    const message = new AiMessage(this._freeId, content, !getAnswer)
     this._freeId += 1 
 
     let sumOfTokens = 0
