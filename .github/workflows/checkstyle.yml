@@ -20,9 +20,7 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
-          cache: maven
-          working-directory: ./backend
-      # Step 3: Run Checkstyle (Fail on violations)
+          cache: maven      # Step 3: Run Checkstyle (Fail on violations)
       - name: Run Checkstyle (Fail on violations)
         run: mvn checkstyle:check
         working-directory: ./backend
