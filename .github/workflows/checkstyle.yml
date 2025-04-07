@@ -25,9 +25,9 @@ jobs:
       - name: Run Checkstyle (Fail on violations)
         run: mvn checkstyle:check
         working-directory: ./backend
-        continue-on-error: true
       # Step 4: Generate Checkstyle Report
       - name: Generate Checkstyle Report
+        if: always()
         run: mvn checkstyle:checkstyle
         working-directory: ./backend
       - name: LS
