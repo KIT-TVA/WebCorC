@@ -1,28 +1,11 @@
 package edu.kit.cbc.common.corc.codeGen;
 
-import java.io.BufferedReader;
+import de.tu_bs.cs.isf.cbc.cbcmodel.*;
+import de.tu_bs.cs.isf.cbc.cbcmodel.impl.*;
+
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.regex.Pattern;
-
-import de.tu_bs.cs.isf.cbc.cbcmodel.AbstractStatement;
-import de.tu_bs.cs.isf.cbc.cbcmodel.CbCFormula;
-import de.tu_bs.cs.isf.cbc.cbcmodel.CompositionStatement;
-import de.tu_bs.cs.isf.cbc.cbcmodel.GlobalConditions;
-import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariable;
-import de.tu_bs.cs.isf.cbc.cbcmodel.Rename;
-import de.tu_bs.cs.isf.cbc.cbcmodel.Renaming;
-import de.tu_bs.cs.isf.cbc.cbcmodel.SelectionStatement;
-import de.tu_bs.cs.isf.cbc.cbcmodel.SmallRepetitionStatement;
-import de.tu_bs.cs.isf.cbc.cbcmodel.impl.AbstractStatementImpl;
-import de.tu_bs.cs.isf.cbc.cbcmodel.impl.CompositionStatementImpl;
-import de.tu_bs.cs.isf.cbc.cbcmodel.impl.MethodStatementImpl;
-import de.tu_bs.cs.isf.cbc.cbcmodel.impl.OriginalStatementImpl;
-import de.tu_bs.cs.isf.cbc.cbcmodel.impl.ReturnStatementImpl;
-import de.tu_bs.cs.isf.cbc.cbcmodel.impl.SelectionStatementImpl;
-import de.tu_bs.cs.isf.cbc.cbcmodel.impl.SkipStatementImpl;
-import de.tu_bs.cs.isf.cbc.cbcmodel.impl.SmallRepetitionStatementImpl;
-import de.tu_bs.cs.isf.cbc.cbcmodel.impl.StrengthWeakStatementImpl;
 
 
 public class ConstructCodeBlock {
@@ -43,8 +26,8 @@ public class ConstructCodeBlock {
     }
 
     public static String constructCodeBlockForExport(CbCFormula formula, GlobalConditions globalConditions,
-            Renaming renaming, LinkedList<String> vars, JavaVariable returnVar, String signatureString,
-            String[] config) {
+                                                     Renaming renaming, LinkedList<String> vars, JavaVariable returnVar, String signatureString,
+                                                     String[] config) {
         handleInnerLoops = true;
 
         String modifiableVariables = Parser.getModifieableVarsFromConditionExceptLocals(
@@ -80,9 +63,9 @@ public class ConstructCodeBlock {
                 + pre.replaceAll(System.getProperty("line.separator"), "").replaceAll("\n", "").replaceAll("\t", "")
                 + "\n\t"// + ";\n" //+ "@ ensures "
                 + post.replaceAll(System.getProperty("line.separator"), "").replaceAll("\n", "").replaceAll("\t",
-                        "")/*
-                             * + ";\n"
-                             */
+                "")/*
+         * + ";\n"
+         */
                 + "\n\t@ assignable " + modifiableVariables + ";\n" + "\t@*/\n\t"
                 + /* "public /*@helper@* / "+ */ signatureString + " {\n");
 

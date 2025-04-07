@@ -1,4 +1,5 @@
 /**
+ *
  */
 package de.tu_bs.cs.isf.cbc.cbcclass;
 
@@ -22,49 +23,49 @@ import org.eclipse.emf.ecore.EObject;
  * @generated
  */
 public interface Parameter extends EObject {
-	/**
-	 * Returns the value of the '<em><b>Type</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Type</em>' attribute.
-	 * @see #setType(String)
-	 * @see de.tu_bs.cs.isf.cbc.cbcclass.CbcclassPackage#getParameter_Type()
-	 * @model
-	 * @generated
-	 */
-	String getType();
+    /**
+     * Returns the value of the '<em><b>Type</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Type</em>' attribute.
+     * @see #setType(String)
+     * @see de.tu_bs.cs.isf.cbc.cbcclass.CbcclassPackage#getParameter_Type()
+     * @model
+     * @generated
+     */
+    String getType();
 
-	/**
-	 * Sets the value of the '{@link de.tu_bs.cs.isf.cbc.cbcclass.Parameter#getType <em>Type</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Type</em>' attribute.
-	 * @see #getType()
-	 * @generated
-	 */
-	void setType(String value);
+    /**
+     * Sets the value of the '{@link de.tu_bs.cs.isf.cbc.cbcclass.Parameter#getType <em>Type</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @param value the new value of the '<em>Type</em>' attribute.
+     * @see #getType()
+     * @generated
+     */
+    void setType(String value);
 
-	/**
-	 * Returns the value of the '<em><b>Name</b></em>' attribute.
-	 * The default value is <code>""</code>.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Name</em>' attribute.
-	 * @see #setName(String)
-	 * @see de.tu_bs.cs.isf.cbc.cbcclass.CbcclassPackage#getParameter_Name()
-	 * @model default=""
-	 * @generated
-	 */
-	String getName();
+    /**
+     * Returns the value of the '<em><b>Name</b></em>' attribute.
+     * The default value is <code>""</code>.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Name</em>' attribute.
+     * @see #setName(String)
+     * @see de.tu_bs.cs.isf.cbc.cbcclass.CbcclassPackage#getParameter_Name()
+     * @model default=""
+     * @generated
+     */
+    String getName();
 
-	/**
-	 * Sets the value of the '{@link de.tu_bs.cs.isf.cbc.cbcclass.Parameter#getName <em>Name</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Name</em>' attribute.
-	 * @see #getName()
-	 * @generated
-	 */
-	void setName(String value);
+    /**
+     * Sets the value of the '{@link de.tu_bs.cs.isf.cbc.cbcclass.Parameter#getName <em>Name</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @param value the new value of the '<em>Name</em>' attribute.
+     * @see #getName()
+     * @generated
+     */
+    void setName(String value);
 
 } // Parameter

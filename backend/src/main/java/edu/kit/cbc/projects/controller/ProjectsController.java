@@ -1,24 +1,14 @@
 package edu.kit.cbc.projects.controller;
 
 import edu.kit.cbc.projects.CreateProjectDto;
-import edu.kit.cbc.projects.ReadProjectDto;
 import edu.kit.cbc.projects.ProjectService;
-
+import edu.kit.cbc.projects.ReadProjectDto;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Delete;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Post;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Consumes;
-import io.micronaut.http.annotation.Produces;
-import io.micronaut.http.annotation.Put;
-import io.micronaut.http.annotation.QueryValue;
+import io.micronaut.http.annotation.*;
 import io.micronaut.objectstorage.aws.AwsS3Operations;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
-
 import jakarta.validation.Valid;
 
 @Controller("/projects")
@@ -38,7 +28,7 @@ public class ProjectsController {
     @Consumes(MediaType.APPLICATION_JSON)
     public HttpResponse<ReadProjectDto> createProject(@Body @Valid CreateProjectDto project) {
         return HttpResponse.ok(
-            projectService.create(project)
+                projectService.create(project)
         );
     }
 

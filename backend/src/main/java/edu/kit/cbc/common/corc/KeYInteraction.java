@@ -1,15 +1,5 @@
 package edu.kit.cbc.common.corc;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.key_project.util.collection.ImmutableSet;
-
 import de.uka.ilkd.key.control.KeYEnvironment;
 import de.uka.ilkd.key.java.abstraction.KeYJavaType;
 import de.uka.ilkd.key.logic.op.IObserverFunction;
@@ -22,16 +12,21 @@ import de.uka.ilkd.key.speclang.Contract;
 import de.uka.ilkd.key.strategy.StrategyProperties;
 import de.uka.ilkd.key.util.KeYTypeUtil;
 import de.uka.ilkd.key.util.MiscTools;
+import org.key_project.util.collection.ImmutableSet;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 public class KeYInteraction {
     public Proof startKeyProof(File location, boolean inlining) {
         Proof proof = null;
         List<File> classPaths = null; // Optionally: Additional specifications
-                                        // for API classes
+        // for API classes
         File bootClassPath = null; // Optionally: Different default
-                                    // specifications for Java API
+        // specifications for Java API
         List<File> includes = null; // Optionally: Additional includes to
-                                    // consider
+        // consider
         try {
             // Ensure that Taclets are parsed
             if (!ProofSettings.isChoiceSettingInitialised()) {
@@ -50,7 +45,7 @@ public class KeYInteraction {
             proof = env.getLoadedProof();
             // Set proof strategy options
             StrategyProperties sp = proof.getSettings().getStrategySettings().getActiveStrategyProperties();
-            if(inlining)
+            if (inlining)
                 sp.setProperty(StrategyProperties.METHOD_OPTIONS_KEY, StrategyProperties.METHOD_EXPAND);
             else
                 sp.setProperty(StrategyProperties.METHOD_OPTIONS_KEY, StrategyProperties.METHOD_CONTRACT);//METHOD_EXPAND
@@ -90,11 +85,11 @@ public class KeYInteraction {
         Proof proof = null;
         File keyFile = null;
         List<File> classPaths = null; // Optionally: Additional specifications
-                                        // for API classes
+        // for API classes
         File bootClassPath = null; // Optionally: Different default
-                                    // specifications for Java API
+        // specifications for Java API
         List<File> includes = null; // Optionally: Additional includes to
-                                    // consider
+        // consider
         try {
             // Ensure that Taclets are parsed
             if (!ProofSettings.isChoiceSettingInitialised()) {
@@ -167,12 +162,12 @@ public class KeYInteraction {
                 } finally {
                     if (proof != null) {
                         //proof.dispose(); // Ensure always that all instances
-                                            // of Proof are disposed
+                        // of Proof are disposed
                     }
                 }
             } finally {
                 env.dispose(); // Ensure always that all instances of
-                                // KeYEnvironment are disposed
+                // KeYEnvironment are disposed
             }
         } catch (ProblemLoaderException e) {
             System.out.println("Exception at '" + e.getCause() + "'");

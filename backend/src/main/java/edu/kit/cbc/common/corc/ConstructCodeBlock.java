@@ -1,28 +1,14 @@
 package edu.kit.cbc.common.corc;
 
+import de.tu_bs.cs.isf.cbc.cbcclass.Method;
+import de.tu_bs.cs.isf.cbc.cbcmodel.*;
+import de.tu_bs.cs.isf.cbc.cbcmodel.impl.*;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedList;
-
-import de.tu_bs.cs.isf.cbc.cbcclass.Method;
-import de.tu_bs.cs.isf.cbc.cbcmodel.AbstractStatement;
-import de.tu_bs.cs.isf.cbc.cbcmodel.CbCFormula;
-import de.tu_bs.cs.isf.cbc.cbcmodel.CompositionStatement;
-import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariable;
-import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariables;
-import de.tu_bs.cs.isf.cbc.cbcmodel.Rename;
-import de.tu_bs.cs.isf.cbc.cbcmodel.Renaming;
-import de.tu_bs.cs.isf.cbc.cbcmodel.SelectionStatement;
-import de.tu_bs.cs.isf.cbc.cbcmodel.SmallRepetitionStatement;
-import de.tu_bs.cs.isf.cbc.cbcmodel.impl.AbstractStatementImpl;
-import de.tu_bs.cs.isf.cbc.cbcmodel.impl.CompositionStatementImpl;
-import de.tu_bs.cs.isf.cbc.cbcmodel.impl.ReturnStatementImpl;
-import de.tu_bs.cs.isf.cbc.cbcmodel.impl.SelectionStatementImpl;
-import de.tu_bs.cs.isf.cbc.cbcmodel.impl.SkipStatementImpl;
-import de.tu_bs.cs.isf.cbc.cbcmodel.impl.SmallRepetitionStatementImpl;
-import de.tu_bs.cs.isf.cbc.cbcmodel.impl.StrengthWeakStatementImpl;
 
 
 public class ConstructCodeBlock {
@@ -53,7 +39,7 @@ public class ConstructCodeBlock {
 
     public static StringBuffer getJmlAnnotations(StringBuffer buffer, BufferedReader br) throws IOException {
         buffer.setLength(0);
-        while(line != null && line.contains("@")) {//get jml annotations
+        while (line != null && line.contains("@")) {//get jml annotations
             buffer.append(line);
             buffer.append("\n");
             line = br.readLine();
@@ -74,35 +60,35 @@ public class ConstructCodeBlock {
 
         //StringBuffer globalVariables = new StringBuffer();
 
-       // while(line != null && !line.contains("@")) {//if file exists
+        // while(line != null && !line.contains("@")) {//if file exists
         //  if(!line.contains(signature.getMethodSignature()) && !line.isEmpty()) {
-                //Iterator<String> itr = newGlobalVariables.iterator();
-                //globalVariables.append(line);
-                //globalVariables.append("\n");
-                //while(itr.hasNext()) {
-                    //String s = itr.next();
-                    //if(s.length() > 2) {
-                        //if(s.substring(0, line.indexOf(';')).equals(line.substring(0, line.indexOf(';')))) {
+        //Iterator<String> itr = newGlobalVariables.iterator();
+        //globalVariables.append(line);
+        //globalVariables.append("\n");
+        //while(itr.hasNext()) {
+        //String s = itr.next();
+        //if(s.length() > 2) {
+        //if(s.substring(0, line.indexOf(';')).equals(line.substring(0, line.indexOf(';')))) {
 
-                        //  Console.println("**************************************************************************");
-                        //  Console.println("The variable " + s.substring(15, line.indexOf(';')) + " exists already.");
-                        //  Console.println("Implemented from the " + line.substring(line.indexOf(';') + 4, line.indexOf('(')) + " diagram.");
-                        //  Console.println("**************************************************************************");
+        //  Console.println("**************************************************************************");
+        //  Console.println("The variable " + s.substring(15, line.indexOf(';')) + " exists already.");
+        //  Console.println("Implemented from the " + line.substring(line.indexOf(';') + 4, line.indexOf('(')) + " diagram.");
+        //  Console.println("**************************************************************************");
 
-                        //  newGlobalVariables.remove(s);
-                        //  break;
-                        //}
-                    //}
-            //  }
-     //     }
-     //     line = br.readLine();
-    //    }
+        //  newGlobalVariables.remove(s);
+        //  break;
+        //}
+        //}
+        //  }
+        //     }
+        //     line = br.readLine();
+        //    }
 
-    //  if(!newGlobalVariables.isEmpty()) {
-    //      newGlobalVariables.forEach(e -> {globalVariables.append(e + "\n");});
-    //  }
+        //  if(!newGlobalVariables.isEmpty()) {
+        //      newGlobalVariables.forEach(e -> {globalVariables.append(e + "\n");});
+        //  }
 
-    //  return globalVariables.toString();
+        //  return globalVariables.toString();
     }
 
     public static StringBuffer editCodeBlockForExport(
@@ -121,52 +107,52 @@ public class ConstructCodeBlock {
         br.readLine();
         line = br.readLine();
 
- //       String globalVariables = constructGlobalVariables(vars, signature);
- //       constructGlobalVariables();
-        while(line != null && !line.contains("@")) {
+        //       String globalVariables = constructGlobalVariables(vars, signature);
+        //       constructGlobalVariables();
+        while (line != null && !line.contains("@")) {
             line = br.readLine();
         }
 
-        if(vars.length() > 2) {
+        if (vars.length() > 2) {
             newCode.append(vars);
             newCode.append("\n");
         }
 
-        while(line != null) {
+        while (line != null) {
             jmlCode = getJmlAnnotations(jmlCode, br);
             String s = methodToExport.getSignature(); //.replace("static ", "");
 //          s = s.trim().substring(s.indexOf(' ') + 1);
-            if(line.contains(s)) {//delete old implementation
+            if (line.contains(s)) {//delete old implementation
                 line = br.readLine();
                 int counter = 1;
-                while(line != null) {
-                    if(line.contains("{")) {
+                while (line != null) {
+                    if (line.contains("{")) {
                         ++counter;
                     }
-                    if(line.contains("}")) {
+                    if (line.contains("}")) {
                         --counter;
                     }
-                    if(counter == 0) {
+                    if (counter == 0) {
                         br.readLine();
                         line = br.readLine();
                         break;
                     }
                     line = br.readLine();
                 }
-            } else if(!line.equals("}")){//copy implemented methods
+            } else if (!line.equals("}")) {//copy implemented methods
                 newCode.append(jmlCode);
                 copyMethod.append(line);
                 copyMethod.append("\n");
                 line = br.readLine();
                 int counter = 1;
-                while(line != null) {
-                    if(line.contains("{")) {
+                while (line != null) {
+                    if (line.contains("{")) {
                         ++counter;
                     }
-                    if(line.contains("}")) {
+                    if (line.contains("}")) {
                         --counter;
                     }
-                    if(counter == 0) {
+                    if (counter == 0) {
                         copyMethod.append("\t}\n\n");
                         newCode.append(copyMethod);
                         copyMethod.setLength(0);
@@ -200,7 +186,7 @@ public class ConstructCodeBlock {
         withInvariants = true;
 
         String modifiableVariables = Parser
-                .getModifieableVarsFromCondition2(formula.getStatement().getPostCondition().getName(),vars);
+                .getModifieableVarsFromCondition2(formula.getStatement().getPostCondition().getName(), vars);
         String postCondition = Parser.getConditionFromCondition(formula.getStatement().getPostCondition().getName());
 
         String pre = createConditionJMLString(formula.getStatement().getPreCondition().getName(), renaming,
@@ -210,7 +196,7 @@ public class ConstructCodeBlock {
         String post = createConditionJMLString(postCondition, renaming, Parser.KEYWORD_JML_POST);
         post = useRenamingCondition(post);
 
-        if(returnVar != null) {
+        if (returnVar != null) {
             String returnValueName = returnVar.getName().split(" ")[1];
             post = post.replaceAll("(?<=\\W)" + returnValueName + "(?=\\W)", "\\\\result");
             returnVariable = returnVar;
@@ -221,13 +207,13 @@ public class ConstructCodeBlock {
         code.append("\t/*@\n" + "\t@ normal_behavior\n" //+ "@ requires "
                 + pre.replaceAll(System.getProperty("line.separator"), "")// + ";\n" //+ "@ ensures "
                 + post.replaceAll(System.getProperty("line.separator"), "")/* + ";\n"*/ + "\t@ assignable "
-                + modifiableVariables + ";\n" + "\t@*/\n" + "\tpublic "+ methodToExport.getSignature()
+                + modifiableVariables + ";\n" + "\t@*/\n" + "\tpublic " + methodToExport.getSignature()
                 + " {\n");
 
         positionIndex = 2;//2
         code = insertTabs(code);
 
-        for(String var : vars) {//declare variables
+        for (String var : vars) {//declare variables
             code.append(var + ";\n");
             code = insertTabs(code);
         }
@@ -268,23 +254,23 @@ public class ConstructCodeBlock {
         String parameters = "";
         for (JavaVariable var : vars.getVariables()) {
             switch (var.getKind()) {
-            case PARAM:
-                if (parameters.equals("")) {
-                    parameters += var.getName();
-                } else {
-                    parameters += ", " + var.getName();
-                }
-                break;
-            case RETURN:
-                String[] splitNameAndType = var.getName().split(" ");
-                // get type of variable not whole name
-                returnValueType = splitNameAndType[0];
-                // get only the name
-                String returnValueName = splitNameAndType[1];
-                post = post.replaceAll("(?<=\\W)" + returnValueName + "(?=\\W)", "\\\\result");
-                break;
-            default:
-                break;
+                case PARAM:
+                    if (parameters.equals("")) {
+                        parameters += var.getName();
+                    } else {
+                        parameters += ", " + var.getName();
+                    }
+                    break;
+                case RETURN:
+                    String[] splitNameAndType = var.getName().split(" ");
+                    // get type of variable not whole name
+                    returnValueType = splitNameAndType[0];
+                    // get only the name
+                    String returnValueName = splitNameAndType[1];
+                    post = post.replaceAll("(?<=\\W)" + returnValueName + "(?=\\W)", "\\\\result");
+                    break;
+                default:
+                    break;
             }
         }
         StringBuffer code = new StringBuffer();
@@ -335,12 +321,12 @@ public class ConstructCodeBlock {
         String modifiableVariables = Parser
                 .getModifieableVarsFromCondition(formula.getStatement().getPostCondition().getName());
         if (vars != null) {
-            for (JavaVariable actVar: vars.getVariables()) {
+            for (JavaVariable actVar : vars.getVariables()) {
                 if (actVar.getKind().getName() != "PARAM") {
                     String splitName[] = actVar.getName().split(" ");
-                    modifiableVariables = modifiableVariables.replaceAll("," + splitName[splitName.length-1],"");
-                    modifiableVariables = modifiableVariables.replaceAll(splitName[splitName.length-1] + ";",";");
-                    modifiableVariables = modifiableVariables.replaceAll(splitName[splitName.length-1] + ",","");
+                    modifiableVariables = modifiableVariables.replaceAll("," + splitName[splitName.length - 1], "");
+                    modifiableVariables = modifiableVariables.replaceAll(splitName[splitName.length - 1] + ";", ";");
+                    modifiableVariables = modifiableVariables.replaceAll(splitName[splitName.length - 1] + ",", "");
                 }
             }
         }
@@ -355,36 +341,36 @@ public class ConstructCodeBlock {
         String parameters = "";
         for (JavaVariable var : vars.getVariables()) {
             switch (var.getKind()) {
-            case PARAM:
-                if (parameters.equals("")) {
-                    parameters += var.getName();
-                } else {
-                    parameters += ", " + var.getName();
-                }
-                break;
-            case RETURN:
-                String[] splitNameAndType = var.getName().split(" ");
-                // get type of variable not whole name
-                returnValueType = splitNameAndType[0];
-                // get only the name
-                String returnValueName = splitNameAndType[1];
-                post = post.replaceAll("(?<=\\W)" + returnValueName + "(?=\\W)", "\\\\result");
-                break;
-            case RETURNPARAM:
-                String[] splitNameAndType2 = var.getName().split(" ");
-                // get type of variable not whole name
-                returnValueType = splitNameAndType2[0];
-                // get only the name
-                String returnValueName2 = splitNameAndType2[1];
-                post = post.replaceAll("(?<=\\W)" + returnValueName2 + "(?=\\W)", "\\\\result");
-                if (parameters.equals("")) {
-                    parameters += var.getName();
-                } else {
-                    parameters += ", " + var.getName();
-                }
-                break;
-            default:
-                break;
+                case PARAM:
+                    if (parameters.equals("")) {
+                        parameters += var.getName();
+                    } else {
+                        parameters += ", " + var.getName();
+                    }
+                    break;
+                case RETURN:
+                    String[] splitNameAndType = var.getName().split(" ");
+                    // get type of variable not whole name
+                    returnValueType = splitNameAndType[0];
+                    // get only the name
+                    String returnValueName = splitNameAndType[1];
+                    post = post.replaceAll("(?<=\\W)" + returnValueName + "(?=\\W)", "\\\\result");
+                    break;
+                case RETURNPARAM:
+                    String[] splitNameAndType2 = var.getName().split(" ");
+                    // get type of variable not whole name
+                    returnValueType = splitNameAndType2[0];
+                    // get only the name
+                    String returnValueName2 = splitNameAndType2[1];
+                    post = post.replaceAll("(?<=\\W)" + returnValueName2 + "(?=\\W)", "\\\\result");
+                    if (parameters.equals("")) {
+                        parameters += var.getName();
+                    } else {
+                        parameters += ", " + var.getName();
+                    }
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -403,7 +389,6 @@ public class ConstructCodeBlock {
 
         return code.toString();
     }
-
 
 
     private static String constructCodeBlockOfChildStatement(AbstractStatement refinement) {
@@ -437,12 +422,12 @@ public class ConstructCodeBlock {
         } else if (refinement.getClass().equals(SkipStatementImpl.class)) {
             return ";\n";
         } else if (refinement.getClass().equals(ReturnStatementImpl.class)) {
-            if(returnVariable != null) {//In case of void method with "return;", returnVariable will be null
+            if (returnVariable != null) {//In case of void method with "return;", returnVariable will be null
                 String returnString = returnStatement(returnVariable.getName().split(" ")[1], refinement.getName().trim());
-                if(returnString.isEmpty()) {
+                if (returnString.isEmpty()) {
                     return "return " + refinement.getName() + "\n";
                 }
-                for(int i = 0; i < positionIndex; i++) {
+                for (int i = 0; i < positionIndex; i++) {
                     returnString = returnString + "\t";
                 }
                 returnString = returnString + "return " + returnVariable.getName().split(" ")[1] + ";\n";
@@ -467,16 +452,16 @@ public class ConstructCodeBlock {
 
     private static String returnStatement(String variableName, String refinementName) {
         String s = "";
-        if(!refinementName.trim().split(";")[0].equals(variableName)
+        if (!refinementName.trim().split(";")[0].equals(variableName)
                 && !refinementName.trim().split(";")[0].equals("this." + variableName)) {
-            if(refinementName.contains("=")
+            if (refinementName.contains("=")
                     && refinementName.charAt(refinementName.indexOf('=') + 1) != '='
                     && refinementName.charAt(refinementName.indexOf('=') - 1) != '>'
                     && refinementName.charAt(refinementName.indexOf('=') - 1) != '<') {
                 //s = variableName + refinementName.replace(refinementName.subSequence(0, refinementName.indexOf('=')), "") + "\n";
                 s = refinementName + "\n";
-                if(!refinementName.trim().substring(0, refinementName.indexOf('=') - 1).equals(variableName)) {
-                    for(int i = 0; i < positionIndex; i++) {
+                if (!refinementName.trim().substring(0, refinementName.indexOf('=') - 1).equals(variableName)) {
+                    for (int i = 0; i < positionIndex; i++) {
                         s = s + "\t";
                     }
                     s = s + variableName + " = " + refinementName.trim().split("=")[0] + ";\n";
@@ -496,9 +481,9 @@ public class ConstructCodeBlock {
 
             guard = rewriteGuardToJavaCode(guard);
 
-            if(guard.trim().equals("TRUE"))
+            if (guard.trim().equals("TRUE"))
                 guard = "true";
-            if(guard.trim().equals("FALSE"))
+            if (guard.trim().equals("FALSE"))
                 guard = "false";
 
             buffer.append("if (" + guard + ") {\n");
@@ -532,9 +517,9 @@ public class ConstructCodeBlock {
             // guard = guard.replaceAll("\\s=\\s", "==");
             guard = rewriteGuardToJavaCode(guard);
 
-            if(guard.trim().equals("TRUE"))
+            if (guard.trim().equals("TRUE"))
                 guard = "true";
-            if(guard.trim().equals("FALSE"))
+            if (guard.trim().equals("FALSE"))
                 guard = "false";
 
             buffer.append(" else if (" + guard + ") {\n");
@@ -636,9 +621,9 @@ public class ConstructCodeBlock {
                 buffer.append("\t");
             }
 
-            if(guard.trim().equals("TRUE"))
+            if (guard.trim().equals("TRUE"))
                 guard = "true";
-            if(guard.trim().equals("FALSE"))
+            if (guard.trim().equals("FALSE"))
                 guard = "false";
 
             buffer.append("while (" + guard + ") {\n");

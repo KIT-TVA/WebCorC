@@ -1,15 +1,14 @@
 package edu.kit.cbc.projects;
 
 import edu.kit.cbc.projects.files.dto.DirectoryDto;
-
-import java.util.Set;
-import java.time.ZonedDateTime;
-import java.net.URI;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
-
 import jakarta.inject.Singleton;
 import jakarta.validation.constraints.NotBlank;
+
+import java.net.URI;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Set;
 
 @Singleton
 class DefaultProjectService implements ProjectService {
@@ -21,17 +20,17 @@ class DefaultProjectService implements ProjectService {
 
     public ReadProjectDto create(CreateProjectDto project) {
         return projectRepository.save(
-            new ReadProjectDto(
-                null,
-                project.name(),
-                ZonedDateTime
-                    .now(ZoneOffset.UTC)
-                    .format(DateTimeFormatter.ISO_INSTANT),
-                new DirectoryDto(
-                    "",
-                    Set.of()
+                new ReadProjectDto(
+                        null,
+                        project.name(),
+                        ZonedDateTime
+                                .now(ZoneOffset.UTC)
+                                .format(DateTimeFormatter.ISO_INSTANT),
+                        new DirectoryDto(
+                                "",
+                                Set.of()
+                        )
                 )
-            )
         );
     }
 
@@ -42,12 +41,12 @@ class DefaultProjectService implements ProjectService {
     public ReadProjectDto updateById(@NotBlank String id, CreateProjectDto project) {
         ReadProjectDto tmp = findById(id);
         return projectRepository.update(
-            new ReadProjectDto(
-                tmp.id(),
-                project.name(),
-                tmp.dateCreated(),
-                tmp.files()
-            )
+                new ReadProjectDto(
+                        tmp.id(),
+                        project.name(),
+                        tmp.dateCreated(),
+                        tmp.files()
+                )
         );
     }
 

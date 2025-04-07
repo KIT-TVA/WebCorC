@@ -1,8 +1,5 @@
 package edu.kit.cbc;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import io.micronaut.context.DefaultApplicationContext;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.context.event.ApplicationEventListener;
@@ -11,6 +8,9 @@ import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.Async;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import jakarta.inject.Singleton;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @ExecuteOn(TaskExecutors.SCHEDULED)
 @Singleton
@@ -30,7 +30,7 @@ public class QuitIfDefaultCredentials implements ApplicationEventListener<Startu
     @Async
     public void onApplicationEvent(StartupEvent event) {
         if (development == true ||
-            !key.equals(DEFAULT_PASSWORD)) {
+                !key.equals(DEFAULT_PASSWORD)) {
             return;
         }
         LOGGER.log(Level.SEVERE, "DEFAULT CREDENTIALS DETECTED IN PRODUCTION. STOPPING SERVER");

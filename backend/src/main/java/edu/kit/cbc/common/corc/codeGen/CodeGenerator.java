@@ -1,15 +1,10 @@
 package edu.kit.cbc.common.corc.codeGen;
 
-import java.util.LinkedList;
-
 import de.tu_bs.cs.isf.cbc.cbcclass.Field;
-import de.tu_bs.cs.isf.cbc.cbcmodel.CbCFormula;
-import de.tu_bs.cs.isf.cbc.cbcmodel.GlobalConditions;
-import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariable;
-import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariables;
-import de.tu_bs.cs.isf.cbc.cbcmodel.Renaming;
-import de.tu_bs.cs.isf.cbc.cbcmodel.VariableKind;
+import de.tu_bs.cs.isf.cbc.cbcmodel.*;
 import edu.kit.cbc.common.CbCFormulaContainer;
+
+import java.util.LinkedList;
 
 public class CodeGenerator {
     public static final CodeGenerator instance = new CodeGenerator();
@@ -29,22 +24,22 @@ public class CodeGenerator {
         JavaVariable returnVariable = null;
         int counter = 0;
         LinkedList<String> localVariables = new LinkedList<String>();
-        for(int i = 0; i < vars.getVariables().size(); i++) {
+        for (int i = 0; i < vars.getVariables().size(); i++) {
             JavaVariable currentVariable = vars.getVariables().get(i);
-        if(currentVariable.getKind() == VariableKind.RETURN) {
-            counter++;
-            if(!signatureString.substring(0, signatureString.indexOf('(')).contains(currentVariable.getName().replace("non-null", "").trim().split(" ")[0])) {
-                //throw new CodeGeneratorException("Method return type and variable type does not match.");
+            if (currentVariable.getKind() == VariableKind.RETURN) {
+                counter++;
+                if (!signatureString.substring(0, signatureString.indexOf('(')).contains(currentVariable.getName().replace("non-null", "").trim().split(" ")[0])) {
+                    //throw new CodeGeneratorException("Method return type and variable type does not match.");
+                }
+                if (counter > 1) {
+                    //throw new CodeGeneratorException("Too much variables of kind RETURN.");
+                }
+                returnVariable = currentVariable;
+            } else if (currentVariable.getKind() == VariableKind.LOCAL) {
+                localVariables.add(currentVariable.getName().replace("non-null", ""));
             }
-            if(counter > 1) {
-                //throw new CodeGeneratorException("Too much variables of kind RETURN.");
-            }
-            returnVariable = currentVariable;
-        }else if(currentVariable.getKind() == VariableKind.LOCAL) {
-            localVariables.add(currentVariable.getName().replace("non-null", ""));
         }
-        }
-        String globalVariables ="";
+        String globalVariables = "";
         for (Field field : vars.getFields()) {
             globalVariables += ("\t" + field.getVisibility().getName().toLowerCase() + " /*@spec_public@*/ " + field.getType() + " " + field.getName().replace("non-null ", "") + ";\n");
         }

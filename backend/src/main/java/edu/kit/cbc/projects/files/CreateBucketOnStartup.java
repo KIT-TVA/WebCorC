@@ -1,7 +1,5 @@
 package edu.kit.cbc.projects.files;
 
-import java.util.logging.Logger;
-
 import io.micronaut.context.event.ApplicationEventListener;
 import io.micronaut.context.event.StartupEvent;
 import io.micronaut.scheduling.TaskExecutors;
@@ -13,6 +11,8 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.BucketAlreadyExistsException;
 import software.amazon.awssdk.services.s3.model.BucketAlreadyOwnedByYouException;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
+
+import java.util.logging.Logger;
 
 @ExecuteOn(TaskExecutors.SCHEDULED)
 @Singleton
@@ -36,19 +36,19 @@ public class CreateBucketOnStartup implements ApplicationEventListener<StartupEv
 
         try {
             client.createBucket(
-                CreateBucketRequest.builder()
-                    .bucket(bucketName)
-                    .build()
-                );
+                    CreateBucketRequest.builder()
+                            .bucket(bucketName)
+                            .build()
+            );
             LOGGER.info(String.format(BUCKET_CREATED, bucketName));
         } catch (BucketAlreadyExistsException | BucketAlreadyOwnedByYouException e) {
         } catch (SdkClientException e) {
             LOGGER.warning(
-                String.format(
-                    BUCKET_CREATION_ERROR,
-                    bucketName,
-                    e.getMessage()
-                )
+                    String.format(
+                            BUCKET_CREATION_ERROR,
+                            bucketName,
+                            e.getMessage()
+                    )
             );
         }
     }

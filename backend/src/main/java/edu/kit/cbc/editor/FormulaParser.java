@@ -1,7 +1,13 @@
 package edu.kit.cbc.editor;
 
-import java.io.IOException;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import de.tu_bs.cs.isf.cbc.cbcmodel.*;
+import edu.kit.cbc.common.CbCFormulaContainer;
+import jakarta.inject.Singleton;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -16,19 +22,7 @@ import org.eclipse.emfcloud.jackson.module.EMFModule.Feature;
 import org.eclipse.emfcloud.jackson.utils.ValueReader;
 import org.eclipse.emfcloud.jackson.utils.ValueWriter;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import de.tu_bs.cs.isf.cbc.cbcmodel.CbCFormula;
-import de.tu_bs.cs.isf.cbc.cbcmodel.CbcmodelPackage;
-import de.tu_bs.cs.isf.cbc.cbcmodel.GlobalConditions;
-import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariables;
-import de.tu_bs.cs.isf.cbc.cbcmodel.Renaming;
-import edu.kit.cbc.common.CbCFormulaContainer;
-import jakarta.inject.Singleton;
+import java.io.IOException;
 
 @Singleton
 public class FormulaParser {
@@ -61,21 +55,21 @@ public class FormulaParser {
         //and use only the class name instead of full uri of the class.
         //taken from https://github.com/eclipse-emfcloud/emfjson-jackson/wiki/Customization#type-field
         module.setTypeInfo(
-            new EcoreTypeInfo(
-                "type",
-                new ValueReader<String, EClass>() {
-                    @Override
-                    public EClass readValue(String value, DeserializationContext context) {
-                        return (EClass) cbcmodelPackage.getEClassifier(value);
-                    }
-                },
-                new ValueWriter<EClass, String>() {
-                    @Override
-                    public String writeValue(EClass value, SerializerProvider context) {
-                        return value.getName();
-                    }
-                }
-            )
+                new EcoreTypeInfo(
+                        "type",
+                        new ValueReader<String, EClass>() {
+                            @Override
+                            public EClass readValue(String value, DeserializationContext context) {
+                                return (EClass) cbcmodelPackage.getEClassifier(value);
+                            }
+                        },
+                        new ValueWriter<EClass, String>() {
+                            @Override
+                            public String writeValue(EClass value, SerializerProvider context) {
+                                return value.getName();
+                            }
+                        }
+                )
         );
         mapper.registerModule(module);
     }
@@ -133,8 +127,8 @@ public class FormulaParser {
     private <T> T fromJsonFieldStringOptional(String jsonString, String fieldName, Class<T> type) {
         try {
             String javaVariablesString = mapper.readTree(jsonString)
-                .get(fieldName)
-                .toString();
+                    .get(fieldName)
+                    .toString();
 
             return fromJsonString(javaVariablesString, type);
         } catch (JsonProcessingException | NullPointerException e) {

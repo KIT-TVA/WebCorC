@@ -1,0 +1,35 @@
+name: Checkstyle CI
+on:
+  push:
+    branches:
+      - *
+  pull_request:
+    branches:
+      - main
+jobs:
+  checkstyle:
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      # Step 2: Set up Java
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+      # Step 3: Run Checkstyle (Fail on violations)
+      - name: Run Checkstyle (Fail on violations)
+        run: mvn checkstyle:check
+      # Step 4: Generate Checkstyle Report
+      - name: Generate Checkstyle Report
+        run: mvn checkstyle:checkstyle
+      # Step 5: Upload Checkstyle Report
+      - name: Upload Checkstyle Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: checkstyle-report
+          path: target/checkstyle/*
+          retention-days: 15

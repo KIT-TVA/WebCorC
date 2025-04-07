@@ -1,17 +1,9 @@
 package edu.kit.cbc.common.corc;
 
+import de.tu_bs.cs.isf.cbc.cbcmodel.*;
 import org.eclipse.emf.common.util.EList;
-import java.net.URI;
 
-import de.tu_bs.cs.isf.cbc.cbcmodel.AbstractStatement;
-import de.tu_bs.cs.isf.cbc.cbcmodel.CbCFormula;
-import de.tu_bs.cs.isf.cbc.cbcmodel.CompositionStatement;
-import de.tu_bs.cs.isf.cbc.cbcmodel.Condition;
-import de.tu_bs.cs.isf.cbc.cbcmodel.GlobalConditions;
-import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariables;
-import de.tu_bs.cs.isf.cbc.cbcmodel.Renaming;
-import de.tu_bs.cs.isf.cbc.cbcmodel.SelectionStatement;
-import de.tu_bs.cs.isf.cbc.cbcmodel.SmallRepetitionStatement;
+import java.net.URI;
 
 public class VerifyAllStatements {
 
@@ -30,13 +22,14 @@ public class VerifyAllStatements {
     }
 
     public static boolean proveStatement(AbstractStatement statement, JavaVariables vars, GlobalConditions conds,
-            Renaming renaming, URI uri) {
+                                         Renaming renaming, URI uri) {
         return proveStatement(statement, vars, conds, renaming, uri, ProofType.FullProof);
         // Default to FullProof if no proofType is explicitly given
     }
 
     /**
      * TODO Add method documentation
+     *
      * @param statement
      * @param vars
      * @param conds
@@ -46,38 +39,38 @@ public class VerifyAllStatements {
      * @return
      */
     public static boolean proveStatement(AbstractStatement statement, JavaVariables vars, GlobalConditions conds,
-            Renaming renaming, URI uri, ProofType proofType) {
+                                         Renaming renaming, URI uri, ProofType proofType) {
         boolean prove = false;
         if (statement instanceof SmallRepetitionStatement) {
             // Switch between proof types according to input parameter
             switch (proofType) {
-            case FullProof:
-                prove = proveSmallRepetitionStatement(statement, vars, conds, renaming, uri);
-                break;
-            case Precondition:
-                prove = provePreconditionSRS(statement, vars, conds, renaming, uri);
-                break;
-            case Postcondition:
-                prove = provePostconditionSRS(statement, vars, conds, renaming, uri);
-                break;
-            case Variant:
-                prove = proveVariantSRS(statement, vars, conds, renaming, uri);
-                break;
-            default:
-                throw new IllegalArgumentException(statement.getName() + " does not support the proof mode " + proofType.toString() + "!");
+                case FullProof:
+                    prove = proveSmallRepetitionStatement(statement, vars, conds, renaming, uri);
+                    break;
+                case Precondition:
+                    prove = provePreconditionSRS(statement, vars, conds, renaming, uri);
+                    break;
+                case Postcondition:
+                    prove = provePostconditionSRS(statement, vars, conds, renaming, uri);
+                    break;
+                case Variant:
+                    prove = proveVariantSRS(statement, vars, conds, renaming, uri);
+                    break;
+                default:
+                    throw new IllegalArgumentException(statement.getName() + " does not support the proof mode " + proofType.toString() + "!");
             }
         } else if (statement instanceof CompositionStatement) {
             prove = proveCompositionStatement(statement, vars, conds, renaming, uri);
         } else if (statement instanceof SelectionStatement) {
             switch (proofType) {
-            case FullProof:
-                prove = proveSelectionStatement(statement, vars, conds, renaming, uri);
-                break;
-            case Precondition:
-                prove = provePreconditionSRS(statement, vars, conds, renaming, uri);
-                break;
-            default:
-                throw new IllegalArgumentException(statement.getName() + " does not support the proof mode " + proofType.toString() + "!");
+                case FullProof:
+                    prove = proveSelectionStatement(statement, vars, conds, renaming, uri);
+                    break;
+                case Precondition:
+                    prove = provePreconditionSRS(statement, vars, conds, renaming, uri);
+                    break;
+                default:
+                    throw new IllegalArgumentException(statement.getName() + " does not support the proof mode " + proofType.toString() + "!");
             }
         } else if (statement instanceof AbstractStatement) {
             prove = proveAbstractStatement(statement, vars, conds, renaming, uri);
@@ -86,7 +79,7 @@ public class VerifyAllStatements {
     }
 
     private static boolean proveVariantSRS(AbstractStatement statement, JavaVariables vars, GlobalConditions conds,
-            Renaming renaming, URI uri) {
+                                           Renaming renaming, URI uri) {
         SmallRepetitionStatement srs = (SmallRepetitionStatement) statement;
         ProveWithKey prove = new ProveWithKey(statement, vars, conds, renaming, uri.toString(), null,
                 new FileUtil(uri.toString()));
@@ -99,7 +92,7 @@ public class VerifyAllStatements {
     }
 
     private static boolean provePreconditionSRS(AbstractStatement statement, JavaVariables vars, GlobalConditions conds,
-            Renaming renaming, URI uri) {
+                                                Renaming renaming, URI uri) {
         SmallRepetitionStatement srs = (SmallRepetitionStatement) statement;
         ProveWithKey prove = new ProveWithKey(statement, vars, conds, renaming, uri.toString(), null,
                 new FileUtil(uri.toString()));
@@ -112,7 +105,7 @@ public class VerifyAllStatements {
     }
 
     private static boolean provePostconditionSRS(AbstractStatement statement, JavaVariables vars,
-            GlobalConditions conds, Renaming renaming, URI uri) {
+                                                 GlobalConditions conds, Renaming renaming, URI uri) {
         SmallRepetitionStatement srs = (SmallRepetitionStatement) statement;
         ProveWithKey prove = new ProveWithKey(statement, vars, conds, renaming, uri.toString(), null,
                 new FileUtil(uri.toString()));
@@ -127,7 +120,7 @@ public class VerifyAllStatements {
     }
 
     private static boolean proveAbstractStatement(AbstractStatement statement, JavaVariables vars,
-            GlobalConditions conds, Renaming renaming, URI uri) {
+                                                  GlobalConditions conds, Renaming renaming, URI uri) {
         boolean prove = false;
         ProveWithKey prover = new ProveWithKey(statement, vars, conds, renaming, uri.toString(), null,
                 new FileUtil(uri.toString()));
@@ -150,7 +143,7 @@ public class VerifyAllStatements {
     }
 
     public static boolean proveCompositionStatement(AbstractStatement statement, JavaVariables vars,
-            GlobalConditions conds, Renaming renaming, URI uri) {
+                                                    GlobalConditions conds, Renaming renaming, URI uri) {
         boolean prove1, prove2 = false;
         CompositionStatement compositionStatement = (CompositionStatement) statement;
         if (compositionStatement.getFirstStatement().getRefinement() != null) {
@@ -174,7 +167,7 @@ public class VerifyAllStatements {
     }
 
     private static boolean proveSelectionStatement(AbstractStatement statement, JavaVariables vars,
-            GlobalConditions conds, Renaming renaming, URI uri) {
+                                                   GlobalConditions conds, Renaming renaming, URI uri) {
         boolean proven = true;
         SelectionStatement selectionStatement = (SelectionStatement) statement;
         for (AbstractStatement childStatement : selectionStatement.getCommands()) {
@@ -204,7 +197,7 @@ public class VerifyAllStatements {
     }
 
     public static boolean proveSmallRepetitionStatement(AbstractStatement statement, JavaVariables vars,
-            GlobalConditions conds, Renaming renaming, URI uri) {
+                                                        GlobalConditions conds, Renaming renaming, URI uri) {
         SmallRepetitionStatement repStatement = (SmallRepetitionStatement) statement;
         boolean proven = true;
         if (repStatement.getLoopStatement().getRefinement() != null) {

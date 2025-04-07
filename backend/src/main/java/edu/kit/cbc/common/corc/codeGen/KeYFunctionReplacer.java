@@ -17,6 +17,26 @@ public final class KeYFunctionReplacer {
         return instance;
     }
 
+    //Copied and shortened from CodeHandler.java from CorC, to avoid adding the entire file
+    public static int findClosingBracketIndex(final String code, final int bracketIndex, char bracket) {
+        char closingBracket;
+        int bracketCounter = 1;
+
+        closingBracket = ')';
+
+        for (int i = bracketIndex + 1; i < code.length(); i++) {
+            if (code.charAt(i) == bracket) {
+                bracketCounter++;
+            } else if (code.charAt(i) == closingBracket) {
+                bracketCounter--;
+            }
+            if (bracketCounter == 0) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     public String restoreIn(String content) {
         int nextMatch = content.indexOf("length(");
         String identifier;
@@ -29,25 +49,5 @@ public final class KeYFunctionReplacer {
             nextMatch = content.indexOf("length(");
         }
         return content;
-    }
-
-    //Copied and shortened from CodeHandler.java from CorC, to avoid adding the entire file
-    public static int findClosingBracketIndex(final String code, final int bracketIndex, char bracket) {
-        char closingBracket;
-        int bracketCounter = 1;
-
-        closingBracket = ')';
-
-        for (int i = bracketIndex + 1; i < code.length(); i++) {
-            if (code.charAt(i) == bracket) {
-            bracketCounter++;
-            } else if (code.charAt(i) == closingBracket) {
-            bracketCounter--;
-            }
-            if (bracketCounter == 0) {
-            return i;
-            }
-        }
-        return -1;
     }
 }

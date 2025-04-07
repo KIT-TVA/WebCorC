@@ -1,18 +1,13 @@
 package edu.kit.cbc.common.corc;
 
-import java.util.List;
-
 import de.tu_bs.cs.isf.cbc.cbcclass.ModelClass;
-import de.tu_bs.cs.isf.cbc.cbcmodel.Condition;
-import de.tu_bs.cs.isf.cbc.cbcmodel.GlobalConditions;
-import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariable;
-import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariables;
-import de.tu_bs.cs.isf.cbc.cbcmodel.Rename;
-import de.tu_bs.cs.isf.cbc.cbcmodel.Renaming;
-import de.tu_bs.cs.isf.cbc.cbcmodel.VariableKind;
+import de.tu_bs.cs.isf.cbc.cbcmodel.*;
+
+import java.util.List;
 
 public class KeYFileContent {
 
+    String statement = "";
     private String location = "";
     private String helper = "helper.key";
     private String programVariables = "";
@@ -23,7 +18,6 @@ public class KeYFileContent {
     private String assignment = "";
     private String pre = "";
     private String post = "";
-    String statement = "";
 
 
     public KeYFileContent() {
@@ -82,7 +76,7 @@ public class KeYFileContent {
                 if (var.getKind() == VariableKind.RETURN) {
                     returnVariable = var;
                 } else {
-                    if(var.getKind() != VariableKind.GLOBAL) {
+                    if (var.getKind() != VariableKind.GLOBAL) {
                         programVariables += var.getName() + "; ";
                         // if variable is an Array add <created> condition for key
                         if (var.getName().contains("[]")) {
@@ -145,7 +139,7 @@ public class KeYFileContent {
     }
 
     public void addSelf(ModelClass javaClass) {
-        if(javaClass != null) {
+        if (javaClass != null) {
             self = javaClass.getName() + " self;";
             selfConditions = " & self.<created>=TRUE & " + javaClass.getName() + "::exactInstance(self)=TRUE &  !self = null & self.<inv> ";
         }
@@ -183,17 +177,17 @@ public class KeYFileContent {
     }
 
     public String getKeYStatementContent() {
-        return  getKeYContent(true);
+        return getKeYContent(true);
     }
 
     public String getKeYCImpliesCContent() {
-        return  getKeYContent(false);
+        return getKeYContent(false);
     }
 
     public String getKeYContent(boolean withStatement) {
-        String string  =    keyHeader() + "\\problem {(" + pre + " "
+        String string = keyHeader() + "\\problem {(" + pre + " "
                 + globalConditions + conditionArraysCreated + selfConditions
-                        + "& wellFormed(heap)) -> {heapAtPre := heap"
+                + "& wellFormed(heap)) -> {heapAtPre := heap"
                 + assignment + "}";
         if (withStatement)
             string += " \\<{" + statement + "}\\>";
@@ -201,16 +195,16 @@ public class KeYFileContent {
     }
 
     //->{variant := " + variantString
-        //  + " || heapAtPre := heap}  ((" + variantString + ") <variant & " + variantString
-        //  + ">=0)}";
+    //  + " || heapAtPre := heap}  ((" + variantString + ") <variant & " + variantString
+    //  + ">=0)}";
 
     public String keyHeader() {
         return "\\javaSource \"" + location + "\";" + "\\include \"" + helper + "\";"
-                + "\\programVariables {" + programVariables + self +" Heap heapAtPre;}";
+                + "\\programVariables {" + programVariables + self + " Heap heapAtPre;}";
     }
 
     public String getKeYWPContent() {
-        return  keyHeader() + "\\problem {\\<{" + statement + "}\\> (" + post + ")}";
+        return keyHeader() + "\\problem {\\<{" + statement + "}\\> (" + post + ")}";
     }
 
     public void setVariantPost(String variant) {

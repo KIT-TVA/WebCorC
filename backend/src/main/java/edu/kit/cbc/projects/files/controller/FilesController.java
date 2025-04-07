@@ -1,27 +1,12 @@
 package edu.kit.cbc.projects.files.controller;
 
-import java.util.List;
-import java.util.Optional;
-import java.io.IOException;
-import java.net.URI;
-
+import edu.kit.cbc.common.Problem;
+import edu.kit.cbc.projects.ProjectService;
 import edu.kit.cbc.projects.files.S3ClientProvider;
 import edu.kit.cbc.projects.files.dto.DirectoryDto;
-import edu.kit.cbc.projects.ProjectService;
-import edu.kit.cbc.common.Problem;
-import io.micronaut.http.HttpHeaders;
-import io.micronaut.http.HttpRequest;
-import io.micronaut.http.HttpResponse;
-import io.micronaut.http.MediaType;
-import io.micronaut.http.MutableHttpResponse;
-import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.*;
+import io.micronaut.http.annotation.*;
 import io.micronaut.http.annotation.Delete;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.PathVariable;
-import io.micronaut.http.annotation.Post;
-import io.micronaut.http.annotation.Consumes;
-import io.micronaut.http.annotation.Produces;
-import io.micronaut.http.annotation.Put;
 import io.micronaut.http.multipart.CompletedFileUpload;
 import io.micronaut.http.server.types.files.StreamedFile;
 import io.micronaut.http.server.util.HttpHostResolver;
@@ -32,11 +17,12 @@ import io.micronaut.objectstorage.request.UploadRequest;
 import io.micronaut.objectstorage.response.UploadResponse;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
-import software.amazon.awssdk.services.s3.model.GetObjectResponse;
-import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
-import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
-import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
-import software.amazon.awssdk.services.s3.model.PutObjectResponse;
+import software.amazon.awssdk.services.s3.model.*;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.List;
+import java.util.Optional;
 
 @Controller("/projects/{id}/files")
 @ExecuteOn(TaskExecutors.BLOCKING)
@@ -55,6 +41,16 @@ public class FilesController {
         this.httpHostResolver = httpHostResolver;
     }
 
+    private static HttpResponse<StreamedFile> buildStreamedFile(AwsS3ObjectStorageEntry entry) {
+        GetObjectResponse nativeEntry = entry.getNativeEntry();
+        MediaType mediaType = MediaType.of(nativeEntry.contentType());
+        StreamedFile file = new StreamedFile(entry.getInputStream(), mediaType).attach(entry.getKey());
+        MutableHttpResponse<Object> httpResponse = HttpResponse.ok()
+                .header(HttpHeaders.ETAG, nativeEntry.eTag());
+        file.process(httpResponse);
+        return httpResponse.body(file);
+    }
+
     @Get
     @Produces(MediaType.APPLICATION_JSON)
     public HttpResponse<DirectoryDto> getDirectories(@PathVariable String id) {
@@ -65,16 +61,20 @@ public class FilesController {
         String bucketName = s3ClientProvider.getBucketName();
 
         ListObjectsV2Request request = ListObjectsV2Request.builder()
-            .bucket(bucketName)
-            .prefix(id)
-            .build();
+                .bucket(bucketName)
+                .prefix(id)
+                .build();
 
         ListObjectsV2Response response = s3ClientProvider.getClient().listObjectsV2(request);
 
         List<String> keys = response.contents().stream()
-            .filter(obj -> {return obj.key().endsWith(".java");})
-            .map(obj -> {return obj.key().substring(id.concat("/files/").length());})
-            .toList();
+                .filter(obj -> {
+                    return obj.key().endsWith(".java");
+                })
+                .map(obj -> {
+                    return obj.key().substring(id.concat("/files/").length());
+                })
+                .toList();
 
         return keys;
     }
@@ -83,17 +83,7 @@ public class FilesController {
     public Optional<HttpResponse<StreamedFile>> getFile(@PathVariable String id, @PathVariable URI urn) {
         String path = String.format(pathFormat, id, urn);
         return objectStorage.retrieve(path)
-            .map(FilesController::buildStreamedFile);
-    }
-
-    private static HttpResponse<StreamedFile> buildStreamedFile(AwsS3ObjectStorageEntry entry) {
-        GetObjectResponse nativeEntry = entry.getNativeEntry();
-        MediaType mediaType = MediaType.of(nativeEntry.contentType());
-        StreamedFile file = new StreamedFile(entry.getInputStream(), mediaType).attach(entry.getKey());
-        MutableHttpResponse<Object> httpResponse = HttpResponse.ok()
-            .header(HttpHeaders.ETAG, nativeEntry.eTag());
-        file.process(httpResponse);
-        return httpResponse.body(file);
+                .map(FilesController::buildStreamedFile);
     }
 
     @Post(uri = "/{urn:.*}")
@@ -114,11 +104,11 @@ public class FilesController {
         UploadResponse<PutObjectResponse> response = performUpload(objectStorageUpload, id, urn);
 
         return HttpResponse
-            .created(UriBuilder.of(httpHostResolver.resolve(request))
-                .path("projects")
-                .path(path)
-                .build())
-            .header(HttpHeaders.ETAG, response.getETag());
+                .created(UriBuilder.of(httpHostResolver.resolve(request))
+                        .path("projects")
+                        .path(path)
+                        .build())
+                .header(HttpHeaders.ETAG, response.getETag());
     }
 
     public void uploadBytes(byte[] bytes, String id, URI urn) throws IOException {

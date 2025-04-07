@@ -1,17 +1,11 @@
 package edu.kit.cbc.projects.files.dto;
 
-import java.util.Set;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
-import java.util.HashSet;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.net.URI;
-import java.util.NoSuchElementException;
-
 import io.micronaut.serde.annotation.Serdeable;
+
+import java.net.URI;
+import java.util.*;
 
 @Serdeable
 public class DirectoryDto extends FileDirectoryDto {
@@ -20,6 +14,11 @@ public class DirectoryDto extends FileDirectoryDto {
     @JsonInclude(Include.ALWAYS)
     private final Set<FileDirectoryDto> content;
 
+    public DirectoryDto(String urn, Set<FileDirectoryDto> content) {
+        super(urn);
+        this.content = content;
+    }
+
     @Override
     public String getInodeType() {
         return inodeType;
@@ -27,12 +26,12 @@ public class DirectoryDto extends FileDirectoryDto {
 
     public void addFilePath(URI path) {
         addFilePath(
-            new LinkedList<String>(
-                Arrays.asList(
-                    path.getPath().split("/")
-                )
-            ),
-            path.getPath().endsWith("/") ? DirectoryDto.inodeType : FileDto.inodeType
+                new LinkedList<String>(
+                        Arrays.asList(
+                                path.getPath().split("/")
+                        )
+                ),
+                path.getPath().endsWith("/") ? DirectoryDto.inodeType : FileDto.inodeType
         );
     }
 
@@ -50,12 +49,12 @@ public class DirectoryDto extends FileDirectoryDto {
         DirectoryDto nextDir;
         try {
             nextDir = (DirectoryDto) content.stream()
-                .filter(
-                    fdd -> {
-                        return fdd.getUrn().equals(name) && fdd.getInodeType().equals(DirectoryDto.inodeType);
-                    })
-                .findFirst()
-                .get();
+                    .filter(
+                            fdd -> {
+                                return fdd.getUrn().equals(name) && fdd.getInodeType().equals(DirectoryDto.inodeType);
+                            })
+                    .findFirst()
+                    .get();
         } catch (NoSuchElementException e) {
             nextDir = new DirectoryDto(name, new HashSet<FileDirectoryDto>());
             content.add(nextDir);
@@ -65,20 +64,20 @@ public class DirectoryDto extends FileDirectoryDto {
 
     private FileType getFileType(String name) {
         return name.endsWith(".key") ? FileType.key
-             : name.endsWith(".prove") ? FileType.prove
-             : name.endsWith(".java") ? FileType.java
-             : name.endsWith(".diagram") ? FileType.diagram
-             : FileType.other;
+                : name.endsWith(".prove") ? FileType.prove
+                : name.endsWith(".java") ? FileType.java
+                : name.endsWith(".diagram") ? FileType.diagram
+                : FileType.other;
     }
 
     public void removeFilePath(URI path) {
         removeFilePath(
-            new LinkedList<String>(
-                Arrays.asList(path.getPath()
-                    .split("/")
-                )
-            ),
-            path.getPath().endsWith("/") ? DirectoryDto.inodeType : FileDto.inodeType
+                new LinkedList<String>(
+                        Arrays.asList(path.getPath()
+                                .split("/")
+                        )
+                ),
+                path.getPath().endsWith("/") ? DirectoryDto.inodeType : FileDto.inodeType
         );
     }
 
@@ -89,12 +88,12 @@ public class DirectoryDto extends FileDirectoryDto {
             DirectoryDto nextDir;
             try {
                 nextDir = (DirectoryDto) content.stream()
-                    .filter(
-                        fdd -> {
-                            return fdd.getUrn().equals(name) && fdd.getInodeType().equals(DirectoryDto.inodeType);
-                        })
-                    .findFirst()
-                    .get();
+                        .filter(
+                                fdd -> {
+                                    return fdd.getUrn().equals(name) && fdd.getInodeType().equals(DirectoryDto.inodeType);
+                                })
+                        .findFirst()
+                        .get();
             } catch (NoSuchElementException e) {
                 return;
             }
@@ -105,11 +104,6 @@ public class DirectoryDto extends FileDirectoryDto {
         content.removeIf(fdd -> {
             return fdd.getUrn().equals(name) && fdd.getInodeType().equals(inodeType);
         });
-    }
-
-    public DirectoryDto(String urn, Set<FileDirectoryDto> content) {
-        super(urn);
-        this.content = content;
     }
 
     public Set<FileDirectoryDto> getContent() {
