@@ -14,7 +14,6 @@ jobs:
       # Step 1: Checkout the code
       - name: Checkout repository
         uses: actions/checkout@v3
-        working-directory: ./backend
       # Step 2: Set up Java
       - name: Set up JDK 21
         uses: actions/setup-java@v3
@@ -22,7 +21,7 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
           cache: maven
-        working-directory: ./backend
+          working-directory: ./backend
       # Step 3: Run Checkstyle (Fail on violations)
       - name: Run Checkstyle (Fail on violations)
         run: mvn checkstyle:check
@@ -38,4 +37,4 @@ jobs:
           name: checkstyle-report
           path: target/checkstyle/*
           retention-days: 15
-        working-directory: ./backend
+      
