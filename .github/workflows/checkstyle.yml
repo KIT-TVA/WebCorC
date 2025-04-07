@@ -34,5 +34,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: checkstyle-report
-          path: target/checkstyle/*
+          path: ${{ github.workspace }}/backend/target/checkstyle/*
           retention-days: 15
