@@ -149,6 +149,13 @@
                             <version>10.23.0</version>
                         </dependency>
                     </dependencies>
+                    <configuration>
+                        <configLocation>../config/corc_checkstyle.xml</configLocation>
+                        <suppressionsLocation>../config/supressions.xml</suppressionsLocation>
+                        <failsOnError>true</failsOnError>
+                        <consoleOutput>true</consoleOutput>
+                        <outputFile>${project.build.directory}/checkstyle/checkstyle-report.xml</outputFile>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -269,7 +276,7 @@
                <configuration>
                    <configLocation>../config/corc_checkstyle.xml</configLocation>
                    <suppressionsLocation>../config/supressions.xml</suppressionsLocation>
-                   <failsOnError>false</failsOnError>
+                   <failsOnError>true</failsOnError>
                    <consoleOutput>true</consoleOutput>
                    <outputFile>${project.build.directory}/checkstyle/checkstyle-report.xml</outputFile>
                </configuration>
