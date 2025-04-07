@@ -36,4 +36,3 @@ jobs:
           name: checkstyle-report
           path: target/checkstyle/*
           retention-days: 15
-          working-directory: ./backend
