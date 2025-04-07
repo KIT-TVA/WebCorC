@@ -31,7 +31,11 @@ jobs:
         working-directory: ./backend
       - name: LS
         run: |
-          ls target
+          ls
+          echo "-------"
+          ls backend
+          echo "------"
+          ls backend/target
       # Step 5: Upload Checkstyle Report
       - name: Upload Checkstyle Report
         uses: actions/upload-artifact@v4
