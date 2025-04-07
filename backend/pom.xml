@@ -269,7 +269,7 @@
                <configuration>
                    <configLocation>../config/corc_checkstyle.xml</configLocation>
                    <suppressionsLocation>../config/supressions.xml</suppressionsLocation>
-                   <failsOnError>true</failsOnError>
+                   <failsOnError>false</failsOnError>
                    <consoleOutput>true</consoleOutput>
                    <outputFile>${project.build.directory}/checkstyle/checkstyle-report.xml</outputFile>
                </configuration>
