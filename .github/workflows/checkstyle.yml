@@ -30,15 +30,9 @@ jobs:
         if: always()
         run: mvn checkstyle:checkstyle
         working-directory: ./backend
-      - name: LS
-        run: |
-          ls
-          echo "-------"
-          ls backend
-          echo "------"
-          ls backend/target
       # Step 5: Upload Checkstyle Report
       - name: Upload Checkstyle Report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: checkstyle-report
