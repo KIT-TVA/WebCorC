@@ -10,11 +10,13 @@ services:
       - docker-compose.env
     volumes:
       - ./data/minio/:/data
+    restart: always
 
   mongo:
     image: mongo
     volumes:
       - ./data/mongo/:/data/db
+    restart: always
 
   webcorc-backend:
     build:
@@ -26,10 +28,12 @@ services:
         condition: service_started
       mongo:
         condition: service_started
+    restart: always
 
   webcorc-frontend:
     build:
       context: frontend
+    restart: always
 
   webserver:
     image: caddy
@@ -41,3 +45,4 @@ services:
       - ./data/caddy/caddyfile:/etc/caddy
       - ./data/caddy/data:/data
       - ./data/caddy/logs:/logs/
+    restart: always
