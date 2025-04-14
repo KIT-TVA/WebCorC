@@ -9,8 +9,8 @@ import io.micronaut.serde.annotation.Serdeable;
 @Serdeable
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "inodeType")
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = FileDto.class, name = FileDto.inodeType),
-        @JsonSubTypes.Type(value = DirectoryDto.class, name = DirectoryDto.inodeType)
+    @JsonSubTypes.Type(value = FileDto.class, name = FileDto.inodeType),
+    @JsonSubTypes.Type(value = DirectoryDto.class, name = DirectoryDto.inodeType)
 })
 public abstract class FileDirectoryDto {
 

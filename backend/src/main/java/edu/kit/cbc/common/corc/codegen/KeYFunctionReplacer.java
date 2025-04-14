@@ -1,8 +1,8 @@
-package edu.kit.cbc.common.corc.codeGen;
+package edu.kit.cbc.common.corc.codegen;
 
 /**
  * Since Key Version 3.12, to access array length in a JML contract, we need to
- * use length(array) instead of array.length
+ * use length(array) instead of array.length.
  */
 public final class KeYFunctionReplacer {
     private static KeYFunctionReplacer instance;

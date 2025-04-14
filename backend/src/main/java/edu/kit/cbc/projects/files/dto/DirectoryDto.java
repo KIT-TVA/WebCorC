@@ -3,9 +3,12 @@ package edu.kit.cbc.projects.files.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import io.micronaut.serde.annotation.Serdeable;
-
 import java.net.URI;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.NoSuchElementException;
+import java.util.Set;
 
 @Serdeable
 public class DirectoryDto extends FileDirectoryDto {

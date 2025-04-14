@@ -5,9 +5,14 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import de.tu_bs.cs.isf.cbc.cbcmodel.*;
+import de.tu_bs.cs.isf.cbc.cbcmodel.CbCFormula;
+import de.tu_bs.cs.isf.cbc.cbcmodel.CbcmodelPackage;
+import de.tu_bs.cs.isf.cbc.cbcmodel.GlobalConditions;
+import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariables;
+import de.tu_bs.cs.isf.cbc.cbcmodel.Renaming;
 import edu.kit.cbc.common.CbCFormulaContainer;
 import jakarta.inject.Singleton;
+import java.io.IOException;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -21,8 +26,6 @@ import org.eclipse.emfcloud.jackson.module.EMFModule;
 import org.eclipse.emfcloud.jackson.module.EMFModule.Feature;
 import org.eclipse.emfcloud.jackson.utils.ValueReader;
 import org.eclipse.emfcloud.jackson.utils.ValueWriter;
-
-import java.io.IOException;
 
 @Singleton
 public class FormulaParser {
@@ -57,18 +60,8 @@ public class FormulaParser {
         module.setTypeInfo(
                 new EcoreTypeInfo(
                         "type",
-                        new ValueReader<String, EClass>() {
-                            @Override
-                            public EClass readValue(String value, DeserializationContext context) {
-                                return (EClass) cbcmodelPackage.getEClassifier(value);
-                            }
-                        },
-                        new ValueWriter<EClass, String>() {
-                            @Override
-                            public String writeValue(EClass value, SerializerProvider context) {
-                                return value.getName();
-                            }
-                        }
+                        (value, context) -> (EClass) cbcmodelPackage.getEClassifier(value),
+                        (value, context) -> value.getName()
                 )
         );
         mapper.registerModule(module);
@@ -76,7 +69,8 @@ public class FormulaParser {
 
     private void setupXMLParser() {
         ResourceSet resourceSet = new ResourceSetImpl();
-        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(Resource.Factory.Registry.DEFAULT_EXTENSION, new XMIResourceFactoryImpl());
+        resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(
+                Resource.Factory.Registry.DEFAULT_EXTENSION, new XMIResourceFactoryImpl());
         resourceSet.getPackageRegistry().put(cbcmodelPackage.getNsURI(), cbcmodelPackage);
         resource = resourceSet.createResource(URI.createURI("*.cbcmodel"));
     }

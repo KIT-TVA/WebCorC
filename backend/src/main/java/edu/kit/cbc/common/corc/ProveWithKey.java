@@ -1,31 +1,43 @@
 package edu.kit.cbc.common.corc;
 
 import de.tu_bs.cs.isf.cbc.cbcclass.ModelClass;
-import de.tu_bs.cs.isf.cbc.cbcmodel.*;
+import de.tu_bs.cs.isf.cbc.cbcmodel.AbstractStatement;
+import de.tu_bs.cs.isf.cbc.cbcmodel.CbCFormula;
+import de.tu_bs.cs.isf.cbc.cbcmodel.CompositionTechnique;
+import de.tu_bs.cs.isf.cbc.cbcmodel.Condition;
+import de.tu_bs.cs.isf.cbc.cbcmodel.GlobalConditions;
+import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariable;
+import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariables;
+import de.tu_bs.cs.isf.cbc.cbcmodel.Renaming;
+import de.tu_bs.cs.isf.cbc.cbcmodel.Variant;
 import de.uka.ilkd.key.proof.Goal;
 import de.uka.ilkd.key.proof.Proof;
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EObject;
-
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
 
 public class ProveWithKey {
     public static final String REGEX_ORIGINAL = "original";
     public static final String REGEX_RESULT = "\\\\result";
 
     AbstractStatement statement;
-    private JavaVariables vars;
-    private GlobalConditions conds;
-    private Renaming renaming;
-    private String uri;
-    private ModelClass javaClass;
-    private IFileUtil fileHandler;
+    private final JavaVariables vars;
+    private final GlobalConditions conds;
+    private final Renaming renaming;
+    private final String uri;
+    private final ModelClass javaClass;
+    private final IFileUtil fileHandler;
 
-    public ProveWithKey(AbstractStatement statement, JavaVariables vars, GlobalConditions conds, Renaming renaming, String uri, ModelClass javaClass, IFileUtil fileHandler) {
+    public ProveWithKey(AbstractStatement statement, JavaVariables vars, GlobalConditions conds,
+                        Renaming renaming, String uri, ModelClass javaClass, IFileUtil fileHandler) {
         super();
         this.statement = statement;
         this.vars = vars;
@@ -51,8 +63,10 @@ public class ProveWithKey {
                 }
                 break;
             case CONJUNCTIVE_CONTRACTING:
-                modifiables.addAll(new ArrayList<String>(Arrays.asList(modifiableOriginal.split(","))));
+                modifiables.addAll(new ArrayList<>(Arrays.asList(modifiableOriginal.split(","))));
                 break;
+            default:
+                throw new IllegalArgumentException("Unsupported composition technique " + compTechnique);
         }
 
         return modifiables;
@@ -77,6 +91,9 @@ public class ProveWithKey {
                 Pattern pattern = Pattern.compile(REGEX_ORIGINAL);
                 Matcher matcher = pattern.matcher(condition);
                 composedCondition = matcher.replaceAll(Matcher.quoteReplacement(conditionOriginal));
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported composition technique " + compositionTechnique);
         }
         return composedCondition;
     }
@@ -132,8 +149,9 @@ public class ProveWithKey {
         return proveWithKey(location, inlining);
     }
 
-    public boolean proveStatementWithKey(boolean returnStatement, boolean inlining, String variants, int numberfile, String callingMethod, String varM) {
-        if (variants == null || variants.length() == 0) {
+    public boolean proveStatementWithKey(boolean returnStatement, boolean inlining, String variants, int numberfile,
+                                         String callingMethod, String varM) {
+        if (variants == null || variants.isEmpty()) {
             File location = createProveStatementWithKey(null, 0, true, callingMethod, varM, inlining);
             System.out.println("  Verify Pre -> {Statement} Post");
             return proveWithKey(location, inlining);
@@ -199,7 +217,7 @@ public class ProveWithKey {
 
         content.setPre(pre);
         content.setPost(post);
-        List<String> unmodifiedVariables = Parser.getUnmodifiedVars(modifiables, vars.getVariables());//what if a glob var is in another diagram defined?
+        List<String> unmodifiedVariables = Parser.getUnmodifiedVars(modifiables, vars.getVariables());
         unmodifiedVariables = unmodifiedVariables.stream().distinct().collect(Collectors.toList());
         content.addUnmodifiableVars(unmodifiedVariables);
 
@@ -212,7 +230,8 @@ public class ProveWithKey {
     }
 
     public void replaceOriginalInStatement(List<String> refinements, String callingMethod, KeYFileContent content, String varM) {
-        if (refinements != null && refinements.size() > 0 && content.statement.contains("original(") || (content.statement.contains("(") && !content.statement.contains("\\."))) { //TODO check guard
+        if (refinements != null && !refinements.isEmpty() && content.statement.contains("original(")
+                || (content.statement.contains("(") && !content.statement.contains("\\."))) {
             String[] splittedRefinement = refinements.get(0).split("\\.");
             if (Character.isLowerCase(splittedRefinement[0].charAt(0))) {
                 content.statement = content.statement.replaceFirst("original", splittedRefinement[0] + ".generated_" + splittedRefinement[1]);
@@ -262,8 +281,9 @@ public class ProveWithKey {
         return modifiables;
     }
 
-    private String composeContractForCbCDiagram(CompositionTechnique compositionTechnique,
-                                                List<String> refinements, String condition, String keyword, JavaVariable returnVariable, String callingMethod) {
+    private String composeContractForCbCDiagram(CompositionTechnique compositionTechnique, List<String> refinements,
+                                                String condition, String keyword, JavaVariable returnVariable,
+                                                String callingMethod) {
         String composedCondition = condition;
         CompositionTechnique compTechnique = compositionTechnique;
         for (int i = 0; i < refinements.size(); i++) {
@@ -273,7 +293,8 @@ public class ProveWithKey {
             if (i != 0) {
                 splittedRefinement = refinements.get(i - 1).split("\\.");
                 methodName = splittedRefinement[1];
-                compTechnique = Parser.getCompositionTechniqueForMethod(classFile, methodName, keyword, callingMethod, fileHandler);
+                compTechnique = Parser.getCompositionTechniqueForMethod(classFile, methodName, keyword, callingMethod,
+                        fileHandler);
             }
             splittedRefinement = refinements.get(i).split("\\.");
             methodName = splittedRefinement[1];
@@ -294,8 +315,8 @@ public class ProveWithKey {
     public String generateComposedClass(List<String> refinements, String callingMethod) {
         String[] splittedRefinement = refinements.get(0).split("\\.");
         String className = "Original" + splittedRefinement[0];
-        String composedClassName = "Generated_" + splittedRefinement[0];
-        String methodName = splittedRefinement[1];
+        final String composedClassName = "Generated_" + splittedRefinement[0];
+        final String methodName = splittedRefinement[1];
         File file = fileHandler.getClassFile(className);
         if (file == null) {
             className = "Generated_" + splittedRefinement[0];
@@ -309,8 +330,8 @@ public class ProveWithKey {
         } else {
             alreadyGenerated = true;
         }
-        String methodPreCondition = composeContractForCalledOriginal(refinements, Parser.KEYWORD_JML_PRE, callingMethod);
-        String methodPostCondition = composeContractForCalledOriginal(refinements,
+        final String methodPreCondition = composeContractForCalledOriginal(refinements, Parser.KEYWORD_JML_PRE, callingMethod);
+        final String methodPostCondition = composeContractForCalledOriginal(refinements,
                 Parser.KEYWORD_JML_POST, callingMethod);
         List<String> assignables = composeModifiables(refinements, new ArrayList<String>(), null, false, callingMethod);
         String assignableString = "";
@@ -320,7 +341,7 @@ public class ProveWithKey {
         if (vars != null) {
             for (JavaVariable actVar : vars.getVariables()) {
                 if ((actVar.getKind().getName() != "PARAM")) {
-                    String splitName[] = actVar.getName().split(" ");
+                    String[] splitName = actVar.getName().split(" ");
                     assignableString = assignableString.replaceAll("," + splitName[splitName.length - 1], "");
                     assignableString = assignableString.replaceAll(splitName[splitName.length - 1] + ";", ";");
                     assignableString = assignableString.replaceAll(splitName[splitName.length - 1] + ",", "");
@@ -344,11 +365,11 @@ public class ProveWithKey {
                         + ";\n    @ ensures " + methodPostCondition + ";\n    " + assignableString + "\n" + "    @*/\n"
                         + methodStub + "\n" + content;
                 contentOriginal = line + "\n" + contentOriginal;
-            } else if (!alreadyGenerated && line.contains(" class ") && className == composedClassName) {
+            } else if (!alreadyGenerated && line.contains(" class ") && className.equals(composedClassName)) {
                 content = line + "\n\n    /*@\n    @ public normal_behavior\n    @ requires " + methodPreCondition
                         + ";\n    @ ensures " + methodPostCondition + ";\n    " + assignableString + "\n" + "    @*/\n"
                         + methodStub + "  }\n" + content;
-            } else if (!alreadyGenerated && line.contains(" class ") && className != composedClassName) {
+            } else if (!alreadyGenerated && line.contains(" class ") && !className.equals(composedClassName)) {
                 content = line.replaceFirst(className, composedClassName)
                         + "\n\n    /*@\n    @ public normal_behavior\n    @ requires " + methodPreCondition + ";\n    @ ensures "
                         + methodPostCondition + ";\n    " + assignableString + "\n" + "    @*/\n" + methodStub + "  }\n" + content;
@@ -373,7 +394,8 @@ public class ProveWithKey {
             if (i != 1) {
                 splittedRefinement = refinements.get(i - 1).split("\\.");
                 methodName = splittedRefinement[1];
-                compositionTechnique = Parser.getCompositionTechniqueForMethod(nextClassFile, methodName, keyword, callingMethod, fileHandler);//old version statt methodName
+                compositionTechnique = Parser.getCompositionTechniqueForMethod(nextClassFile, methodName, keyword,
+                        callingMethod, fileHandler); //old version statt methodName
             }
             splittedRefinement = refinements.get(i).split("\\.");
             String nextMethodName = splittedRefinement[1];
@@ -435,7 +457,6 @@ public class ProveWithKey {
         content.replaceThisWithSelf();
         content.addSelf(javaClass);
 
-        //String location = fileHandler.getProjectLocation(uri) + uri.segment(uri.segmentCount()-3) + "/prove" + uri.trimFileExtension().lastSegment();
         String location = fileHandler.getLocationString(uri);
         File keyFile = fileHandler.writeFile(content.getKeYCImpliesCContent(), location, numberFile, override);
         return keyFile;

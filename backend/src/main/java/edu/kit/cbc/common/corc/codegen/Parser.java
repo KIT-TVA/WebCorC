@@ -1,7 +1,10 @@
-package edu.kit.cbc.common.corc.codeGen;
+package edu.kit.cbc.common.corc.codegen;
 
-import de.tu_bs.cs.isf.cbc.cbcmodel.*;
-
+import de.tu_bs.cs.isf.cbc.cbcmodel.Condition;
+import de.tu_bs.cs.isf.cbc.cbcmodel.GlobalConditions;
+import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariable;
+import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariables;
+import de.tu_bs.cs.isf.cbc.cbcmodel.VariableKind;
 import java.util.HashSet;
 import java.util.LinkedList;
 
@@ -32,12 +35,15 @@ public class Parser {
         }
 
         // remove return variable, as it must not be in assignables in java class
-        if (variables.endsWith(",ret") || variables.contains(",ret,"))
+        if (variables.endsWith(",ret") || variables.contains(",ret,")) {
             variables = variables.replace(",ret", "");
-        if (variables.equals("ret"))
+        }
+        if (variables.equals("ret")) {
             variables = "\\nothing";
-        if (variables.startsWith("ret,"))
+        }
+        if (variables.startsWith("ret,")) {
             variables = variables.replace("ret,", "");
+        }
         return variables;
     }
 
@@ -64,14 +70,16 @@ public class Parser {
             // Check if condition contains local variables:
             boolean isLocal = false;
             for (String v : localVars) {
-                if (c.getName().contains(v.substring(v.indexOf(" ")).trim()))
+                if (c.getName().contains(v.substring(v.indexOf(" ")).trim())) {
                     isLocal = true;
+                }
             }
-            if (preCondition.contains(c.getName()) || c.getName().contains("<inv>"))
+            if (preCondition.contains(c.getName()) || c.getName().contains("<inv>")) {
                 continue;
-            if (!isLocal)
+            }
+            if (!isLocal) {
                 conditionsSet.add(rewriteConditionToJML(c.getName()));
-            else {
+            } else {
                 System.out.println("[WARNING] Did not add global condition '" + c.getName()
                         + "' to JML annotation, because it contains access to a local variable.");
             }
@@ -95,7 +103,7 @@ public class Parser {
         } else {
             String[] assignableVariables = variables.replaceAll("this\\.", "").split(",");
             for (int i = 0; i < assignableVariables.length; i++) {
-                assignableVariables[i] = assignableVariables[i].replaceAll("\\[.*\\]", "\\[\\*\\]");// .split("\\.")[0];
+                assignableVariables[i] = assignableVariables[i].replaceAll("\\[.*\\]", "\\[\\*\\]");
             }
             variables = "";
             for (String modVar : assignableVariables) {

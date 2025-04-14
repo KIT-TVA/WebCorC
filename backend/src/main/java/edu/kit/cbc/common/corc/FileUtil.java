@@ -1,16 +1,22 @@
 package edu.kit.cbc.common.corc;
 
-import org.eclipse.emf.common.util.URI;
-
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Collections;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+import org.eclipse.emf.common.util.URI;
 
 public class FileUtil implements IFileUtil {
 
@@ -105,6 +111,11 @@ public class FileUtil implements IFileUtil {
         // rResource-file
     }
 
+    public String getProjectLocation(String uriString) {
+        // return getProjectLocationS(uriString);
+        return URI.createURI(uriString).trimSegments(1).toFileString().replace("\\\\", "\\").replace("\\", "/");
+    }
+
     /*
      * private File traverseFolders(IContainer folder, String className) { try {
      * IResource[] members = folder.members(); for (final IResource resource :
@@ -170,10 +181,7 @@ public class FileUtil implements IFileUtil {
      * // } // } return null; }
      */
 
-    public String getProjectLocation(String uriString) {
-        // return getProjectLocationS(uriString);
-        return URI.createURI(uriString).trimSegments(1).toFileString().replace("\\\\", "\\").replace("\\", "/");
-    }
+
 
     /*
      * public static IProject getProject(URI uri) { uri = uri.trimFragment(); String

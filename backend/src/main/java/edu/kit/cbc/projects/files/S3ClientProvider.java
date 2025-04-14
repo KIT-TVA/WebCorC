@@ -2,12 +2,11 @@ package edu.kit.cbc.projects.files;
 
 import io.micronaut.context.annotation.Property;
 import jakarta.inject.Singleton;
+import java.net.URI;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
-
-import java.net.URI;
 
 @Singleton
 public class S3ClientProvider {

@@ -1,7 +1,6 @@
 package edu.kit.cbc.projects;
 
 import jakarta.validation.constraints.NotBlank;
-
 import java.net.URI;
 
 public interface ProjectService {

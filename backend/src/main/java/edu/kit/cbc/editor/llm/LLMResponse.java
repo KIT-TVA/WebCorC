@@ -1,7 +1,6 @@
 package edu.kit.cbc.editor.llm;
 
 import io.micronaut.serde.annotation.Serdeable;
-
 import java.util.List;
 
 @Serdeable

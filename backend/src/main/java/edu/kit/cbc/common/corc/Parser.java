@@ -1,12 +1,20 @@
 package edu.kit.cbc.common.corc;
 
-import de.tu_bs.cs.isf.cbc.cbcmodel.*;
-import org.eclipse.emf.common.util.EList;
-
+import de.tu_bs.cs.isf.cbc.cbcmodel.AbstractStatement;
+import de.tu_bs.cs.isf.cbc.cbcmodel.CompositionTechnique;
+import de.tu_bs.cs.isf.cbc.cbcmodel.Condition;
+import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariable;
+import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariables;
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.eclipse.emf.common.util.EList;
 
 public class Parser {
     public static final String KEYWORD_JML_PRE = "requires";
@@ -42,16 +50,17 @@ public class Parser {
 
             if (nextStatement.contains("=")) {
                 String[] nextStatementTokens;
-                if (nextStatement.contains("*="))
+                if (nextStatement.contains("*=")) {
                     nextStatementTokens = nextStatement.split("[*]=");
-                else if (nextStatement.contains("-="))
+                } else if (nextStatement.contains("-=")) {
                     nextStatementTokens = nextStatement.split("[-]=");
-                else if (nextStatement.contains("+="))
+                } else if (nextStatement.contains("+=")) {
                     nextStatementTokens = nextStatement.split("[+]=");
-                else if (nextStatement.contains("/="))
+                } else if (nextStatement.contains("/=")) {
                     nextStatementTokens = nextStatement.split("[/]=");
-                else
+                } else {
                     nextStatementTokens = nextStatement.split("=");
+                }
                 variable = parseVariable(nextStatementTokens[0].trim());
                 //add only variables of kind param or global
                 /*String typeOfVariable = getTypeOfVariable(variable, vars);
@@ -77,19 +86,18 @@ public class Parser {
                                 KEYWORD_JML_MODIFIABLE, fileHandler);
                         if (!assignablesFromMethodCall.equals("")) {
                             for (String var : assignablesFromMethodCall.split(",")) {
-                                /*if(vars.getVariables().stream().filter(e -> e.getName().equals(variableName) && e.getKind() == VariableKind.PARAM).count() > 0) {
-                                    variableList.add(variableName + "." + var);
-                                }*/
                                 if (nextStatement.trim().startsWith("this.")) {
-                                    if (!var.equals("\\nothing"))
+                                    if (!var.equals("\\nothing")) {
                                         variableList.add("this." + variableName + "." + var);
-                                    else
+                                    } else {
                                         variableList.add("this." + variableName);
+                                    }
                                 } else {
-                                    if (!var.equals("\\nothing"))
+                                    if (!var.equals("\\nothing")) {
                                         variableList.add(variableName + "." + var);
-                                    else
+                                    } else {
                                         variableList.add(variableName);
+                                    }
                                 }
                             }
                         }
@@ -180,7 +188,7 @@ public class Parser {
     public static CompositionTechnique getCompositionTechniqueForMethod(File classFile, String feature,
                                                                         String keyword, String callingMethod, IFileUtil fileHandler) {
         String path = classFile.getAbsolutePath();
-        String pathParts[] = path.split("\\\\"); //TODO replace with correct delimiter
+        String[] pathParts = path.split("\\\\"); //TODO replace with correct delimiter
         String location = "";
         for (int i = 0; i < pathParts.length - 2; i++) {
             location += pathParts[i] + "\\"; //TODO replace with correct delimiter
@@ -240,8 +248,7 @@ public class Parser {
         return modifiedVars;
     }
 
-    public static String getModifieableVarsFromCondition(String condition) {//modifiable in assignable+++++++++++++++++++++++++++++++++++++++++++++++++++
-//      String variables = "\\\\everything;";
+    public static String getModifieableVarsFromCondition(String condition) {
         String variables = "\\nothing";
         if (condition.contains("modifiable(") && condition.split(";").length > 1) {
             if (!condition.contains("modifiable(*)") && !condition.contains("nothing")) {
@@ -251,8 +258,9 @@ public class Parser {
                     variables = variables.replace(" ", "");
                     variables = variables.replace(System.getProperty("line.separator"), "");
                 }
-            } else
+            } else {
                 variables = "\\everything";
+            }
         }
         return variables;
     }
@@ -308,19 +316,19 @@ public class Parser {
             return variables;
         } else {
             String[] assignableVariables = variables.split(",");
-//          String s;//should be a list
             variables = "";
             if (assignableVariables[0].startsWith("this.")) {
                 assignableVariables[0] = assignableVariables[0].replaceAll("\\[.*\\]", "\\[\\*\\]");
                 variables = assignableVariables[0];
             }
-            for (int i = 1; i < assignableVariables.length; i++) {//only global vars are modifiable
+            for (int i = 1; i < assignableVariables.length; i++) { //only global vars are modifiable
                 if (assignableVariables[i].startsWith("this.")) {
                     assignableVariables[i] = assignableVariables[i].replaceAll("\\[.*\\]", "\\[\\*\\]");
-                    if (variables.isEmpty())
+                    if (variables.isEmpty()) {
                         variables = assignableVariables[i];
-                    else if (!Arrays.stream(variables.split(",")).anyMatch(assignableVariables[i]::equals))
+                    } else if (!Arrays.stream(variables.split(",")).anyMatch(assignableVariables[i]::equals)) {
                         variables = variables + "," + assignableVariables[i];
+                    }
                 }
                 /*if(assignableVariables[i].contains("[")) {
                     s = assignableVariables[i].substring(0, assignableVariables[i].indexOf('[')) + "[*]";
@@ -353,7 +361,7 @@ public class Parser {
     public static String extractMethodNameFromStatemtent(String stmt) {
         String methodName = "";
         boolean isInSameClass = false;
-        char stmtChar[] = stmt.toCharArray();
+        char[] stmtChar = stmt.toCharArray();
         boolean name = false;
         for (int i = stmtChar.length - 1; i >= 0; i--) {
             if (!name && stmtChar[i] == '(') {

@@ -1,8 +1,13 @@
 package edu.kit.cbc.common.corc;
 
 import de.tu_bs.cs.isf.cbc.cbcclass.ModelClass;
-import de.tu_bs.cs.isf.cbc.cbcmodel.*;
-
+import de.tu_bs.cs.isf.cbc.cbcmodel.Condition;
+import de.tu_bs.cs.isf.cbc.cbcmodel.GlobalConditions;
+import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariable;
+import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariables;
+import de.tu_bs.cs.isf.cbc.cbcmodel.Rename;
+import de.tu_bs.cs.isf.cbc.cbcmodel.Renaming;
+import de.tu_bs.cs.isf.cbc.cbcmodel.VariableKind;
 import java.util.List;
 
 public class KeYFileContent {
@@ -189,8 +194,9 @@ public class KeYFileContent {
                 + globalConditions + conditionArraysCreated + selfConditions
                 + "& wellFormed(heap)) -> {heapAtPre := heap"
                 + assignment + "}";
-        if (withStatement)
+        if (withStatement) {
             string += " \\<{" + statement + "}\\>";
+        }
         return string + " (" + post + ")}";
     }
 

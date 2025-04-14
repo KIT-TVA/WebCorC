@@ -4,15 +4,14 @@ import io.micronaut.context.annotation.Property;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.client.HttpClient;
 import jakarta.inject.Singleton;
-
 import java.util.logging.Logger;
 
 @Singleton
 public class OpenAIClient {
-    private final static String OPENAI_API_URI = "https://api.openai.com/v1/";
+    private static final String OPENAI_API_URI = "https://api.openai.com/v1/";
+    private static final Logger LOGGER = Logger.getGlobal();
     private final String accessToken;
     private final HttpClient httpClient;
-    private Logger LOGGER = Logger.getGlobal();
 
     public OpenAIClient(
             @Property(name = "openai.accessToken") String accessToken, HttpClient httpClient

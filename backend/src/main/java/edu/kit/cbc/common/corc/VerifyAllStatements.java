@@ -1,9 +1,17 @@
 package edu.kit.cbc.common.corc;
 
-import de.tu_bs.cs.isf.cbc.cbcmodel.*;
-import org.eclipse.emf.common.util.EList;
-
+import de.tu_bs.cs.isf.cbc.cbcmodel.AbstractStatement;
+import de.tu_bs.cs.isf.cbc.cbcmodel.CbCFormula;
+import de.tu_bs.cs.isf.cbc.cbcmodel.CompositionStatement;
+import de.tu_bs.cs.isf.cbc.cbcmodel.Condition;
+import de.tu_bs.cs.isf.cbc.cbcmodel.GlobalConditions;
+import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariables;
+import de.tu_bs.cs.isf.cbc.cbcmodel.Renaming;
+import de.tu_bs.cs.isf.cbc.cbcmodel.SelectionStatement;
+import de.tu_bs.cs.isf.cbc.cbcmodel.SmallRepetitionStatement;
+import edu.kit.cbc.common.corc.codegen.ConstructCodeBlock;
 import java.net.URI;
+import org.eclipse.emf.common.util.EList;
 
 public class VerifyAllStatements {
 
@@ -27,17 +35,6 @@ public class VerifyAllStatements {
         // Default to FullProof if no proofType is explicitly given
     }
 
-    /**
-     * TODO Add method documentation
-     *
-     * @param statement
-     * @param vars
-     * @param conds
-     * @param renaming
-     * @param uri
-     * @param proofType
-     * @return
-     */
     public static boolean proveStatement(AbstractStatement statement, JavaVariables vars, GlobalConditions conds,
                                          Renaming renaming, URI uri, ProofType proofType) {
         boolean prove = false;
@@ -85,7 +82,8 @@ public class VerifyAllStatements {
                 new FileUtil(uri.toString()));
         boolean proveVar = srs.isVariantProven();
         if (!proveVar) {
-            proveVar = prove.proveVariantWithKey(ConstructCodeBlock.constructCodeBlockAndVerify(statement, true), srs.getInvariant(), srs.getGuard(), srs.getVariant());
+            proveVar = prove.proveVariantWithKey(ConstructCodeBlock.constructCodeBlockAndVerify(statement, true),
+                    srs.getInvariant(), srs.getGuard(), srs.getVariant());
             srs.setVariantProven(proveVar);
         }
         return proveVar;
@@ -144,7 +142,8 @@ public class VerifyAllStatements {
 
     public static boolean proveCompositionStatement(AbstractStatement statement, JavaVariables vars,
                                                     GlobalConditions conds, Renaming renaming, URI uri) {
-        boolean prove1, prove2 = false;
+        boolean prove1;
+        boolean prove2;
         CompositionStatement compositionStatement = (CompositionStatement) statement;
         if (compositionStatement.getFirstStatement().getRefinement() != null) {
             prove1 = proveStatement(compositionStatement.getFirstStatement().getRefinement(), vars, conds,
@@ -187,7 +186,7 @@ public class VerifyAllStatements {
             if (provePre && proven && true) {
                 selectionStatement.setProven(true);
             } else {
-                selectionStatement.setProven(false);//
+                selectionStatement.setProven(false);
             }
             return (proven && provePre && true);
         } else {

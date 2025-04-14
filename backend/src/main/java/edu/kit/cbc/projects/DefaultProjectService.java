@@ -3,7 +3,6 @@ package edu.kit.cbc.projects;
 import edu.kit.cbc.projects.files.dto.DirectoryDto;
 import jakarta.inject.Singleton;
 import jakarta.validation.constraints.NotBlank;
-
 import java.net.URI;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
