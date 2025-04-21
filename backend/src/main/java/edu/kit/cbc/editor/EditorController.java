@@ -78,26 +78,26 @@ public class EditorController {
     public HttpResponse<?> verify(@QueryValue Optional<String> projectId, @Body String cbcFormulaString) {
         try {
             CbCFormulaContainer formula = parser.fromJsonStringToCbC(cbcFormulaString);
-            Path p;
-            Path proofPath;
+            Path proofFolderPath;
+            Path proofFilePath;
             try {
-                p = Files.createTempDirectory("proof_");
-                proofPath = Files.createDirectory(p.resolve("prove_"));
+                proofFolderPath = Files.createTempDirectory("proof_");
+                proofFilePath = Files.createDirectory(proofFolderPath.resolve("prove_"));
                 if (projectId.isPresent()) {
                     //obtaining java files and helper.key from project before verification
-                    LinkedList<String> filePaths = new LinkedList<>(filesController.findJavaFilesOfProject(projectId.get()));
+                    List<String> filePaths = new LinkedList<>(filesController.findJavaFilesOfProject(projectId.get()));
                     filePaths.add("helper.key");
                     for (String filePath : filePaths) {
                         Optional<HttpResponse<StreamedFile>> response = filesController.getFile(projectId.get(), URI.create(filePath));
                         if (response.isPresent()) {
                             InputStream e = response.get().body().getInputStream();
-                            Path fullPath = proofPath.resolve(filePath);
+                            Path fullPath = proofFilePath.resolve(filePath);
                             Files.createDirectories(fullPath.getParent());
                             Files.copy(e, fullPath);
                         }
                     }
                 }
-                VerifyAllStatements.verify(formula.cbcFormula(), formula.javaVariables(), formula.globalConditions(), formula.renaming(), p.toUri());
+                VerifyAllStatements.verify(formula.cbcFormula(), formula.javaVariables(), formula.globalConditions(), formula.renaming(), proofFolderPath.toUri());
             } catch (IOException e) {
                 return HttpResponse.serverError(e.getMessage());
             }
@@ -105,7 +105,7 @@ public class EditorController {
             //find all key files except helper.key
             List<Path> keyFiles;
             try {
-                keyFiles = Files.find(proofPath, 30, (path, attributes) -> {
+                keyFiles = Files.find(proofFilePath, 30, (path, attributes) -> {
                     String pathStr = path.toString();
                     return
                             pathStr.endsWith(".key")
@@ -117,7 +117,7 @@ public class EditorController {
 
             //upload found files to project
             projectId.ifPresent(s -> keyFiles.forEach(path -> {
-                URI urn = URI.create(p.getFileName() + path.toString().replace(proofPath.toString(), ""));
+                URI urn = URI.create(proofFolderPath.getFileName() + path.toString().replace(proofFilePath.toString(), ""));
                 try {
                     filesController.uploadBytes(Files.readAllBytes(path), s, urn);
                 } catch (IOException e) {

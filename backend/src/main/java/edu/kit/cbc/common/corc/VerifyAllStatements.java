@@ -17,62 +17,44 @@ public class VerifyAllStatements {
 
     public static void verify(CbCFormula formula, JavaVariables vars, GlobalConditions conds, Renaming renaming, URI proofFileUri) {
         AbstractStatement statement = formula.getStatement();
-        boolean prove = false;
-        prove = proveStatement(statement.getRefinement(), vars, conds, renaming, proofFileUri,
-                ProofType.FullProof);
-        if (prove) {
-            statement.setProven(true);
-        } else {
-            statement.setProven(false);
-        }
 
-        System.out.println(String.format("All statements verified: %b", prove));
+        boolean proven =  proveStatement(statement.getRefinement(), vars, conds, renaming, proofFileUri,
+                ProofType.FULL_PROOF);
+
+        statement.setProven(proven);
+        System.out.println(String.format("All statements verified: %b", proven));
     }
 
     public static boolean proveStatement(AbstractStatement statement, JavaVariables vars, GlobalConditions conds,
                                          Renaming renaming, URI uri) {
-        return proveStatement(statement, vars, conds, renaming, uri, ProofType.FullProof);
         // Default to FullProof if no proofType is explicitly given
+        return proveStatement(statement, vars, conds, renaming, uri, ProofType.FULL_PROOF);
     }
 
     public static boolean proveStatement(AbstractStatement statement, JavaVariables vars, GlobalConditions conds,
                                          Renaming renaming, URI uri, ProofType proofType) {
-        boolean prove = false;
+        boolean proven = false;
         if (statement instanceof SmallRepetitionStatement) {
             // Switch between proof types according to input parameter
-            switch (proofType) {
-                case FullProof:
-                    prove = proveSmallRepetitionStatement(statement, vars, conds, renaming, uri);
-                    break;
-                case Precondition:
-                    prove = provePreconditionSRS(statement, vars, conds, renaming, uri);
-                    break;
-                case Postcondition:
-                    prove = provePostconditionSRS(statement, vars, conds, renaming, uri);
-                    break;
-                case Variant:
-                    prove = proveVariantSRS(statement, vars, conds, renaming, uri);
-                    break;
-                default:
-                    throw new IllegalArgumentException(statement.getName() + " does not support the proof mode " + proofType.toString() + "!");
-            }
+            proven = switch (proofType) {
+                case FULL_PROOF -> proveSmallRepetitionStatement(statement, vars, conds, renaming, uri);
+                case PRECONDITION -> provePreconditionSRS(statement, vars, conds, renaming, uri);
+                case POSTCONDITION -> provePostconditionSRS(statement, vars, conds, renaming, uri);
+                case VARIANT -> proveVariantSRS(statement, vars, conds, renaming, uri);
+            };
         } else if (statement instanceof CompositionStatement) {
-            prove = proveCompositionStatement(statement, vars, conds, renaming, uri);
+            proven = proveCompositionStatement(statement, vars, conds, renaming, uri);
         } else if (statement instanceof SelectionStatement) {
-            switch (proofType) {
-                case FullProof:
-                    prove = proveSelectionStatement(statement, vars, conds, renaming, uri);
-                    break;
-                case Precondition:
-                    prove = provePreconditionSRS(statement, vars, conds, renaming, uri);
-                    break;
-                default:
-                    throw new IllegalArgumentException(statement.getName() + " does not support the proof mode " + proofType.toString() + "!");
-            }
-        } else if (statement instanceof AbstractStatement) {
-            prove = proveAbstractStatement(statement, vars, conds, renaming, uri);
+            proven = switch (proofType) {
+                case FULL_PROOF -> proveSelectionStatement(statement, vars, conds, renaming, uri);
+                case PRECONDITION -> provePreconditionSRS(statement, vars, conds, renaming, uri);
+                default ->
+                        throw new IllegalArgumentException(statement.getName() + " does not support the proof mode " + proofType + "!");
+            };
+        } else if (statement != null) {
+            proven = proveAbstractStatement(statement, vars, conds, renaming, uri);
         }
-        return prove;
+        return proven;
     }
 
     private static boolean proveVariantSRS(AbstractStatement statement, JavaVariables vars, GlobalConditions conds,
@@ -119,50 +101,41 @@ public class VerifyAllStatements {
 
     private static boolean proveAbstractStatement(AbstractStatement statement, JavaVariables vars,
                                                   GlobalConditions conds, Renaming renaming, URI uri) {
-        boolean prove = false;
         ProveWithKey prover = new ProveWithKey(statement, vars, conds, renaming, uri.toString(), null,
                 new FileUtil(uri.toString()));
-        prove = prover.proveStatementWithKey(false, false, 0);
-        if (prove) {
-            statement.setProven(true);
-        } else {
-            statement.setProven(false);
-        }
-        return prove;
-        /*
-         * if (!statement.isProven()) { boolean prove = false; ProveWithKey prover = new
-         * ProveWithKey(statement, vars, conds, renaming, uri.toString(), null, new
-         * FileUtil(uri.toString())); prove = prover.proveStatementWithKey(false, false,
-         * 0); if (prove) { statement.setProven(true); } else {
-         * statement.setProven(false); } return prove; } else {
-         * System.out.println("Abstract statement: " + statement.getName() +
-         * " already true"); return true; }
-         */
+
+        boolean proven = prover.proveStatementWithKey(false, false, 0);
+        statement.setProven(proven);
+
+        return proven;
     }
 
     public static boolean proveCompositionStatement(AbstractStatement statement, JavaVariables vars,
                                                     GlobalConditions conds, Renaming renaming, URI uri) {
-        boolean prove1;
-        boolean prove2;
+
         CompositionStatement compositionStatement = (CompositionStatement) statement;
-        if (compositionStatement.getFirstStatement().getRefinement() != null) {
-            prove1 = proveStatement(compositionStatement.getFirstStatement().getRefinement(), vars, conds,
-                    renaming, uri);
+        AbstractStatement firstStatementRefinement = compositionStatement.getFirstStatement().getRefinement();
+        AbstractStatement secondStatementRefinement = compositionStatement.getSecondStatement().getRefinement();
+
+        boolean proven1;
+        boolean proven2;
+
+        if (firstStatementRefinement != null) {
+            proven1 = proveStatement(firstStatementRefinement, vars, conds, renaming, uri);
         } else {
-            prove1 = proveStatement(compositionStatement.getFirstStatement(), vars, conds, renaming, uri);
+            proven1 = proveStatement(compositionStatement.getFirstStatement(), vars, conds, renaming, uri);
         }
-        if (compositionStatement.getSecondStatement().getRefinement() != null) {
-            prove2 = proveStatement(compositionStatement.getSecondStatement().getRefinement(), vars, conds,
-                    renaming, uri);
+
+        if (secondStatementRefinement != null) {
+            proven2 = proveStatement(secondStatementRefinement, vars, conds, renaming, uri);
         } else {
-            prove2 = proveStatement(compositionStatement.getSecondStatement(), vars, conds, renaming, uri);
+            proven2 = proveStatement(compositionStatement.getSecondStatement(), vars, conds, renaming, uri);
         }
-        if (prove1 && prove2 && true) {
-            statement.setProven(true);
-        } else {
-            statement.setProven(false);
-        }
-        return (prove1 && prove2 && true);
+
+        boolean proven = proven1 && proven2;
+        statement.setProven(proven);
+
+        return (proven);
     }
 
     private static boolean proveSelectionStatement(AbstractStatement statement, JavaVariables vars,
@@ -170,25 +143,21 @@ public class VerifyAllStatements {
         boolean proven = true;
         SelectionStatement selectionStatement = (SelectionStatement) statement;
         for (AbstractStatement childStatement : selectionStatement.getCommands()) {
-            proven = (proveStatement(childStatement.getRefinement(), vars, conds, renaming, uri) && proven
-                    && true);
+            proven = (proveStatement(childStatement.getRefinement(), vars, conds, renaming, uri) && proven);
         }
-        boolean provePre = selectionStatement.isPreProve();
-        if (!(selectionStatement.isProven() && provePre && true)) {
+        boolean preProven = selectionStatement.isPreProve();
+        if (!(selectionStatement.isProven() && preProven)) {
             if (!selectionStatement.isPreProve()) {
                 EList<Condition> guards = selectionStatement.getGuards();
                 Condition preCondition = selectionStatement.getParent().getPreCondition();
                 ProveWithKey prove = new ProveWithKey(statement, vars, conds, renaming, uri.toString(), null,
                         new FileUtil(uri.toString()));
-                provePre = prove.provePreSelWithKey(guards, preCondition);
-                selectionStatement.setPreProve(provePre);
+                preProven = prove.provePreSelWithKey(guards, preCondition);
+                selectionStatement.setPreProve(preProven);
             }
-            if (provePre && proven && true) {
-                selectionStatement.setProven(true);
-            } else {
-                selectionStatement.setProven(false);
-            }
-            return (proven && provePre && true);
+
+            selectionStatement.setProven(preProven && proven);
+            return (proven && preProven);
         } else {
             System.out.println("Selection statement already true");
             return true;
@@ -200,13 +169,12 @@ public class VerifyAllStatements {
         SmallRepetitionStatement repStatement = (SmallRepetitionStatement) statement;
         boolean proven = true;
         if (repStatement.getLoopStatement().getRefinement() != null) {
-            proven = (proveStatement(repStatement.getLoopStatement().getRefinement(), vars, conds, renaming, uri)
-                    && proven && true);
+            proven = proveStatement(repStatement.getLoopStatement().getRefinement(), vars, conds, renaming, uri);
         }
         boolean provePre = repStatement.isPreProven();
         boolean provePost = repStatement.isPostProven();
         boolean proveVar = repStatement.isVariantProven();
-        if (!(repStatement.isProven() && provePre && provePost && proveVar && true)) {
+        if (!(repStatement.isProven() && provePre && provePost && proveVar)) {
             if (!provePre) {
                 provePre = provePreconditionSRS(statement, vars, conds, renaming, uri);
             }
@@ -216,12 +184,9 @@ public class VerifyAllStatements {
             if (!proveVar) {
                 proveVar = proveVariantSRS(statement, vars, conds, renaming, uri);
             }
-            if (proven && provePre && provePost && proveVar) {
-                repStatement.setProven(true);
-            } else {
-                repStatement.setProven(false);
-            }
-            return (proven && provePre && provePost && proveVar);
+            boolean srsProven = provePre && provePost && proveVar && proven;
+            repStatement.setProven(srsProven);
+            return srsProven;
         } else {
             repStatement.setPreProven(true);
             repStatement.setPostProven(true);

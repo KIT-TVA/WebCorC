@@ -1,128 +1,28 @@
 package edu.kit.cbc.common.corc;
 
-import de.tu_bs.cs.isf.cbc.cbcmodel.AbstractStatement;
 import de.tu_bs.cs.isf.cbc.cbcmodel.CompositionTechnique;
 import de.tu_bs.cs.isf.cbc.cbcmodel.Condition;
+import de.tu_bs.cs.isf.cbc.cbcmodel.GlobalConditions;
 import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariable;
 import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariables;
+import de.tu_bs.cs.isf.cbc.cbcmodel.VariableKind;
+import edu.kit.cbc.common.corc.codegen.KeYFunctionReplacer;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.eclipse.emf.common.util.EList;
 
 public class Parser {
     public static final String KEYWORD_JML_PRE = "requires";
     public static final String KEYWORD_JML_POST = "ensures";
     public static final String KEYWORD_JML_MODIFIABLE = "assignable";
-    private Map<String, String> variablesToStatements = new HashMap<String, String>();
 
-    public static List<String> findAllVariables(AbstractStatement abstractStatement, JavaVariables vars, IFileUtil fileHandler)
-            throws ParserException {
-        String input = abstractStatement.getName().trim();
-        List<String> variableList = new LinkedList<String>();
-        if (input.charAt(input.length() - 1) != ';') {
-            throw new ParserException("Statement must end with ';'. " + input);
-        }
-        String[] statements = input.split(";");
-
-        for (String nextStatement : statements) {
-            String variable = "";
-            if (nextStatement.matches("(\\+\\+)(\\w+)")) {
-                variable = nextStatement.split("\\+\\+")[0];
-            } else if (nextStatement.matches("(\\-\\-)(\\w+)")) {
-                variable = nextStatement.split("\\-\\-")[0];
-            } else if (nextStatement.matches("(\\w+)(\\-\\-)")) {
-                variable = nextStatement.split("\\-\\-")[0];
-            } else if (nextStatement.matches("(\\w+)(\\+\\+)")) {
-                variable = nextStatement.split("\\+\\+")[0];
-            }
-
-            if (!variable.isEmpty()) {
-                variableList.add(variable);
-                variable = "";
-            }
-
-            if (nextStatement.contains("=")) {
-                String[] nextStatementTokens;
-                if (nextStatement.contains("*=")) {
-                    nextStatementTokens = nextStatement.split("[*]=");
-                } else if (nextStatement.contains("-=")) {
-                    nextStatementTokens = nextStatement.split("[-]=");
-                } else if (nextStatement.contains("+=")) {
-                    nextStatementTokens = nextStatement.split("[+]=");
-                } else if (nextStatement.contains("/=")) {
-                    nextStatementTokens = nextStatement.split("[/]=");
-                } else {
-                    nextStatementTokens = nextStatement.split("=");
-                }
-                variable = parseVariable(nextStatementTokens[0].trim());
-                //add only variables of kind param or global
-                /*String typeOfVariable = getTypeOfVariable(variable, vars);
-                if(variable.startsWith("this.") ||
-                        vars.getVariables().stream().filter(e -> e.getName().equals(typeOfVariable + " " + variable)
-                        && e.getKind() == VariableKind.PARAM).count() > 0) {
-                    variableList.add(variable);
-                }*/
-                //--------------------------------
-                variableList.add(variable);
-            }
-            if (nextStatement.contains(".") && nextStatement.contains("(")) {
-                Pattern methodCallPattern = Pattern.compile("\\w+\\.\\w+\\(");
-                Matcher matcher = methodCallPattern.matcher(nextStatement);
-                while (matcher.find()) {
-                    String[] nextStatementTokens = matcher.group(0).split("\\.", 2);
-                    String variableName = nextStatementTokens[0];
-                    String methodName = nextStatementTokens[1].replaceAll("\\(", "");
-                    String variableType = getTypeOfVariable(variableName, vars);
-                    File javaFile = fileHandler.getClassFile(variableType);
-                    if (javaFile != null) {
-                        String assignablesFromMethodCall = getContentFromJML(javaFile, methodName,
-                                KEYWORD_JML_MODIFIABLE, fileHandler);
-                        if (!assignablesFromMethodCall.equals("")) {
-                            for (String var : assignablesFromMethodCall.split(",")) {
-                                if (nextStatement.trim().startsWith("this.")) {
-                                    if (!var.equals("\\nothing")) {
-                                        variableList.add("this." + variableName + "." + var);
-                                    } else {
-                                        variableList.add("this." + variableName);
-                                    }
-                                } else {
-                                    if (!var.equals("\\nothing")) {
-                                        variableList.add(variableName + "." + var);
-                                    } else {
-                                        variableList.add(variableName);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-            }
-        }
-        return variableList;
-
-    }
-
-    public static String getTypeOfVariable(String variableName, JavaVariables vars) {
-        variableName = variableName.replaceFirst("\\w+\\.", "");
-        variableName = variableName.replaceFirst("\\[\\w+\\]", "");
-        for (JavaVariable var : vars.getVariables()) {
-            String[] splittedName = var.getName().split(" ");
-            if (splittedName.length > 1) {
-                if (splittedName[1].trim().equals(variableName.trim())) {
-                    return splittedName[0];
-                }
-            }
-        }
-        return null;
-    }
+    private final Map<String, String> variablesToStatements = new HashMap<>();
 
     public static String getContentFromJML(File javaFile, String methodName, String keyword, IFileUtil fileHandler) {
         if (javaFile != null) {
@@ -162,17 +62,6 @@ public class Parser {
 
     }
 
-    public static String parseVariable(String input) throws ParserException {
-        String[] inputTokens = input.split(" ");
-        if (inputTokens.length == 2) {
-            return inputTokens[1].trim();
-        } else if (inputTokens.length == 1) {
-            return inputTokens[0].trim();
-        } else {
-            throw new ParserException("Variable not in format \"<type> <name>\"." + input);
-        }
-    }
-
     public static String rewriteJMLConditionToKeY(String condition) {
 
         condition = condition.replaceAll("==>", "->");
@@ -208,6 +97,29 @@ public class Parser {
         return CompositionTechnique.CONTRACT_OVERRIDING;
     }
 
+    public static String getModifieableVarsFromCondition(Condition condition) {
+        String variables = "\\nothing";
+        if (!condition.getModifiables().isEmpty()) {
+            variables = "";
+            for (String mod : condition.getModifiables()) {
+                variables += mod + ",";
+            }
+            variables = variables.substring(0, variables.length() - 1);
+        }
+
+        // remove return variable, as it must not be in assignables in java class
+        if (variables.endsWith(",ret") || variables.contains(",ret,")) {
+            variables = variables.replace(",ret", "");
+        }
+        if (variables.equals("ret")) {
+            variables = "\\nothing";
+        }
+        if (variables.startsWith("ret,")) {
+            variables = variables.replace("ret,", "");
+        }
+        return variables;
+    }
+
     public static String getConditionFromCondition(String condition) {
         if (condition.contains("modifiable")) {
             String[] splittedCondition = condition.split(";", 2);
@@ -215,6 +127,7 @@ public class Parser {
                 return splittedCondition[1].trim();
             }
         }
+        condition = KeYFunctionReplacer.getInstance().restoreIn(condition);
         return condition;
     }
 
@@ -265,6 +178,87 @@ public class Parser {
         return variables;
     }
 
+    public static String getModifieableVarsFromConditionExceptLocals(Condition condition,
+                                                                     LinkedList<String> varsLinkedList, JavaVariables vars, JavaVariable returnVar) {
+        String variables = getModifieableVarsFromCondition(condition);
+        if (variables.contains("nothing") || variables.contains("everything")) {
+            return variables;
+        } else {
+            String[] assignableVariables = variables.replaceAll("this\\.", "").split(",");
+            for (int i = 0; i < assignableVariables.length; i++) {
+                assignableVariables[i] = assignableVariables[i].replaceAll("\\[.*\\]", "\\[\\*\\]");
+            }
+            variables = "";
+            for (String modVar : assignableVariables) {
+                boolean isLocal = false;
+                if (varsLinkedList != null && varsLinkedList.size() > 0) {
+                    for (String var : varsLinkedList) {
+                        if (modVar.replaceAll("\\[.*\\]", "").equals(var.split(" ")[1])) {
+                            isLocal = true;
+                        }
+                    }
+                }
+                if (vars != null && vars.getVariables().size() > 0) {
+                    for (JavaVariable var : vars.getVariables()) {
+                        if (modVar.replaceAll("\\[.*\\]", "").equals(var.getName().split(" ")[1])
+                                && var.getKind().equals(VariableKind.LOCAL)) {
+                            isLocal = true;
+                        }
+                    }
+                }
+                if (returnVar != null) {
+                    if (modVar.replaceAll("\\[.*\\]", "").equals(returnVar.getName().split(" ")[1])) {
+                        isLocal = true;
+                    }
+                }
+                if (!isLocal && !variables.contains(modVar)) {
+                    if (variables.isEmpty()) {
+                        variables = modVar;
+                    } else {
+                        variables = variables + "," + modVar;
+                    }
+                }
+            }
+        }
+        if (variables.isEmpty()) {
+            return variables = "\\nothing";
+        }
+        return variables;
+    }
+
+    public static String processGlobalConditions(GlobalConditions globalConditions, LinkedList<String> localVars,
+                                                 String preCondition) {
+        String result = "";
+        HashSet<String> conditionsSet = new HashSet<>();
+        for (Condition c : globalConditions.getConditions()) {
+            // Check if condition contains local variables:
+            boolean isLocal = false;
+            for (String v : localVars) {
+                if (c.getName().contains(v.substring(v.indexOf(" ")).trim())) {
+                    isLocal = true;
+                }
+            }
+            if (preCondition.contains(c.getName()) || c.getName().contains("<inv>")) {
+                continue;
+            }
+            if (!isLocal) {
+                conditionsSet.add(rewriteConditionToJML(c.getName()));
+            } else {
+                System.out.println("[WARNING] Did not add global condition '" + c.getName()
+                        + "' to JML annotation, because it contains access to a local variable.");
+            }
+        }
+        for (String c : conditionsSet) {
+            if (result.isEmpty()) {
+                result += c;
+            } else {
+                result += " & " + c;
+            }
+        }
+
+        return result;
+    }
+
     public static String rewriteConditionToJML(String condition) {
         condition = condition.replaceAll("(?<!<|>|!|=)(\\s*=\\s*)(?!<|>|=)", " == ");
         condition = condition.replaceAll("->", "==>");
@@ -273,7 +267,10 @@ public class Parser {
         condition = condition.replace("|", "||");
         condition = condition.replaceAll("(?<==\\s?)TRUE", "true");
         condition = condition.replaceAll("(?<==\\s?)FALSE", "false");
-        condition = condition.replaceAll("(\\w*)::instance\\((\\w*)\\) = TRUE", "$2 instanceof $1");
+        condition = condition.replaceAll("(\\w*)::exactInstance\\((\\w*)\\)\\s*=\\s*TRUE", "$2 instanceof $1");
+        condition = condition.replaceAll(".<created>\\s*=\\s*TRUE", " != null");
+        condition = condition.replaceAll(".<created>\\s*=\\s*FALSE", " == null");
+        condition = KeYFunctionReplacer.getInstance().restoreIn(condition);
         return condition;
     }
 
@@ -330,167 +327,11 @@ public class Parser {
                         variables = variables + "," + assignableVariables[i];
                     }
                 }
-                /*if(assignableVariables[i].contains("[")) {
-                    s = assignableVariables[i].substring(0, assignableVariables[i].indexOf('[')) + "[*]";
-                    variables = variables.replaceFirst(
-                            assignableVariables[i].substring(0, assignableVariables[i].indexOf('[')) + "\\[\\w*.?\\w+\\]", s);
-                    variables = variables.replaceAll(
-                            "\\," + assignableVariables[i].substring(0, assignableVariables[i].indexOf('[')) + "\\[\\w*.?\\w+\\]", "");
-                    variables = variables.replaceAll(
-                            assignableVariables[i].substring(0, assignableVariables[i].indexOf('[')) + "\\[\\w*.?\\w+\\]\\,", "");
-                    assignableVariables[i] = s;
-                }
-                int j = i;
-                if(vars.stream().filter(e -> e.split(" ")[1].equals(assignableVariables[j])
-                        || (e.split(" ")[1] + "[*]").equals(assignableVariables[j])).count() > 0) {
-                    if(variables.contains(assignableVariables[i] + ","))
-                        variables = variables.replace(assignableVariables[i] + "," , "");
-                    else if(variables.contains("," + assignableVariables[i]))
-                        variables = variables.replace("," + assignableVariables[i] , "");
-                    else
-                        return variables = "\\nothing";
-                }*/
             }
         }
         if (variables.isEmpty()) {
-            return variables = "\\nothing";
+            return "\\nothing";
         }
         return variables;
-    }
-
-    public static String extractMethodNameFromStatemtent(String stmt) {
-        String methodName = "";
-        boolean isInSameClass = false;
-        char[] stmtChar = stmt.toCharArray();
-        boolean name = false;
-        for (int i = stmtChar.length - 1; i >= 0; i--) {
-            if (!name && stmtChar[i] == '(') {
-                name = true;
-            } else if (name && Character.isLetter(stmtChar[i])) {
-                methodName = stmtChar[i] + methodName;
-                isInSameClass = true;
-            } else if (name && stmtChar[i] == '.') {
-                isInSameClass = false;
-                break;
-            } else {
-                name = false;
-            }
-        }
-        if (isInSameClass) {
-            methodName = methodName.substring(0, 1).toUpperCase() + methodName.substring(1) + ".diagram";
-        }
-        return methodName;
-    }
-
-    public void addVariableStatementPairs(AbstractStatement abstractStatement) throws ParserException {
-        String input = abstractStatement.getName().trim();
-        if (input.charAt(input.length() - 1) != ';') {
-            throw new ParserException("Statement must end with ';'. " + input);
-        }
-        String[] statements = input.split(";");
-
-        for (String nextStatement : statements) {
-            if (nextStatement.contains("=")) {
-                String[] nextStatementTokens = nextStatement.split("=");
-                String variable = parseVariable(nextStatementTokens[0].trim());
-                variablesToStatements.put(variable, nextStatementTokens[1].trim());
-            }
-        }
-    }
-
-    public String destructConditionAndReplace(Condition condition) throws ParserException {
-        String input = condition.getName();
-        String[] inputTokens = new String[0];
-        if (input.contains("&")) {
-            input = input.replace("&", "|");
-        }
-        if (input.contains("|")) {
-            inputTokens = input.split("\\|");
-        }
-        if (!input.contains("&") && !input.contains("|")) {
-            inputTokens = new String[]{input};
-        }
-
-        for (String nextRelation : inputTokens) {
-            String regex = "";
-            if (nextRelation.contains("<=")) {
-                regex = "<=";
-            } else if (nextRelation.contains(">=")) {
-                regex = ">=";
-            } else if (nextRelation.contains("<")) {
-                regex = "<";
-            } else if (nextRelation.contains(">")) {
-                regex = ">";
-            } else if (nextRelation.contains("!=")) {
-                regex = "!=";
-            } else if (nextRelation.contains("=")) {
-                regex = "=";
-            } else {
-                regex = null;
-            }
-
-            if (regex != null) {
-                String[] nextRelationTokens = nextRelation.split(regex);
-
-                for (String nextRelationToken : nextRelationTokens) {
-                    if (nextRelationToken.contains("<") || nextRelationToken.contains(">")
-                            || nextRelationToken.contains("=")) {
-                        throw new ParserException("Only one relation symbol per relation. " + nextRelation);
-                    }
-                }
-
-                if (nextRelationTokens.length > 2) {
-                    throw new ParserException("Exactly two operands per relation. " + nextRelation);
-                }
-
-                for (String nextRelationToken : nextRelationTokens) {
-                    for (String variable : variablesToStatements.keySet()) {
-                        int startPosition = -1;
-                        if (nextRelationToken.equals(variable)) {
-                            startPosition = input.indexOf(nextRelationToken) + nextRelationToken.indexOf(variable);
-                        } else if (nextRelationToken.contains(" " + variable + " ")) {
-                            startPosition = input.indexOf(nextRelationToken)
-                                    + nextRelationToken.indexOf(" " + variable + " ") + 1;
-                        } else if (nextRelationToken.contains(" " + variable + ",")) {
-                            startPosition = input.indexOf(nextRelationToken)
-                                    + nextRelationToken.indexOf(" " + variable + ",") + 1;
-                        } else if (nextRelationToken.contains("," + variable + " ")) {
-                            startPosition = input.indexOf(nextRelationToken)
-                                    + nextRelationToken.indexOf("," + variable + " ") + 1;
-                        } else if (nextRelationToken.contains("," + variable + ",")) {
-                            startPosition = input.indexOf(nextRelationToken)
-                                    + nextRelationToken.indexOf("," + variable + ",") + 1;
-                        }
-                        if (startPosition != -1) {
-                            int endPosition = startPosition + variable.length();
-                            input = input.substring(0, startPosition) + variablesToStatements.get(variable)
-                                    + input.substring(endPosition, input.length());
-                        }
-                    }
-                }
-
-            } else {
-                for (String variable : variablesToStatements.keySet()) {
-                    int startPosition = -1;
-                    if (nextRelation.equals(variable)) {
-                        startPosition = input.indexOf(nextRelation) + nextRelation.indexOf(variable);
-                    } else if (nextRelation.contains(" " + variable + " ")) {
-                        startPosition = input.indexOf(nextRelation) + nextRelation.indexOf(" " + variable + " ") + 1;
-                    } else if (nextRelation.contains(" " + variable + ",")) {
-                        startPosition = input.indexOf(nextRelation) + nextRelation.indexOf(" " + variable + ",") + 1;
-                    } else if (nextRelation.contains("," + variable + " ")) {
-                        startPosition = input.indexOf(nextRelation) + nextRelation.indexOf("," + variable + " ") + 1;
-                    } else if (nextRelation.contains("," + variable + ",")) {
-                        startPosition = input.indexOf(nextRelation) + nextRelation.indexOf("," + variable + ",") + 1;
-                    }
-                    if (startPosition != -1) {
-                        int endPosition = startPosition + variable.length();
-                        input = input.substring(0, startPosition) + variablesToStatements.get(variable)
-                                + input.substring(endPosition, input.length());
-                    }
-                }
-            }
-        }
-        return input;
     }
 }

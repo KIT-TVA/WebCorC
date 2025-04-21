@@ -119,18 +119,6 @@ public class FileUtil implements IFileUtil {
         return URI.createURI(uriString).trimSegments(1).toFileString().replace("\\\\", "\\").replace("\\", "/");
     }
 
-    /*
-     * private File traverseFolders(IContainer folder, String className) { try {
-     * IResource[] members = folder.members(); for (final IResource resource :
-     * members) { if (resource instanceof IContainer) { File foundFile =
-     * traverseFolders((IContainer) resource, className); if (foundFile != null) {
-     * return foundFile; } } else if (resource instanceof IFile) {
-     *
-     * final IFile file = (IFile) resource; if (file.getName().equals(className +
-     * ".java")) { return file.getLocation().toFile(); } } } } catch (CoreException
-     * e) { e.printStackTrace(); } return null; }
-     */
-
     public File getClassFile(String className) {
         URI uriTrimmed = URI.createURI(applicationUri).trimFragment();
         if (uriTrimmed.isPlatformResource()) {
@@ -156,46 +144,6 @@ public class FileUtil implements IFileUtil {
         }
         return lines;
     }
-
-    /*
-     * private static String getProjectLocationS(String uriPath) { uriPath =
-     * uriPath.substring(1, uriPath.length()); int positionOfSlash =
-     * uriPath.indexOf('/') + 1; uriPath = uriPath.substring(positionOfSlash,
-     * uriPath.length()); IProject thisProject = null; for (IProject p :
-     * ResourcesPlugin.getWorkspace().getRoot().getProjects()) { if (p.getFile(new
-     * Path(uriPath)).exists()) { thisProject = p; } } // if
-     * (thisProject.getName().contains("Userstudy")) { // File diagramFile = new
-     * File(thisProject.getLocation() + "/" + uriPath); // File diagramFileCopy =
-     * new File(thisProject.getLocation() + "/src/saved/ExDia" + proofCounter +
-     * ".diagram"); // File cbcFile = new File(thisProject.getLocation() + "/" +
-     * uriPath.substring(0, uriPath.indexOf(".")) + ".cbcmodel"); // File
-     * cbcFileCopy = new File(thisProject.getLocation() + "/src/saved/ExDia" +
-     * proofCounter + ".cbcmodel"); // proofCounter++; // try { // IWorkspace
-     * workspace = ResourcesPlugin.getWorkspace(); //
-     * Files.copy(diagramFile.toPath(), diagramFileCopy.toPath(),
-     * StandardCopyOption.REPLACE_EXISTING); // Files.copy(cbcFile.toPath(),
-     * cbcFileCopy.toPath(), StandardCopyOption.REPLACE_EXISTING); // IPath
-     * iLocation = Path.fromOSString(diagramFileCopy.getAbsolutePath()); // IFile
-     * ifile = workspace.getRoot().getFileForLocation(iLocation); //
-     * ifile.refreshLocal(0, null); // iLocation =
-     * Path.fromOSString(cbcFileCopy.getAbsolutePath()); // ifile =
-     * workspace.getRoot().getFileForLocation(iLocation); // ifile.refreshLocal(0,
-     * null); // } catch (IOException | CoreException e) { // e.printStackTrace();
-     * // } // } return null; }
-     */
-
-
-
-    /*
-     * public static IProject getProject(URI uri) { uri = uri.trimFragment(); String
-     * uriPath = uri.toPlatformString(true);
-     *
-     * uriPath = uriPath.substring(1, uriPath.length()); int positionOfSlash =
-     * uriPath.indexOf('/') + 1; uriPath = uriPath.substring(positionOfSlash,
-     * uriPath.length()); IProject thisProject = null; for (IProject p :
-     * ResourcesPlugin.getWorkspace().getRoot().getProjects()) { if (p.getFile(new
-     * Path(uriPath)).exists()) { thisProject = p; } } return thisProject; }
-     */
 
     public File writeFile(String problem, String location, int numberFile, boolean override) {
         File keyFile = new File(location + "/prove" + numberFile + ".key");
