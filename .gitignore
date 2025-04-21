@@ -12,6 +12,8 @@ local.properties
 .settings/
 .loadpath
 .recommenders
+.idea/
+.vscode/
 
 # External tool builders
 .externalToolBuilders/

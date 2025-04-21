@@ -1,5 +1,27 @@
 package edu.kit.cbc.editor;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import edu.kit.cbc.common.CbCFormulaContainer;
+import edu.kit.cbc.common.Problem;
+import edu.kit.cbc.common.corc.VerifyAllStatements;
+import edu.kit.cbc.common.corc.codegen.CodeGenerator;
+import edu.kit.cbc.editor.llm.LLMQueryDto;
+import edu.kit.cbc.editor.llm.LLMResponse;
+import edu.kit.cbc.editor.llm.OpenAIClient;
+import edu.kit.cbc.projects.files.controller.FilesController;
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Consumes;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Produces;
+import io.micronaut.http.annotation.QueryValue;
+import io.micronaut.http.server.types.files.StreamedFile;
+import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
+import jakarta.validation.Valid;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -8,30 +30,6 @@ import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-
-import edu.kit.cbc.common.CbCFormulaContainer;
-import edu.kit.cbc.common.Problem;
-import edu.kit.cbc.common.corc.VerifyAllStatements;
-import edu.kit.cbc.common.corc.codeGen.CodeGenerator;
-import edu.kit.cbc.editor.llm.OpenAIClient;
-import edu.kit.cbc.editor.llm.LLMQueryDto;
-import edu.kit.cbc.editor.llm.LLMResponse;
-import edu.kit.cbc.projects.files.controller.FilesController;
-import io.micronaut.http.HttpResponse;
-import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Post;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Consumes;
-import io.micronaut.http.annotation.Produces;
-import io.micronaut.http.annotation.QueryValue;
-import io.micronaut.http.server.types.files.StreamedFile;
-import io.micronaut.scheduling.TaskExecutors;
-import io.micronaut.scheduling.annotation.ExecuteOn;
-import jakarta.validation.Valid;
 
 
 @Controller("/editor")
@@ -70,7 +68,7 @@ public class EditorController {
             CbCFormulaContainer c = parser.fromXMLStringToCbC(cbcFormulaString);
             return HttpResponse.ok(parser.toJsonString(c));
         } catch (IOException e) {
-            return HttpResponse.serverError(Problem.PARSING_ERROR(e.getMessage()));
+            return HttpResponse.serverError(Problem.getParsingError(e.getMessage()));
         }
     }
 
@@ -109,9 +107,9 @@ public class EditorController {
             try {
                 keyFiles = Files.find(proofPath, 30, (path, attributes) -> {
                     String pathStr = path.toString();
-                    return 
-                        pathStr.endsWith(".key")
-                        && !pathStr.endsWith("helper.key");
+                    return
+                            pathStr.endsWith(".key")
+                                    && !pathStr.endsWith("helper.key");
                 }).toList();
             } catch (IOException e) {
                 return HttpResponse.serverError(e.getMessage());
@@ -123,7 +121,9 @@ public class EditorController {
                     URI urn = URI.create(p.getFileName() + path.toString().replace(proofPath.toString(), ""));
                     try {
                         filesController.uploadBytes(Files.readAllBytes(path), projectId.get(), urn);
-                    } catch (IOException e) { }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 });
             }
 

@@ -1,4 +1,5 @@
 /**
+ *
  */
 package de.tu_bs.cs.isf.cbc.cbcclass;
 
@@ -26,129 +27,129 @@ import org.eclipse.emf.ecore.EObject;
  * @generated
  */
 public interface Field extends EObject {
-	/**
-	 * Returns the value of the '<em><b>Visibility</b></em>' attribute.
-	 * The literals are from the enumeration {@link de.tu_bs.cs.isf.cbc.cbcclass.Visibility}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Visibility</em>' attribute.
-	 * @see de.tu_bs.cs.isf.cbc.cbcclass.Visibility
-	 * @see #setVisibility(Visibility)
-	 * @see de.tu_bs.cs.isf.cbc.cbcclass.CbcclassPackage#getField_Visibility()
-	 * @model
-	 * @generated
-	 */
-	Visibility getVisibility();
+    /**
+     * Returns the value of the '<em><b>Visibility</b></em>' attribute.
+     * The literals are from the enumeration {@link de.tu_bs.cs.isf.cbc.cbcclass.Visibility}.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Visibility</em>' attribute.
+     * @see de.tu_bs.cs.isf.cbc.cbcclass.Visibility
+     * @see #setVisibility(Visibility)
+     * @see de.tu_bs.cs.isf.cbc.cbcclass.CbcclassPackage#getField_Visibility()
+     * @model
+     * @generated
+     */
+    Visibility getVisibility();
 
-	/**
-	 * Sets the value of the '{@link de.tu_bs.cs.isf.cbc.cbcclass.Field#getVisibility <em>Visibility</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Visibility</em>' attribute.
-	 * @see de.tu_bs.cs.isf.cbc.cbcclass.Visibility
-	 * @see #getVisibility()
-	 * @generated
-	 */
-	void setVisibility(Visibility value);
+    /**
+     * Sets the value of the '{@link de.tu_bs.cs.isf.cbc.cbcclass.Field#getVisibility <em>Visibility</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @param value the new value of the '<em>Visibility</em>' attribute.
+     * @see de.tu_bs.cs.isf.cbc.cbcclass.Visibility
+     * @see #getVisibility()
+     * @generated
+     */
+    void setVisibility(Visibility value);
 
-	/**
-	 * Returns the value of the '<em><b>Type</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Type</em>' attribute.
-	 * @see #setType(String)
-	 * @see de.tu_bs.cs.isf.cbc.cbcclass.CbcclassPackage#getField_Type()
-	 * @model
-	 * @generated
-	 */
-	String getType();
+    /**
+     * Returns the value of the '<em><b>Type</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Type</em>' attribute.
+     * @see #setType(String)
+     * @see de.tu_bs.cs.isf.cbc.cbcclass.CbcclassPackage#getField_Type()
+     * @model
+     * @generated
+     */
+    String getType();
 
-	/**
-	 * Sets the value of the '{@link de.tu_bs.cs.isf.cbc.cbcclass.Field#getType <em>Type</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Type</em>' attribute.
-	 * @see #getType()
-	 * @generated
-	 */
-	void setType(String value);
+    /**
+     * Sets the value of the '{@link de.tu_bs.cs.isf.cbc.cbcclass.Field#getType <em>Type</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @param value the new value of the '<em>Type</em>' attribute.
+     * @see #getType()
+     * @generated
+     */
+    void setType(String value);
 
-	/**
-	 * Returns the value of the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Name</em>' attribute.
-	 * @see #setName(String)
-	 * @see de.tu_bs.cs.isf.cbc.cbcclass.CbcclassPackage#getField_Name()
-	 * @model
-	 * @generated
-	 */
-	String getName();
+    /**
+     * Returns the value of the '<em><b>Name</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Name</em>' attribute.
+     * @see #setName(String)
+     * @see de.tu_bs.cs.isf.cbc.cbcclass.CbcclassPackage#getField_Name()
+     * @model
+     * @generated
+     */
+    String getName();
 
-	/**
-	 * Sets the value of the '{@link de.tu_bs.cs.isf.cbc.cbcclass.Field#getName <em>Name</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Name</em>' attribute.
-	 * @see #getName()
-	 * @generated
-	 */
-	void setName(String value);
+    /**
+     * Sets the value of the '{@link de.tu_bs.cs.isf.cbc.cbcclass.Field#getName <em>Name</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @param value the new value of the '<em>Name</em>' attribute.
+     * @see #getName()
+     * @generated
+     */
+    void setName(String value);
 
-	/**
-	 * Returns the value of the '<em><b>Is Static</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Is Static</em>' attribute.
-	 * @see #setIsStatic(boolean)
-	 * @see de.tu_bs.cs.isf.cbc.cbcclass.CbcclassPackage#getField_IsStatic()
-	 * @model
-	 * @generated
-	 */
-	boolean isIsStatic();
+    /**
+     * Returns the value of the '<em><b>Is Static</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Is Static</em>' attribute.
+     * @see #setIsStatic(boolean)
+     * @see de.tu_bs.cs.isf.cbc.cbcclass.CbcclassPackage#getField_IsStatic()
+     * @model
+     * @generated
+     */
+    boolean isIsStatic();
 
-	/**
-	 * Sets the value of the '{@link de.tu_bs.cs.isf.cbc.cbcclass.Field#isIsStatic <em>Is Static</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Is Static</em>' attribute.
-	 * @see #isIsStatic()
-	 * @generated
-	 */
-	void setIsStatic(boolean value);
+    /**
+     * Sets the value of the '{@link de.tu_bs.cs.isf.cbc.cbcclass.Field#isIsStatic <em>Is Static</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @param value the new value of the '<em>Is Static</em>' attribute.
+     * @see #isIsStatic()
+     * @generated
+     */
+    void setIsStatic(boolean value);
 
-	/**
-	 * Returns the value of the '<em><b>Is Final</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Is Final</em>' attribute.
-	 * @see #setIsFinal(boolean)
-	 * @see de.tu_bs.cs.isf.cbc.cbcclass.CbcclassPackage#getField_IsFinal()
-	 * @model
-	 * @generated
-	 */
-	boolean isIsFinal();
+    /**
+     * Returns the value of the '<em><b>Is Final</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Is Final</em>' attribute.
+     * @see #setIsFinal(boolean)
+     * @see de.tu_bs.cs.isf.cbc.cbcclass.CbcclassPackage#getField_IsFinal()
+     * @model
+     * @generated
+     */
+    boolean isIsFinal();
 
-	/**
-	 * Sets the value of the '{@link de.tu_bs.cs.isf.cbc.cbcclass.Field#isIsFinal <em>Is Final</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Is Final</em>' attribute.
-	 * @see #isIsFinal()
-	 * @generated
-	 */
-	void setIsFinal(boolean value);
+    /**
+     * Sets the value of the '{@link de.tu_bs.cs.isf.cbc.cbcclass.Field#isIsFinal <em>Is Final</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @param value the new value of the '<em>Is Final</em>' attribute.
+     * @see #isIsFinal()
+     * @generated
+     */
+    void setIsFinal(boolean value);
 
-	/**
-	 * Returns the value of the '<em><b>Displayed Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Displayed Name</em>' attribute.
-	 * @see de.tu_bs.cs.isf.cbc.cbcclass.CbcclassPackage#getField_DisplayedName()
-	 * @model transient="true" changeable="false" volatile="true" derived="true"
-	 *        annotation="http://www.eclipse.org/emf/2002/GenModel get='String staticString = isStatic? \"static \" : \"\"; String finalString = isFinal ? \"final \" : \"\"; return visibility + \" \" + staticString + finalString + type + \" \" + name;'"
-	 * @generated
-	 */
-	String getDisplayedName();
+    /**
+     * Returns the value of the '<em><b>Displayed Name</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Displayed Name</em>' attribute.
+     * @see de.tu_bs.cs.isf.cbc.cbcclass.CbcclassPackage#getField_DisplayedName()
+     * @model transient="true" changeable="false" volatile="true" derived="true"
+     *        annotation="http://www.eclipse.org/emf/2002/GenModel get='String staticString = isStatic? \"static \" : \"\"; String finalString = isFinal ? \"final \" : \"\"; return visibility + \" \" + staticString + finalString + type + \" \" + name;'"
+     * @generated
+     */
+    String getDisplayedName();
 
 } // Field

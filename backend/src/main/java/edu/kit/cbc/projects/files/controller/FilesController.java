@@ -1,25 +1,20 @@
 package edu.kit.cbc.projects.files.controller;
 
-import java.util.List;
-import java.util.Optional;
-import java.io.IOException;
-import java.net.URI;
-
+import edu.kit.cbc.common.Problem;
+import edu.kit.cbc.projects.ProjectService;
 import edu.kit.cbc.projects.files.S3ClientProvider;
 import edu.kit.cbc.projects.files.dto.DirectoryDto;
-import edu.kit.cbc.projects.ProjectService;
-import edu.kit.cbc.common.Problem;
 import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.MutableHttpResponse;
+import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Delete;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
-import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Produces;
 import io.micronaut.http.annotation.Put;
 import io.micronaut.http.multipart.CompletedFileUpload;
@@ -32,6 +27,10 @@ import io.micronaut.objectstorage.request.UploadRequest;
 import io.micronaut.objectstorage.response.UploadResponse;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
+import java.io.IOException;
+import java.net.URI;
+import java.util.List;
+import java.util.Optional;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
@@ -48,11 +47,22 @@ public class FilesController {
     private final S3ClientProvider s3ClientProvider;
     private final HttpHostResolver httpHostResolver;
 
-    FilesController(ProjectService projectService, AwsS3Operations objectStorage, S3ClientProvider s3ClientProvider, HttpHostResolver httpHostResolver) {
+    FilesController(ProjectService projectService, AwsS3Operations objectStorage, S3ClientProvider s3ClientProvider,
+                    HttpHostResolver httpHostResolver) {
         this.projectService = projectService;
         this.objectStorage = objectStorage;
         this.s3ClientProvider = s3ClientProvider;
         this.httpHostResolver = httpHostResolver;
+    }
+
+    private static HttpResponse<StreamedFile> buildStreamedFile(AwsS3ObjectStorageEntry entry) {
+        GetObjectResponse nativeEntry = entry.getNativeEntry();
+        MediaType mediaType = MediaType.of(nativeEntry.contentType());
+        StreamedFile file = new StreamedFile(entry.getInputStream(), mediaType).attach(entry.getKey());
+        MutableHttpResponse<Object> httpResponse = HttpResponse.ok()
+                .header(HttpHeaders.ETAG, nativeEntry.eTag());
+        file.process(httpResponse);
+        return httpResponse.body(file);
     }
 
     @Get
@@ -65,16 +75,20 @@ public class FilesController {
         String bucketName = s3ClientProvider.getBucketName();
 
         ListObjectsV2Request request = ListObjectsV2Request.builder()
-            .bucket(bucketName)
-            .prefix(id)
-            .build();
+                .bucket(bucketName)
+                .prefix(id)
+                .build();
 
         ListObjectsV2Response response = s3ClientProvider.getClient().listObjectsV2(request);
 
         List<String> keys = response.contents().stream()
-            .filter(obj -> {return obj.key().endsWith(".java");})
-            .map(obj -> {return obj.key().substring(id.concat("/files/").length());})
-            .toList();
+                .filter(obj -> {
+                    return obj.key().endsWith(".java");
+                })
+                .map(obj -> {
+                    return obj.key().substring(id.concat("/files/").length());
+                })
+                .toList();
 
         return keys;
     }
@@ -83,17 +97,7 @@ public class FilesController {
     public Optional<HttpResponse<StreamedFile>> getFile(@PathVariable String id, @PathVariable URI urn) {
         String path = String.format(pathFormat, id, urn);
         return objectStorage.retrieve(path)
-            .map(FilesController::buildStreamedFile);
-    }
-
-    private static HttpResponse<StreamedFile> buildStreamedFile(AwsS3ObjectStorageEntry entry) {
-        GetObjectResponse nativeEntry = entry.getNativeEntry();
-        MediaType mediaType = MediaType.of(nativeEntry.contentType());
-        StreamedFile file = new StreamedFile(entry.getInputStream(), mediaType).attach(entry.getKey());
-        MutableHttpResponse<Object> httpResponse = HttpResponse.ok()
-            .header(HttpHeaders.ETAG, nativeEntry.eTag());
-        file.process(httpResponse);
-        return httpResponse.body(file);
+                .map(FilesController::buildStreamedFile);
     }
 
     @Post(uri = "/{urn:.*}")
@@ -105,7 +109,8 @@ public class FilesController {
             @PathVariable URI urn,
             HttpRequest<?> request) {
         if (!projectService.existsById(id)) {
-            return HttpResponse.notFound(new Problem("about:blank", "Not found", 404, String.format("project with id %s was not found", id), "about:blank"));
+            return HttpResponse.notFound(new Problem("about:blank", "Not found", 404,
+                    String.format("project with id %s was not found", id), "about:blank"));
         }
 
         String path = String.format(pathFormat, id, urn);
@@ -114,11 +119,11 @@ public class FilesController {
         UploadResponse<PutObjectResponse> response = performUpload(objectStorageUpload, id, urn);
 
         return HttpResponse
-            .created(UriBuilder.of(httpHostResolver.resolve(request))
-                .path("projects")
-                .path(path)
-                .build())
-            .header(HttpHeaders.ETAG, response.getETag());
+                .created(UriBuilder.of(httpHostResolver.resolve(request))
+                        .path("projects")
+                        .path(path)
+                        .build())
+                .header(HttpHeaders.ETAG, response.getETag());
     }
 
     public void uploadBytes(byte[] bytes, String id, URI urn) throws IOException {
@@ -150,7 +155,8 @@ public class FilesController {
     @Produces(MediaType.APPLICATION_JSON)
     public HttpResponse<?> deleteFileOrDirectory(@PathVariable String id, @PathVariable URI urn) {
         if (!projectService.existsById(id)) {
-            return HttpResponse.notFound(new Problem("about:blank", "Not found", 404, String.format("project with id %s was not found", id), "about:blank"));
+            return HttpResponse.notFound(new Problem("about:blank", "Not found", 404,
+                    String.format("project with id %s was not found", id), "about:blank"));
         }
 
         String path = String.format(pathFormat, id, urn);

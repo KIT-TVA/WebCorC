@@ -1,4 +1,4 @@
-package edu.kit.cbc.common.corc.codeGen;
+package edu.kit.cbc.common.corc.codegen;
 
 public class ParserException extends Exception {
     private static final long serialVersionUID = -4042507879968316032L;

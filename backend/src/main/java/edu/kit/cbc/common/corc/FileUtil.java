@@ -1,16 +1,13 @@
 package edu.kit.cbc.common.corc;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -19,7 +16,6 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
-
 import org.eclipse.emf.common.util.URI;
 
 public class FileUtil implements IFileUtil {
@@ -28,22 +24,6 @@ public class FileUtil implements IFileUtil {
 
     public FileUtil(String applicationUri) {
         this.applicationUri = applicationUri;
-    }
-
-    public File getClassFile(String className) {
-        URI uriTrimmed = URI.createURI(applicationUri).trimFragment();
-        if (uriTrimmed.isPlatformResource()) {
-            /*
-             * String platformString = uriTrimmed.toPlatformString(true); IResource
-             * fileResource =
-             * ResourcesPlugin.getWorkspace().getRoot().findMember(platformString); if
-             * (fileResource != null) { IProject project = fileResource.getProject(); return
-             * traverseFolders(project, className);
-             *
-             * }
-             */
-        }
-        return null;
     }
 
     public static void zipDirectory(File folder, String parentFolder, ZipOutputStream zos)
@@ -73,7 +53,7 @@ public class FileUtil implements IFileUtil {
 
             while (zipEntry != null) {
 
-                if(zipEntry.toString().startsWith(".meta")) {
+                if (zipEntry.toString().startsWith(".meta")) {
                     zipEntry = zis.getNextEntry();
                     continue;
                 }
@@ -122,6 +102,20 @@ public class FileUtil implements IFileUtil {
         return normalizePath;
     }
 
+    public static String getProjectLocation(URI uri) {
+        // uri = uri.trimFragment();
+        // String uriPath = uri.toPlatformString(true);
+        // return getProjectLocationS(uriPath);
+        return uri.trimSegments(1).toFileString().replace("\\\\", "\\").replace("\\", "/"); // just return the place of
+        // the save destination of
+        // rResource-file
+    }
+
+    public String getProjectLocation(String uriString) {
+        // return getProjectLocationS(uriString);
+        return URI.createURI(uriString).trimSegments(1).toFileString().replace("\\\\", "\\").replace("\\", "/");
+    }
+
     /*
      * private File traverseFolders(IContainer folder, String className) { try {
      * IResource[] members = folder.members(); for (final IResource resource :
@@ -134,6 +128,22 @@ public class FileUtil implements IFileUtil {
      * e) { e.printStackTrace(); } return null; }
      */
 
+    public File getClassFile(String className) {
+        URI uriTrimmed = URI.createURI(applicationUri).trimFragment();
+        if (uriTrimmed.isPlatformResource()) {
+            /*
+             * String platformString = uriTrimmed.toPlatformString(true); IResource
+             * fileResource =
+             * ResourcesPlugin.getWorkspace().getRoot().findMember(platformString); if
+             * (fileResource != null) { IProject project = fileResource.getProject(); return
+             * traverseFolders(project, className);
+             *
+             * }
+             */
+        }
+        return null;
+    }
+
     public List<String> readFileInList(String path) {
         List<String> lines = Collections.emptyList();
         try {
@@ -142,11 +152,6 @@ public class FileUtil implements IFileUtil {
             e.printStackTrace();
         }
         return lines;
-    }
-
-    public String getProjectLocation(String uriString) {
-        // return getProjectLocationS(uriString);
-        return URI.createURI(uriString).trimSegments(1).toFileString().replace("\\\\", "\\").replace("\\", "/");
     }
 
     /*
@@ -176,14 +181,7 @@ public class FileUtil implements IFileUtil {
      * // } // } return null; }
      */
 
-    public static String getProjectLocation(URI uri) {
-        // uri = uri.trimFragment();
-        // String uriPath = uri.toPlatformString(true);
-        // return getProjectLocationS(uriPath);
-        return uri.trimSegments(1).toFileString().replace("\\\\", "\\").replace("\\", "/"); // just return the place of
-                                                                                            // the save destination of
-                                                                                            // rResource-file
-    }
+
 
     /*
      * public static IProject getProject(URI uri) { uri = uri.trimFragment(); String
@@ -240,7 +238,7 @@ public class FileUtil implements IFileUtil {
 
     @Override
     public String generateComposedClass(String project, String composedClassName, String className, String content,
-            String contentOriginal) {
+                                        String contentOriginal) {
         File generatedClass = new File(getProjectLocation(project) + "/src_gen/" + composedClassName + ".java");
         File originalClass = new File(getProjectLocation(project) + "/src-orig/" + className + ".java");
         if (!className.contentEquals(composedClassName)) {

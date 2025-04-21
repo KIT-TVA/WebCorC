@@ -8,15 +8,15 @@ public class FileDto extends FileDirectoryDto {
 
     private final FileType fileType;
 
-    @Override
-    public String getInodeType() {
-        return inodeType;
-    }
-
     public FileDto(String urn, FileType fileType) {
         super(urn);
         //TODO: set filetype based on filename ending (urn ending)
         this.fileType = fileType;
+    }
+
+    @Override
+    public String getInodeType() {
+        return inodeType;
     }
 
     public FileType getFileType() {

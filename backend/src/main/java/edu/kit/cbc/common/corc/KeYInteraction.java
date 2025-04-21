@@ -1,15 +1,5 @@
 package edu.kit.cbc.common.corc;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.key_project.util.collection.ImmutableSet;
-
 import de.uka.ilkd.key.control.KeYEnvironment;
 import de.uka.ilkd.key.java.abstraction.KeYJavaType;
 import de.uka.ilkd.key.logic.op.IObserverFunction;
@@ -22,16 +12,29 @@ import de.uka.ilkd.key.speclang.Contract;
 import de.uka.ilkd.key.strategy.StrategyProperties;
 import de.uka.ilkd.key.util.KeYTypeUtil;
 import de.uka.ilkd.key.util.MiscTools;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import org.key_project.util.collection.ImmutableSet;
 
 public class KeYInteraction {
+
+
+    /**
+     * Starts the KeY proof with a location and some info on inlining.
+     */
     public Proof startKeyProof(File location, boolean inlining) {
         Proof proof = null;
         List<File> classPaths = null; // Optionally: Additional specifications
-                                        // for API classes
+        // for API classes
         File bootClassPath = null; // Optionally: Different default
-                                    // specifications for Java API
+        // specifications for Java API
         List<File> includes = null; // Optionally: Additional includes to
-                                    // consider
+        // consider
         try {
             // Ensure that Taclets are parsed
             if (!ProofSettings.isChoiceSettingInitialised()) {
@@ -50,13 +53,15 @@ public class KeYInteraction {
             proof = env.getLoadedProof();
             // Set proof strategy options
             StrategyProperties sp = proof.getSettings().getStrategySettings().getActiveStrategyProperties();
-            if(inlining)
+            if (inlining) {
                 sp.setProperty(StrategyProperties.METHOD_OPTIONS_KEY, StrategyProperties.METHOD_EXPAND);
-            else
-                sp.setProperty(StrategyProperties.METHOD_OPTIONS_KEY, StrategyProperties.METHOD_CONTRACT);//METHOD_EXPAND
+            } else {
+                //METHOD_EXPAND
+                sp.setProperty(StrategyProperties.METHOD_OPTIONS_KEY, StrategyProperties.METHOD_CONTRACT);
+            }
             sp.setProperty(StrategyProperties.LOOP_OPTIONS_KEY, StrategyProperties.LOOP_INVARIANT);
             sp.setProperty(StrategyProperties.DEP_OPTIONS_KEY, StrategyProperties.DEP_ON);
-            sp.setProperty(StrategyProperties.QUERY_OPTIONS_KEY, StrategyProperties.QUERY_RESTRICTED);//
+            sp.setProperty(StrategyProperties.QUERY_OPTIONS_KEY, StrategyProperties.QUERY_RESTRICTED);
             sp.setProperty(StrategyProperties.NON_LIN_ARITH_OPTIONS_KEY, StrategyProperties.NON_LIN_ARITH_DEF_OPS);
             sp.setProperty(StrategyProperties.STOPMODE_OPTIONS_KEY, StrategyProperties.STOPMODE_NONCLOSE);
             proof.getSettings().getStrategySettings().setActiveStrategyProperties(sp);
@@ -86,15 +91,18 @@ public class KeYInteraction {
         return proof;
     }
 
+    /**
+     * Starts the proof of the first contract.
+     */
     public Proof startKeYProofFirstContract(File location) {
         Proof proof = null;
         File keyFile = null;
         List<File> classPaths = null; // Optionally: Additional specifications
-                                        // for API classes
+        // for API classes
         File bootClassPath = null; // Optionally: Different default
-                                    // specifications for Java API
+        // specifications for Java API
         List<File> includes = null; // Optionally: Additional includes to
-                                    // consider
+        // consider
         try {
             // Ensure that Taclets are parsed
             if (!ProofSettings.isChoiceSettingInitialised()) {
@@ -138,7 +146,7 @@ public class KeYInteraction {
                     sp.setProperty(StrategyProperties.METHOD_OPTIONS_KEY, StrategyProperties.METHOD_EXPAND);
                     sp.setProperty(StrategyProperties.LOOP_OPTIONS_KEY, StrategyProperties.LOOP_INVARIANT);
                     sp.setProperty(StrategyProperties.DEP_OPTIONS_KEY, StrategyProperties.DEP_ON);
-                    sp.setProperty(StrategyProperties.QUERY_OPTIONS_KEY, StrategyProperties.QUERY_RESTRICTED);// StrategyProperties.QUERY_ON
+                    sp.setProperty(StrategyProperties.QUERY_OPTIONS_KEY, StrategyProperties.QUERY_RESTRICTED); //StrategyProperties.QUERY_ON
                     sp.setProperty(StrategyProperties.NON_LIN_ARITH_OPTIONS_KEY, StrategyProperties.NON_LIN_ARITH_DEF_OPS);
                     sp.setProperty(StrategyProperties.STOPMODE_OPTIONS_KEY, StrategyProperties.STOPMODE_DEFAULT);
                     proof.getSettings().getStrategySettings().setActiveStrategyProperties(sp);
@@ -148,8 +156,6 @@ public class KeYInteraction {
                     ProofSettings.DEFAULT_SETTINGS.getStrategySettings().setActiveStrategyProperties(sp);
                     proof.getSettings().getStrategySettings().setMaxSteps(maxSteps);
                     proof.setActiveStrategy(proof.getServices().getProfile().getDefaultStrategyFactory().create(proof, sp));
-                    // Start auto mode
-//                      MainWindow.getInstance().setVisible(true);
                     env.getUi().getProofControl().startAndWaitForAutoMode(proof);
                     // Show proof result
                     //System.out.println("Proof is closed: " + proof.openGoals().isEmpty());
@@ -167,12 +173,12 @@ public class KeYInteraction {
                 } finally {
                     if (proof != null) {
                         //proof.dispose(); // Ensure always that all instances
-                                            // of Proof are disposed
+                        // of Proof are disposed
                     }
                 }
             } finally {
                 env.dispose(); // Ensure always that all instances of
-                                // KeYEnvironment are disposed
+                // KeYEnvironment are disposed
             }
         } catch (ProblemLoaderException e) {
             System.out.println("Exception at '" + e.getCause() + "'");
