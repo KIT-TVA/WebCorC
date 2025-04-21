@@ -21,7 +21,7 @@ public class CodeGenerator {
         JavaVariables vars = container.javaVariables();
         GlobalConditions globalConditions = container.globalConditions();
         Renaming renaming = container.renaming();
-        CbCFormula formula = container.cbCFormula();
+        CbCFormula formula = container.cbcFormula();
 
         String signatureString = formula.getMethodObj() != null ? formula.getMethodObj().getSignature() :
                 ("public void " + formula.getName().toLowerCase() + " ()");
