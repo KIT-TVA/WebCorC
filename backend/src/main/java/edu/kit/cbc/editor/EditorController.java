@@ -97,7 +97,7 @@ public class EditorController {
                         }
                     }
                 }
-                VerifyAllStatements.verify(formula.cbCFormula(), formula.javaVariables(), formula.globalConditions(), formula.renaming(), p.toUri());
+                VerifyAllStatements.verify(formula.cbcFormula(), formula.javaVariables(), formula.globalConditions(), formula.renaming(), p.toUri());
             } catch (IOException e) {
                 return HttpResponse.serverError(e.getMessage());
             }
@@ -116,20 +116,18 @@ public class EditorController {
             }
 
             //upload found files to project
-            if (projectId.isPresent()) {
-                keyFiles.forEach(path -> {
-                    URI urn = URI.create(p.getFileName() + path.toString().replace(proofPath.toString(), ""));
-                    try {
-                        filesController.uploadBytes(Files.readAllBytes(path), projectId.get(), urn);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                });
-            }
+            projectId.ifPresent(s -> keyFiles.forEach(path -> {
+                URI urn = URI.create(p.getFileName() + path.toString().replace(proofPath.toString(), ""));
+                try {
+                    filesController.uploadBytes(Files.readAllBytes(path), s, urn);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }));
 
             return HttpResponse.ok(parser.toJsonString(formula));
         } catch (JsonProcessingException e) {
-            return HttpResponse.serverError(Problem.PARSING_ERROR(e.getMessage()));
+            return HttpResponse.serverError(Problem.getParsingError(e.getMessage()));
         }
     }
 
@@ -142,7 +140,7 @@ public class EditorController {
 
             return HttpResponse.ok(CodeGenerator.instance.generateCodeFor(formula));
         } catch (JsonProcessingException e) {
-            return HttpResponse.serverError(Problem.PARSING_ERROR(e.getMessage()));
+            return HttpResponse.serverError(Problem.getParsingError(e.getMessage()));
         }
     }
 

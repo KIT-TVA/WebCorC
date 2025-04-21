@@ -4,6 +4,7 @@ import de.tu_bs.cs.isf.cbc.cbcclass.Method;
 import de.tu_bs.cs.isf.cbc.cbcmodel.AbstractStatement;
 import de.tu_bs.cs.isf.cbc.cbcmodel.CbCFormula;
 import de.tu_bs.cs.isf.cbc.cbcmodel.CompositionStatement;
+import de.tu_bs.cs.isf.cbc.cbcmodel.GlobalConditions;
 import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariable;
 import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariables;
 import de.tu_bs.cs.isf.cbc.cbcmodel.Rename;
@@ -17,12 +18,12 @@ import de.tu_bs.cs.isf.cbc.cbcmodel.impl.SelectionStatementImpl;
 import de.tu_bs.cs.isf.cbc.cbcmodel.impl.SkipStatementImpl;
 import de.tu_bs.cs.isf.cbc.cbcmodel.impl.SmallRepetitionStatementImpl;
 import de.tu_bs.cs.isf.cbc.cbcmodel.impl.StrengthWeakStatementImpl;
-import edu.kit.cbc.common.corc.Parser;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.regex.Pattern;
 
 
 public class ConstructCodeBlock {
@@ -140,6 +141,20 @@ public class ConstructCodeBlock {
         return newCode;
     }
 
+
+
+    private static String translateOldVariablesToJML(String post, LinkedList<String> vars) {
+        for (String var : vars) {
+            if (var.contains("old_")) {
+                String varNameWithoutOld = var.substring(var.indexOf("_") + 1);
+                String varNameWithoutType = var.substring(var.indexOf(" ") + 1);
+                post = post.replaceAll(varNameWithoutType, "\\\\old(" + varNameWithoutOld + ")");
+            }
+
+        }
+        return post;
+    }
+
     private static StringBuffer insertTabs(StringBuffer s) {
         for (int i = 0; i < positionIndex; i++) {
             s.append("\t");
@@ -200,6 +215,97 @@ public class ConstructCodeBlock {
             code.append(s);
         }
 
+        code.append("\n\t}");
+
+        returnVariable = null;
+        return code.toString();
+    }
+
+    public static String constructCodeBlockForExport(CbCFormula formula, GlobalConditions globalConditions,
+                                                     Renaming renaming, LinkedList<String> vars, JavaVariable returnVar, String signatureString,
+                                                     String[] config) {
+        handleInnerLoops = true;
+
+        String modifiableVariables = Parser.getModifieableVarsFromConditionExceptLocals(
+                formula.getStatement().getPostCondition(), vars, null, returnVar);
+        modifiableVariables = modifiableVariables.replaceAll("\\)", "").replaceAll("\\(", "");
+        String postCondition = Parser.getConditionFromCondition(formula.getStatement().getPostCondition().getName());
+
+        String pre = createConditionJMLString(formula.getStatement().getPreCondition().getName(), renaming,
+                Parser.KEYWORD_JML_PRE);
+        if (globalConditions != null) {
+            String processedGlobalConditions = Parser.processGlobalConditions(globalConditions, vars, pre);
+            if (!processedGlobalConditions.isEmpty()) {
+                pre = pre.replace(";\n", "");
+                pre += " & " + processedGlobalConditions + ";\n";
+            }
+        }
+
+        pre = useRenamingCondition(pre);
+
+        String post = createConditionJMLString(postCondition, renaming, Parser.KEYWORD_JML_POST);
+        post = translateOldVariablesToJML(post, vars);
+        post = useRenamingCondition(post);
+
+        if (returnVar != null) {
+            String returnValueName = returnVar.getName().split(" ")[1];
+            post = post.replaceAll("(?<=\\W)" + returnValueName + "(?=\\W)", "\\\\result");
+            post = post.replaceAll("(?<=\\W)\\\\\\\\result(?=\\W)", "\\\\result");
+            returnVariable = returnVar;
+        }
+
+        StringBuffer code = new StringBuffer();
+        code.append("\t/*@\n" + "\t@ normal_behavior\n\t" // + "@ requires "
+                + pre.replaceAll(System.getProperty("line.separator"), "").replaceAll("\n", "").replaceAll("\t", "")
+                + "\n\t"// + ";\n" //+ "@ ensures "
+                + post.replaceAll(System.getProperty("line.separator"), "").replaceAll("\n", "").replaceAll("\t",
+                "")/*
+         * + ";\n"
+         */
+                + "\n\t@ assignable " + modifiableVariables + ";\n" + "\t@*/\n\t"
+                + /* "public /*@helper@* / "+ */ signatureString + " {\n");
+
+        positionIndex = 2;
+        code = insertTabs(code);
+
+        for (String var : vars) { // declare variables
+            if (!var.contains("old_")) {
+                code.append(var + ";\n");
+                code = insertTabs(code);
+            }
+        }
+        // initialize local variables
+        /*
+         * for(String var : vars) {//declare variables // TODO: Masterarbeit Hayreddin -
+         * Initialize all variables directly if
+         * (REGEX_PRIMITIVE_INTEGERS.matcher(var).find()) { code.append(var +
+         * " = 0;\n"); code = insertTabs(code); } else
+         * if(REGEX_PRIMITIVE_FLOAT.matcher(var).find()) { code.append(var +
+         * " = 0.0;\n"); code = insertTabs(code); } else if(var.contains("boolean")) {
+         * code.append(var + " = false;\n"); code = insertTabs(code); } else {
+         * code.append(var + " = null;\n"); code = insertTabs(code); } }
+         */
+        String s;
+        if (formula.getStatement().getRefinement() != null) {
+            s = constructCodeBlockOfChildStatement(formula.getStatement().getRefinement());
+            if (renaming != null) {
+                s = useRenamingCondition(s);
+            }
+            code.append(s);
+        } else {
+            s = constructCodeBlockOfChildStatement(formula.getStatement());
+            if (renaming != null) {
+                s = useRenamingCondition(s);
+            }
+            code.append(s);
+        }
+
+        final Pattern void_pattern = java.util.regex.Pattern.compile("(?<![a-zA-Z0-9])(void)(?![a-zA-Z0-9])");
+        final Pattern return_pattern = Pattern.compile("(?<![a-zA-Z0-9])(return)(?![a-zA-Z0-9])");
+        if (returnVariable != null && !void_pattern.matcher(signatureString).find()
+                && !return_pattern.matcher(code.toString()).find()) {
+            code.append("\t\treturn " + returnVariable.getName().split(" ")[1] + ";");
+        }
         code.append("\n\t}");
 
         returnVariable = null;

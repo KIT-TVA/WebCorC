@@ -1,9 +1,7 @@
 package edu.kit.cbc.editor;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.tu_bs.cs.isf.cbc.cbcmodel.CbCFormula;
 import de.tu_bs.cs.isf.cbc.cbcmodel.CbcmodelPackage;
@@ -24,8 +22,6 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.emfcloud.jackson.annotations.EcoreTypeInfo;
 import org.eclipse.emfcloud.jackson.module.EMFModule;
 import org.eclipse.emfcloud.jackson.module.EMFModule.Feature;
-import org.eclipse.emfcloud.jackson.utils.ValueReader;
-import org.eclipse.emfcloud.jackson.utils.ValueWriter;
 
 @Singleton
 public class FormulaParser {
@@ -135,7 +131,7 @@ public class FormulaParser {
     }
 
     String toJsonString(CbCFormulaContainer formula) throws JsonProcessingException {
-        ObjectNode result = mapper.valueToTree(formula.cbCFormula());
+        ObjectNode result = mapper.valueToTree(formula.cbcFormula());
         result.putPOJO(JAVA_VARIABLES_NAME, mapper.valueToTree(formula.javaVariables()));
         result.putPOJO(GLOBAL_CONDITIONS_NAME, mapper.valueToTree(formula.globalConditions()));
         result.putPOJO(RENAMING_NAME, mapper.valueToTree(formula.renaming()));
