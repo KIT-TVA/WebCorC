@@ -141,94 +141,7 @@ public class ConstructCodeBlock {
         return newCode;
     }
 
-    public static String constructCodeBlockForExport(CbCFormula formula, GlobalConditions globalConditions,
-                                                     Renaming renaming, LinkedList<String> vars, JavaVariable returnVar, String signatureString,
-                                                     String[] config) {
-        handleInnerLoops = true;
 
-        String modifiableVariables = Parser.getModifieableVarsFromConditionExceptLocals(
-                formula.getStatement().getPostCondition(), vars, null, returnVar);
-        modifiableVariables = modifiableVariables.replaceAll("\\)", "").replaceAll("\\(", "");
-        String postCondition = Parser.getConditionFromCondition(formula.getStatement().getPostCondition().getName());
-
-        String pre = createConditionJMLString(formula.getStatement().getPreCondition().getName(), renaming,
-                Parser.KEYWORD_JML_PRE);
-        if (globalConditions != null) {
-            String processedGlobalConditions = Parser.processGlobalConditions(globalConditions, vars, pre);
-            if (!processedGlobalConditions.isEmpty()) {
-                pre = pre.replace(";\n", "");
-                pre += " & " + processedGlobalConditions + ";\n";
-            }
-        }
-
-        pre = useRenamingCondition(pre);
-
-        String post = createConditionJMLString(postCondition, renaming, Parser.KEYWORD_JML_POST);
-        post = translateOldVariablesToJML(post, vars);
-        post = useRenamingCondition(post);
-
-        if (returnVar != null) {
-            String returnValueName = returnVar.getName().split(" ")[1];
-            post = post.replaceAll("(?<=\\W)" + returnValueName + "(?=\\W)", "\\\\result");
-            post = post.replaceAll("(?<=\\W)\\\\\\\\result(?=\\W)", "\\\\result");
-            returnVariable = returnVar;
-        }
-
-        StringBuffer code = new StringBuffer();
-        code.append("\t/*@\n" + "\t@ normal_behavior\n\t" // + "@ requires "
-                + pre.replaceAll(System.getProperty("line.separator"), "").replaceAll("\n", "").replaceAll("\t", "")
-                + "\n\t"// + ";\n" //+ "@ ensures "
-                + post.replaceAll(System.getProperty("line.separator"), "").replaceAll("\n", "").replaceAll("\t",
-                "")/*
-         * + ";\n"
-         */
-                + "\n\t@ assignable " + modifiableVariables + ";\n" + "\t@*/\n\t"
-                + /* "public /*@helper@* / "+ */ signatureString + " {\n");
-
-        positionIndex = 2;// 2
-        code = insertTabs(code);
-
-        for (String var : vars) {// declare variables
-            if (!var.contains("old_")) {
-                code.append(var + ";\n");
-                code = insertTabs(code);
-            }
-        }
-        // initialize local variables
-        /*
-         * for(String var : vars) {//declare variables // TODO: Masterarbeit Hayreddin -
-         * Initialize all variables directly if
-         * (REGEX_PRIMITIVE_INTEGERS.matcher(var).find()) { code.append(var +
-         * " = 0;\n"); code = insertTabs(code); } else
-         * if(REGEX_PRIMITIVE_FLOAT.matcher(var).find()) { code.append(var +
-         * " = 0.0;\n"); code = insertTabs(code); } else if(var.contains("boolean")) {
-         * code.append(var + " = false;\n"); code = insertTabs(code); } else {
-         * code.append(var + " = null;\n"); code = insertTabs(code); } }
-         */
-        String s;
-        if (formula.getStatement().getRefinement() != null) {
-            s = constructCodeBlockOfChildStatement(formula.getStatement().getRefinement());
-            if (renaming != null)
-                s = useRenamingCondition(s);
-            code.append(s);
-        } else {
-            s = constructCodeBlockOfChildStatement(formula.getStatement());
-            if (renaming != null)
-                s = useRenamingCondition(s);
-            code.append(s);
-        }
-
-        Pattern void_pattern = Pattern.compile("(?<![a-zA-Z0-9])(void)(?![a-zA-Z0-9])");
-        Pattern return_pattern = Pattern.compile("(?<![a-zA-Z0-9])(return)(?![a-zA-Z0-9])");
-        if (returnVariable != null && !void_pattern.matcher(signatureString).find()
-                && !return_pattern.matcher(code.toString()).find()) {
-            code.append("\t\treturn " + returnVariable.getName().split(" ")[1] + ";");
-        }
-        code.append("\n\t}");// }
-
-        returnVariable = null;
-        return code.toString();
-    }
 
     private static String translateOldVariablesToJML(String post, LinkedList<String> vars) {
         for (String var : vars) {
@@ -302,6 +215,97 @@ public class ConstructCodeBlock {
             code.append(s);
         }
 
+        code.append("\n\t}");
+
+        returnVariable = null;
+        return code.toString();
+    }
+
+    public static String constructCodeBlockForExport(CbCFormula formula, GlobalConditions globalConditions,
+                                                     Renaming renaming, LinkedList<String> vars, JavaVariable returnVar, String signatureString,
+                                                     String[] config) {
+        handleInnerLoops = true;
+
+        String modifiableVariables = Parser.getModifieableVarsFromConditionExceptLocals(
+                formula.getStatement().getPostCondition(), vars, null, returnVar);
+        modifiableVariables = modifiableVariables.replaceAll("\\)", "").replaceAll("\\(", "");
+        String postCondition = Parser.getConditionFromCondition(formula.getStatement().getPostCondition().getName());
+
+        String pre = createConditionJMLString(formula.getStatement().getPreCondition().getName(), renaming,
+                Parser.KEYWORD_JML_PRE);
+        if (globalConditions != null) {
+            String processedGlobalConditions = Parser.processGlobalConditions(globalConditions, vars, pre);
+            if (!processedGlobalConditions.isEmpty()) {
+                pre = pre.replace(";\n", "");
+                pre += " & " + processedGlobalConditions + ";\n";
+            }
+        }
+
+        pre = useRenamingCondition(pre);
+
+        String post = createConditionJMLString(postCondition, renaming, Parser.KEYWORD_JML_POST);
+        post = translateOldVariablesToJML(post, vars);
+        post = useRenamingCondition(post);
+
+        if (returnVar != null) {
+            String returnValueName = returnVar.getName().split(" ")[1];
+            post = post.replaceAll("(?<=\\W)" + returnValueName + "(?=\\W)", "\\\\result");
+            post = post.replaceAll("(?<=\\W)\\\\\\\\result(?=\\W)", "\\\\result");
+            returnVariable = returnVar;
+        }
+
+        StringBuffer code = new StringBuffer();
+        code.append("\t/*@\n" + "\t@ normal_behavior\n\t" // + "@ requires "
+                + pre.replaceAll(System.getProperty("line.separator"), "").replaceAll("\n", "").replaceAll("\t", "")
+                + "\n\t"// + ";\n" //+ "@ ensures "
+                + post.replaceAll(System.getProperty("line.separator"), "").replaceAll("\n", "").replaceAll("\t",
+                "")/*
+         * + ";\n"
+         */
+                + "\n\t@ assignable " + modifiableVariables + ";\n" + "\t@*/\n\t"
+                + /* "public /*@helper@* / "+ */ signatureString + " {\n");
+
+        positionIndex = 2;
+        code = insertTabs(code);
+
+        for (String var : vars) { // declare variables
+            if (!var.contains("old_")) {
+                code.append(var + ";\n");
+                code = insertTabs(code);
+            }
+        }
+        // initialize local variables
+        /*
+         * for(String var : vars) {//declare variables // TODO: Masterarbeit Hayreddin -
+         * Initialize all variables directly if
+         * (REGEX_PRIMITIVE_INTEGERS.matcher(var).find()) { code.append(var +
+         * " = 0;\n"); code = insertTabs(code); } else
+         * if(REGEX_PRIMITIVE_FLOAT.matcher(var).find()) { code.append(var +
+         * " = 0.0;\n"); code = insertTabs(code); } else if(var.contains("boolean")) {
+         * code.append(var + " = false;\n"); code = insertTabs(code); } else {
+         * code.append(var + " = null;\n"); code = insertTabs(code); } }
+         */
+        String s;
+        if (formula.getStatement().getRefinement() != null) {
+            s = constructCodeBlockOfChildStatement(formula.getStatement().getRefinement());
+            if (renaming != null) {
+                s = useRenamingCondition(s);
+            }
+            code.append(s);
+        } else {
+            s = constructCodeBlockOfChildStatement(formula.getStatement());
+            if (renaming != null) {
+                s = useRenamingCondition(s);
+            }
+            code.append(s);
+        }
+
+        final Pattern void_pattern = java.util.regex.Pattern.compile("(?<![a-zA-Z0-9])(void)(?![a-zA-Z0-9])");
+        final Pattern return_pattern = Pattern.compile("(?<![a-zA-Z0-9])(return)(?![a-zA-Z0-9])");
+        if (returnVariable != null && !void_pattern.matcher(signatureString).find()
+                && !return_pattern.matcher(code.toString()).find()) {
+            code.append("\t\treturn " + returnVariable.getName().split(" ")[1] + ";");
+        }
         code.append("\n\t}");
 
         returnVariable = null;
