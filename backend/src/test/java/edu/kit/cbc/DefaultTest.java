@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 @MicronautTest
-class efaultTest {
+class DefaultTest {
 
     @Inject
     EmbeddedApplication<?> application;
@@ -16,5 +16,4 @@ class efaultTest {
     void testItWorks() {
         Assertions.assertTrue(application.isRunning());
     }
-
 }

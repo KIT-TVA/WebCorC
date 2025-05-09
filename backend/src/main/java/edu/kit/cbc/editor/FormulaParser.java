@@ -1,27 +1,22 @@
 package edu.kit.cbc.editor;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.StreamReadFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import de.tu_bs.cs.isf.cbc.cbcmodel.CbCFormula;
 import de.tu_bs.cs.isf.cbc.cbcmodel.CbcmodelPackage;
 import de.tu_bs.cs.isf.cbc.cbcmodel.GlobalConditions;
 import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariables;
 import de.tu_bs.cs.isf.cbc.cbcmodel.Renaming;
 import edu.kit.cbc.common.CbCFormulaContainer;
+import edu.kit.cbc.common.corc.cbcmodel.CbCFormula;
 import jakarta.inject.Singleton;
 import java.io.IOException;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.URIConverter;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
-import org.eclipse.emfcloud.jackson.annotations.EcoreTypeInfo;
-import org.eclipse.emfcloud.jackson.module.EMFModule;
-import org.eclipse.emfcloud.jackson.module.EMFModule.Feature;
 
 @Singleton
 public class FormulaParser {
@@ -40,13 +35,15 @@ public class FormulaParser {
     //EMF Resource responsible for XML parsing
     private Resource resource;
 
-    FormulaParser() {
+    public FormulaParser() {
         setupJsonMapper();
         setupXMLParser();
     }
 
     private void setupJsonMapper() {
         this.mapper = new ObjectMapper();
+        this.mapper.configure(StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION.mappedFeature(), true);
+        /*
         EMFModule module = new EMFModule();
         module.configure(Feature.OPTION_SERIALIZE_DEFAULT_VALUE, true);
 
@@ -60,7 +57,7 @@ public class FormulaParser {
                         (value, context) -> value.getName()
                 )
         );
-        mapper.registerModule(module);
+        mapper.registerModule(module);*/
     }
 
     private void setupXMLParser() {
@@ -72,7 +69,7 @@ public class FormulaParser {
     }
 
     CbCFormulaContainer fromXMLStringToCbC(String xmlString) throws IOException {
-        resource.unload();
+        /*resource.unload();
         resource.load(new URIConverter.ReadableInputStream(xmlString), null);
 
         CbCFormula cbCFormula = null;
@@ -99,21 +96,26 @@ public class FormulaParser {
             }
         }
 
-        return new CbCFormulaContainer(cbCFormula, javaVariables, globalConditions, renaming);
+        return new CbCFormulaContainer(cbCFormula, javaVariables, globalConditions, renaming);*/
+        return null;
     }
 
-    CbCFormulaContainer fromJsonStringToCbC(String jsonString) throws JsonProcessingException {
+    public CbCFormulaContainer fromJsonStringToCbC(String jsonString) throws JsonProcessingException {
         //TODO: consider setting parent fields of statements accordingly
         //TODO: consider checking pre and post conditions
-        CbCFormula cbCFormula = fromJsonString(jsonString, CbCFormula.class);
+        CbCFormula cbcFormula = fromJsonString(jsonString, CbCFormula.class);
+
+        System.out.println(cbcFormula);
 
         JavaVariables javaVariables = fromJsonFieldStringOptional(jsonString, JAVA_VARIABLES_NAME, JavaVariables.class);
         GlobalConditions globalConditions = fromJsonFieldStringOptional(jsonString, GLOBAL_CONDITIONS_NAME, GlobalConditions.class);
         Renaming renaming = fromJsonFieldStringOptional(jsonString, RENAMING_NAME, Renaming.class);
 
-        return new CbCFormulaContainer(cbCFormula, javaVariables, globalConditions, renaming);
+        //return new CbCFormulaContainer(cbCFormula, javaVariables, globalConditions, renaming);
+        return null;
     }
 
+    //TODO: Replace with actual Optional
     private <T> T fromJsonFieldStringOptional(String jsonString, String fieldName, Class<T> type) {
         try {
             String javaVariablesString = mapper.readTree(jsonString)

@@ -1,0 +1,62 @@
+{
+   "type":"CbCFormula",
+   "name":"",
+   "proven":false,
+   "comment":"",
+   "cmpositionTechnique":"CONTRACT_OVERRIDING",
+   "className":"",
+   "methodName":"",
+   "tested":false,
+   "javaVariables":{
+      "type":"JavaVariables",
+      "variables":[
+         {
+            "name":"int i"
+         }
+      ]
+   },
+   "globalConditions":{
+      "type":"GlobalConditions",
+      "conditions":[
+         
+      ]
+   },
+   "preCondition":{
+      "name":"i=0"
+   },
+   "postCondition":{
+      "name":"i=1"
+   },
+   "statement":{
+      "name":"i=1;",
+      "type":"AbstractStatement",
+      "id":2,
+      "proven":true,
+      "tested":false,
+      "comment":"",
+      "preCondition":{
+         "name":"i=0"
+      },
+      "postCondition":{
+         "name":"i=1"
+      },
+      "refinement":{
+         "name":"i=1;",
+         "type":"AbstractStatement",
+         "preCondition":{
+            "name":"i=0"
+         },
+         "postCondition":{
+            "name":"i=1"
+         },
+         "proven":true,
+         "tested":false
+      }
+   },
+   "renaming":{
+      "rename":[
+         
+      ],
+      "type":"Renaming"
+   }
+}

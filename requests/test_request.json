@@ -1,0 +1,7 @@
+{
+    "name": "statement",
+    "statement": {"statementType" : "STATEMENT"},
+    "preCondition": {},
+    "postCondition": {},
+    "proven": true
+}

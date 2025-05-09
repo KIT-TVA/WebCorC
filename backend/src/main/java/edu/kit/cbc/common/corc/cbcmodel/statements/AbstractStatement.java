@@ -1,9 +1,14 @@
 package edu.kit.cbc.common.corc.cbcmodel.statements;
 
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import edu.kit.cbc.common.corc.cbcmodel.Condition;
 import edu.kit.cbc.common.corc.cbcmodel.Representable;
+import edu.kit.cbc.common.corc.cbcmodel.StatementType;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
@@ -15,9 +20,16 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "statementType")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = Statement.class, name = "STATEMENT")
+})
 public abstract class AbstractStatement implements Representable {
 
   private String name;
+  private StatementType statementType;
   private AbstractStatement refinement;
   private AbstractStatement parent;
   private Condition preCondition;
