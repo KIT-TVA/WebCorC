@@ -6,10 +6,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.tu_bs.cs.isf.cbc.cbcmodel.CbcmodelPackage;
 import de.tu_bs.cs.isf.cbc.cbcmodel.GlobalConditions;
-import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariables;
 import de.tu_bs.cs.isf.cbc.cbcmodel.Renaming;
 import edu.kit.cbc.common.CbCFormulaContainer;
 import edu.kit.cbc.common.corc.cbcmodel.CbCFormula;
+import edu.kit.cbc.common.corc.cbcmodel.JavaVariables;
 import jakarta.inject.Singleton;
 import java.io.IOException;
 import org.eclipse.emf.common.util.URI;
@@ -103,9 +103,9 @@ public class FormulaParser {
     public CbCFormulaContainer fromJsonStringToCbC(String jsonString) throws JsonProcessingException {
         //TODO: consider setting parent fields of statements accordingly
         //TODO: consider checking pre and post conditions
-        CbCFormula cbcFormula = fromJsonString(jsonString, CbCFormula.class);
+        CbCFormulaContainer container = fromJsonString(jsonString, CbCFormulaContainer.class);
 
-        System.out.println(cbcFormula);
+        System.out.println(toJsonString(container));
 
         JavaVariables javaVariables = fromJsonFieldStringOptional(jsonString, JAVA_VARIABLES_NAME, JavaVariables.class);
         GlobalConditions globalConditions = fromJsonFieldStringOptional(jsonString, GLOBAL_CONDITIONS_NAME, GlobalConditions.class);
@@ -133,10 +133,10 @@ public class FormulaParser {
     }
 
     String toJsonString(CbCFormulaContainer formula) throws JsonProcessingException {
-        ObjectNode result = mapper.valueToTree(formula.cbcFormula());
-        result.putPOJO(JAVA_VARIABLES_NAME, mapper.valueToTree(formula.javaVariables()));
-        result.putPOJO(GLOBAL_CONDITIONS_NAME, mapper.valueToTree(formula.globalConditions()));
-        result.putPOJO(RENAMING_NAME, mapper.valueToTree(formula.renaming()));
+        ObjectNode result = mapper.valueToTree(formula.getCbcFormula());
+        result.putPOJO(JAVA_VARIABLES_NAME, mapper.valueToTree(formula.getJavaVariables()));
+        //result.putPOJO(GLOBAL_CONDITIONS_NAME, mapper.valueToTree(formula.globalConditions()));
+        //result.putPOJO(RENAMING_NAME, mapper.valueToTree(formula.renaming()));
 
         return result.toString();
     }

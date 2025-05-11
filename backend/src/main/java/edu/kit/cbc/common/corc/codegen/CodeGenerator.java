@@ -17,7 +17,9 @@ public class CodeGenerator {
 
     }
 
+
     public String generateCodeFor(CbCFormulaContainer container) {
+        /*
         JavaVariables vars = container.javaVariables();
         GlobalConditions globalConditions = container.globalConditions();
         Renaming renaming = container.renaming();
@@ -40,12 +42,13 @@ public class CodeGenerator {
         }
         String globalVariables = "";
         for (Field field : vars.getFields()) {
-            globalVariables += ("\t" + field.getVisibility().getName().toLowerCase() + " /*@spec_public@*/ "
+            globalVariables += ("\t" + field.getVisibility().getName().toLowerCase() + " @spec_public@ " //missing comments
                     + field.getType() + " " + field.getName().replace("non-null ", "") + ";\n");
         }
-
         String code = ConstructCodeBlock.constructCodeBlockForExport(formula,
                 globalConditions, renaming, localVariables, returnVariable, signatureString, new String[0]);
         return code;
+        */
+        return null;
     }
 }

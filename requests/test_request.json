@@ -1,7 +1,19 @@
 {
-    "name": "statement",
-    "statement": {"statementType" : "STATEMENT"},
-    "preCondition": {},
-    "postCondition": {},
-    "proven": true
+    "cbcFormula": { 
+        "name": "statement",
+        "statement": {"statementType" : "statement"},
+        "preCondition": {},
+        "postCondition": {},
+        "isProven": true
+    },
+    "javaVariables": {
+        "variables": [
+            {
+                "name": "varName",
+                "kind": "GLOBAL",
+                "modifier": "private",
+                "displayName": "var"
+            }
+        ]
+    }
 }

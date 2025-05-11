@@ -97,7 +97,7 @@ public class EditorController {
                         }
                     }
                 }
-                VerifyAllStatements.verify(formula.cbcFormula(), formula.javaVariables(), formula.globalConditions(), formula.renaming(), proofFolderPath.toUri());
+                //VerifyAllStatements.verify(formula.cbcFormula(), formula.javaVariables(), formula.globalConditions(), formula.renaming(), proofFolderPath.toUri());
             } catch (IOException e) {
                 return HttpResponse.serverError(e.getMessage());
             }

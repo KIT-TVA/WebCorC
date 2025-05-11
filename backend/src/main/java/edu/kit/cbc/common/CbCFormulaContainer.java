@@ -1,11 +1,21 @@
 package edu.kit.cbc.common;
 
-import de.tu_bs.cs.isf.cbc.cbcmodel.CbCFormula;
-import de.tu_bs.cs.isf.cbc.cbcmodel.GlobalConditions;
-import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariables;
-import de.tu_bs.cs.isf.cbc.cbcmodel.Renaming;
+import edu.kit.cbc.common.corc.cbcmodel.CbCFormula;
+import edu.kit.cbc.common.corc.cbcmodel.JavaVariables;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-//Extra record to hold a CbCFormula, JavaVariables, GlobalConditions, and Renaming instance all in one object
-public record CbCFormulaContainer(CbCFormula cbcFormula, JavaVariables javaVariables, GlobalConditions globalConditions,
-                                  Renaming renaming) {
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class CbCFormulaContainer {
+  private CbCFormula cbcFormula;
+  private JavaVariables javaVariables;
+  // Global Conditions
+  // Renaming
+
 }

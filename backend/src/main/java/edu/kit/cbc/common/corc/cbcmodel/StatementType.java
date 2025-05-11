@@ -6,5 +6,5 @@ public enum StatementType {
     RETURN,
     SELECTION,
     SKIP,
-    REPETITION
+    REPETITION;
 }

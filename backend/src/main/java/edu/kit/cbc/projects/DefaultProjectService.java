@@ -8,6 +8,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Set;
+import java.util.UUID;
 
 @Singleton
 class DefaultProjectService implements ProjectService {
@@ -20,7 +21,7 @@ class DefaultProjectService implements ProjectService {
     public ReadProjectDto create(CreateProjectDto project) {
         return projectRepository.save(
                 new ReadProjectDto(
-                        null,
+                  null,
                         project.name(),
                         ZonedDateTime
                                 .now(ZoneOffset.UTC)
