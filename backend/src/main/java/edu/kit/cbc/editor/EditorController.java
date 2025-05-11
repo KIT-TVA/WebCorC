@@ -3,7 +3,6 @@ package edu.kit.cbc.editor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.kit.cbc.common.CbCFormulaContainer;
 import edu.kit.cbc.common.Problem;
-import edu.kit.cbc.common.corc.VerifyAllStatements;
 import edu.kit.cbc.common.corc.codegen.CodeGenerator;
 import edu.kit.cbc.editor.llm.LLMQueryDto;
 import edu.kit.cbc.editor.llm.LLMResponse;
@@ -64,12 +63,7 @@ public class EditorController {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.ALL)
     public HttpResponse<?> xmltojson(@Body String cbcFormulaString) {
-        try {
-            CbCFormulaContainer c = parser.fromXMLStringToCbC(cbcFormulaString);
-            return HttpResponse.ok(parser.toJsonString(c));
-        } catch (IOException e) {
-            return HttpResponse.serverError(Problem.getParsingError(e.getMessage()));
-        }
+        return HttpResponse.serverError("NOT IMPLEMENTED ");
     }
 
     @Post(uri = "/verify")
@@ -125,7 +119,7 @@ public class EditorController {
                 }
             }));
 
-            return HttpResponse.ok(parser.toJsonString(formula));
+            return HttpResponse.ok(formula.toJsonString());
         } catch (JsonProcessingException e) {
             return HttpResponse.serverError(Problem.getParsingError(e.getMessage()));
         }

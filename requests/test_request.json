@@ -6,14 +6,15 @@
         "postCondition": {},
         "isProven": true
     },
-    "javaVariables": {
-        "variables": [
+    "javaVariables": [
             {
                 "name": "varName",
                 "kind": "GLOBAL",
                 "modifier": "private",
                 "displayName": "var"
             }
-        ]
-    }
+    ],
+    "globalConditions": [],
+    "renamings": []
+
 }
