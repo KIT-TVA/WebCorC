@@ -1,0 +1,69 @@
+site_name: WebCorC Wiki
+site_url: https://corc.informatik.kit.edu
+repo_url: https://github.com/KIT-TVA/WebCorC
+theme:
+  name: material
+
+theme:
+  name: material
+  color_mode: auto
+  user_color_mode_toggle: true
+  features:
+    - navigation.sections
+    - navigation.instant
+    - navigation.tracking
+    - navigation.top
+    - navigation.footer
+    - content.code.copy
+  palette:
+    # light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight:
+      use_pygments: true
+      anchor_linenums: true
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.superfences
+  - pymdownx.details
+
+nav:
+  - Overview: index.md
+  - Features:
+    - Features Introduction: features/index.md
+    - Feature List:
+      - AI Chat: features/ai-chat.md
+  - CbC:
+    - Theory: cbc/cbc.md
+    - Practical Example: cbc/webcorc.md
+  - CorC:
+    - CorC: corc/index.md
+    - Extensions:
+      - Editors: editors.md
+      - Project Types: project-types.md
+      - Verification: verification.md
+      - Code Generation: code-conversion.md
+      - Testing: testing.md
+      - Mutation Generation: mutation.md
+      - Proof Statistics: stats.md
+      - Counterexample Generation: counterexamples.md
+      - Information Flow: information-flow.md
+      - Related Work: related-work.md
+
+       
+      
+
