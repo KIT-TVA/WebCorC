@@ -136,7 +136,10 @@ export class TreeService {
    * @param newName The new name of the renaming
    */
   public addRenaming(type : string, original : string, newName : string) : void {
-    this._renames.push(new Renaming(type, original, newName))
+    let rename: Renaming = new Renaming(type, original, newName)
+    if (!this._renames.some(name => rename.equal(name))) {
+        this._renames.push(rename)
+    }
   }
 
   /**

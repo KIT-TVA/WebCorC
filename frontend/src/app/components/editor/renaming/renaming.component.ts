@@ -66,7 +66,7 @@ export class RenamingComponent {
 
   /**
    * Delete renaming by the index
-   * @param index The index of the renaimg in the from items to remove
+   * @param index The index of the renaming in the items array to remove
    */
   public removeRenaming(index : number) : void {
     const group : FormGroup = this.items.at(index) as FormGroup
