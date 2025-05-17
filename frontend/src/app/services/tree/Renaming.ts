@@ -23,7 +23,7 @@ export class Renaming implements IRenaming {
     }
 
     public equal(other : Renaming) : boolean {
-        return this.type == other.type && this.function == other.type && this.newName == other.type
+        return this.type === other.type && this.function === other.function && this.newName === other.newName
     }
 
 }
