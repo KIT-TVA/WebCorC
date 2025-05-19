@@ -3,6 +3,7 @@ package edu.kit.cbc.editor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.kit.cbc.common.CbCFormulaContainer;
 import edu.kit.cbc.common.Problem;
+import edu.kit.cbc.common.corc.VerifyAllStatements;
 import edu.kit.cbc.common.corc.codegen.CodeGenerator;
 import edu.kit.cbc.editor.llm.LLMQueryDto;
 import edu.kit.cbc.editor.llm.LLMResponse;
@@ -29,7 +30,6 @@ import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-
 
 @Controller("/editor")
 @ExecuteOn(TaskExecutors.BLOCKING)
@@ -78,11 +78,12 @@ public class EditorController {
                 proofFolderPath = Files.createTempDirectory("proof_");
                 proofFilePath = Files.createDirectory(proofFolderPath.resolve("prove_"));
                 if (projectId.isPresent()) {
-                    //obtaining java files and helper.key from project before verification
+                    // obtaining java files and helper.key from project before verification
                     List<String> filePaths = new LinkedList<>(filesController.findJavaFilesOfProject(projectId.get()));
                     filePaths.add("helper.key");
                     for (String filePath : filePaths) {
-                        Optional<HttpResponse<StreamedFile>> response = filesController.getFile(projectId.get(), URI.create(filePath));
+                        Optional<HttpResponse<StreamedFile>> response = filesController.getFile(projectId.get(),
+                                URI.create(filePath));
                         if (response.isPresent()) {
                             InputStream e = response.get().body().getInputStream();
                             Path fullPath = proofFilePath.resolve(filePath);
@@ -91,27 +92,29 @@ public class EditorController {
                         }
                     }
                 }
-                //VerifyAllStatements.verify(formula.cbcFormula(), formula.javaVariables(), formula.globalConditions(), formula.renaming(), proofFolderPath.toUri());
+                VerifyAllStatements.verify(formula.getCbcFormula(), formula.getJavaVariables(),
+                        formula.getGlobalConditions(),
+                        formula.getRenamings(), proofFolderPath.toUri());
             } catch (IOException e) {
                 return HttpResponse.serverError(e.getMessage());
             }
 
-            //find all key files except helper.key
+            // find all key files except helper.key
             List<Path> keyFiles;
             try {
                 keyFiles = Files.find(proofFilePath, 30, (path, attributes) -> {
                     String pathStr = path.toString();
-                    return
-                            pathStr.endsWith(".key")
-                                    && !pathStr.endsWith("helper.key");
+                    return pathStr.endsWith(".key")
+                            && !pathStr.endsWith("helper.key");
                 }).toList();
             } catch (IOException e) {
                 return HttpResponse.serverError(e.getMessage());
             }
 
-            //upload found files to project
+            // upload found files to project
             projectId.ifPresent(s -> keyFiles.forEach(path -> {
-                URI urn = URI.create(proofFolderPath.getFileName() + path.toString().replace(proofFilePath.toString(), ""));
+                URI urn = URI
+                        .create(proofFolderPath.getFileName() + path.toString().replace(proofFilePath.toString(), ""));
                 try {
                     filesController.uploadBytes(Files.readAllBytes(path), s, urn);
                 } catch (IOException e) {
@@ -141,7 +144,7 @@ public class EditorController {
     @Get(uri = "/jobs/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public HttpResponse<String> getJobs(long id) {
-        //TODO: Websocket
+        // TODO: Websocket
         return HttpResponse.serverError(String.format("NOT IMPLEMENTED %d", id));
     }
 

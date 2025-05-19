@@ -12,8 +12,13 @@ import de.uka.ilkd.key.speclang.Contract;
 import de.uka.ilkd.key.strategy.StrategyProperties;
 import de.uka.ilkd.key.util.KeYTypeUtil;
 import de.uka.ilkd.key.util.MiscTools;
+import io.micronaut.core.io.IOUtils;
+
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,11 +28,17 @@ import org.key_project.util.collection.ImmutableSet;
 
 public class KeYInteraction {
 
-
     /**
      * Starts the KeY proof with a location and some info on inlining.
      */
     public Proof startKeyProof(File location, boolean inlining) {
+        try {
+            System.out.println(Files.readAllLines(Path.of(location.getAbsolutePath())));
+            ;
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         Proof proof = null;
         List<File> classPaths = null; // Optionally: Additional specifications
         // for API classes
@@ -56,7 +67,7 @@ public class KeYInteraction {
             if (inlining) {
                 sp.setProperty(StrategyProperties.METHOD_OPTIONS_KEY, StrategyProperties.METHOD_EXPAND);
             } else {
-                //METHOD_EXPAND
+                // METHOD_EXPAND
                 sp.setProperty(StrategyProperties.METHOD_OPTIONS_KEY, StrategyProperties.METHOD_CONTRACT);
             }
             sp.setProperty(StrategyProperties.LOOP_OPTIONS_KEY, StrategyProperties.LOOP_INVARIANT);
@@ -79,7 +90,7 @@ public class KeYInteraction {
             try {
                 proof.saveToFile(location);
 
-                //printStatistics(proof, inlining);
+                // printStatistics(proof, inlining);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -126,9 +137,11 @@ public class KeYInteraction {
                 Set<KeYJavaType> kjts = env.getJavaInfo().getAllKeYJavaTypes();
                 for (KeYJavaType type : kjts) {
                     if (!KeYTypeUtil.isLibraryClass(type)) {
-                        ImmutableSet<IObserverFunction> targets = env.getSpecificationRepository().getContractTargets(type);
+                        ImmutableSet<IObserverFunction> targets = env.getSpecificationRepository()
+                                .getContractTargets(type);
                         for (IObserverFunction target : targets) {
-                            ImmutableSet<Contract> contracts = env.getSpecificationRepository().getContracts(type, target);
+                            ImmutableSet<Contract> contracts = env.getSpecificationRepository().getContracts(type,
+                                    target);
                             for (Contract contract : contracts) {
                                 proofContracts.add(contract);
                             }
@@ -146,8 +159,9 @@ public class KeYInteraction {
                     sp.setProperty(StrategyProperties.METHOD_OPTIONS_KEY, StrategyProperties.METHOD_EXPAND);
                     sp.setProperty(StrategyProperties.LOOP_OPTIONS_KEY, StrategyProperties.LOOP_INVARIANT);
                     sp.setProperty(StrategyProperties.DEP_OPTIONS_KEY, StrategyProperties.DEP_ON);
-                    sp.setProperty(StrategyProperties.QUERY_OPTIONS_KEY, StrategyProperties.QUERY_RESTRICTED); //StrategyProperties.QUERY_ON
-                    sp.setProperty(StrategyProperties.NON_LIN_ARITH_OPTIONS_KEY, StrategyProperties.NON_LIN_ARITH_DEF_OPS);
+                    sp.setProperty(StrategyProperties.QUERY_OPTIONS_KEY, StrategyProperties.QUERY_RESTRICTED); // StrategyProperties.QUERY_ON
+                    sp.setProperty(StrategyProperties.NON_LIN_ARITH_OPTIONS_KEY,
+                            StrategyProperties.NON_LIN_ARITH_DEF_OPS);
                     sp.setProperty(StrategyProperties.STOPMODE_OPTIONS_KEY, StrategyProperties.STOPMODE_DEFAULT);
                     proof.getSettings().getStrategySettings().setActiveStrategyProperties(sp);
                     // Make sure that the new options are used
@@ -155,12 +169,14 @@ public class KeYInteraction {
                     ProofSettings.DEFAULT_SETTINGS.getStrategySettings().setMaxSteps(maxSteps);
                     ProofSettings.DEFAULT_SETTINGS.getStrategySettings().setActiveStrategyProperties(sp);
                     proof.getSettings().getStrategySettings().setMaxSteps(maxSteps);
-                    proof.setActiveStrategy(proof.getServices().getProfile().getDefaultStrategyFactory().create(proof, sp));
+                    proof.setActiveStrategy(
+                            proof.getServices().getProfile().getDefaultStrategyFactory().create(proof, sp));
                     env.getUi().getProofControl().startAndWaitForAutoMode(proof);
                     // Show proof result
-                    //System.out.println("Proof is closed: " + proof.openGoals().isEmpty());
+                    // System.out.println("Proof is closed: " + proof.openGoals().isEmpty());
                     try {
-                        String locationWithoutFileEnding = location.toString().substring(0, location.toString().indexOf("."));
+                        String locationWithoutFileEnding = location.toString().substring(0,
+                                location.toString().indexOf("."));
                         keyFile = new File(locationWithoutFileEnding + ".proof");
                         proof.saveToFile(keyFile);
                     } catch (IOException e) {
@@ -172,7 +188,7 @@ public class KeYInteraction {
                     e.printStackTrace();
                 } finally {
                     if (proof != null) {
-                        //proof.dispose(); // Ensure always that all instances
+                        // proof.dispose(); // Ensure always that all instances
                         // of Proof are disposed
                     }
                 }
@@ -187,14 +203,17 @@ public class KeYInteraction {
         return proof;
     }
 
-    /*private static void printStatistics(Proof proof, boolean inlining) {
-        Statistics s = proof.getStatistics();
-        if(inlining)
-            System.out.println("Inlining");
-        else
-            System.out.println("Contracting");
-        System.out.println("Statistics: \n\t nodes: " + s.nodes + "\n\t rule apps: " + s.totalRuleApps
-                + "\n\t time in Millis: " + s.timeInMillis );
-    }*/
+    /*
+     * private static void printStatistics(Proof proof, boolean inlining) {
+     * Statistics s = proof.getStatistics();
+     * if(inlining)
+     * System.out.println("Inlining");
+     * else
+     * System.out.println("Contracting");
+     * System.out.println("Statistics: \n\t nodes: " + s.nodes + "\n\t rule apps: "
+     * + s.totalRuleApps
+     * + "\n\t time in Millis: " + s.timeInMillis );
+     * }
+     */
 
 }

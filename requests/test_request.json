@@ -1,17 +1,47 @@
 {
     "cbcFormula": { 
         "name": "statement",
-        "statement": {"statementType" : "statement"},
-        "preCondition": {},
-        "postCondition": {},
-        "isProven": true
+        "statement": {
+            "name": "i=1;",
+            "statementType" : "statement",
+            "isProven": false,
+            "parent": {"statementType": "statement" },
+            "codeRepresentation": "",
+            "preCondition": {
+                "condition": "i=0"
+            },
+            "postCondition": {
+                "condition": "i=1"
+            },
+            "refinement": {
+                "name": "i=1;",
+                "statementType" : "statement",
+                "isProven": false,
+                "parent": {"statementType": "statement" },
+                "codeRepresentation": "",
+                "refinement": {"statementType": "statement"},
+                "preCondition": {
+                    "condition": "i=0"
+                },
+                "postCondition": {
+                    "condition": "i=1"
+                }
+            }
+        },
+        "preCondition": {
+            "condition": "i=0"
+        },
+        "postCondition": {
+            "condition": "i=1"
+        },
+        "isProven": false 
     },
     "javaVariables": [
             {
-                "name": "varName",
-                "kind": "GLOBAL",
-                "modifier": "private",
-                "displayName": "var"
+                "name": "int i",
+                "kind": "LOCAL",
+                "modifier": "public",
+                "displayName": ""
             }
     ],
     "globalConditions": [],

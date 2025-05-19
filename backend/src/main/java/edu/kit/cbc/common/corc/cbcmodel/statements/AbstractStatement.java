@@ -1,6 +1,6 @@
 package edu.kit.cbc.common.corc.cbcmodel.statements;
 
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import edu.kit.cbc.common.corc.cbcmodel.Condition;
@@ -13,10 +13,11 @@ import lombok.Setter;
 
 /**
  * @author Markus
- * This class holds the implementation of an abstract statement in CorC.
- * It replaces the old EMF version of this class. If any methods or
- * features are missing please refer to the old CorC project and integrate
- * them.
+ *         This class holds the implementation of an abstract statement in CorC.
+ *         It replaces the old EMF version of this class. If any methods or
+ *         features are missing please refer to the old CorC project and
+ *         integrate
+ *         them.
  */
 @Getter
 @Setter
@@ -24,12 +25,12 @@ import lombok.Setter;
 @NoArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "statementType")
 @JsonSubTypes({
-  @JsonSubTypes.Type(value = Statement.class, name = "statement"),
-  @JsonSubTypes.Type(value = CompositionStatement.class, name = "composition_statement"),
-  @JsonSubTypes.Type(value = ReturnStatement.class, name = "return_statement"),
-  @JsonSubTypes.Type(value = SelectionStatement.class, name = "selection_statement"),
-  @JsonSubTypes.Type(value = SkipStatement.class, name = "skip_statement"),
-  @JsonSubTypes.Type(value = SmallRepetitionStatement.class, name = "small_repetition_statement")
+    @JsonSubTypes.Type(value = Statement.class, name = "statement"),
+    @JsonSubTypes.Type(value = CompositionStatement.class, name = "composition_statement"),
+    @JsonSubTypes.Type(value = ReturnStatement.class, name = "return_statement"),
+    @JsonSubTypes.Type(value = SelectionStatement.class, name = "selection_statement"),
+    @JsonSubTypes.Type(value = SkipStatement.class, name = "skip_statement"),
+    @JsonSubTypes.Type(value = SmallRepetitionStatement.class, name = "small_repetition_statement")
 })
 public abstract class AbstractStatement implements Representable {
 
@@ -40,6 +41,16 @@ public abstract class AbstractStatement implements Representable {
   private Condition preCondition;
   private Condition postCondition;
   private String codeRepresentation;
+
+  /*
+   * WARNING: Jackson will interpret this value as "proven" because the
+   * preprocessor automatically removes the "is"
+   * from the getters name -> "isProven" will be proven. The input JSON must
+   * contain proven= instead of isProven.
+   * Therefore this annotation is important, as it disables this feature. (I spent
+   * hours finding this bug ~ Markus)
+   */
+  @JsonProperty(value = "isProven", required = true)
   private boolean isProven;
 
   public abstract void prove();

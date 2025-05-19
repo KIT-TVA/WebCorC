@@ -1,11 +1,8 @@
 package edu.kit.cbc.common.corc;
 
-import de.tu_bs.cs.isf.cbc.cbcmodel.CompositionTechnique;
-import de.tu_bs.cs.isf.cbc.cbcmodel.Condition;
-import de.tu_bs.cs.isf.cbc.cbcmodel.GlobalConditions;
-import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariable;
-import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariables;
-import de.tu_bs.cs.isf.cbc.cbcmodel.VariableKind;
+import edu.kit.cbc.common.corc.cbcmodel.Condition;
+import edu.kit.cbc.common.corc.cbcmodel.JavaVariable;
+import edu.kit.cbc.common.corc.cbcmodel.JavaVariableKind;
 import edu.kit.cbc.common.corc.codegen.KeYFunctionReplacer;
 import java.io.File;
 import java.util.ArrayList;
@@ -15,7 +12,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import org.eclipse.emf.common.util.EList;
 
 public class Parser {
     public static final String KEYWORD_JML_PRE = "requires";
@@ -37,14 +33,19 @@ public class Parser {
                     String currLine = linesOfFile.get(i);
                     if (currLine.contains(keyword)) {
                         if (currLine.substring(currLine.length() - 1).contains(";")) {
-                            return currLine.substring(currLine.indexOf(keyword) + keyword.length(), currLine.lastIndexOf(";")).trim();
+                            return currLine
+                                    .substring(currLine.indexOf(keyword) + keyword.length(), currLine.lastIndexOf(";"))
+                                    .trim();
                         } else {
-                            while (!linesOfFile.get(i + 1).substring(linesOfFile.get(i + 1).length() - 1).contains(";")) {
+                            while (!linesOfFile.get(i + 1).substring(linesOfFile.get(i + 1).length() - 1)
+                                    .contains(";")) {
                                 currLine += linesOfFile.get(i + 1);
                                 i++;
                             }
                             currLine += linesOfFile.get(i + 1);
-                            return currLine.substring(currLine.indexOf(keyword) + keyword.length(), currLine.lastIndexOf(";")).trim();
+                            return currLine
+                                    .substring(currLine.indexOf(keyword) + keyword.length(), currLine.lastIndexOf(";"))
+                                    .trim();
                         }
                     } else if (currLine.contains("}")) {
                         if (keyword == KEYWORD_JML_MODIFIABLE) {
@@ -72,29 +73,6 @@ public class Parser {
         condition = condition.replaceAll("(?<==\\s?)false", "FALSE");
         condition = condition.replaceAll("(\\w*)\\sinstanceof\\s(\\w*)", "$2::instance($1) = TRUE");
         return condition;
-    }
-
-    public static CompositionTechnique getCompositionTechniqueForMethod(File classFile, String feature,
-                                                                        String keyword, String callingMethod, IFileUtil fileHandler) {
-        String path = classFile.getAbsolutePath();
-        String[] pathParts = path.split("\\\\"); //TODO replace with correct delimiter
-        String location = "";
-        for (int i = 0; i < pathParts.length - 2; i++) {
-            location += pathParts[i] + "\\"; //TODO replace with correct delimiter
-        }
-        location += "features\\" + feature.substring(0, 1).toUpperCase() + feature.substring(1) + "\\diagram\\" + callingMethod + ".cbcmodel";
-        List<String> linesOfFile = fileHandler.readFileInList(location);
-        for (int i = 0; i < linesOfFile.size(); i++) {
-            String currLine = linesOfFile.get(i);
-            if (currLine.contains("EXPLICIT_CONTRACTING")) {
-                return CompositionTechnique.EXPLICIT_CONTRACTING;
-            } else if (currLine.contains("CONJUNCTIVE_CONTRACTING")) {
-                return CompositionTechnique.CONJUNCTIVE_CONTRACTING;
-            }
-
-        }
-
-        return CompositionTechnique.CONTRACT_OVERRIDING;
     }
 
     public static String getModifieableVarsFromCondition(Condition condition) {
@@ -131,7 +109,7 @@ public class Parser {
         return condition;
     }
 
-    public static List<String> getUnmodifiedVars(List<String> modifiedVars, EList<JavaVariable> declaredVariables) {
+    public static List<String> getUnmodifiedVars(List<String> modifiedVars, List<JavaVariable> declaredVariables) {
         List<String> unmodifiedVariables = new ArrayList<String>();
         if (!modifiedVars.contains("\\everything")) {
             for (JavaVariable var : declaredVariables) {
@@ -179,7 +157,7 @@ public class Parser {
     }
 
     public static String getModifieableVarsFromConditionExceptLocals(Condition condition,
-                                                                     LinkedList<String> varsLinkedList, JavaVariables vars, JavaVariable returnVar) {
+            List<String> varsLinkedList, List<JavaVariable> vars, JavaVariable returnVar) {
         String variables = getModifieableVarsFromCondition(condition);
         if (variables.contains("nothing") || variables.contains("everything")) {
             return variables;
@@ -198,10 +176,10 @@ public class Parser {
                         }
                     }
                 }
-                if (vars != null && vars.getVariables().size() > 0) {
-                    for (JavaVariable var : vars.getVariables()) {
+                if (vars != null && vars.size() > 0) {
+                    for (JavaVariable var : vars) {
                         if (modVar.replaceAll("\\[.*\\]", "").equals(var.getName().split(" ")[1])
-                                && var.getKind().equals(VariableKind.LOCAL)) {
+                                && var.getKind().equals(JavaVariableKind.LOCAL)) {
                             isLocal = true;
                         }
                     }
@@ -226,25 +204,25 @@ public class Parser {
         return variables;
     }
 
-    public static String processGlobalConditions(GlobalConditions globalConditions, LinkedList<String> localVars,
-                                                 String preCondition) {
+    public static String processGlobalConditions(List<Condition> globalConditions, List<String> localVars,
+            String preCondition) {
         String result = "";
         HashSet<String> conditionsSet = new HashSet<>();
-        for (Condition c : globalConditions.getConditions()) {
+        for (Condition c : globalConditions) {
             // Check if condition contains local variables:
             boolean isLocal = false;
             for (String v : localVars) {
-                if (c.getName().contains(v.substring(v.indexOf(" ")).trim())) {
+                if (c.getCondition().contains(v.substring(v.indexOf(" ")).trim())) {
                     isLocal = true;
                 }
             }
-            if (preCondition.contains(c.getName()) || c.getName().contains("<inv>")) {
+            if (preCondition.contains(c.getCondition()) || c.getCondition().contains("<inv>")) {
                 continue;
             }
             if (!isLocal) {
-                conditionsSet.add(rewriteConditionToJML(c.getName()));
+                conditionsSet.add(rewriteConditionToJML(c.getCondition()));
             } else {
-                System.out.println("[WARNING] Did not add global condition '" + c.getName()
+                System.out.println("[WARNING] Did not add global condition '" + c.getCondition()
                         + "' to JML annotation, because it contains access to a local variable.");
             }
         }
@@ -318,7 +296,7 @@ public class Parser {
                 assignableVariables[0] = assignableVariables[0].replaceAll("\\[.*\\]", "\\[\\*\\]");
                 variables = assignableVariables[0];
             }
-            for (int i = 1; i < assignableVariables.length; i++) { //only global vars are modifiable
+            for (int i = 1; i < assignableVariables.length; i++) { // only global vars are modifiable
                 if (assignableVariables[i].startsWith("this.")) {
                     assignableVariables[i] = assignableVariables[i].replaceAll("\\[.*\\]", "\\[\\*\\]");
                     if (variables.isEmpty()) {

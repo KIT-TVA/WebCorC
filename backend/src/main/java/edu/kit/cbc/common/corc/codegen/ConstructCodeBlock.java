@@ -1,37 +1,31 @@
 package edu.kit.cbc.common.corc.codegen;
 
-import de.tu_bs.cs.isf.cbc.cbcclass.Method;
-import de.tu_bs.cs.isf.cbc.cbcmodel.AbstractStatement;
-import de.tu_bs.cs.isf.cbc.cbcmodel.CbCFormula;
-import de.tu_bs.cs.isf.cbc.cbcmodel.CompositionStatement;
-import de.tu_bs.cs.isf.cbc.cbcmodel.GlobalConditions;
-import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariable;
-import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariables;
-import de.tu_bs.cs.isf.cbc.cbcmodel.Rename;
-import de.tu_bs.cs.isf.cbc.cbcmodel.Renaming;
-import de.tu_bs.cs.isf.cbc.cbcmodel.SelectionStatement;
-import de.tu_bs.cs.isf.cbc.cbcmodel.SmallRepetitionStatement;
-import de.tu_bs.cs.isf.cbc.cbcmodel.impl.AbstractStatementImpl;
-import de.tu_bs.cs.isf.cbc.cbcmodel.impl.CompositionStatementImpl;
-import de.tu_bs.cs.isf.cbc.cbcmodel.impl.ReturnStatementImpl;
-import de.tu_bs.cs.isf.cbc.cbcmodel.impl.SelectionStatementImpl;
-import de.tu_bs.cs.isf.cbc.cbcmodel.impl.SkipStatementImpl;
-import de.tu_bs.cs.isf.cbc.cbcmodel.impl.SmallRepetitionStatementImpl;
-import de.tu_bs.cs.isf.cbc.cbcmodel.impl.StrengthWeakStatementImpl;
 import edu.kit.cbc.common.corc.Parser;
+import edu.kit.cbc.common.corc.cbcmodel.CbCFormula;
+import edu.kit.cbc.common.corc.cbcmodel.Condition;
+import edu.kit.cbc.common.corc.cbcmodel.JavaVariable;
+import edu.kit.cbc.common.corc.cbcmodel.Renaming;
+import edu.kit.cbc.common.corc.cbcmodel.statements.AbstractStatement;
+import edu.kit.cbc.common.corc.cbcmodel.statements.CompositionStatement;
+import edu.kit.cbc.common.corc.cbcmodel.statements.ReturnStatement;
+import edu.kit.cbc.common.corc.cbcmodel.statements.SelectionStatement;
+import edu.kit.cbc.common.corc.cbcmodel.statements.SkipStatement;
+import edu.kit.cbc.common.corc.cbcmodel.statements.SmallRepetitionStatement;
+import edu.kit.cbc.common.corc.cbcmodel.statements.Statement;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Pattern;
-
 
 public class ConstructCodeBlock {
 
     private static boolean handleInnerLoops = true;
     private static boolean withInvariants = false;
-    private static Renaming renaming = null;
+    private static List<Renaming> renamings = null;
     private static int positionIndex = 0;
     private static String line;
     private static BufferedReader br;
@@ -57,7 +51,7 @@ public class ConstructCodeBlock {
 
     public static StringBuffer getJmlAnnotations(StringBuffer buffer, BufferedReader br) throws IOException {
         buffer.setLength(0);
-        while (line != null && line.contains("@")) { //get jml annotations
+        while (line != null && line.contains("@")) { // get jml annotations
             buffer.append(line);
             buffer.append("\n");
             line = br.readLine();
@@ -65,86 +59,7 @@ public class ConstructCodeBlock {
         return buffer;
     }
 
-    public static StringBuffer editCodeBlockForExport(
-            Method methodToExport, String methodCode, File javaFile, String vars) throws IOException {
-
-        final StringBuffer newCode = new StringBuffer();
-        final StringBuilder copyMethod = new StringBuilder();
-
-        br = new BufferedReader(new FileReader(javaFile));
-
-        line = br.readLine();
-        newCode.append(line);
-        newCode.append("\n\n");
-
-        br.readLine();
-
-        do {
-            line = br.readLine();
-        } while (line != null && !line.contains("@"));
-
-        if (vars.length() > 2) {
-            newCode.append(vars);
-            newCode.append("\n");
-        }
-
-        while (line != null) {
-            final StringBuffer jmlCode = getJmlAnnotations(new StringBuffer(), br);
-            String s = methodToExport.getSignature(); //.replace("static ", "");
-            if (line.contains(s)) {
-                line = br.readLine();
-                int counter = 1;
-                while (line != null) {
-                    if (line.contains("{")) {
-                        ++counter;
-                    }
-                    if (line.contains("}")) {
-                        --counter;
-                    }
-                    if (counter == 0) {
-                        br.readLine();
-                        line = br.readLine();
-                        break;
-                    }
-                    line = br.readLine();
-                }
-            } else if (!line.equals("}")) { //copy implemented methods
-                newCode.append(jmlCode);
-                copyMethod.append(line);
-                copyMethod.append("\n");
-                line = br.readLine();
-                int counter = 1;
-                while (line != null) {
-                    if (line.contains("{")) {
-                        ++counter;
-                    }
-                    if (line.contains("}")) {
-                        --counter;
-                    }
-                    if (counter == 0) {
-                        copyMethod.append("\t}\n\n");
-                        newCode.append(copyMethod);
-                        copyMethod.setLength(0);
-                        br.readLine();
-                        line = br.readLine();
-                        break;
-                    }
-                    copyMethod.append(line);
-                    copyMethod.append("\n");
-                    line = br.readLine();
-                }
-            } else {
-                line = br.readLine();
-            }
-        }
-        newCode.append(methodCode);
-        br.close();
-        return newCode;
-    }
-
-
-
-    private static String translateOldVariablesToJML(String post, LinkedList<String> vars) {
+    private static String translateOldVariablesToJML(String post, List<String> vars) {
         for (String var : vars) {
             if (var.contains("old_")) {
                 String varNameWithoutOld = var.substring(var.indexOf("_") + 1);
@@ -163,76 +78,18 @@ public class ConstructCodeBlock {
         return s;
     }
 
-    public static String constructCodeBlockForExport(
-            CbCFormula formula, Renaming renaming, LinkedList<String> vars, JavaVariable returnVar, Method methodToExport) {
-        handleInnerLoops = true;
-        withInvariants = true;
-
-        final String modifiableVariables = edu.kit.cbc.common.corc.Parser
-                .getModifieableVarsFromCondition2(formula.getStatement().getPostCondition().getName(), vars);
-        final String postCondition = edu.kit.cbc.common.corc.Parser.getConditionFromCondition(formula.getStatement().getPostCondition().getName());
-
-        String pre = createConditionJMLString(formula.getStatement().getPreCondition().getName(), renaming,
-                edu.kit.cbc.common.corc.Parser.KEYWORD_JML_PRE);
-        pre = useRenamingCondition(pre);
-
-        String post = createConditionJMLString(postCondition, renaming, edu.kit.cbc.common.corc.Parser.KEYWORD_JML_POST);
-        post = useRenamingCondition(post);
-
-        if (returnVar != null) {
-            String returnValueName = returnVar.getName().split(" ")[1];
-            post = post.replaceAll("(?<=\\W)" + returnValueName + "(?=\\W)", "\\\\result");
-            returnVariable = returnVar;
-        }
-
-        StringBuffer code = new StringBuffer();
-        System.out.println(System.getProperties());
-        code.append("\t/*@\n" + "\t@ normal_behavior\n" //+ "@ requires "
-                + pre.replaceAll(System.getProperty("line.separator"), "")// + ";\n" //+ "@ ensures "
-                + post.replaceAll(System.getProperty("line.separator"), "")/* + ";\n"*/ + "\t@ assignable "
-                + modifiableVariables + ";\n" + "\t@*/\n" + "\tpublic " + methodToExport.getSignature()
-                + " {\n");
-
-        positionIndex = 2;
-        code = insertTabs(code);
-
-        for (String var : vars) { //declare variables
-            code.append(var + ";\n");
-            code = insertTabs(code);
-        }
-
-        String s;
-        if (formula.getStatement().getRefinement() != null) {
-            s = constructCodeBlockOfChildStatement(formula.getStatement().getRefinement());
-            if (renaming != null) {
-                s = useRenamingCondition(s);
-            }
-            code.append(s);
-        } else {
-            s = constructCodeBlockOfChildStatement(formula.getStatement());
-            if (renaming != null) {
-                s = useRenamingCondition(s);
-            }
-            code.append(s);
-        }
-
-        code.append("\n\t}");
-
-        returnVariable = null;
-        return code.toString();
-    }
-
-    public static String constructCodeBlockForExport(CbCFormula formula, GlobalConditions globalConditions,
-                                                     Renaming renaming, LinkedList<String> vars, JavaVariable returnVar, String signatureString,
-                                                     String[] config) {
+    public static String constructCodeBlockForExport(CbCFormula formula, List<Condition> globalConditions,
+            List<Renaming> renamings, List<String> vars, JavaVariable returnVar, String signatureString,
+            String[] config) {
         handleInnerLoops = true;
 
         String modifiableVariables = Parser.getModifieableVarsFromConditionExceptLocals(
                 formula.getStatement().getPostCondition(), vars, null, returnVar);
         modifiableVariables = modifiableVariables.replaceAll("\\)", "").replaceAll("\\(", "");
-        String postCondition = Parser.getConditionFromCondition(formula.getStatement().getPostCondition().getName());
+        String postCondition = Parser
+                .getConditionFromCondition(formula.getStatement().getPostCondition().getCondition());
 
-        String pre = createConditionJMLString(formula.getStatement().getPreCondition().getName(), renaming,
+        String pre = createConditionJMLString(formula.getStatement().getPreCondition().getCondition(), renamings,
                 Parser.KEYWORD_JML_PRE);
         if (globalConditions != null) {
             String processedGlobalConditions = Parser.processGlobalConditions(globalConditions, vars, pre);
@@ -244,7 +101,7 @@ public class ConstructCodeBlock {
 
         pre = useRenamingCondition(pre);
 
-        String post = createConditionJMLString(postCondition, renaming, Parser.KEYWORD_JML_POST);
+        String post = createConditionJMLString(postCondition, renamings, Parser.KEYWORD_JML_POST);
         post = translateOldVariablesToJML(post, vars);
         post = useRenamingCondition(post);
 
@@ -260,9 +117,9 @@ public class ConstructCodeBlock {
                 + pre.replaceAll(System.getProperty("line.separator"), "").replaceAll("\n", "").replaceAll("\t", "")
                 + "\n\t"// + ";\n" //+ "@ ensures "
                 + post.replaceAll(System.getProperty("line.separator"), "").replaceAll("\n", "").replaceAll("\t",
-                "")/*
-         * + ";\n"
-         */
+                        "")/*
+                            * + ";\n"
+                            */
                 + "\n\t@ assignable " + modifiableVariables + ";\n" + "\t@*/\n\t"
                 + /* "public /*@helper@* / "+ */ signatureString + " {\n");
 
@@ -289,13 +146,13 @@ public class ConstructCodeBlock {
         String s;
         if (formula.getStatement().getRefinement() != null) {
             s = constructCodeBlockOfChildStatement(formula.getStatement().getRefinement());
-            if (renaming != null) {
+            if (renamings != null) {
                 s = useRenamingCondition(s);
             }
             code.append(s);
         } else {
             s = constructCodeBlockOfChildStatement(formula.getStatement());
-            if (renaming != null) {
+            if (renamings != null) {
                 s = useRenamingCondition(s);
             }
             code.append(s);
@@ -313,21 +170,24 @@ public class ConstructCodeBlock {
         return code.toString();
     }
 
-    public static String constructMethodStubsForExport(CbCFormula formula, Renaming renaming, JavaVariables vars) {
+    public static String constructMethodStubsForExport(CbCFormula formula, List<Renaming> renamings,
+            List<JavaVariable> vars) {
         handleInnerLoops = true;
         withInvariants = false;
 
         String modifiableVariables = edu.kit.cbc.common.corc.Parser
-                .getModifieableVarsFromCondition(formula.getStatement().getPostCondition().getName());
-        String postCondition = edu.kit.cbc.common.corc.Parser.getConditionFromCondition(formula.getStatement().getPostCondition().getName());
+                .getModifieableVarsFromCondition(formula.getStatement().getPostCondition().getCondition());
+        String postCondition = edu.kit.cbc.common.corc.Parser
+                .getConditionFromCondition(formula.getStatement().getPostCondition().getCondition());
 
-        String pre = createConditionJMLString(formula.getStatement().getPreCondition().getName(), renaming,
+        String pre = createConditionJMLString(formula.getStatement().getPreCondition().getCondition(), renamings,
                 edu.kit.cbc.common.corc.Parser.KEYWORD_JML_PRE);
-        String post = createConditionJMLString(postCondition, renaming, edu.kit.cbc.common.corc.Parser.KEYWORD_JML_POST);
+        String post = createConditionJMLString(postCondition, renamings,
+                edu.kit.cbc.common.corc.Parser.KEYWORD_JML_POST);
 
         String returnValueType = "void";
         String parameters = "";
-        for (JavaVariable var : vars.getVariables()) {
+        for (JavaVariable var : vars) {
             switch (var.getKind()) {
                 case PARAM:
                     if (parameters.equals("")) {
@@ -365,15 +225,16 @@ public class ConstructCodeBlock {
         return code.toString();
     }
 
-    public static String constructMethodStubsForExport(CbCFormula formula, Renaming renaming, JavaVariables vars, String feature, String project) {
+    public static String constructMethodStubsForExport(CbCFormula formula, Renaming renaming, List<JavaVariable> vars,
+            String feature, String project) {
         handleInnerLoops = true;
         withInvariants = false;
 
         String modifiableVariables = edu.kit.cbc.common.corc.Parser
-                .getModifieableVarsFromCondition(formula.getStatement().getPostCondition().getName());
+                .getModifieableVarsFromCondition(formula.getStatement().getPostCondition().getCondition());
         if (vars != null) {
-            for (JavaVariable actVar : vars.getVariables()) {
-                if (actVar.getKind().getName() != "PARAM") {
+            for (JavaVariable actVar : vars) {
+                if (actVar.getKind().toString() != "PARAM") {
                     String[] splitName = actVar.getName().split(" ");
                     modifiableVariables = modifiableVariables.replaceAll("," + splitName[splitName.length - 1], "");
                     modifiableVariables = modifiableVariables.replaceAll(splitName[splitName.length - 1] + ";", ";");
@@ -382,15 +243,17 @@ public class ConstructCodeBlock {
             }
         }
 
-        String postCondition = edu.kit.cbc.common.corc.Parser.getConditionFromCondition(formula.getStatement().getPostCondition().getName());
+        String postCondition = edu.kit.cbc.common.corc.Parser
+                .getConditionFromCondition(formula.getStatement().getPostCondition().getCondition());
 
-        String pre = createConditionJMLString(formula.getStatement().getPreCondition().getName(), renaming,
+        String pre = createConditionJMLString(formula.getStatement().getPreCondition().getCondition(), renamings,
                 edu.kit.cbc.common.corc.Parser.KEYWORD_JML_PRE);
-        String post = createConditionJMLString(postCondition, renaming, edu.kit.cbc.common.corc.Parser.KEYWORD_JML_POST);
+        String post = createConditionJMLString(postCondition, renamings,
+                edu.kit.cbc.common.corc.Parser.KEYWORD_JML_POST);
 
         String returnValueType = "void";
         String parameters = "";
-        for (JavaVariable var : vars.getVariables()) {
+        for (JavaVariable var : vars) {
             switch (var.getKind()) {
                 case PARAM:
                     if (parameters.equals("")) {
@@ -407,7 +270,7 @@ public class ConstructCodeBlock {
                     String returnValueName = splitNameAndType[1];
                     post = post.replaceAll("(?<=\\W)" + returnValueName + "(?=\\W)", "\\\\result");
                     break;
-                case RETURNPARAM:
+                case RETURN_PARAM:
                     String[] splitNameAndType2 = var.getName().split(" ");
                     // get type of variable not whole name
                     returnValueType = splitNameAndType2[0];
@@ -428,52 +291,43 @@ public class ConstructCodeBlock {
         StringBuffer code = new StringBuffer();
         System.out.println(System.getProperties());
         code.append("    /*@\n    @ normal_behavior\n" + pre + post + "    @ assignable "
-                + modifiableVariables + ";\n" + "    @*/\n" + "    public static " + returnValueType + " " + feature.toLowerCase()
+                + modifiableVariables + ";\n" + "    @*/\n" + "    public static " + returnValueType + " "
+                + feature.toLowerCase()
                 + "(" + parameters + ") {\n    }");
 
         // traverse through tree and add stubs for called methods to the String
-        /*if (formula.getStatement() != null) {
-            code.append(constructMethodStubOfChildStatement(formula.getStatement().getRefinement()));
-        } else {
-            code.append(constructMethodStubOfChildStatement(formula.getStatement()));
-        }*/
+        /*
+         * if (formula.getStatement() != null) {
+         * code.append(constructMethodStubOfChildStatement(formula.getStatement().
+         * getRefinement()));
+         * } else {
+         * code.append(constructMethodStubOfChildStatement(formula.getStatement()));
+         * }
+         */
 
         return code.toString();
     }
 
     private static String constructMethodStubOfChildStatement(AbstractStatement refinement) {
-        if (refinement.getClass().equals(AbstractStatementImpl.class)) {
-            return extractMethodNameFromStatement(refinement.getName());
-        } else if (refinement.getClass().equals(SkipStatementImpl.class)
-                || refinement.getClass().equals(ReturnStatementImpl.class)) {
-            return "";
-        } else if (refinement.getClass().equals(SelectionStatementImpl.class)) {
-            return traverseSelection((SelectionStatement) refinement);
-        } else if (refinement.getClass().equals(CompositionStatementImpl.class)) {
-            return traverseComposition((CompositionStatement) refinement);
-        } else if (refinement.getClass().equals(SmallRepetitionStatementImpl.class)) {
-            return traverseSmallRepetition((SmallRepetitionStatement) refinement);
-        } else if (refinement.getClass().equals(StrengthWeakStatementImpl.class)) {
-            if (refinement.getRefinement() != null) {
-                return constructCodeBlockOfChildStatement(refinement.getRefinement());
-            } else {
-                return "";
-            }
-        }
-        return null;
+        return switch (refinement) {
+            case Statement s -> extractMethodNameFromStatement(refinement.getName());
+            case SkipStatement __ -> "";
+            case ReturnStatement __ -> "";
+            case SelectionStatement s -> traverseSelection(s);
+            case CompositionStatement s -> traverseComposition(s);
+            case SmallRepetitionStatement s -> traverseSmallRepetition(s);
+            default -> "";
+        };
     }
 
-
-
-
-
     private static String constructCodeBlockOfChildStatement(AbstractStatement refinement) {
-        if (refinement.getClass().equals(AbstractStatementImpl.class)) {
+        if (refinement instanceof Statement) {
             // behandlung von AbstractStatementImpl nur von Tobi
             String allStatements = refinement.getName().replace("\r\n", "");
             allStatements = allStatements.trim();
             allStatements = allStatements.replaceAll("\\s+", " ");
-            //allStatements = allStatements.split("\\w\\=\\w")[0]+ " = " + allStatements.split("\\w\\=\\w")[1];
+            // allStatements = allStatements.split("\\w\\=\\w")[0]+ " = " +
+            // allStatements.split("\\w\\=\\w")[1];
             allStatements = allStatements.replace("/ =", " /= ");
             allStatements = allStatements.replace("+ =", " += ");
             allStatements = allStatements.replace("- =", " -= ");
@@ -495,11 +349,12 @@ public class ConstructCodeBlock {
             // return statements;
             return statements;
             // return refinement.getName() + "\n";
-        } else if (refinement.getClass().equals(SkipStatementImpl.class)) {
+        } else if (refinement instanceof SkipStatement) {
             return ";\n";
-        } else if (refinement.getClass().equals(ReturnStatementImpl.class)) {
-            if (returnVariable != null) { //In case of void method with "return;", returnVariable will be null
-                String returnString = returnStatement(returnVariable.getName().split(" ")[1], refinement.getName().trim());
+        } else if (refinement instanceof ReturnStatement) {
+            if (returnVariable != null) { // In case of void method with "return;", returnVariable will be null
+                String returnString = returnStatement(returnVariable.getName().split(" ")[1],
+                        refinement.getName().trim());
                 if (returnString.isEmpty()) {
                     return "return " + refinement.getName() + "\n";
                 }
@@ -510,19 +365,14 @@ public class ConstructCodeBlock {
                 return returnString;
             }
             return "return " + refinement.getName() + "\n";
-        } else if (refinement.getClass().equals(SelectionStatementImpl.class)) {
+        } else if (refinement instanceof SelectionStatement) {
             return constructSelection((SelectionStatement) refinement);
-        } else if (refinement.getClass().equals(CompositionStatementImpl.class)) {
+        } else if (refinement instanceof CompositionStatement) {
             return constructComposition((CompositionStatement) refinement);
-        } else if (refinement.getClass().equals(SmallRepetitionStatementImpl.class)) {
+        } else if (refinement instanceof SmallRepetitionStatement) {
             return constructSmallRepetition((SmallRepetitionStatement) refinement);
-        } else if (refinement.getClass().equals(StrengthWeakStatementImpl.class)) {
-            if (refinement.getRefinement() != null) {
-                return constructCodeBlockOfChildStatement(refinement.getRefinement());
-            } else {
-                return refinement.getName() + ";\n";
-            }
         }
+
         return null;
     }
 
@@ -534,7 +384,8 @@ public class ConstructCodeBlock {
                     && refinementName.charAt(refinementName.indexOf('=') + 1) != '='
                     && refinementName.charAt(refinementName.indexOf('=') - 1) != '>'
                     && refinementName.charAt(refinementName.indexOf('=') - 1) != '<') {
-                //s = variableName + refinementName.replace(refinementName.subSequence(0, refinementName.indexOf('=')), "") + "\n";
+                // s = variableName + refinementName.replace(refinementName.subSequence(0,
+                // refinementName.indexOf('=')), "") + "\n";
                 s = refinementName + "\n";
                 if (!refinementName.trim().substring(0, refinementName.indexOf('=') - 1).equals(variableName)) {
                     for (int i = 0; i < positionIndex; i++) {
@@ -553,7 +404,7 @@ public class ConstructCodeBlock {
         StringBuffer buffer = new StringBuffer();
 
         if (!statement.getCommands().isEmpty()) {
-            String guard = statement.getGuards().get(0).getName();
+            String guard = statement.getGuards().get(0).getCondition();
 
             guard = rewriteGuardToJavaCode(guard);
 
@@ -591,7 +442,7 @@ public class ConstructCodeBlock {
         }
 
         for (int i = 1; i < statement.getCommands().size(); i++) {
-            String guard = statement.getGuards().get(i).getName();
+            String guard = statement.getGuards().get(i).getCondition();
             // guard = guard.replaceAll("\\s=\\s", "==");
             guard = rewriteGuardToJavaCode(guard);
 
@@ -685,16 +536,16 @@ public class ConstructCodeBlock {
         StringBuffer buffer = new StringBuffer();
         if (handleInnerLoops) {
             if (withInvariants) {
-                String invariant = statement.getInvariant().getName();
+                String invariant = statement.getInvariant().getCondition();
                 invariant = edu.kit.cbc.common.corc.Parser.rewriteConditionToJML(invariant);
-                //invariant = useRenamingCondition(invariant);
+                // invariant = useRenamingCondition(invariant);
                 buffer.append("//@ loop_invariant " + invariant.replaceAll("\\r\\n", "") + ";\n");
                 for (int i = 0; i < positionIndex; i++) {
                     buffer.append("\t");
                 }
-                buffer.append("//@ decreases " + statement.getVariant().getName() + ";\n");
+                buffer.append("//@ decreases " + statement.getVariant().getCondition() + ";\n");
             }
-            String guard = statement.getGuard().getName();
+            String guard = statement.getGuard().getCondition();
             // guard = guard.replaceAll("\\s=\\s", "==");
             guard = rewriteGuardToJavaCode(guard);
             for (int i = 0; i < positionIndex; i++) {
@@ -739,14 +590,14 @@ public class ConstructCodeBlock {
         return buffer.toString();
     }
 
-    private static String createConditionJMLString(String condition, Renaming renaming, String postOrPre) {
+    private static String createConditionJMLString(String condition, List<Renaming> renamings, String postOrPre) {
         if (condition.equals("")) {
             return condition;
         } else {
             String jmlCondition = Parser.rewriteConditionToJML(condition);
-            if (renaming != null) {
-                ConstructCodeBlock.renaming = renaming;
-                //jmlCondition = useRenamingCondition(jmlCondition);
+            if (renamings != null) {
+                ConstructCodeBlock.renamings = renamings;
+                // jmlCondition = useRenamingCondition(jmlCondition);
             }
             jmlCondition = jmlCondition.replaceAll(System.getProperty("line.separator"), "");
             jmlCondition = "\t@ " + postOrPre + " " + jmlCondition + ";\n";
@@ -766,8 +617,8 @@ public class ConstructCodeBlock {
     }
 
     public static String useRenamingCondition(String toRename) {
-        if (renaming != null) {
-            for (Rename rename : renaming.getRename()) {
+        if (renamings != null) {
+            for (Renaming rename : renamings) {
                 toRename = toRename.replaceAll(rename.getNewName(), rename.getFunction());
             }
         }
