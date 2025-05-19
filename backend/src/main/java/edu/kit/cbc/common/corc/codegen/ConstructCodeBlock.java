@@ -12,12 +12,8 @@ import edu.kit.cbc.common.corc.cbcmodel.statements.SelectionStatement;
 import edu.kit.cbc.common.corc.cbcmodel.statements.SkipStatement;
 import edu.kit.cbc.common.corc.cbcmodel.statements.SmallRepetitionStatement;
 import edu.kit.cbc.common.corc.cbcmodel.statements.Statement;
-
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 

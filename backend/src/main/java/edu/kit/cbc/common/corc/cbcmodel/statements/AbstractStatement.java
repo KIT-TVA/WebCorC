@@ -11,26 +11,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/**
- * @author Markus
- *         This class holds the implementation of an abstract statement in CorC.
- *         It replaces the old EMF version of this class. If any methods or
- *         features are missing please refer to the old CorC project and
- *         integrate
- *         them.
- */
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "statementType")
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = Statement.class, name = "statement"),
-        @JsonSubTypes.Type(value = CompositionStatement.class, name = "composition_statement"),
-        @JsonSubTypes.Type(value = ReturnStatement.class, name = "return_statement"),
-        @JsonSubTypes.Type(value = SelectionStatement.class, name = "selection_statement"),
-        @JsonSubTypes.Type(value = SkipStatement.class, name = "skip_statement"),
-        @JsonSubTypes.Type(value = SmallRepetitionStatement.class, name = "small_repetition_statement")
+    @JsonSubTypes.Type(value = Statement.class, name = "statement"),
+    @JsonSubTypes.Type(value = CompositionStatement.class, name = "composition_statement"),
+    @JsonSubTypes.Type(value = ReturnStatement.class, name = "return_statement"),
+    @JsonSubTypes.Type(value = SelectionStatement.class, name = "selection_statement"),
+    @JsonSubTypes.Type(value = SkipStatement.class, name = "skip_statement"),
+    @JsonSubTypes.Type(value = SmallRepetitionStatement.class, name = "small_repetition_statement")
 })
 public abstract class AbstractStatement implements Representable {
 
