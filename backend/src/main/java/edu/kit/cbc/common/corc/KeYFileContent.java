@@ -1,11 +1,10 @@
 package edu.kit.cbc.common.corc;
 
-import java.util.List;
-
 import edu.kit.cbc.common.corc.cbcmodel.Condition;
 import edu.kit.cbc.common.corc.cbcmodel.JavaVariable;
 import edu.kit.cbc.common.corc.cbcmodel.JavaVariableKind;
 import edu.kit.cbc.common.corc.cbcmodel.Renaming;
+import java.util.List;
 
 public class KeYFileContent {
 

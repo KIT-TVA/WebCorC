@@ -10,22 +10,22 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class JavaVariable {
-  private String name;
-  private JavaVariableKind kind;
-  private String modifier;
-  private String displayName;
+    private String name;
+    private JavaVariableKind kind;
+    private String modifier;
+    private String displayName;
 
-  public boolean hasDisplayName() {
-    return this.displayName != null && !this.displayName.isEmpty();
-  }
+    public boolean hasDisplayName() {
+        return this.displayName != null && !this.displayName.isEmpty();
+    }
 
-  @Override
-  public String toString() {
-    return "JavaVariable{" +
-      "name='" + name + '\'' +
-      ", kind=" + kind +
-      ", modifier='" + modifier + '\'' +
-      ", displayName='" + displayName + '\'' +
-      '}';
-  }
+    @Override
+    public String toString() {
+        return "JavaVariable{"
+                + "name='" + name + '\''
+                + ", kind=" + kind
+                + ", modifier='" + modifier + '\''
+                + ", displayName='" + displayName + '\''
+                + '}';
+    }
 }

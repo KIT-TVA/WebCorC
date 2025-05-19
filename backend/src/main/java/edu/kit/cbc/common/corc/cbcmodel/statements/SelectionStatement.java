@@ -7,13 +7,13 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class SelectionStatement extends AbstractStatement{
-  private List<Condition> guards;
-  private List<AbstractStatement> commands;
-  private boolean isPreProven;
+public class SelectionStatement extends AbstractStatement {
+    private List<Condition> guards;
+    private List<AbstractStatement> commands;
+    private boolean isPreProven;
 
-  @Override
-  public void prove() {
+    @Override
+    public void prove() {
 
-  }
+    }
 }

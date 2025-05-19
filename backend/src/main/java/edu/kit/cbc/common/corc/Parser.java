@@ -75,29 +75,6 @@ public class Parser {
         return condition;
     }
 
-    public static String getModifieableVarsFromCondition(Condition condition) {
-        String variables = "\\nothing";
-        if (!condition.getModifiables().isEmpty()) {
-            variables = "";
-            for (String mod : condition.getModifiables()) {
-                variables += mod + ",";
-            }
-            variables = variables.substring(0, variables.length() - 1);
-        }
-
-        // remove return variable, as it must not be in assignables in java class
-        if (variables.endsWith(",ret") || variables.contains(",ret,")) {
-            variables = variables.replace(",ret", "");
-        }
-        if (variables.equals("ret")) {
-            variables = "\\nothing";
-        }
-        if (variables.startsWith("ret,")) {
-            variables = variables.replace("ret,", "");
-        }
-        return variables;
-    }
-
     public static String getConditionFromCondition(String condition) {
         if (condition.contains("modifiable")) {
             String[] splittedCondition = condition.split(";", 2);
@@ -122,21 +99,27 @@ public class Parser {
         return unmodifiedVariables;
     }
 
-    public static List<String> getModifiedVarsFromCondition(String condition) {
-        String variables = null;
-        List<String> modifiedVars = new ArrayList<String>();
-        if (!condition.contains("modifiable(")) {
-            modifiedVars.add("\\everything");
-        } else if (condition.contains("modifiable(")) {
-            variables = condition.split(";", 2)[0];
-            if (variables != null) {
-                variables = variables.substring(variables.indexOf("(") + 1, variables.indexOf(")"));
-                variables = variables.replace(" ", "");
-                variables = variables.replace(System.getProperty("line.separator"), "");
-                modifiedVars = new ArrayList<String>(Arrays.asList(variables.split(",")));
+    public static String getModifieableVarsFromCondition(Condition condition) {
+        String variables = "\\nothing";
+        if (!condition.getModifiables().isEmpty()) {
+            variables = "";
+            for (String mod : condition.getModifiables()) {
+                variables += mod + ",";
             }
+            variables = variables.substring(0, variables.length() - 1);
         }
-        return modifiedVars;
+
+        // remove return variable, as it must not be in assignables in java class
+        if (variables.endsWith(",ret") || variables.contains(",ret,")) {
+            variables = variables.replace(",ret", "");
+        }
+        if (variables.equals("ret")) {
+            variables = "\\nothing";
+        }
+        if (variables.startsWith("ret,")) {
+            variables = variables.replace("ret,", "");
+        }
+        return variables;
     }
 
     public static String getModifieableVarsFromCondition(String condition) {
@@ -154,6 +137,23 @@ public class Parser {
             }
         }
         return variables;
+    }
+
+    public static List<String> getModifiedVarsFromCondition(String condition) {
+        String variables = null;
+        List<String> modifiedVars = new ArrayList<String>();
+        if (!condition.contains("modifiable(")) {
+            modifiedVars.add("\\everything");
+        } else if (condition.contains("modifiable(")) {
+            variables = condition.split(";", 2)[0];
+            if (variables != null) {
+                variables = variables.substring(variables.indexOf("(") + 1, variables.indexOf(")"));
+                variables = variables.replace(" ", "");
+                variables = variables.replace(System.getProperty("line.separator"), "");
+                modifiedVars = new ArrayList<String>(Arrays.asList(variables.split(",")));
+            }
+        }
+        return modifiedVars;
     }
 
     public static String getModifieableVarsFromConditionExceptLocals(Condition condition,

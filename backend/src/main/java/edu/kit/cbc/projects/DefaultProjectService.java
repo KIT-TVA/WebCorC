@@ -8,7 +8,6 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Set;
-import java.util.UUID;
 
 @Singleton
 class DefaultProjectService implements ProjectService {
@@ -21,17 +20,14 @@ class DefaultProjectService implements ProjectService {
     public ReadProjectDto create(CreateProjectDto project) {
         return projectRepository.save(
                 new ReadProjectDto(
-                  null,
+                        null,
                         project.name(),
                         ZonedDateTime
                                 .now(ZoneOffset.UTC)
                                 .format(DateTimeFormatter.ISO_INSTANT),
                         new DirectoryDto(
                                 "",
-                                Set.of()
-                        )
-                )
-        );
+                                Set.of())));
     }
 
     public ReadProjectDto updateById(@NotBlank String id, ReadProjectDto project) {
@@ -45,9 +41,7 @@ class DefaultProjectService implements ProjectService {
                         tmp.id(),
                         project.name(),
                         tmp.dateCreated(),
-                        tmp.files()
-                )
-        );
+                        tmp.files()));
     }
 
     public ReadProjectDto findById(@NotBlank String id) {

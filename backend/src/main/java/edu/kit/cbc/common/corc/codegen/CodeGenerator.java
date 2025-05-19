@@ -1,14 +1,13 @@
 package edu.kit.cbc.common.corc.codegen;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import edu.kit.cbc.common.CbCFormulaContainer;
 import edu.kit.cbc.common.corc.cbcmodel.CbCFormula;
 import edu.kit.cbc.common.corc.cbcmodel.Condition;
 import edu.kit.cbc.common.corc.cbcmodel.JavaVariable;
 import edu.kit.cbc.common.corc.cbcmodel.JavaVariableKind;
 import edu.kit.cbc.common.corc.cbcmodel.Renaming;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CodeGenerator {
     public static final CodeGenerator instance = new CodeGenerator();

@@ -6,7 +6,6 @@ import edu.kit.cbc.common.corc.cbcmodel.Condition;
 import edu.kit.cbc.common.corc.cbcmodel.JavaVariable;
 import edu.kit.cbc.common.corc.cbcmodel.Renaming;
 import edu.kit.cbc.common.corc.cbcmodel.statements.AbstractStatement;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;

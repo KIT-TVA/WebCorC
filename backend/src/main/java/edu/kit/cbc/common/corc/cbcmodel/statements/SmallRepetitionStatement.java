@@ -8,16 +8,16 @@ import lombok.Setter;
 @Setter
 public class SmallRepetitionStatement extends AbstractStatement {
 
-  private AbstractStatement loopStatement;
-  private Condition variant;
-  private Condition invariant;
-  private Condition guard;
-  private boolean isVariantProven;
-  private boolean isPreProven;
-  private boolean isPostProven;
+    private AbstractStatement loopStatement;
+    private Condition variant;
+    private Condition invariant;
+    private Condition guard;
+    private boolean isVariantProven;
+    private boolean isPreProven;
+    private boolean isPostProven;
 
-  @Override
-  public void prove() {
+    @Override
+    public void prove() {
 
-  }
+    }
 }

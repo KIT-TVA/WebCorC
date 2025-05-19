@@ -11,19 +11,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class CbCFormulaContainer {
-  private CbCFormula cbcFormula;
-  private List<JavaVariable> javaVariables;
-  private List<Condition>  globalConditions;
-  private List<Renaming> renamings;
+    private CbCFormula cbcFormula;
+    private List<JavaVariable> javaVariables;
+    private List<Condition> globalConditions;
+    private List<Renaming> renamings;
 
-
-  public String toJsonString() {
-    return new ObjectMapper().valueToTree(this).toPrettyString();
-  }
+    public String toJsonString() {
+        return new ObjectMapper().valueToTree(this).toPrettyString();
+    }
 }

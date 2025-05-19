@@ -311,8 +311,8 @@ public class ConstructCodeBlock {
     private static String constructMethodStubOfChildStatement(AbstractStatement refinement) {
         return switch (refinement) {
             case Statement s -> extractMethodNameFromStatement(refinement.getName());
-            case SkipStatement __ -> "";
-            case ReturnStatement __ -> "";
+            case SkipStatement ignored -> "";
+            case ReturnStatement ignored -> "";
             case SelectionStatement s -> traverseSelection(s);
             case CompositionStatement s -> traverseComposition(s);
             case SmallRepetitionStatement s -> traverseSmallRepetition(s);

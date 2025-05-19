@@ -8,12 +8,12 @@ import lombok.Setter;
 @Setter
 public class CompositionStatement extends AbstractStatement {
 
-  private AbstractStatement firstStatement;
-  private AbstractStatement secondStatement;
-  private Condition intermediateCondition;
+    private AbstractStatement firstStatement;
+    private AbstractStatement secondStatement;
+    private Condition intermediateCondition;
 
-  @Override
-  public void prove() {
+    @Override
+    public void prove() {
 
-  }
+    }
 }

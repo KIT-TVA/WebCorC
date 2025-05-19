@@ -6,17 +6,17 @@ import lombok.Data;
 @Data
 public class Condition implements Representable {
 
-  private String condition;
-  private List<String> modifiables;
-  private String codeRepresentation;
+    private String condition;
+    private List<String> modifiables;
+    private String codeRepresentation;
 
-  @Override
-  public String getCodeRepresentation() {
-    return this.codeRepresentation;
-  }
+    @Override
+    public String getCodeRepresentation() {
+        return this.codeRepresentation;
+    }
 
-  @Override
-  public void setCodeRepresentation(String codeRepresentation) {
-    this.codeRepresentation = codeRepresentation;
-  }
+    @Override
+    public void setCodeRepresentation(String codeRepresentation) {
+        this.codeRepresentation = codeRepresentation;
+    }
 }
