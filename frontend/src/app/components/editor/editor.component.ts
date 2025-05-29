@@ -1,4 +1,14 @@
-import {AfterViewInit, Component, ElementRef, HostListener, Input, OnDestroy, Type, ViewChild, ViewContainerRef} from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  HostListener,
+  Input,
+  OnDestroy,
+  Type,
+  ViewChild,
+  ViewContainerRef
+} from '@angular/core';
 import {CommonModule, NgComponentOutlet} from '@angular/common';
 import {Refinement} from "../../types/refinement";
 import {MatButtonModule} from "@angular/material/button";
@@ -8,16 +18,20 @@ import {MatExpansionModule} from "@angular/material/expansion";
 import {VariablesComponent} from "./variables/variables.component";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {MatMenuModule} from "@angular/material/menu";
-import { GlobalConditionsComponent } from './global-conditions/global-conditions.component';
-import { ProjectService } from '../../services/project/project.service';
-import { CBCFormula } from '../../services/project/CBCFormula';
-import { Router } from '@angular/router';
-import { Position } from '../../types/position';
-import { OptionsComponent } from './options/options.component';
-import { EditorService } from '../../services/editor/editor.service';
-import { SimpleStatement } from '../../types/statements/simple-statement';
-import { RenamingComponent } from './renaming/renaming.component';
-import { SimpleStatementComponent } from './statements/simple-statement/simple-statement.component';
+import {GlobalConditionsComponent} from './global-conditions/global-conditions.component';
+import {ProjectService} from '../../services/project/project.service';
+import {CBCFormula} from '../../services/project/CBCFormula';
+import {Router} from '@angular/router';
+import {Position} from '../../types/position';
+import {OptionsComponent} from './options/options.component';
+import {EditorService} from '../../services/editor/editor.service';
+import {SimpleStatement} from '../../types/statements/simple-statement';
+import {RenamingComponent} from './renaming/renaming.component';
+import {SimpleStatementComponent} from './statements/simple-statement/simple-statement.component';
+import {MatTab, MatTabGroup, MatTabLabel} from "@angular/material/tabs";
+import {AiChatComponent} from "../ai-chat/ai-chat.component";
+import {ConsoleComponent} from "../console/console.component";
+import {MatDrawer, MatDrawerContainer} from "@angular/material/sidenav";
 
 /**
  * Component to edit {@link CBCFormula} by editing a grahical representation based of the statement components like {@link SimpleStatementComponent}.
@@ -27,7 +41,7 @@ import { SimpleStatementComponent } from './statements/simple-statement/simple-s
  */
 @Component({
     selector: 'app-editor',
-    imports: [CommonModule, MatButtonModule, MatIconModule, MatExpansionModule, VariablesComponent, MatTooltipModule, MatMenuModule, GlobalConditionsComponent, OptionsComponent, RenamingComponent],
+  imports: [CommonModule, MatButtonModule, MatIconModule, MatExpansionModule, VariablesComponent, MatTooltipModule, MatMenuModule, GlobalConditionsComponent, OptionsComponent, RenamingComponent, MatTab, MatTabGroup, MatTabLabel, AiChatComponent, ConsoleComponent, MatDrawerContainer, MatDrawer],
     templateUrl: './editor.component.html',
     styleUrl: './editor.component.scss'
 })

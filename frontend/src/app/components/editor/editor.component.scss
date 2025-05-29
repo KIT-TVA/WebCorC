@@ -1,9 +1,38 @@
 .sideMenu {
   position: absolute;
-  top: 15px;
-  right: 15px;
+  right: 0;
   width: 450px;
+  height: 100%;
   z-index: 1;
+}
+
+.sideMenuContainer {
+  position: absolute;
+  height: 100%;
+  right: 0;
+  z-index: 1;
+}
+
+.toggleButton {
+  position: sticky;
+  top: 0;
+}
+
+.bottomContainer {
+  border: 0;
+  border-top: 1px;
+  border-style: solid;
+  border-color: var(--grey-webcorc);
+  background-color: var(--grey-background-light-webcorc);
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  z-index: 1;
+}
+
+.tabContent {
+  display: flex;
+  height: 15em;
 }
 
 #editorContainer {

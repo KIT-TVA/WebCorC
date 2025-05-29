@@ -1,38 +1,33 @@
 <mat-toolbar color="primary" class="toolbar">
-  <button mat-icon-button (click)="drawer.toggle()" > <mat-icon>menu</mat-icon> </button> 
-  <h1>WebCorC</h1>
-  <span class="spacer"></span>
-  <mat-form-field appearance="fill" style="margin-top: 20px">
-    <input matInput [(ngModel)]="projectService.projectname" placeholder="Projectname">
-  </mat-form-field>
-  <span class="spacer"></span>
-  <button mat-raised-button style="margin-right: 10px;" (click)="share()"> <mat-icon> share </mat-icon> Share </button>
-  <button mat-raised-button (click)="generateCode()" style="margin-right: 10px" [disabled]="!treeService.rootNode"> <mat-icon> code </mat-icon> Generate Code</button>
-  <button mat-raised-button (click)="verify()" [disabled]="!treeService.rootNode"> <mat-icon> check_circle</mat-icon> Verify</button>
-  <button mat-icon-button style="margin-left: 10px;"  [style.background-color]="aiButtonColor" (click)="aichat.toggle()"><mat-icon>psychology_alt</mat-icon></button>
-  <button mat-icon-button style="margin-left: 10px;" [style.background-color]="consoleButtonColor" (click)="console.toggle()"> <mat-icon>terminal</mat-icon> </button>
+    <button mat-icon-button (click)="drawer.toggle()">
+        <mat-icon>menu</mat-icon>
+    </button>
+    <h1>WebCorC</h1>
+    <span class="spacer"></span>
+    <mat-form-field appearance="fill" style="margin-top: 20px">
+        <input matInput [(ngModel)]="projectService.projectname" placeholder="Projectname">
+    </mat-form-field>
+    <span class="spacer"></span>
+    <button mat-raised-button style="margin-right: 10px;" (click)="share()">
+        <mat-icon> share</mat-icon>
+        Share
+    </button>
+    <button mat-raised-button (click)="generateCode()" style="margin-right: 10px" [disabled]="!treeService.rootNode">
+        <mat-icon> code</mat-icon>
+        Generate Code
+    </button>
+    <button mat-raised-button (click)="verify()" [disabled]="!treeService.rootNode">
+        <mat-icon> check_circle</mat-icon>
+        Verify
+    </button>
 </mat-toolbar>
 <mat-progress-bar color="primary" [mode]="getLoadingState()" value="100"></mat-progress-bar>
 <mat-drawer-container class="editorWindow">
-  <mat-drawer #drawer mode="over" [style.max-width]="'50%'" [style.min-width]="'20%'" [style.overflow]="'hidden'" >
-    <app-project-explorer></app-project-explorer>
-  </mat-drawer>
-  <mat-drawer-content class="editor">
-      <mat-drawer-container class="consoleWindow" [hasBackdrop]="false">
-        <mat-drawer #console mode="over" position="end"  [style.max-width]="'50%'" [style.min-width]="'30%'">
-          <app-console></app-console>
-        </mat-drawer>
-        <mat-drawer-content>
-          <mat-drawer-container class="chatWindow" [hasBackdrop]="false">
-            <mat-drawer #aichat mode="over" position="end" [style.max-width]="'50%'" [style.min-width]="'30%'">
-              <app-ai-chat></app-ai-chat>
-            </mat-drawer>
-            <mat-drawer-content>
-              <router-outlet></router-outlet>
-            </mat-drawer-content>
-          </mat-drawer-container>
-        </mat-drawer-content>
-      </mat-drawer-container>
+    <mat-drawer #drawer mode="over" [style.max-width]="'50%'" [style.min-width]="'20%'" [style.overflow]="'hidden'">
+        <app-project-explorer></app-project-explorer>
+    </mat-drawer>
+    <mat-drawer-content class="editor">
+        <router-outlet></router-outlet>
     </mat-drawer-content>
 </mat-drawer-container>
 
