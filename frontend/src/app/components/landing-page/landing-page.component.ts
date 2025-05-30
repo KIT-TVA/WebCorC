@@ -7,6 +7,7 @@ import { ProjectService } from '../../services/project/project.service';
 import { MatDialog } from '@angular/material/dialog';
 import { OpenProjectDialogComponent } from './open-project-dialog/open-project-dialog.component';
 import { ImportProjectDialogComponent } from './import-project-dialog/import-project-dialog.component';
+import { LoadExampleDialogComponent } from './load-example-dialog/load-example-dialog.component';
 import { ImportFileDialogComponent } from '../project-explorer/import-file-dialog/import-file-dialog';
 
 /**
@@ -50,4 +51,7 @@ export class LandingPageComponent implements OnInit {
     this.dialog.open(ImportFileDialogComponent, { data: { parentURN: "/" } })
   }
 
+  public loadExampleDialog() {
+    this.dialog.open(LoadExampleDialogComponent)
+  }
 }

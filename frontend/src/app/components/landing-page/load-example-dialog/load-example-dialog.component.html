@@ -1,0 +1,12 @@
+<h1 mat-dialog-title>Choose example program</h1>
+<div mat-dialog-content>
+  <div *ngFor="let example of EXAMPLE_PROGRAMS" style="float: left">
+    <div id="background">
+      <mat-icon>{{example.icon}}</mat-icon><br>
+      <span>{{example.name}}</span>
+    </div>
+  </div>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">Cancel</button>
+</div>
