@@ -1,12 +1,12 @@
 <h1 mat-dialog-title>Choose refinement</h1>
-<div mat-dialog-content>
+<mat-dialog-content>
   <app-refinement-widget   *ngFor="let refinementWidget of REFINEMENT_WIDGETS"
                               [text]="refinementWidget.name"
                               [icon]="refinementWidget.icon"
                               [matDialogClose]="refinementWidget.component"
                               style="float: left">
   </app-refinement-widget>
-</div>
-<div mat-dialog-actions>
-  <button mat-button (click)="onNoClick()">Cancel</button>
-</div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close>Cancel</button>
+</mat-dialog-actions>

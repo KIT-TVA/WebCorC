@@ -52,6 +52,13 @@ export class LandingPageComponent implements OnInit {
   }
 
   public loadExampleDialog() {
-    this.dialog.open(LoadExampleDialogComponent)
+    const dialogRef = this.dialog.open(LoadExampleDialogComponent)
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+          //TODO: Instantiate DiagramFile objects of the examples
+          console.log(result)
+      }
+    });
   }
 }

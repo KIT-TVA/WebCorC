@@ -40,17 +40,4 @@ export class ChooseRefinementComponent {
     {name: "Repetition", icon: "autorenew", component: RepetitionStatementComponent},
     {name: "Strong-Weak", icon: "priority_high", component: StrongWeakStatementComponent}
   ];
-
-  /**
-   * Constructor for dependency injection of the dialog ref of this component
-   * @param dialogRef The MatDialogRef of this component, used to interact with the dialog form the inside of this component
-   */
-  public constructor(public dialogRef: MatDialogRef<ChooseRefinementComponent>) {}
-
-  /**
-   * Close the Dialog when clicking outside the dialog content
-   */
-  public onNoClick(): void {
-    this.dialogRef.close();
-  }
 }
