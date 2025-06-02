@@ -1,10 +1,10 @@
 package edu.kit.cbc.editor;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import edu.kit.cbc.common.CbCFormulaContainer;
 import edu.kit.cbc.common.Problem;
-import edu.kit.cbc.common.corc.VerifyAllStatements;
-import edu.kit.cbc.common.corc.codegen.CodeGenerator;
+import edu.kit.cbc.common.corc.cbcmodel.CbCFormula;
+import edu.kit.cbc.common.corc.proof.KeYProof;
+import edu.kit.cbc.common.corc.proof.KeYProofGenerator;
 import edu.kit.cbc.editor.llm.LLMQueryDto;
 import edu.kit.cbc.editor.llm.LLMResponse;
 import edu.kit.cbc.editor.llm.OpenAIClient;
@@ -18,17 +18,9 @@ import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Produces;
 import io.micronaut.http.annotation.QueryValue;
-import io.micronaut.http.server.types.files.StreamedFile;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import jakarta.validation.Valid;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Optional;
 
 @Controller("/editor")
@@ -71,58 +63,13 @@ public class EditorController {
     @Consumes(MediaType.APPLICATION_JSON)
     public HttpResponse<?> verify(@QueryValue Optional<String> projectId, @Body String cbcFormulaString) {
         try {
-            CbCFormulaContainer formula = parser.fromJsonStringToCbC(cbcFormulaString);
-            Path proofFolderPath;
-            Path proofFilePath;
-            try {
-                proofFolderPath = Files.createTempDirectory("proof_");
-                proofFilePath = Files.createDirectory(proofFolderPath.resolve("prove_"));
-                if (projectId.isPresent()) {
-                    // obtaining java files and helper.key from project before verification
-                    List<String> filePaths = new LinkedList<>(filesController.findJavaFilesOfProject(projectId.get()));
-                    filePaths.add("helper.key");
-                    for (String filePath : filePaths) {
-                        Optional<HttpResponse<StreamedFile>> response = filesController.getFile(projectId.get(),
-                                URI.create(filePath));
-                        if (response.isPresent()) {
-                            InputStream e = response.get().body().getInputStream();
-                            Path fullPath = proofFilePath.resolve(filePath);
-                            Files.createDirectories(fullPath.getParent());
-                            Files.copy(e, fullPath);
-                        }
-                    }
-                }
-                VerifyAllStatements.verify(formula.getCbcFormula(), formula.getJavaVariables(),
-                        formula.getGlobalConditions(),
-                        formula.getRenamings(), proofFolderPath.toUri());
-            } catch (IOException e) {
-                return HttpResponse.serverError(e.getMessage());
-            }
 
-            // find all key files except helper.key
-            List<Path> keyFiles;
-            try {
-                keyFiles = Files.find(proofFilePath, 30, (path, attributes) -> {
-                    String pathStr = path.toString();
-                    return pathStr.endsWith(".key")
-                            && !pathStr.endsWith("helper.key");
-                }).toList();
-            } catch (IOException e) {
-                return HttpResponse.serverError(e.getMessage());
-            }
+            CbCFormula formula = parser.fromJsonStringToCbC(cbcFormulaString);
+            KeYProofGenerator generator = new KeYProofGenerator(formula);
+            KeYProof proof = generator.generate(formula.getStatement());
+            System.out.println(proof);
 
-            // upload found files to project
-            projectId.ifPresent(s -> keyFiles.forEach(path -> {
-                URI urn = URI
-                        .create(proofFolderPath.getFileName() + path.toString().replace(proofFilePath.toString(), ""));
-                try {
-                    filesController.uploadBytes(Files.readAllBytes(path), s, urn);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }));
-
-            return HttpResponse.ok(formula.toJsonString());
+            return HttpResponse.ok(parser.toJsonString(formula));
         } catch (JsonProcessingException e) {
             return HttpResponse.serverError(Problem.getParsingError(e.getMessage()));
         }
@@ -132,13 +79,7 @@ public class EditorController {
     @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.APPLICATION_JSON)
     public HttpResponse<?> javaGen(@QueryValue Optional<String> projectId, @Body String cbcFormulaString) {
-        try {
-            CbCFormulaContainer formula = parser.fromJsonStringToCbC(cbcFormulaString);
-
-            return HttpResponse.ok(CodeGenerator.instance.generateCodeFor(formula));
-        } catch (JsonProcessingException e) {
-            return HttpResponse.serverError(Problem.getParsingError(e.getMessage()));
-        }
+        return HttpResponse.serverError("NOT IMPLEMENTED");
     }
 
     @Get(uri = "/jobs/{id}")

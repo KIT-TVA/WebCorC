@@ -3,7 +3,7 @@ package edu.kit.cbc.editor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.StreamReadFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.kit.cbc.common.CbCFormulaContainer;
+import edu.kit.cbc.common.corc.cbcmodel.CbCFormula;
 import jakarta.inject.Singleton;
 import java.io.IOException;
 
@@ -22,15 +22,15 @@ public class FormulaParser {
         this.mapper.configure(StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION.mappedFeature(), true);
     }
 
-    CbCFormulaContainer fromXMLStringToCbC(String xmlString) throws IOException {
+    CbCFormula fromXMLStringToCbC(String xmlString) throws IOException {
         throw new UnsupportedOperationException();
     }
 
-    public CbCFormulaContainer fromJsonStringToCbC(String jsonString) throws JsonProcessingException {
-        return mapper.readValue(jsonString, CbCFormulaContainer.class);
+    public CbCFormula fromJsonStringToCbC(String jsonString) throws JsonProcessingException {
+        return mapper.readValue(jsonString, CbCFormula.class);
     }
 
-    String toJsonString(CbCFormulaContainer formula) throws JsonProcessingException {
-        return formula.toJsonString();
+    public String toJsonString(CbCFormula formula) throws JsonProcessingException {
+        return this.mapper.writeValueAsString(formula);
     }
 }

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import edu.kit.cbc.common.corc.cbcmodel.Condition;
-import edu.kit.cbc.common.corc.cbcmodel.Representable;
 import edu.kit.cbc.common.corc.cbcmodel.StatementType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,15 +23,12 @@ import lombok.Setter;
     @JsonSubTypes.Type(value = SkipStatement.class, name = "skip_statement"),
     @JsonSubTypes.Type(value = SmallRepetitionStatement.class, name = "small_repetition_statement")
 })
-public abstract class AbstractStatement implements Representable {
+public abstract class AbstractStatement {
 
-    private String name;
+    private String programStatement;
     private StatementType statementType;
-    private AbstractStatement refinement;
-    private AbstractStatement parent;
     private Condition preCondition;
     private Condition postCondition;
-    private String codeRepresentation;
 
     /*
      * WARNING: Jackson will interpret this value as "proven" because the
@@ -46,14 +42,4 @@ public abstract class AbstractStatement implements Representable {
     private boolean isProven;
 
     public abstract void prove();
-
-    @Override
-    public String getCodeRepresentation() {
-        return this.codeRepresentation;
-    }
-
-    @Override
-    public void setCodeRepresentation(String codeRepresentation) {
-        this.codeRepresentation = codeRepresentation;
-    }
 }

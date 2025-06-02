@@ -18,11 +18,8 @@ export interface EMFRefinement {
  */
 export interface EMFStatement {
     name : string
-    type : string
-    id : number
-    proven : boolean
-    tested: boolean
-    comment : string
+    isProven : boolean
+    statementType: string
     refinement: EMFRefinement
     preCondition : EMFCondition
     postCondition : EMFCondition

@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class JavaVariable {
-    private String name;
+    private String variable;
     private JavaVariableKind kind;
     private String modifier;
     private String displayName;
@@ -21,11 +21,6 @@ public class JavaVariable {
 
     @Override
     public String toString() {
-        return "JavaVariable{"
-                + "name='" + name + '\''
-                + ", kind=" + kind
-                + ", modifier='" + modifier + '\''
-                + ", displayName='" + displayName + '\''
-                + '}';
+        return this.variable;
     }
 }

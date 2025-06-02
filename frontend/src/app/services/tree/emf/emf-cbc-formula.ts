@@ -1,6 +1,4 @@
-import { EMFCondition, EMFConditions } from "./emf-condition";
-import { EMFJavaVariables } from "./emf-java-variable";
-import { EMFRenaming } from "./emf-renaming";
+import { EMFCondition} from "./emf-condition";
 import { EMFStatement } from "./emf-statement";
 
 /**
@@ -8,18 +6,9 @@ import { EMFStatement } from "./emf-statement";
  * @see CBCFormula
  */
 export interface EMFCbcFormula {
-    type : string,
-    name : string,
-    proven : boolean,
-    comment: string,
-    compositionTechnique : string,
-    className : string,
-    methodName : string,
-    tested : boolean,
-    javaVariables : EMFJavaVariables,
-    globalConditions : EMFConditions | null,
-    preCondition : EMFCondition,
-    postCondition : EMFCondition,
-    statement : EMFStatement | undefined
-    renaming : EMFRenaming | null
+    name : string
+    isProven : boolean
+    preCondition : EMFCondition
+    postCondition : EMFCondition
+    statement : EMFStatement
 }

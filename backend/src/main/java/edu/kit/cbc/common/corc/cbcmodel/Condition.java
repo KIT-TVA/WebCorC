@@ -19,4 +19,16 @@ public class Condition implements Representable {
     public void setCodeRepresentation(String codeRepresentation) {
         this.codeRepresentation = codeRepresentation;
     }
+
+    public Condition rename(List<Renaming> renamings) {
+        renamings.forEach(renaming -> {
+            if (renaming.getType().equalsIgnoreCase("boolean")) {
+                this.condition.replaceAll(renaming.getFunction(), "TRUE=" + renaming.getNewName());
+            } else {
+                this.condition.replaceAll(renaming.getFunction(), renaming.getNewName());
+            }
+        });
+
+        return this;
+    }
 }
