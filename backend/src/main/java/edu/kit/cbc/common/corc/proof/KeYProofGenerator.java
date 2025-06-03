@@ -1,5 +1,6 @@
 package edu.kit.cbc.common.corc.proof;
 
+import edu.kit.cbc.common.corc.cbcmodel.statements.Statement;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -35,7 +36,8 @@ public final class KeYProofGenerator {
             .map(cond -> cond.rename(renamings)).toList();
 
         proofBuilder.globalConditions(renamedGlobalConditions);
-        proofBuilder.programStatement(statement.getProgramStatement());
+        if (statement instanceof Statement st)
+            proofBuilder.programStatement(st.getProgramStatement());
 
         return proofBuilder.build();
     }
@@ -49,8 +51,8 @@ public final class KeYProofGenerator {
     private List<JavaVariable> filterProgramVariables() {
         //
         Predicate<? super JavaVariable> localFilter =
-            var -> var.getKind() == JavaVariableKind.GLOBAL
-                || var.getKind() == JavaVariableKind.RETURN;
+            var -> var.getKind() != JavaVariableKind.GLOBAL
+                && var.getKind() != JavaVariableKind.RETURN;
 
         return this.javaVariables.stream().filter(localFilter).toList();
     }

@@ -1,56 +1,23 @@
 {
-   "name":"TestFormula",
-   "proven":false,
-   "comment":"",
-   "cmpositionTechnique":"CONTRACT_OVERRIDING",
-   "className":"",
-   "methodName":"",
-   "tested":false,
-   "javaVariables":{
-      "variables":[
-         {
-            "name":"int i"
-         }
-      ]
-   },
-   "globalConditions":{
-      "conditions":[
-         
-      ]
-   },
-   "preCondition":{
-      "condition":"i=0"
-   },
-   "postCondition":{
-      "condition":"i=1"
-   },
-   "statement":{
-      "name":"i=1;",
-      "id":2,
-      "proven":true,
-      "tested":false,
-      "comment":"",
-      "preCondition":{
-         "name":"i=0"
-      },
-      "postCondition":{
-         "name":"i=1"
-      },
-      "refinement":{
-         "name":"i=1;",
-         "preCondition":{
-            "name":"i=0"
-         },
-         "postCondition":{
-            "name":"i=1"
-         },
-         "proven":true,
-         "tested":false
-      }
-   },
-   "renaming":{
-      "rename":[
-         
-      ]
-   }
+    "name": "TestFormula",
+    "statement": {
+        "programStatement": "i = 1",
+        "statementType": "statement",
+        "preCondition": {
+            "condition": "i = 0"
+        },
+        "postCondition": {
+            "condition": "i = 1"
+        },
+        "isProven": false
+    },
+    "javaVariables": [
+        {
+            "variable": "int i",
+            "kind": "LOCAL"
+        }
+    ],
+    "globalConditions": [],
+    "renamings": [],
+    "isProven": false
 }

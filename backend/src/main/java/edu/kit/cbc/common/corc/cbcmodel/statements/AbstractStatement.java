@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import edu.kit.cbc.common.corc.cbcmodel.Condition;
 import edu.kit.cbc.common.corc.cbcmodel.StatementType;
+import io.micronaut.serde.annotation.Serdeable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Serdeable
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "statementType")
 @JsonSubTypes({
     @JsonSubTypes.Type(value = Statement.class, name = "statement"),
@@ -25,7 +27,6 @@ import lombok.Setter;
 })
 public abstract class AbstractStatement {
 
-    private String programStatement;
     private StatementType statementType;
     private Condition preCondition;
     private Condition postCondition;

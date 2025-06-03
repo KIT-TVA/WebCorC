@@ -10,8 +10,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Statement extends AbstractStatement {
-    
-    private AbstractStatement refinement;
+
+    private String programStatement;
 
     @Override
     public void prove() {

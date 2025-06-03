@@ -30,7 +30,7 @@ public class KeYProof {
     private static final String PROGRAM_VARIABLE_SEPARATOR = "; ";
     private static final String GLOBAL_CONDITIONS_SEPARATOR = " & ";
 
-    private final File file;
+    private final File file = new File("./");
     private final Condition preCondition;
     private final Condition postCondition;
     private final String programStatement;

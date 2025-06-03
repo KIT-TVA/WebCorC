@@ -1,5 +1,7 @@
 package edu.kit.cbc.common.corc.cbcmodel;
 
+import io.micronaut.core.annotation.Introspected;
+import io.micronaut.serde.annotation.Serdeable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -13,6 +15,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
+@Serdeable
 public class CbCFormula {
     private String name;
     private AbstractStatement statement;

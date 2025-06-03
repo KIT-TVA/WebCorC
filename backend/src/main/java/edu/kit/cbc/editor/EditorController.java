@@ -61,10 +61,9 @@ public class EditorController {
     @Post(uri = "/verify")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public HttpResponse<?> verify(@QueryValue Optional<String> projectId, @Body String cbcFormulaString) {
+    public HttpResponse<?> verify(@QueryValue Optional<String> projectId, @Body @Valid CbCFormula formula) {
         try {
 
-            CbCFormula formula = parser.fromJsonStringToCbC(cbcFormulaString);
             KeYProofGenerator generator = new KeYProofGenerator(formula);
             KeYProof proof = generator.generate(formula.getStatement());
             System.out.println(proof);

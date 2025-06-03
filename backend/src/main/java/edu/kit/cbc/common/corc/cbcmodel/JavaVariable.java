@@ -1,5 +1,6 @@
 package edu.kit.cbc.common.corc.cbcmodel;
 
+import io.micronaut.serde.annotation.Serdeable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,15 +10,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@Serdeable
 public class JavaVariable {
     private String variable;
     private JavaVariableKind kind;
-    private String modifier;
-    private String displayName;
-
-    public boolean hasDisplayName() {
-        return this.displayName != null && !this.displayName.isEmpty();
-    }
 
     @Override
     public String toString() {
