@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>Choose example program</h1>
 <mat-dialog-content>
-  <div *ngFor="let example of EXAMPLE_PROGRAMS" [mat-dialog-close]="example.name" style="float: left">
+  <div *ngFor="let example of EXAMPLE_PROGRAMS" [mat-dialog-close]="example" style="float: left">
     <div id="background">
       <mat-icon>{{example.icon}}</mat-icon><br>
       <span>{{example.name}}</span>

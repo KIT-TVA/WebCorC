@@ -56,8 +56,8 @@ export class LandingPageComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-          //TODO: Instantiate DiagramFile objects of the examples
           console.log(result)
+        this.projectService.import(result.project, result.name)
       }
     });
   }
