@@ -273,7 +273,7 @@ export class EmfMapperService {
 
     console.log(emfStatement)
 
-    switch (emfStatement.type) {
+    switch (emfStatement.refinement.type) {
       case SimpleStatement.TYPE: return this.toSimpleStatement(emfStatement)
       case SelectionStatement.TYPE: return this.toSelectionStatement(emfStatement)
       case RepetitionStatement.TYPE: return this.toRepetitionStatement(emfStatement)
