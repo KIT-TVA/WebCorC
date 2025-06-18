@@ -3,9 +3,12 @@ package edu.kit.cbc.common.corc.cbcmodel.statements;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import edu.kit.cbc.common.corc.cbcmodel.CbCFormula;
 import edu.kit.cbc.common.corc.cbcmodel.Condition;
 import edu.kit.cbc.common.corc.cbcmodel.StatementType;
+import edu.kit.cbc.common.corc.proof.ProofContext;
 import io.micronaut.serde.annotation.Serdeable;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,6 +30,7 @@ import lombok.Setter;
 })
 public abstract class AbstractStatement {
 
+    private String name;
     private StatementType statementType;
     private Condition preCondition;
     private Condition postCondition;
@@ -40,7 +44,8 @@ public abstract class AbstractStatement {
      * hours finding this bug ~ Markus)
      */
     @JsonProperty(value = "isProven", required = true)
-    private boolean isProven;
+    protected boolean isProven;
 
-    public abstract void prove();
+    public abstract boolean prove(ProofContext proofContext);
+
 }

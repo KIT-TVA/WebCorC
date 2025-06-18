@@ -1,6 +1,7 @@
 package edu.kit.cbc.common.corc.cbcmodel.statements;
 
 import edu.kit.cbc.common.corc.cbcmodel.Condition;
+import edu.kit.cbc.common.corc.proof.ProofContext;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,7 +18,7 @@ public class SmallRepetitionStatement extends AbstractStatement {
     private boolean isPostProven;
 
     @Override
-    public void prove() {
-
+    public boolean prove(ProofContext proofContext) {
+        return false;
     }
 }

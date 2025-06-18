@@ -1,10 +1,7 @@
 package edu.kit.cbc.editor;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import edu.kit.cbc.common.Problem;
 import edu.kit.cbc.common.corc.cbcmodel.CbCFormula;
-import edu.kit.cbc.common.corc.proof.KeYProof;
-import edu.kit.cbc.common.corc.proof.KeYProofGenerator;
+import edu.kit.cbc.common.corc.proof.ProofContext;
 import edu.kit.cbc.editor.llm.LLMQueryDto;
 import edu.kit.cbc.editor.llm.LLMResponse;
 import edu.kit.cbc.editor.llm.OpenAIClient;
@@ -21,6 +18,12 @@ import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import jakarta.validation.Valid;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Controller("/editor")
@@ -28,12 +31,10 @@ import java.util.Optional;
 public class EditorController {
 
     private final FilesController filesController;
-    private final FormulaParser parser;
     private final OpenAIClient openai;
 
-    EditorController(FilesController filesController, FormulaParser parser, OpenAIClient openai) {
+    EditorController(FilesController filesController, OpenAIClient openai) {
         this.filesController = filesController;
-        this.parser = parser;
         this.openai = openai;
     }
 
@@ -61,18 +62,54 @@ public class EditorController {
     @Post(uri = "/verify")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public HttpResponse<?> verify(@QueryValue Optional<String> projectId, @Body @Valid CbCFormula formula) {
-        try {
+    public HttpResponse<?> verify(@QueryValue Optional<String> projectId, @Body @Valid CbCFormula formula)
+        throws IOException {
 
-            KeYProofGenerator generator = new KeYProofGenerator(formula);
-            KeYProof proof = generator.generate(formula.getStatement());
-            System.out.println(proof);
+        ProofContext.ProofContextBuilder context = ProofContext.builder();
+        context.cbCFormula(formula);
 
-            return HttpResponse.ok(parser.toJsonString(formula));
-        } catch (JsonProcessingException e) {
-            return HttpResponse.serverError(Problem.getParsingError(e.getMessage()));
+        Path proofFolder = Files.createTempDirectory(projectId.isPresent() ? "proof_" + projectId.get() : "proof");
+        proofFolder.toFile().deleteOnExit();
+
+        context.proofFolder(proofFolder);
+        if (projectId.isPresent()) {
+            System.out.println(projectId);
+            List<Path> includeFiles = filesController.retrieveFiles(projectId.get(), ".key", "include");
+            List<Path> javaSrcFiles = filesController.retrieveFiles(projectId.get(), ".java", "javaSrc");
+
+            List<Path> existingKeyFiles= filesController.retrieveFiles(projectId.get(), ".key", "proofs");
+
+            System.out.println("Included KeY-Files: " + includeFiles);
+            System.out.println("Included Java-Files: " + javaSrcFiles);
+            System.out.println("Existing Proof-Files: " + existingKeyFiles);
+            context.includeFiles(includeFiles);
+            context.javaSrcFiles(javaSrcFiles);
+            context.existingProofFiles(existingKeyFiles);
         }
+
+        formula.getStatement().prove(context.build());
+
+        if (projectId.isPresent()) {
+            List<Path> proofFiles;
+            proofFiles = Files.find(proofFolder, 10, (path, attributes) -> {
+                String pathStr = path.toString();
+                System.out.println(pathStr);
+                return pathStr.endsWith(".key") || pathStr.endsWith(".proof");
+            }).toList();
+
+            for (Path projectFile : proofFiles) {
+                String statementName = projectFile.getFileName().toString().split("_")[0];
+                Path uploadPath = Path.of("proofs/" + statementName + "/");
+                uploadPath = uploadPath.resolve(projectFile.getFileName().toString());
+                filesController.uploadBytes(Files.readAllBytes(projectFile), projectId.get(), uploadPath);
+            }
+
+        }
+
+
+        return HttpResponse.ok(formula);
     }
+
 
     @Post(uri = "/javaGen")
     @Produces(MediaType.TEXT_PLAIN)

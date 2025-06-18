@@ -17,6 +17,6 @@ public class JavaVariable {
 
     @Override
     public String toString() {
-        return this.variable;
+        return this.variable + ";";
     }
 }

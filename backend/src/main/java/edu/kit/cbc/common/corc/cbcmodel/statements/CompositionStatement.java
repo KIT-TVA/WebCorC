@@ -1,6 +1,9 @@
 package edu.kit.cbc.common.corc.cbcmodel.statements;
 
+import edu.kit.cbc.common.corc.cbcmodel.CbCFormula;
 import edu.kit.cbc.common.corc.cbcmodel.Condition;
+import edu.kit.cbc.common.corc.proof.ProofContext;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +20,7 @@ public class CompositionStatement extends AbstractStatement {
     private Condition intermediateCondition;
 
     @Override
-    public void prove() {
-
+    public boolean prove(ProofContext proofContext) {
+        return false;
     }
 }

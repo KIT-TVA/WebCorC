@@ -1,6 +1,7 @@
 {
     "name": "TestFormula",
     "statement": {
+        "name": "Statement1",
         "programStatement": "i = 1",
         "statementType": "statement",
         "preCondition": {

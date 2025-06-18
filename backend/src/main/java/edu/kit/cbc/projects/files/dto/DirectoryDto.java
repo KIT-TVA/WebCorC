@@ -4,11 +4,15 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import io.micronaut.serde.annotation.Serdeable;
 import java.net.URI;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Serdeable
 public class DirectoryDto extends FileDirectoryDto {
@@ -27,18 +31,16 @@ public class DirectoryDto extends FileDirectoryDto {
         return inodeType;
     }
 
-    public void addFilePath(URI path) {
+    public void addFilePath(Path path) {
+        List<Path> pathElements = new ArrayList<>();
+        path.iterator().forEachRemaining(pathElements::add);
         addFilePath(
-                new LinkedList<String>(
-                        Arrays.asList(
-                                path.getPath().split("/")
-                        )
-                ),
-                path.getPath().endsWith("/") ? DirectoryDto.inodeType : FileDto.inodeType
+            new ArrayList<>(pathElements.stream().map(Path::toString).toList()),
+            path.getName(path.getNameCount() - 1).toFile().isDirectory() ? DirectoryDto.inodeType : FileDto.inodeType
         );
     }
 
-    private void addFilePath(LinkedList<String> path, String inodeType) {
+    private void addFilePath(List<String> path, String inodeType) {
         String name = path.removeFirst();
 
         if (path.isEmpty() && inodeType.equals(FileDto.inodeType)) {
@@ -67,24 +69,22 @@ public class DirectoryDto extends FileDirectoryDto {
 
     private FileType getFileType(String name) {
         return name.endsWith(".key") ? FileType.key
-                : name.endsWith(".prove") ? FileType.prove
+                : name.endsWith(".proof") ? FileType.prove
                 : name.endsWith(".java") ? FileType.java
                 : name.endsWith(".diagram") ? FileType.diagram
                 : FileType.other;
     }
 
-    public void removeFilePath(URI path) {
+    public void removeFilePath(Path path) {
+        List<Path> pathElements = new ArrayList<>();
+        path.iterator().forEachRemaining(pathElements::add);
         removeFilePath(
-                new LinkedList<String>(
-                        Arrays.asList(path.getPath()
-                                .split("/")
-                        )
-                ),
-                path.getPath().endsWith("/") ? DirectoryDto.inodeType : FileDto.inodeType
+            pathElements.stream().map(Path::toString).toList(),
+            path.getName(path.getNameCount() - 1).toFile().isDirectory() ? DirectoryDto.inodeType : FileDto.inodeType
         );
     }
 
-    private void removeFilePath(LinkedList<String> path, String inodeType) {
+    private void removeFilePath(List<String> path, String inodeType) {
         //TODO: consider deleting empty parent directories as well
         String name = path.removeFirst();
         if (!path.isEmpty()) {

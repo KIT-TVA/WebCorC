@@ -28,7 +28,12 @@ import io.micronaut.objectstorage.response.UploadResponse;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
@@ -40,7 +45,8 @@ import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 @Controller("/projects/{id}/files")
 @ExecuteOn(TaskExecutors.BLOCKING)
 public class FilesController {
-    private static final String pathFormat = "%s/files/%s";
+    private static final String PATH_FORMAT = "%s/files/%s";
+    private static final String SUBFOLDER_PATH_FORMAT = "%s/files/%s/";
 
     private final ProjectService projectService;
     private final AwsS3Operations objectStorage;
@@ -60,7 +66,7 @@ public class FilesController {
         MediaType mediaType = MediaType.of(nativeEntry.contentType());
         StreamedFile file = new StreamedFile(entry.getInputStream(), mediaType).attach(entry.getKey());
         MutableHttpResponse<Object> httpResponse = HttpResponse.ok()
-                .header(HttpHeaders.ETAG, nativeEntry.eTag());
+            .header(HttpHeaders.ETAG, nativeEntry.eTag());
         file.process(httpResponse);
         return httpResponse.body(file);
     }
@@ -71,73 +77,88 @@ public class FilesController {
         return HttpResponse.ok(projectService.findById(id).files());
     }
 
-    public List<String> findJavaFilesOfProject(String id) {
+    public List<Path> retrieveFiles(String projectId, String extension, String subFolder) throws IOException {
+        Path targetFolder = Files.createTempDirectory(subFolder);
+        Collection<String> relevantFiles = new ArrayList<>(findFilesWithExtension(projectId, subFolder, extension));
+
+        for (String file : relevantFiles) {
+            Optional<HttpResponse<StreamedFile>> response = getFile(projectId, URI.create(file));
+            if (response.isPresent()) {
+                InputStream fileInput = response.get().body().getInputStream();
+                Files.copy(fileInput, targetFolder.resolve(file));
+            }
+        }
+
+
+        return relevantFiles.stream().map(targetFolder::resolve).toList();
+    }
+
+    private List<String> findFilesWithExtension(String id, String subFolder, String extension) {
         String bucketName = s3ClientProvider.getBucketName();
 
         ListObjectsV2Request request = ListObjectsV2Request.builder()
-                .bucket(bucketName)
-                .prefix(id)
-                .build();
+            .bucket(bucketName)
+            .prefix(id)
+            .build();
 
         ListObjectsV2Response response = s3ClientProvider.getClient().listObjectsV2(request);
 
-        List<String> keys = response.contents().stream()
-                .filter(obj -> obj.key().endsWith(".java"))
-                .map(obj -> obj.key().substring(id.concat("/files/").length()))
-                .toList();
-
-        return keys;
+        return response.contents().stream()
+            .filter(obj -> obj.key().substring((String.format(PATH_FORMAT, id, "")).length()).startsWith(subFolder))
+            .filter(obj -> obj.key().endsWith(extension))
+            .map(obj -> obj.key().substring((String.format(SUBFOLDER_PATH_FORMAT, id, subFolder)).length()))
+            .toList();
     }
 
     @Get(uri = "/{urn:.*}")
     public Optional<HttpResponse<StreamedFile>> getFile(@PathVariable String id, @PathVariable URI urn) {
-        String path = String.format(pathFormat, id, urn);
+        String path = String.format(PATH_FORMAT, id, urn);
         return objectStorage.retrieve(path)
-                .map(FilesController::buildStreamedFile);
+            .map(FilesController::buildStreamedFile);
     }
 
-    @Post(uri = "/{urn:.*}")
+    @Post(uri = "/{path:.*}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public HttpResponse<?> uploadFile(
-            CompletedFileUpload fileUpload,
-            @PathVariable String id,
-            @PathVariable URI urn,
-            HttpRequest<?> request) {
+        CompletedFileUpload fileUpload,
+        @PathVariable String id,
+        @PathVariable Path path,
+        HttpRequest<?> request) {
         if (!projectService.existsById(id)) {
             return HttpResponse.notFound(new Problem("about:blank", "Not found", 404,
-                    String.format("project with id %s was not found", id), "about:blank"));
+                String.format("project with id %s was not found", id), "about:blank"));
         }
 
-        String path = String.format(pathFormat, id, urn);
+        String uploadPath = String.format(PATH_FORMAT, id, path);
 
-        UploadRequest objectStorageUpload = UploadRequest.fromCompletedFileUpload(fileUpload, path);
-        UploadResponse<PutObjectResponse> response = performUpload(objectStorageUpload, id, urn);
+        UploadRequest objectStorageUpload = UploadRequest.fromCompletedFileUpload(fileUpload, uploadPath);
+        UploadResponse<PutObjectResponse> response = performUpload(objectStorageUpload, id, path);
 
         return HttpResponse
-                .created(UriBuilder.of(httpHostResolver.resolve(request))
-                        .path("projects")
-                        .path(path)
-                        .build())
-                .header(HttpHeaders.ETAG, response.getETag());
+            .created(UriBuilder.of(httpHostResolver.resolve(request))
+                .path("projects")
+                .path(uploadPath)
+                .build())
+            .header(HttpHeaders.ETAG, response.getETag());
     }
 
-    public void uploadBytes(byte[] bytes, String id, URI urn) throws IOException {
+    public void uploadBytes(byte[] bytes, String id, Path uploadPath) throws IOException {
         if (!projectService.existsById(id)) {
             return;
         }
 
-        String path = String.format(pathFormat, id, urn);
+        String path = String.format(PATH_FORMAT, id, uploadPath);
 
         UploadRequest objectStorageUpload = UploadRequest.fromBytes(bytes, path);
-        performUpload(objectStorageUpload, id, urn);
+        performUpload(objectStorageUpload, id, uploadPath);
     }
 
-    private UploadResponse<PutObjectResponse> performUpload(UploadRequest uploadRequest, String id, URI urn) {
+    private UploadResponse<PutObjectResponse> performUpload(UploadRequest uploadRequest, String id, Path uploadPath) {
         UploadResponse<PutObjectResponse> response = objectStorage.upload(uploadRequest, builder -> {
             builder.acl(ObjectCannedACL.PUBLIC_READ);
         });
-        projectService.addFilePathToId(id, urn);
+        projectService.addFilePathToId(id, uploadPath);
         return response;
     }
 
@@ -147,17 +168,17 @@ public class FilesController {
         return HttpResponse.serverError(String.format("NOT IMPLEMENTED %s %s", id, urn));
     }
 
-    @Delete(uri = "/{urn:.*}")
+    @Delete(uri = "/{path:.*}")
     @Produces(MediaType.APPLICATION_JSON)
-    public HttpResponse<?> deleteFileOrDirectory(@PathVariable String id, @PathVariable URI urn) {
+    public HttpResponse<?> deleteFileOrDirectory(@PathVariable String id, @PathVariable Path path) {
         if (!projectService.existsById(id)) {
             return HttpResponse.notFound(new Problem("about:blank", "Not found", 404,
-                    String.format("project with id %s was not found", id), "about:blank"));
+                String.format("project with id %s was not found", id), "about:blank"));
         }
 
-        String path = String.format(pathFormat, id, urn);
-        objectStorage.delete(path); //TODO: doesn't delete folders with children
-        projectService.removeFilePathFromId(id, urn);
+        String objectPath = String.format(PATH_FORMAT, id, path);
+        objectStorage.delete(objectPath); //TODO: doesn't delete folders with children
+        projectService.removeFilePathFromId(id, path);
 
         return HttpResponse.ok("file deleted");
     }

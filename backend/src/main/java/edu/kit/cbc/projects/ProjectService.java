@@ -2,6 +2,7 @@ package edu.kit.cbc.projects;
 
 import jakarta.validation.constraints.NotBlank;
 import java.net.URI;
+import java.nio.file.Path;
 
 public interface ProjectService {
     ReadProjectDto create(CreateProjectDto project);
@@ -14,9 +15,9 @@ public interface ProjectService {
 
     boolean existsById(@NotBlank String id);
 
-    void addFilePathToId(@NotBlank String id, URI uri);
+    void addFilePathToId(@NotBlank String id, Path path);
 
-    void removeFilePathFromId(@NotBlank String id, URI uri);
+    void removeFilePathFromId(@NotBlank String id, Path path);
 
     void deleteById(@NotBlank String id);
 }
