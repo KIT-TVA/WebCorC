@@ -21,6 +21,21 @@ public class CompositionStatement extends AbstractStatement {
 
     @Override
     public boolean prove(ProofContext proofContext) {
-        return false;
+        boolean firstProve = firstStatement.prove(proofContext);
+        boolean secondProve = secondStatement.prove(proofContext);
+
+        if (!firstProve) {
+            System.err.println("[ERROR] The statement " + this.getName() + " could not be proven due to it's first " +
+                "statement!");
+        }
+
+        if (!secondProve) {
+            System.err.println("[ERROR] The statement " + this.getName() + " could not be proven due to it's second " +
+                "statement!");
+        }
+
+        this.isProven = firstProve && secondProve;
+
+        return firstProve && secondProve;
     }
 }

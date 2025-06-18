@@ -19,7 +19,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Serdeable
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "statementType")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({
     @JsonSubTypes.Type(value = Statement.class, name = "statement"),
     @JsonSubTypes.Type(value = CompositionStatement.class, name = "composition_statement"),
@@ -31,7 +31,7 @@ import lombok.Setter;
 public abstract class AbstractStatement {
 
     private String name;
-    private StatementType statementType;
+    private StatementType type;
     private Condition preCondition;
     private Condition postCondition;
 

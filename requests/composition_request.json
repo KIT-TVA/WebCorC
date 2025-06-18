@@ -1,0 +1,44 @@
+{
+    "name": "TestFormula",
+    "statement": {
+        "name": "Composition1",
+        "type": "composition_statement",
+        "preCondition": "i=0",
+        "intermediateCondition": "i=1",
+        "postCondition": "i=2",
+        "firstStatement": {
+            "name": "Statement1",
+            "programStatement": "i++",
+            "type": "statement",
+            "preCondition": {
+                "condition": "i = 0"
+            },
+            "postCondition": {
+                "condition": "i = 1"
+            },
+            "isProven": false
+        },
+        "secondStatement": {
+            "name": "Statement2",
+            "programStatement": "i++",
+            "type": "statement",
+            "preCondition": {
+                "condition": "i = 1"
+            },
+            "postCondition": {
+                "condition": "i = 2"
+            },
+            "isProven": false
+        }
+
+    },
+    "javaVariables": [
+        {
+            "variable": "int i",
+            "kind": "LOCAL"
+        }
+    ],
+    "globalConditions": [],
+    "renamings": [],
+    "isProven": false
+}

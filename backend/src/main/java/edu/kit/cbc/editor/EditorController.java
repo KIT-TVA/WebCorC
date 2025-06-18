@@ -69,7 +69,6 @@ public class EditorController {
         context.cbCFormula(formula);
 
         Path proofFolder = Files.createTempDirectory(projectId.isPresent() ? "proof_" + projectId.get() : "proof");
-        proofFolder.toFile().deleteOnExit();
 
         context.proofFolder(proofFolder);
         if (projectId.isPresent()) {
@@ -93,7 +92,6 @@ public class EditorController {
             List<Path> proofFiles;
             proofFiles = Files.find(proofFolder, 10, (path, attributes) -> {
                 String pathStr = path.toString();
-                System.out.println(pathStr);
                 return pathStr.endsWith(".key") || pathStr.endsWith(".proof");
             }).toList();
 
@@ -105,7 +103,6 @@ public class EditorController {
             }
 
         }
-
 
         return HttpResponse.ok(formula);
     }
