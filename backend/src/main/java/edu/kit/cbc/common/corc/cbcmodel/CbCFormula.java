@@ -1,11 +1,9 @@
 package edu.kit.cbc.common.corc.cbcmodel;
 
-import io.micronaut.core.annotation.Introspected;
-import io.micronaut.serde.annotation.Serdeable;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.kit.cbc.common.corc.cbcmodel.statements.AbstractStatement;
+import io.micronaut.serde.annotation.Serdeable;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -10,9 +10,9 @@ import lombok.Getter;
 @Getter
 public final class ProofContext {
 
-  private final CbCFormula cbCFormula;
-  private final Path proofFolder;
-  private final List<Path> includeFiles;
-  private final List<Path> javaSrcFiles;
-  private final List<Path> existingProofFiles;
+    private final CbCFormula cbCFormula;
+    private final Path proofFolder;
+    private final List<Path> includeFiles;
+    private final List<Path> javaSrcFiles;
+    private final List<Path> existingProofFiles;
 }

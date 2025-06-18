@@ -15,16 +15,16 @@ import java.util.Map;
 
 /**
  * Information: This class is taken from <a href="https://github.com/KeYProject/key-java-example">here</a>.
- *              We know that it is ugly but there is no documentation of how to interact with KeY other than this.
- *              It is best if you leave this class unchanged. However, if you have to make changes here, make sure
- *              to test them even more thoroughly than normal.
+ * We know that it is ugly but there is no documentation of how to interact with KeY other than this.
+ * It is best if you leave this class unchanged. However, if you have to make changes here, make sure
+ * to test them even more thoroughly than normal.
  */
 public class KeYInteraction {
 
-  private KeYInteraction() {
-  }
+    private KeYInteraction() {
+    }
 
-  /**
+    /**
      * Starts the KeY proof with a location and some info on inlining.
      */
     public static Proof startKeyProof(File location, boolean inlining) {
@@ -49,7 +49,7 @@ public class KeYInteraction {
             /*Set STRATEGY options*/
             StrategyProperties sp = proof.getSettings().getStrategySettings().getActiveStrategyProperties();
             sp.setProperty(StrategyProperties.METHOD_OPTIONS_KEY,
-              inlining ? StrategyProperties.METHOD_EXPAND : StrategyProperties.METHOD_CONTRACT);
+                inlining ? StrategyProperties.METHOD_EXPAND : StrategyProperties.METHOD_CONTRACT);
             sp.setProperty(StrategyProperties.LOOP_OPTIONS_KEY, StrategyProperties.LOOP_INVARIANT);
             sp.setProperty(StrategyProperties.DEP_OPTIONS_KEY, StrategyProperties.DEP_ON);
             sp.setProperty(StrategyProperties.QUERY_OPTIONS_KEY, StrategyProperties.QUERY_RESTRICTED);
@@ -69,7 +69,7 @@ public class KeYInteraction {
             try {
 
                 Path parentDir = location.getParentFile().toPath();
-                Path proofLocation =  parentDir.resolve(location.getName().split("\\.")[0] + ".proof");
+                Path proofLocation = parentDir.resolve(location.getName().split("\\.")[0] + ".proof");
                 proof.saveToFile(proofLocation.toFile());
 
                 // printStatistics(proof, inlining);

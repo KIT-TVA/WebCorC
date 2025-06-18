@@ -77,7 +77,7 @@ public class EditorController {
             List<Path> includeFiles = filesController.retrieveFiles(projectId.get(), ".key", "include");
             List<Path> javaSrcFiles = filesController.retrieveFiles(projectId.get(), ".java", "javaSrc");
 
-            List<Path> existingKeyFiles= filesController.retrieveFiles(projectId.get(), ".key", "proofs");
+            List<Path> existingKeyFiles = filesController.retrieveFiles(projectId.get(), ".key", "proofs");
 
             System.out.println("Included KeY-Files: " + includeFiles);
             System.out.println("Included Java-Files: " + javaSrcFiles);

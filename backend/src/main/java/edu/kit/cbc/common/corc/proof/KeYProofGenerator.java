@@ -1,17 +1,14 @@
 package edu.kit.cbc.common.corc.proof;
 
-import edu.kit.cbc.common.corc.cbcmodel.statements.Statement;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
-
 import edu.kit.cbc.common.corc.cbcmodel.CbCFormula;
 import edu.kit.cbc.common.corc.cbcmodel.Condition;
 import edu.kit.cbc.common.corc.cbcmodel.JavaVariable;
 import edu.kit.cbc.common.corc.cbcmodel.JavaVariableKind;
 import edu.kit.cbc.common.corc.cbcmodel.Renaming;
-import edu.kit.cbc.common.corc.cbcmodel.statements.AbstractStatement;
+import edu.kit.cbc.common.corc.cbcmodel.statements.Statement;
 import edu.kit.cbc.common.corc.proof.KeYProof.KeYProofBuilder;
+import java.util.List;
+import java.util.function.Predicate;
 
 public final class KeYProofGenerator {
 

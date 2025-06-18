@@ -80,8 +80,7 @@ public class KeYProof {
 
     @Override
     public String toString() {
-        return this.printKeYHeader() +
-            printKeYBody();
+        return this.printKeYHeader() + printKeYBody();
     }
 
     private String printKeYHeader() {
@@ -93,14 +92,12 @@ public class KeYProof {
     }
 
     private String printProgramVariables() {
-        return this.programVariables.stream()
-            .map(JavaVariable::toString)
+        return this.programVariables.stream().map(JavaVariable::toString)
             .collect(Collectors.joining(PROGRAM_VARIABLE_SEPARATOR));
     }
 
     private String printGlobalConditions() {
-        return this.globalConditions.stream()
-            .map(Condition::toString)
+        return this.globalConditions.stream().map(Condition::toString)
             .collect(Collectors.joining(GLOBAL_CONDITIONS_SEPARATOR));
     }
 }
