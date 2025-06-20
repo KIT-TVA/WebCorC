@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        <link rel="canonical" href="https://corc.informatik.kit.edu/corc/editors/">
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>Editors - WebCorC Wiki</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../../css/brands.min.css" rel="stylesheet">
+        <link href="../../css/solid.min.css" rel="stylesheet">
+        <link href="../../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" disabled>
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">WebCorC Wiki</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href="../.." class="nav-link">Overview</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Features</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../features/" class="dropdown-item">Features Introduction</a>
+</li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">Feature List</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../features/ai-chat/" class="dropdown-item">AI Chat</a>
+</li>
+    </ul>
+  </li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">CbC</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../cbc/cbc/" class="dropdown-item">Theory</a>
+</li>
+                                    
+<li>
+    <a href="../../cbc/webcorc/" class="dropdown-item">Practical Example</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">CorC</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../" class="dropdown-item">CorC</a>
+</li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">Extensions</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../editors.md" class="dropdown-item">Editors</a>
+</li>
+            
+<li>
+    <a href="../../project-types.md" class="dropdown-item">Project Types</a>
+</li>
+            
+<li>
+    <a href="../../verification.md" class="dropdown-item">Verification</a>
+</li>
+            
+<li>
+    <a href="../../code-conversion.md" class="dropdown-item">Code Generation</a>
+</li>
+            
+<li>
+    <a href="../../testing.md" class="dropdown-item">Testing</a>
+</li>
+            
+<li>
+    <a href="../../mutation.md" class="dropdown-item">Mutation Generation</a>
+</li>
+            
+<li>
+    <a href="../../stats.md" class="dropdown-item">Proof Statistics</a>
+</li>
+            
+<li>
+    <a href="../../counterexamples.md" class="dropdown-item">Counterexample Generation</a>
+</li>
+            
+<li>
+    <a href="../../information-flow.md" class="dropdown-item">Information Flow</a>
+</li>
+            
+<li>
+    <a href="../../related-work.md" class="dropdown-item">Related Work</a>
+</li>
+    </ul>
+  </li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/KIT-TVA/WebCorC/edit/master/docs/corc/editors.md" class="nav-link"><i class="fa-brands fa-github"></i> Edit on GitHub</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                              <button id="theme-menu" aria-expanded="false" data-bs-toggle="dropdown" data-bs-display="static" aria-label="Toggle theme" class="nav-link dropdown-toggle">
+                                <i class="fa-solid fa-circle-half-stroke fa-fw"></i>
+                                <span class="d-lg-none ms-2">Toggle theme</span>
+                              </button>
+                              <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                  <button class="dropdown-item d-flex align-items-center" data-bs-theme-value="light" aria-pressed="false">
+                                    <i class="fa-solid fa-sun fa-fw"></i>
+                                    <span class="ms-2">Light</span>
+                                    <i class="fa-solid fa-check ms-auto d-none"></i>
+                                  </button>
+                                </li>
+                                <li>
+                                  <button class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark" aria-pressed="false">
+                                    <i class="fa-solid fa-moon fa-fw"></i>
+                                    <span class="ms-2">Dark</span>
+                                    <i class="fa-solid fa-check ms-auto d-none"></i>
+                                  </button>
+                                </li>
+                                <li>
+                                  <button class="dropdown-item d-flex align-items-center" data-bs-theme-value="auto" aria-pressed="true">
+                                    <i class="fa-solid fa-circle-half-stroke fa-fw"></i>
+                                    <span class="ms-2">Auto</span>
+                                    <i class="fa-solid fa-check ms-auto"></i>
+                                  </button>
+                                </li>
+                              </ul>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <script src="../../js/darkmode.js"></script>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="2"><a href="#graphical-editor" class="nav-link">Graphical Editor</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-bs-level="2"><a href="#textual-editor" class="nav-link">Textual Editor</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h2 id="graphical-editor">Graphical Editor</h2>
+<p>The graphical editor provides diagram elements to create CbC programs graphically.
+[[https://github.com/KIT-TVA/CorC/blob/master/Wiki/graphical-editor.png]]</p>
+<ul>
+<li>The white canvas contains the content of a CbC program, which in this case is called <code>graphical_editor</code>.</li>
+<li>The <code>Palette</code> contains all tools to manipulate the diagram, including all <a href="#corc-refinement-rules">CorC refinements</a>.</li>
+<li>The window tabs on the bottom are called <code>Eclipse property views</code>. These can be opened and closed on demand through <code>Window -&gt; Show View -&gt; Other...</code>.</li>
+</ul>
+<h2 id="textual-editor">Textual Editor</h2>
+<p>In addition to the <a href="#graphical-editor">graphical editor</a>, we provide a textual editor called <a href=""><em>LOST-Editor</em></a>. The LOST-Editor is based on the <em>LOST</em> DSL and is accessible through the Eclipse property view (<code>Window -&gt; Show View -&gt; LOST-Editor</code>). In LOST, each line represents an operation or is part of Java code. A line followed by a tab indicates a new refinement. With this, we get a tree-like code structure in which the number of tabs represents the depth of the tree of a CorC diagram before each refinement. Developers specify refinements sequentially, starting from the abstract hoare triple and continuing through its refinements sequentially. LOST supports the same refinement rules as the graphical editor:
+- <code>F(pre: [preCondition], post: [postCondition])</code> - Formula with pre- and post-condition.
+- <code>C(intm: [intermediateCondition])</code> - Composition with its intermediate condition.
+- <code>S(guard: [guard1], guard: [guard2], ...)</code> - Selection statement and its guards.
+- <code>L(inv: [invariant], guard: [guard], var: [variant])</code> - Repetition statement ("Loop") and its invariant, guard, and variant.
+- <code>[statement] ;</code> - Basic statement.
+- <code>O: [statement] ;</code> - Original statement. Used in SPLs to refer to the definition of the parent of any given method.
+- <code>R: [statement] ;</code> - Return statement.
+- <code>M: [statement] ;</code> - Method call statement.
+- <code>skip</code> - Skip statement.
+- <code>{ [statements] }</code> - Block of Java code.</p>
+<p>Additionally, each refinement rule supports the specification of <em>modifiables</em> variables. Specify the initializer <code>mod: [modifiable]</code> as the first parameter of any refinement rule, e.g., <code>F(mod: x, pre: x &gt; 0, post: y &gt; 0)</code>. Further details are described in the <a href="https://www.overleaf.com/read/cbnncfypyvqj#47edca">LOST-documentation</a>.</p></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js"></script>
+        <script src="../../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
