@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http'
 import { Injectable } from '@angular/core';
 import { CBCFormula } from '../../project/CBCFormula';
 import { environment } from '../../../../environments/environment';
-import { Observable, Subject, catchError, map, of } from 'rxjs';
+import { Observable, catchError, of } from 'rxjs';
 import { Refinement } from '../../../types/refinement';
 import { ConditionDTO } from '../../../types/condition/condition';
 import { SimpleStatementComponent } from '../../../components/editor/statements/simple-statement/simple-statement.component';
@@ -104,7 +104,6 @@ export class NetworkTreeService {
 
     this.networkStatusService.startNetworkRequest()
     this.http.post(environment.apiUrl + NetworkTreeService.generatePath, formula, {params : params, responseType: 'text' as const})
-    .pipe(map(string => string))
     .pipe(catchError((error : HttpErrorResponse) : Observable<string> => {
       this.consoleService.addErrorResponse(error, "Java code generation failed")
       this.networkStatusService.stopNetworkRequest()
