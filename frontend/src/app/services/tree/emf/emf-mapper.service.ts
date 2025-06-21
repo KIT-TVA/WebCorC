@@ -105,11 +105,7 @@ export class EmfMapperService {
   private toEMFSimpleStatement(statement : Statement) : EMFSimpleStatement {
     return {
       name : statement.name,
-      type : statement.type,
-      id : statement.id,
-      proven : statement.proven,
-      tested : statement.tested,
-      comment : statement.comment,
+      isProven : statement.proven,
       preCondition : this.toEMFCondition(statement.preCondition),
       postCondition : this.toEMFCondition(statement.postCondition),
       refinement : {
@@ -246,7 +242,7 @@ export class EmfMapperService {
   }
 
   private toEMFCondition(condition : ConditionDTO) : EMFCondition {
-    return { name : condition.content }
+    return { condition : condition.content }
   }
 
   private toEMFJavaVariables(javaVariables : string[]) : EMFJavaVariables {

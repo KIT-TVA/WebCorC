@@ -1,0 +1,21 @@
+Condition
+c ::= e == e
+          | e <= e
+          | e >= c
+          | e < e
+          | e > e
+          | c && c
+          | c || c
+          | c ==> c
+          | c <==>
+          | \forall (t ident) c
+          | \exists (t ident) c
+
+e ::= ident | const
+            | e + e
+            | e - e
+            | e / e
+            | e * e
+            | e % e
+
+t ::= int | [..]

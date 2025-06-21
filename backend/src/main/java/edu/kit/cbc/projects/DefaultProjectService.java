@@ -4,6 +4,7 @@ import edu.kit.cbc.projects.files.dto.DirectoryDto;
 import jakarta.inject.Singleton;
 import jakarta.validation.constraints.NotBlank;
 import java.net.URI;
+import java.nio.file.Path;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -53,15 +54,15 @@ class DefaultProjectService implements ProjectService {
 
     }
 
-    public void addFilePathToId(@NotBlank String id, URI urn) {
+    public void addFilePathToId(@NotBlank String id, Path path) {
         ReadProjectDto project = findById(id);
-        project.files().addFilePath(urn);
+        project.files().addFilePath(path);
         updateById(id, project);
     }
 
-    public void removeFilePathFromId(@NotBlank String id, URI urn) {
+    public void removeFilePathFromId(@NotBlank String id, Path path) {
         ReadProjectDto project = findById(id);
-        project.files().removeFilePath(urn);
+        project.files().removeFilePath(path);
         updateById(id, project);
     }
 

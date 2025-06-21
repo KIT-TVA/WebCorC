@@ -1,16 +1,30 @@
 package edu.kit.cbc.common.corc.cbcmodel.statements;
 
-import edu.kit.cbc.common.corc.cbcmodel.StatementType;
+import edu.kit.cbc.common.corc.cbcmodel.CbCFormula;
+import edu.kit.cbc.common.corc.proof.KeYProof;
+import edu.kit.cbc.common.corc.proof.KeYProofGenerator;
+import edu.kit.cbc.common.corc.proof.ProofContext;
+import java.util.Optional;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Statement extends AbstractStatement {
 
-    @Override
-    public StatementType getStatementType() {
-        return StatementType.STATEMENT;
-    }
+    private String programStatement;
 
     @Override
-    public void prove() {
+    public boolean prove(ProofContext proofContext) {
+        KeYProofGenerator proofGenerator = new KeYProofGenerator(proofContext);
+        KeYProof proof = proofGenerator.generate(this);
 
+        this.isProven = proof.execute();
+
+        return this.isProven();
     }
 }

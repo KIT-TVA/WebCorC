@@ -1,72 +1,55 @@
 package edu.kit.cbc.common.corc;
 
 import de.uka.ilkd.key.control.KeYEnvironment;
-import de.uka.ilkd.key.java.abstraction.KeYJavaType;
-import de.uka.ilkd.key.logic.op.IObserverFunction;
 import de.uka.ilkd.key.proof.Proof;
-import de.uka.ilkd.key.proof.init.ProofInputException;
 import de.uka.ilkd.key.proof.io.ProblemLoaderException;
 import de.uka.ilkd.key.settings.ChoiceSettings;
 import de.uka.ilkd.key.settings.ProofSettings;
-import de.uka.ilkd.key.speclang.Contract;
 import de.uka.ilkd.key.strategy.StrategyProperties;
-import de.uka.ilkd.key.util.KeYTypeUtil;
 import de.uka.ilkd.key.util.MiscTools;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import org.key_project.util.collection.ImmutableSet;
 
+/**
+ * Information: This class is taken from <a href="https://github.com/KeYProject/key-java-example">here</a>.
+ * We know that it is ugly but there is no documentation of how to interact with KeY other than this.
+ * It is best if you leave this class unchanged. However, if you have to make changes here, make sure
+ * to test them even more thoroughly than normal.
+ */
 public class KeYInteraction {
+
+    private KeYInteraction() {
+    }
 
     /**
      * Starts the KeY proof with a location and some info on inlining.
      */
-    public Proof startKeyProof(File location, boolean inlining) {
+    public static Proof startKeyProof(File location, boolean inlining) {
         try {
-            System.out.println(Files.readAllLines(Path.of(location.getAbsolutePath())));
-            ;
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        Proof proof = null;
-        List<File> classPaths = null; // Optionally: Additional specifications
-        // for API classes
-        File bootClassPath = null; // Optionally: Different default
-        // specifications for Java API
-        List<File> includes = null; // Optionally: Additional includes to
-        // consider
-        try {
-            // Ensure that Taclets are parsed
+
             if (!ProofSettings.isChoiceSettingInitialised()) {
-                KeYEnvironment<?> env = KeYEnvironment.load(location, classPaths, bootClassPath, includes);
+                KeYEnvironment<?> env = KeYEnvironment.load(location);
                 env.dispose();
             }
-            // Set Taclet options
+
+            /*Set TACLET options*/
             ChoiceSettings choiceSettings = ProofSettings.DEFAULT_SETTINGS.getChoiceSettings();
             Map<String, String> oldSettings = choiceSettings.getDefaultChoices();
-            HashMap<String, String> newSettings = new HashMap<String, String>(oldSettings);
+            Map<String, String> newSettings = new HashMap<>(oldSettings);
             newSettings.putAll(MiscTools.getDefaultTacletOptions());
             newSettings.put("runtimeExceptions", "runtimeExceptions:ban");
             choiceSettings.setDefaultChoices(newSettings);
-            // Load source code
-            KeYEnvironment<?> env = KeYEnvironment.load(location, classPaths, bootClassPath, includes);
-            proof = env.getLoadedProof();
-            // Set proof strategy options
+
+            KeYEnvironment<?> env = KeYEnvironment.load(location);
+            Proof proof = env.getLoadedProof();
+
+            /*Set STRATEGY options*/
             StrategyProperties sp = proof.getSettings().getStrategySettings().getActiveStrategyProperties();
-            if (inlining) {
-                sp.setProperty(StrategyProperties.METHOD_OPTIONS_KEY, StrategyProperties.METHOD_EXPAND);
-            } else {
-                // METHOD_EXPAND
-                sp.setProperty(StrategyProperties.METHOD_OPTIONS_KEY, StrategyProperties.METHOD_CONTRACT);
-            }
+            sp.setProperty(StrategyProperties.METHOD_OPTIONS_KEY,
+                inlining ? StrategyProperties.METHOD_EXPAND : StrategyProperties.METHOD_CONTRACT);
             sp.setProperty(StrategyProperties.LOOP_OPTIONS_KEY, StrategyProperties.LOOP_INVARIANT);
             sp.setProperty(StrategyProperties.DEP_OPTIONS_KEY, StrategyProperties.DEP_ON);
             sp.setProperty(StrategyProperties.QUERY_OPTIONS_KEY, StrategyProperties.QUERY_RESTRICTED);
@@ -80,137 +63,26 @@ public class KeYInteraction {
             proof.getSettings().getStrategySettings().setMaxSteps(maxSteps);
             proof.setActiveStrategy(proof.getServices().getProfile().getDefaultStrategyFactory().create(proof, sp));
             // Start auto mode
-            System.out.println("  Start proof: " + location.getName());
             env.getUi().getProofControl().startAndWaitForAutoMode(proof);
 
             // Show proof result
             try {
-                proof.saveToFile(location);
+
+                Path parentDir = location.getParentFile().toPath();
+                Path proofLocation = parentDir.resolve(location.getName().split("\\.")[0] + ".proof");
+                proof.saveToFile(proofLocation.toFile());
 
                 // printStatistics(proof, inlining);
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
+            return proof;
+
         } catch (ProblemLoaderException e) {
-            System.out.println("  Exception at '" + e.getCause() + "'");
             e.printStackTrace();
         }
-        return proof;
+        return null;
     }
-
-    /**
-     * Starts the proof of the first contract.
-     */
-    public Proof startKeYProofFirstContract(File location) {
-        Proof proof = null;
-        File keyFile = null;
-        List<File> classPaths = null; // Optionally: Additional specifications
-        // for API classes
-        File bootClassPath = null; // Optionally: Different default
-        // specifications for Java API
-        List<File> includes = null; // Optionally: Additional includes to
-        // consider
-        try {
-            // Ensure that Taclets are parsed
-            if (!ProofSettings.isChoiceSettingInitialised()) {
-                KeYEnvironment<?> env = KeYEnvironment.load(location, classPaths, bootClassPath, includes);
-                env.dispose();
-            }
-            // Set Taclet options
-            ChoiceSettings choiceSettings = ProofSettings.DEFAULT_SETTINGS.getChoiceSettings();
-            Map<String, String> oldSettings = choiceSettings.getDefaultChoices();
-            HashMap<String, String> newSettings = new HashMap<String, String>(oldSettings);
-            newSettings.putAll(MiscTools.getDefaultTacletOptions());
-            newSettings.put("runtimeExceptions", "runtimeExceptions:ban");
-            choiceSettings.setDefaultChoices(newSettings);
-            // Load source code
-            KeYEnvironment<?> env = KeYEnvironment.load(location, classPaths, bootClassPath, includes);
-            // proof = env.getLoadedProof();
-            try {
-                // List all specifications of all types in the source location
-                // (not classPaths and bootClassPath)
-                final List<Contract> proofContracts = new LinkedList<Contract>();
-                Set<KeYJavaType> kjts = env.getJavaInfo().getAllKeYJavaTypes();
-                for (KeYJavaType type : kjts) {
-                    if (!KeYTypeUtil.isLibraryClass(type)) {
-                        ImmutableSet<IObserverFunction> targets = env.getSpecificationRepository()
-                                .getContractTargets(type);
-                        for (IObserverFunction target : targets) {
-                            ImmutableSet<Contract> contracts = env.getSpecificationRepository().getContracts(type,
-                                    target);
-                            for (Contract contract : contracts) {
-                                proofContracts.add(contract);
-                            }
-                        }
-                    }
-                }
-                // Perform proofs
-                Contract contract = proofContracts.get(0);
-
-                try {
-                    // Create proof
-                    proof = env.createProof(contract.createProofObl(env.getInitConfig(), contract));
-                    // Set proof strategy options
-                    StrategyProperties sp = proof.getSettings().getStrategySettings().getActiveStrategyProperties();
-                    sp.setProperty(StrategyProperties.METHOD_OPTIONS_KEY, StrategyProperties.METHOD_EXPAND);
-                    sp.setProperty(StrategyProperties.LOOP_OPTIONS_KEY, StrategyProperties.LOOP_INVARIANT);
-                    sp.setProperty(StrategyProperties.DEP_OPTIONS_KEY, StrategyProperties.DEP_ON);
-                    sp.setProperty(StrategyProperties.QUERY_OPTIONS_KEY, StrategyProperties.QUERY_RESTRICTED); // StrategyProperties.QUERY_ON
-                    sp.setProperty(StrategyProperties.NON_LIN_ARITH_OPTIONS_KEY,
-                            StrategyProperties.NON_LIN_ARITH_DEF_OPS);
-                    sp.setProperty(StrategyProperties.STOPMODE_OPTIONS_KEY, StrategyProperties.STOPMODE_DEFAULT);
-                    proof.getSettings().getStrategySettings().setActiveStrategyProperties(sp);
-                    // Make sure that the new options are used
-                    int maxSteps = 5000;
-                    ProofSettings.DEFAULT_SETTINGS.getStrategySettings().setMaxSteps(maxSteps);
-                    ProofSettings.DEFAULT_SETTINGS.getStrategySettings().setActiveStrategyProperties(sp);
-                    proof.getSettings().getStrategySettings().setMaxSteps(maxSteps);
-                    proof.setActiveStrategy(
-                            proof.getServices().getProfile().getDefaultStrategyFactory().create(proof, sp));
-                    env.getUi().getProofControl().startAndWaitForAutoMode(proof);
-                    // Show proof result
-                    // System.out.println("Proof is closed: " + proof.openGoals().isEmpty());
-                    try {
-                        String locationWithoutFileEnding = location.toString().substring(0,
-                                location.toString().indexOf("."));
-                        keyFile = new File(locationWithoutFileEnding + ".proof");
-                        proof.saveToFile(keyFile);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } catch (ProofInputException e) {
-                    System.out.println(
-                            "Exception at '" + contract.getDisplayName() + "' of " + contract.getTarget() + ":");
-                    e.printStackTrace();
-                } finally {
-                    if (proof != null) {
-                        // proof.dispose(); // Ensure always that all instances
-                        // of Proof are disposed
-                    }
-                }
-            } finally {
-                env.dispose(); // Ensure always that all instances of
-                // KeYEnvironment are disposed
-            }
-        } catch (ProblemLoaderException e) {
-            System.out.println("Exception at '" + e.getCause() + "'");
-            e.printStackTrace();
-        }
-        return proof;
-    }
-
-    /*
-     * private static void printStatistics(Proof proof, boolean inlining) {
-     * Statistics s = proof.getStatistics();
-     * if(inlining)
-     * System.out.println("Inlining");
-     * else
-     * System.out.println("Contracting");
-     * System.out.println("Statistics: \n\t nodes: " + s.nodes + "\n\t rule apps: "
-     * + s.totalRuleApps
-     * + "\n\t time in Millis: " + s.timeInMillis );
-     * }
-     */
 
 }

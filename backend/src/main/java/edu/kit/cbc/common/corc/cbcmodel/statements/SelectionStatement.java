@@ -1,7 +1,10 @@
 package edu.kit.cbc.common.corc.cbcmodel.statements;
 
+import edu.kit.cbc.common.corc.cbcmodel.CbCFormula;
 import edu.kit.cbc.common.corc.cbcmodel.Condition;
+import edu.kit.cbc.common.corc.proof.ProofContext;
 import java.util.List;
+import java.util.Optional;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,7 +16,7 @@ public class SelectionStatement extends AbstractStatement {
     private boolean isPreProven;
 
     @Override
-    public void prove() {
-
+    public boolean prove(ProofContext proofContext) {
+        return false;
     }
 }

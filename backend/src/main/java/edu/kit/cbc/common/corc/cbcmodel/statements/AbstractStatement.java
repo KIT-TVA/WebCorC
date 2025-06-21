@@ -3,9 +3,12 @@ package edu.kit.cbc.common.corc.cbcmodel.statements;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import edu.kit.cbc.common.corc.cbcmodel.CbCFormula;
 import edu.kit.cbc.common.corc.cbcmodel.Condition;
-import edu.kit.cbc.common.corc.cbcmodel.Representable;
 import edu.kit.cbc.common.corc.cbcmodel.StatementType;
+import edu.kit.cbc.common.corc.proof.ProofContext;
+import io.micronaut.serde.annotation.Serdeable;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +18,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "statementType")
+@Serdeable
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({
     @JsonSubTypes.Type(value = Statement.class, name = "statement"),
     @JsonSubTypes.Type(value = CompositionStatement.class, name = "composition_statement"),
@@ -24,15 +28,12 @@ import lombok.Setter;
     @JsonSubTypes.Type(value = SkipStatement.class, name = "skip_statement"),
     @JsonSubTypes.Type(value = SmallRepetitionStatement.class, name = "small_repetition_statement")
 })
-public abstract class AbstractStatement implements Representable {
+public abstract class AbstractStatement {
 
     private String name;
-    private StatementType statementType;
-    private AbstractStatement refinement;
-    private AbstractStatement parent;
+    private StatementType type;
     private Condition preCondition;
     private Condition postCondition;
-    private String codeRepresentation;
 
     /*
      * WARNING: Jackson will interpret this value as "proven" because the
@@ -43,17 +44,8 @@ public abstract class AbstractStatement implements Representable {
      * hours finding this bug ~ Markus)
      */
     @JsonProperty(value = "isProven", required = true)
-    private boolean isProven;
+    protected boolean isProven;
 
-    public abstract void prove();
+    public abstract boolean prove(ProofContext proofContext);
 
-    @Override
-    public String getCodeRepresentation() {
-        return this.codeRepresentation;
-    }
-
-    @Override
-    public void setCodeRepresentation(String codeRepresentation) {
-        this.codeRepresentation = codeRepresentation;
-    }
 }
