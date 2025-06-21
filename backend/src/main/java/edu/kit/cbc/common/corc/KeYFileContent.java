@@ -1,13 +1,9 @@
 package edu.kit.cbc.common.corc;
 
-import de.tu_bs.cs.isf.cbc.cbcclass.ModelClass;
-import de.tu_bs.cs.isf.cbc.cbcmodel.Condition;
-import de.tu_bs.cs.isf.cbc.cbcmodel.GlobalConditions;
-import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariable;
-import de.tu_bs.cs.isf.cbc.cbcmodel.JavaVariables;
-import de.tu_bs.cs.isf.cbc.cbcmodel.Rename;
-import de.tu_bs.cs.isf.cbc.cbcmodel.Renaming;
-import de.tu_bs.cs.isf.cbc.cbcmodel.VariableKind;
+import edu.kit.cbc.common.corc.cbcmodel.Condition;
+import edu.kit.cbc.common.corc.cbcmodel.JavaVariable;
+import edu.kit.cbc.common.corc.cbcmodel.JavaVariableKind;
+import edu.kit.cbc.common.corc.cbcmodel.Renaming;
 import java.util.List;
 
 public class KeYFileContent {
@@ -23,7 +19,6 @@ public class KeYFileContent {
     private String assignment = "";
     private String pre = "";
     private String post = "";
-
 
     public KeYFileContent() {
 
@@ -73,15 +68,14 @@ public class KeYFileContent {
         this.statement = statement;
     }
 
-
-    public JavaVariable readVariables(JavaVariables vars) {
+    public JavaVariable readVariables(List<JavaVariable> vars) {
         JavaVariable returnVariable = null;
         if (vars != null) {
-            for (JavaVariable var : vars.getVariables()) {
-                if (var.getKind() == VariableKind.RETURN) {
+            for (JavaVariable var : vars) {
+                if (var.getKind() == JavaVariableKind.RETURN) {
                     returnVariable = var;
                 } else {
-                    if (var.getKind() != VariableKind.GLOBAL) {
+                    if (var.getKind() != JavaVariableKind.GLOBAL) {
                         programVariables += var.getName() + "; ";
                         // if variable is an Array add <created> condition for key
                         if (var.getName().contains("[]")) {
@@ -99,17 +93,17 @@ public class KeYFileContent {
         programVariables += var + "; ";
     }
 
-    public void readGlobalConditions(GlobalConditions conds) {
-        if (conds != null) {
-            for (Condition cond : conds.getConditions()) {
-                if (!cond.getName().isEmpty()) {
-                    globalConditions += " & " + cond.getName();
+    public void readGlobalConditions(List<Condition> conditions) {
+        if (conditions != null) {
+            for (Condition cond : conditions) {
+                if (!cond.getCondition().isEmpty()) {
+                    globalConditions += " & " + cond.getCondition();
                 }
             }
         }
     }
 
-    public void rename(Renaming renaming) {
+    public void rename(List<Renaming> renaming) {
         if (renaming != null) {
             globalConditions = useRenamingCondition(renaming, globalConditions);
             pre = useRenamingCondition(renaming, pre);
@@ -118,8 +112,8 @@ public class KeYFileContent {
         }
     }
 
-    private String useRenamingCondition(Renaming renaming, String toRename) {
-        for (Rename rename : renaming.getRename()) {
+    private String useRenamingCondition(List<Renaming> renaming, String toRename) {
+        for (Renaming rename : renaming) {
             if (rename.getType().equalsIgnoreCase("boolean")) {
                 toRename = toRename.replaceAll(rename.getNewName(), "TRUE=" + rename.getFunction());
             } else {
@@ -129,8 +123,8 @@ public class KeYFileContent {
         return toRename;
     }
 
-    private String useRenamingStatement(Renaming renaming, String toRename) {
-        for (Rename rename : renaming.getRename()) {
+    private String useRenamingStatement(List<Renaming> renaming, String toRename) {
+        for (Renaming rename : renaming) {
             toRename = toRename.replaceAll(rename.getNewName(), rename.getFunction());
         }
         return toRename;
@@ -140,14 +134,7 @@ public class KeYFileContent {
         statement = statement.replace("this.", "self.");
         pre = pre.replace("this.", "self.");
         post = post.replace("this.", "self.");
-        globalConditions = globalConditions.replace("this.", "self."); //TODO this without dot is not replaced
-    }
-
-    public void addSelf(ModelClass javaClass) {
-        if (javaClass != null) {
-            self = javaClass.getName() + " self;";
-            selfConditions = " & self.<created>=TRUE & " + javaClass.getName() + "::exactInstance(self)=TRUE &  !self = null & self.<inv> ";
-        }
+        globalConditions = globalConditions.replace("this.", "self."); // TODO this without dot is not replaced
     }
 
     public void addUnmodifiableVars(List<String> unmodifiedVariables) {
@@ -200,9 +187,10 @@ public class KeYFileContent {
         return string + " (" + post + ")}";
     }
 
-    //->{variant := " + variantString
-    //  + " || heapAtPre := heap}  ((" + variantString + ") <variant & " + variantString
-    //  + ">=0)}";
+    // ->{variant := " + variantString
+    // + " || heapAtPre := heap} ((" + variantString + ") <variant & " +
+    // variantString
+    // + ">=0)}";
 
     public String keyHeader() {
         return "\\javaSource \"" + location + "\";" + "\\include \"" + helper + "\";"

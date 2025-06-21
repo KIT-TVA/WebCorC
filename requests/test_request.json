@@ -1,0 +1,50 @@
+{
+    "cbcFormula": { 
+        "name": "statement",
+        "statement": {
+            "name": "i=1;",
+            "statementType" : "statement",
+            "isProven": false,
+            "parent": {"statementType": "statement" },
+            "codeRepresentation": "",
+            "preCondition": {
+                "condition": "i=0"
+            },
+            "postCondition": {
+                "condition": "i=1"
+            },
+            "refinement": {
+                "name": "i=1;",
+                "statementType" : "statement",
+                "isProven": false,
+                "parent": {"statementType": "statement" },
+                "codeRepresentation": "",
+                "refinement": {"statementType": "statement"},
+                "preCondition": {
+                    "condition": "i=0"
+                },
+                "postCondition": {
+                    "condition": "i=1"
+                }
+            }
+        },
+        "preCondition": {
+            "condition": "i=0"
+        },
+        "postCondition": {
+            "condition": "i=1"
+        },
+        "isProven": false 
+    },
+    "javaVariables": [
+            {
+                "name": "int i",
+                "kind": "LOCAL",
+                "modifier": "public",
+                "displayName": ""
+            }
+    ],
+    "globalConditions": [],
+    "renamings": []
+
+}

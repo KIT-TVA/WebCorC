@@ -27,10 +27,7 @@ class DefaultProjectService implements ProjectService {
                                 .format(DateTimeFormatter.ISO_INSTANT),
                         new DirectoryDto(
                                 "",
-                                Set.of()
-                        )
-                )
-        );
+                                Set.of())));
     }
 
     public ReadProjectDto updateById(@NotBlank String id, ReadProjectDto project) {
@@ -44,9 +41,7 @@ class DefaultProjectService implements ProjectService {
                         tmp.id(),
                         project.name(),
                         tmp.dateCreated(),
-                        tmp.files()
-                )
-        );
+                        tmp.files()));
     }
 
     public ReadProjectDto findById(@NotBlank String id) {

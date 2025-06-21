@@ -82,12 +82,8 @@ public class FilesController {
         ListObjectsV2Response response = s3ClientProvider.getClient().listObjectsV2(request);
 
         List<String> keys = response.contents().stream()
-                .filter(obj -> {
-                    return obj.key().endsWith(".java");
-                })
-                .map(obj -> {
-                    return obj.key().substring(id.concat("/files/").length());
-                })
+                .filter(obj -> obj.key().endsWith(".java"))
+                .map(obj -> obj.key().substring(id.concat("/files/").length()))
                 .toList();
 
         return keys;

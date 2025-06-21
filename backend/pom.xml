@@ -105,34 +105,30 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.emf</groupId>
-            <artifactId>org.eclipse.emf.common</artifactId>
-            <version>2.21.0</version>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.19.0</version>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.emf</groupId>
-            <artifactId>org.eclipse.emf.ecore</artifactId>
-            <version>2.23.0</version>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.19.0</version>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.emf</groupId>
-            <artifactId>org.eclipse.emf.ecore.change</artifactId>
-            <version>2.14.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.emf</groupId>
-            <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
-            <version>2.16.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.emfcloud</groupId>
-            <artifactId>emfjson-jackson</artifactId>
-            <version>2.2.0</version>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.19.0</version>
         </dependency>
         <dependency>
             <groupId>org.key-project</groupId>
             <artifactId>key.core</artifactId>
             <version>2.12.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.38</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
     <build>
@@ -177,8 +173,13 @@
                 <configuration>
                     <!-- Uncomment to enable incremental compilation -->
                     <!-- <useIncrementalCompilation>false</useIncrementalCompilation> -->
-
                     <annotationProcessorPaths combine.children="override">
+                        <!-- The order of this is very important!!-->
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.34</version>
+                        </path>
                         <path>
                             <groupId>io.micronaut</groupId>
                             <artifactId>micronaut-inject-java</artifactId>

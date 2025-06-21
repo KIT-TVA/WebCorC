@@ -25,7 +25,12 @@ $light-disabled-text: rgba(white, 0.5);
 $light-dividers: rgba(white, 0.12);
 $light-focused: rgba(white, 0.12);
 
-
+$grey-webcorc: #989696;
+$grey-background-light-webcorc: #dadada;
+:root {
+  --grey-webcorc: #{$grey-webcorc};
+  --grey-background-light-webcorc: #{$grey-background-light-webcorc};
+}
 
 $kit-green: (
   50: #e8f5e9,

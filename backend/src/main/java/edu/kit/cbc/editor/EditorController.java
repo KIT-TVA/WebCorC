@@ -31,7 +31,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-
 @Controller("/editor")
 @ExecuteOn(TaskExecutors.BLOCKING)
 public class EditorController {
@@ -64,12 +63,7 @@ public class EditorController {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.ALL)
     public HttpResponse<?> xmltojson(@Body String cbcFormulaString) {
-        try {
-            CbCFormulaContainer c = parser.fromXMLStringToCbC(cbcFormulaString);
-            return HttpResponse.ok(parser.toJsonString(c));
-        } catch (IOException e) {
-            return HttpResponse.serverError(Problem.getParsingError(e.getMessage()));
-        }
+        return HttpResponse.serverError("NOT IMPLEMENTED ");
     }
 
     @Post(uri = "/verify")
@@ -78,46 +72,49 @@ public class EditorController {
     public HttpResponse<?> verify(@QueryValue Optional<String> projectId, @Body String cbcFormulaString) {
         try {
             CbCFormulaContainer formula = parser.fromJsonStringToCbC(cbcFormulaString);
-            Path p;
-            Path proofPath;
+            Path proofFolderPath;
+            Path proofFilePath;
             try {
-                p = Files.createTempDirectory("proof_");
-                proofPath = Files.createDirectory(p.resolve("prove_"));
+                proofFolderPath = Files.createTempDirectory("proof_");
+                proofFilePath = Files.createDirectory(proofFolderPath.resolve("prove_"));
                 if (projectId.isPresent()) {
-                    //obtaining java files and helper.key from project before verification
-                    LinkedList<String> filePaths = new LinkedList<>(filesController.findJavaFilesOfProject(projectId.get()));
+                    // obtaining java files and helper.key from project before verification
+                    List<String> filePaths = new LinkedList<>(filesController.findJavaFilesOfProject(projectId.get()));
                     filePaths.add("helper.key");
                     for (String filePath : filePaths) {
-                        Optional<HttpResponse<StreamedFile>> response = filesController.getFile(projectId.get(), URI.create(filePath));
+                        Optional<HttpResponse<StreamedFile>> response = filesController.getFile(projectId.get(),
+                                URI.create(filePath));
                         if (response.isPresent()) {
                             InputStream e = response.get().body().getInputStream();
-                            Path fullPath = proofPath.resolve(filePath);
+                            Path fullPath = proofFilePath.resolve(filePath);
                             Files.createDirectories(fullPath.getParent());
                             Files.copy(e, fullPath);
                         }
                     }
                 }
-                VerifyAllStatements.verify(formula.cbcFormula(), formula.javaVariables(), formula.globalConditions(), formula.renaming(), p.toUri());
+                VerifyAllStatements.verify(formula.getCbcFormula(), formula.getJavaVariables(),
+                        formula.getGlobalConditions(),
+                        formula.getRenamings(), proofFolderPath.toUri());
             } catch (IOException e) {
                 return HttpResponse.serverError(e.getMessage());
             }
 
-            //find all key files except helper.key
+            // find all key files except helper.key
             List<Path> keyFiles;
             try {
-                keyFiles = Files.find(proofPath, 30, (path, attributes) -> {
+                keyFiles = Files.find(proofFilePath, 30, (path, attributes) -> {
                     String pathStr = path.toString();
-                    return
-                            pathStr.endsWith(".key")
-                                    && !pathStr.endsWith("helper.key");
+                    return pathStr.endsWith(".key")
+                            && !pathStr.endsWith("helper.key");
                 }).toList();
             } catch (IOException e) {
                 return HttpResponse.serverError(e.getMessage());
             }
 
-            //upload found files to project
+            // upload found files to project
             projectId.ifPresent(s -> keyFiles.forEach(path -> {
-                URI urn = URI.create(p.getFileName() + path.toString().replace(proofPath.toString(), ""));
+                URI urn = URI
+                        .create(proofFolderPath.getFileName() + path.toString().replace(proofFilePath.toString(), ""));
                 try {
                     filesController.uploadBytes(Files.readAllBytes(path), s, urn);
                 } catch (IOException e) {
@@ -125,7 +122,7 @@ public class EditorController {
                 }
             }));
 
-            return HttpResponse.ok(parser.toJsonString(formula));
+            return HttpResponse.ok(formula.toJsonString());
         } catch (JsonProcessingException e) {
             return HttpResponse.serverError(Problem.getParsingError(e.getMessage()));
         }
@@ -147,7 +144,7 @@ public class EditorController {
     @Get(uri = "/jobs/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public HttpResponse<String> getJobs(long id) {
-        //TODO: Websocket
+        // TODO: Websocket
         return HttpResponse.serverError(String.format("NOT IMPLEMENTED %d", id));
     }
 

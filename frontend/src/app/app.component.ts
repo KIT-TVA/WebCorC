@@ -1,30 +1,30 @@
-import { Component, HostListener } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
-import { MatToolbarModule } from "@angular/material/toolbar";
-import { MatSidenavModule } from "@angular/material/sidenav";
-import { MatSnackBar } from "@angular/material/snack-bar";
-import { FormsModule } from "@angular/forms";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatInputModule } from "@angular/material/input";
+import {Component, HostListener} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {RouterOutlet} from '@angular/router';
+import {MatToolbarModule} from "@angular/material/toolbar";
+import {MatSidenavModule} from "@angular/material/sidenav";
+import {MatSnackBar} from "@angular/material/snack-bar";
+import {FormsModule} from "@angular/forms";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatInputModule} from "@angular/material/input";
 import {MatProgressBarModule} from '@angular/material/progress-bar';
-import { TreeService } from "./services/tree/tree.service";
-import { MatButtonModule } from "@angular/material/button";
-import { MatDialog } from "@angular/material/dialog";
+import {TreeService} from "./services/tree/tree.service";
+import {MatButtonModule} from "@angular/material/button";
+import {MatDialog} from "@angular/material/dialog";
 import {MatBadgeModule} from '@angular/material/badge';
-import { ProjectExplorerComponent } from "./components/project-explorer/project-explorer.component";
-import { MatIconModule } from '@angular/material/icon';
-import { NuMonacoEditorModule } from '@ng-util/monaco-editor';
-import { ConsoleComponent } from './components/console/console.component';
-import { ProjectService } from './services/project/project.service';
-import { NetworkTreeService } from './services/tree/network/network-tree.service';
-import { CreateProjectDialogComponent } from './components/project-explorer/create-project-dialog/create-project-dialog.component';
-import { first } from 'rxjs';
-import { NetworkStatusService } from './services/networkStatus/network-status.service';
-import { ConsoleService } from './services/console/console.service';
-import { EditorService } from './services/editor/editor.service';
-import { AiChatComponent } from "./components/ai-chat/ai-chat.component";
-import { AiChatService } from './services/ai-chat/ai-chat.service';
+import {ProjectExplorerComponent} from "./components/project-explorer/project-explorer.component";
+import {MatIconModule} from '@angular/material/icon';
+import {NuMonacoEditorModule} from '@ng-util/monaco-editor';
+import {ProjectService} from './services/project/project.service';
+import {NetworkTreeService} from './services/tree/network/network-tree.service';
+import {
+  CreateProjectDialogComponent
+} from './components/project-explorer/create-project-dialog/create-project-dialog.component';
+import {first} from 'rxjs';
+import {NetworkStatusService} from './services/networkStatus/network-status.service';
+import {ConsoleService} from './services/console/console.service';
+import {EditorService} from './services/editor/editor.service';
+import {AiChatService} from './services/ai-chat/ai-chat.service';
 
 /**
  * Top Component of this application, 
@@ -33,7 +33,7 @@ import { AiChatService } from './services/ai-chat/ai-chat.service';
  */
 @Component({
     selector: 'app-root',
-    imports: [CommonModule, RouterOutlet, MatToolbarModule, MatSidenavModule, FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, ProjectExplorerComponent, MatIconModule, NuMonacoEditorModule, ConsoleComponent, MatProgressBarModule, MatBadgeModule, AiChatComponent],
+  imports: [CommonModule, RouterOutlet, MatToolbarModule, MatSidenavModule, FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, ProjectExplorerComponent, MatIconModule, NuMonacoEditorModule, MatProgressBarModule, MatBadgeModule],
     templateUrl: './app.component.html',
     styleUrl: './app.component.scss'
 })
