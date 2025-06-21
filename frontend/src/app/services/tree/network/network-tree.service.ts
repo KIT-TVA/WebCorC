@@ -3,8 +3,6 @@ import { Injectable } from '@angular/core';
 import { CBCFormula } from '../../project/CBCFormula';
 import { environment } from '../../../../environments/environment';
 import { Observable, Subject, catchError, map, of } from 'rxjs';
-import { EMFCbcFormula } from '../emf/emf-cbc-formula';
-import { EmfMapperService } from '../emf/emf-mapper.service';
 import { Refinement } from '../../../types/refinement';
 import { ConditionDTO } from '../../../types/condition/condition';
 import { SimpleStatementComponent } from '../../../components/editor/statements/simple-statement/simple-statement.component';
@@ -25,14 +23,9 @@ import { ProjectService } from '../../project/project.service';
 export class NetworkTreeService {
   private static readonly verifyPath = "/editor/verify"
   private static readonly generatePath = "/editor/javaGen"
-  private static readonly converstionPath = "/editor/xmltojson"
-
-
-  private readonly _conversionResponse = new Subject<CBCFormula>()
 
   constructor(
     private readonly http: HttpClient,
-    private readonly mapper : EmfMapperService,
     private readonly verificationService : VerificationService,
     private readonly networkStatusService : NetworkStatusService,
     private readonly consoleService : ConsoleService,
@@ -68,8 +61,7 @@ export class NetworkTreeService {
     this.networkStatusService.startNetworkRequest()
     //Todo: Websocket?
     this.http
-      .post<EMFCbcFormula>(environment.apiUrl + NetworkTreeService.verifyPath, this.mapper.toEMFCbcFormula(formula), { params: params })
-      .pipe(map(formula => this.mapper.toCBCFormula(formula)))
+      .post<CBCFormula>(environment.apiUrl + NetworkTreeService.verifyPath, formula, { params: params })
       .pipe(catchError((error : HttpErrorResponse) : Observable<CBCFormula> => {
         this.consoleService.addErrorResponse(error, "Verification failed")
         this.networkStatusService.stopNetworkRequest()
@@ -111,7 +103,7 @@ export class NetworkTreeService {
     }
 
     this.networkStatusService.startNetworkRequest()
-    this.http.post(environment.apiUrl + NetworkTreeService.generatePath, this.mapper.toEMFCbcFormula(formula), {params : params, responseType: 'text' as const})
+    this.http.post(environment.apiUrl + NetworkTreeService.generatePath, formula, {params : params, responseType: 'text' as const})
     .pipe(map(string => string))
     .pipe(catchError((error : HttpErrorResponse) : Observable<string> => {
       this.consoleService.addErrorResponse(error, "Java code generation failed")
@@ -128,34 +120,5 @@ export class NetworkTreeService {
       window.URL.revokeObjectURL(url)
       this.networkStatusService.stopNetworkRequest()
     })
-  }
-
-  /**
-   * Convert a file from CorC editor from xml to emfjson compatible file. 
-   * @param cbcmodel The model to convert.
-   */
-  public convertCBCModel(cbcmodel : string) {
-    this.networkStatusService.startNetworkRequest()
-
-    this.http
-    .post<EMFCbcFormula>(environment.apiUrl + NetworkTreeService.converstionPath, cbcmodel, {
-      headers : {
-        'Content-Type': 'application/xml'
-      }
-    })
-    .pipe(map(formula => this.mapper.toCBCFormula(formula)))
-    .pipe(catchError((error : HttpErrorResponse) : Observable<CBCFormula> => {
-      this.consoleService.addErrorResponse(error, "Converting .cbcmodel file to emf json")
-      this.networkStatusService.stopNetworkRequest()
-      return of()
-    }))
-    .subscribe((formula : CBCFormula) => {
-      this._conversionResponse.next(formula)
-      this.networkStatusService.stopNetworkRequest()
-    })
-  }
-
-  public get conversionResponse() {
-    return this._conversionResponse
   }
 }
