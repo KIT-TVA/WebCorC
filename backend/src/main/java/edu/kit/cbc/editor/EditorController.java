@@ -1,5 +1,6 @@
 package edu.kit.cbc.editor;
 
+import edu.kit.cbc.common.corc.FileUtil;
 import edu.kit.cbc.common.corc.cbcmodel.CbCFormula;
 import edu.kit.cbc.common.corc.proof.ProofContext;
 import edu.kit.cbc.editor.llm.LLMQueryDto;
@@ -72,7 +73,6 @@ public class EditorController {
 
         context.proofFolder(proofFolder);
         if (projectId.isPresent()) {
-            System.out.println(projectId);
             List<Path> includeFiles = filesController.retrieveFiles(projectId.get(), ".key", "include");
             List<Path> javaSrcFiles = filesController.retrieveFiles(projectId.get(), ".java", "javaSrc");
 
@@ -88,6 +88,7 @@ public class EditorController {
 
         formula.getStatement().prove(context.build());
 
+
         if (projectId.isPresent()) {
             List<Path> proofFiles;
             proofFiles = Files.find(proofFolder, 10, (path, attributes) -> {
@@ -102,6 +103,34 @@ public class EditorController {
                 filesController.uploadBytes(Files.readAllBytes(projectFile), projectId.get(), uploadPath);
             }
 
+        }
+
+        FileUtil.deleteDirectory(proofFolder);
+
+        if (projectId.isPresent()) {
+            context.build().getIncludeFiles().stream().findFirst().ifPresent(includeFile -> {
+                try {
+                    FileUtil.deleteDirectory(includeFile.getParent());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+
+            context.build().getJavaSrcFiles().stream().findFirst().ifPresent(javaSrcFile -> {
+                try {
+                    FileUtil.deleteDirectory(javaSrcFile.getParent());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+
+            context.build().getExistingProofFiles().stream().findFirst().ifPresent(existingKeyFile -> {
+                try {
+                    FileUtil.deleteDirectory(existingKeyFile.getParent().getParent());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
         }
 
         return HttpResponse.ok(formula);

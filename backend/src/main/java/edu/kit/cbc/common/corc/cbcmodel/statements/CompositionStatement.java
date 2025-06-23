@@ -1,9 +1,7 @@
 package edu.kit.cbc.common.corc.cbcmodel.statements;
 
-import edu.kit.cbc.common.corc.cbcmodel.CbCFormula;
 import edu.kit.cbc.common.corc.cbcmodel.Condition;
 import edu.kit.cbc.common.corc.proof.ProofContext;
-import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,13 +23,13 @@ public class CompositionStatement extends AbstractStatement {
         boolean secondProve = secondStatement.prove(proofContext);
 
         if (!firstProve) {
-            System.err.println("[ERROR] The statement " + this.getName() + " could not be proven due to it's first " +
-                "statement!");
+            System.err.println("[ERROR] The statement " + this.getName() + " could not be proven due to it's first "
+                + "statement!");
         }
 
         if (!secondProve) {
-            System.err.println("[ERROR] The statement " + this.getName() + " could not be proven due to it's second " +
-                "statement!");
+            System.err.println("[ERROR] The statement " + this.getName() + " could not be proven due to it's second "
+                + "statement!");
         }
 
         this.isProven = firstProve && secondProve;

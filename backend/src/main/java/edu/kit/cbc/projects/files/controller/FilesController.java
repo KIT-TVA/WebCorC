@@ -1,6 +1,7 @@
 package edu.kit.cbc.projects.files.controller;
 
 import edu.kit.cbc.common.Problem;
+import edu.kit.cbc.common.corc.FileUtil;
 import edu.kit.cbc.projects.ProjectService;
 import edu.kit.cbc.projects.files.S3ClientProvider;
 import edu.kit.cbc.projects.files.dto.DirectoryDto;
@@ -80,6 +81,10 @@ public class FilesController {
     public List<Path> retrieveFiles(String projectId, String extension, String subFolder) throws IOException {
         Path targetFolder = Files.createTempDirectory(subFolder);
         Collection<String> relevantFiles = new ArrayList<>(findFilesWithExtension(projectId, subFolder, extension));
+
+        if (relevantFiles.isEmpty()) {
+            FileUtil.deleteDirectory(targetFolder);
+        }
 
         for (String file : relevantFiles) {
             Optional<HttpResponse<StreamedFile>> response = getFile(projectId, URI.create(file));
