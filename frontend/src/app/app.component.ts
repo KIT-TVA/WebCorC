@@ -70,14 +70,14 @@ export class AppComponent {
       this.projectService.requestFinished.pipe(first()).subscribe(() => {
 
         this.projectService.editorNotify.pipe(first()).subscribe(() => {
-          this.networkTreeService.verify(this.treeService.rootNode, this.treeService.variables, this.treeService.conditions, this.treeService.renaming ,this.projectService.projectId)
+          this.networkTreeService.verify(this.treeService.rootFormula, this.projectService.projectId)
         })
 
         this.projectService.uploadWorkspace()
       })
       this.dialog.open(CreateProjectDialogComponent)
     } else {
-      this.networkTreeService.verify(this.treeService.rootNode, this.treeService.variables, this.treeService.conditions, this.treeService.renaming ,this.projectService.projectId)
+      this.networkTreeService.verify(this.treeService.rootFormula, this.projectService.projectId)
     }
 
   }
@@ -92,7 +92,7 @@ export class AppComponent {
       this.projectService.requestFinished.pipe(first()).subscribe(() => {
 
         this.projectService.editorNotify.pipe(first()).subscribe(() => {
-          this.networkTreeService.generateCode(this.treeService.rootNode, this.treeService.variables, this.treeService.conditions, this.treeService.renaming, this.editorService.currentFileName ,this.projectService.projectId)
+          this.networkTreeService.generateCode(this.treeService.rootFormula, this.projectService.projectId)
         })
 
         this.projectService.uploadWorkspace()
@@ -100,7 +100,7 @@ export class AppComponent {
 
       this.dialog.open(CreateProjectDialogComponent)
     } else {
-      this.networkTreeService.generateCode(this.treeService.rootNode, this.treeService.variables, this.treeService.conditions, this.treeService.renaming, this.editorService.currentFileName ,this.projectService.projectId)
+      this.networkTreeService.generateCode(this.treeService.rootFormula, this.projectService.projectId)
     }
   }
 

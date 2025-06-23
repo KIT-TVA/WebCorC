@@ -1,15 +1,23 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatListModule } from '@angular/material/list';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { TreeService } from '../../../services/tree/tree.service';
-import { Renaming } from '../../../services/tree/Renaming';
+import {CommonModule} from '@angular/common';
+import {Component} from '@angular/core';
+import {
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
+import {MatButtonModule} from '@angular/material/button';
+import {MatDividerModule} from '@angular/material/divider';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatIconModule} from '@angular/material/icon';
+import {MatInputModule} from '@angular/material/input';
+import {MatListModule} from '@angular/material/list';
+import {MatTooltipModule} from '@angular/material/tooltip';
+import {TreeService} from '../../../services/tree/tree.service';
+import {IRenaming} from "../../../types/Renaming";
 
 /**
  * Component to allow renaming, each renaming includes the original name, new name and the type of the operation to rename.
@@ -131,7 +139,7 @@ export class RenamingComponent {
    * Import renamings into this component
    * @param renames Array of renamings to import
    */
-  public importRenaming(renames : Renaming[] | null) {
+  public importRenaming(renames : IRenaming[] | null) {
     if (!renames) {
       return
     }

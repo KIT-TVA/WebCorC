@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ApiDiagrammFile, ApiDirectory, ApiTextFile } from '../types/api-elements';
-import { CBCFormula } from '../CBCFormula';
+import { CBCFormula } from '../../../types/CBCFormula';
 import { ProjectElement } from '../types/project-elements';
 import { CbcFormulaMapperService } from '../mapper/cbc-formula-mapper.service';
 

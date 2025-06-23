@@ -1,5 +1,5 @@
-import {Component, ElementRef, ViewChild, ViewContainerRef} from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {Component, ElementRef, Input, ViewChild, ViewContainerRef} from '@angular/core';
+import {CommonModule} from '@angular/common';
 import {StatementComponent} from "../statement/statement.component";
 import {Refinement} from "../../../../types/refinement";
 import {TreeService} from "../../../../services/tree/tree.service";
@@ -14,8 +14,8 @@ import {MatDialog} from "@angular/material/dialog";
 import {ChooseRefinementComponent} from "../../../choose-refinement/choose-refinement.component";
 import {MatIconModule} from "@angular/material/icon";
 import {LinkComponent} from "../link/link.component";
-import { StrongWeakStatement } from '../../../../types/statements/strong-weak-statement';
-import { Position } from '../../../../types/position';
+import {Position} from '../../../../types/position';
+import {SkipStatementNode} from "../../../../types/statements/nodes/skip-statement-node";
 
 /**
  * Component in the graphic editor representing {@link StrongWeakStatement}
@@ -28,128 +28,97 @@ import { Position } from '../../../../types/position';
     styleUrl: './strong-weak-statement.component.scss'
 })
 export class StrongWeakStatementComponent extends Refinement {
-  private _weakPreCondition : Condition;
-  private _strongPostCondition : Condition;
-  
-  private _statement : Refinement | undefined;
-  private _statementRef : ElementRef | undefined;
+    private _weakPreCondition: Condition;
+    private _strongPostCondition: Condition;
 
-  @ViewChild("subComponentSpawn", {read: ViewContainerRef}) private componentSpawn!: ViewContainerRef;
+    private _statement: Refinement | undefined;
+    @Input({required: true}) override _node!: SkipStatementNode;
+    private _statementRef: ElementRef | undefined;
 
-  public constructor(treeService : TreeService, private dialog : MatDialog) {
-    super(treeService);
-    this._weakPreCondition = new Condition(this.id, "Weak precondition");
-    this._strongPostCondition = new Condition(this.id, "Strong postcondition");
+    @ViewChild("subComponentSpawn", {read: ViewContainerRef}) private componentSpawn!: ViewContainerRef;
 
-    // delete the child statement on deletion
-    treeService.deletionNotifier.subscribe(refinement => {
-      if (refinement === this._statement) {
-        this._statement = undefined;
-        this._statementRef!.nativeElement!.remove();
-      }
-    })
+    public constructor(treeService: TreeService, private dialog: MatDialog) {
+        super(treeService);
+        this._weakPreCondition = new Condition("Weak precondition");
+        this._strongPostCondition = new Condition("Strong postcondition");
 
-    // propagate the changes of the weak precondition to the precondition of the child
-    this._weakPreCondition.contentChangeObservable.subscribe(() => {
-      if (!this._statement) { return }
+        // delete the child statement on deletion
+        treeService.deletionNotifier.subscribe(refinement => {
+            if (refinement === this._statement) {
+                this._statement = undefined;
+                this._statementRef!.nativeElement!.remove();
+            }
+        })
 
-      this._statement.precondition.content = this._weakPreCondition.content
-      this._statement.precondition.originId = this.id
-    })
+    }
 
-    // propagate the changes of the strong postcondition to the postcondition of the child
-    this._strongPostCondition.contentChangeObservable.subscribe(() => {
-      if (!this._statement) { return }
+    public override getTitle(): string {
+        return "Strong-Weak"
+    }
 
-      this._statement.postcondition.content = this._strongPostCondition.content
-      this._statement.precondition.originId = this.id
-    })
-  }
-  
-  public override getTitle(): string {
-    return "Strong-Weak"
-  }
+    /**
+     * Open {@link ChooseRefinementComponent} and allow adding a child to this statement
+     */
+    public chooseRefinement() {
+        const dialogRef = this.dialog.open(ChooseRefinementComponent);
 
-  /**
-   * Open {@link ChooseRefinementComponent} and allow adding a child to this statement
-   */
-  public chooseRefinement() {
-    const dialogRef = this.dialog.open(ChooseRefinementComponent);
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (!result) { return }
-
-      const componentRef = this.componentSpawn.createComponent(result)
-      const createdSubComponent = componentRef.instance as Refinement
-
-      this._statementRef = componentRef.location;
-      this._statement = createdSubComponent;
-      this._statement.precondition.content = this.weakPreCondition.content
-      this._statement.postcondition.content = this.strongPostCondition.content
-
-      this.treeService.redrawNotifier.next()
-    })
-  }
+        dialogRef.afterClosed().subscribe(result => {
+            if (!result) {
+                return
+            }
+            //TODO: Spawn subcomponent
+            this.treeService.redrawNotifier.next()
+        })
+    }
 
 
+    /**
+     * Convert this Component to the data only {@link StrongWeakStatement}
+     * @returns
+     */
+    public override export() {
+        return undefined
+    }
 
-  /**
-   * Convert this Component to the data only {@link StrongWeakStatement}
-   * @returns 
-   */
-  public override export() {
-    return new StrongWeakStatement(
-      this.getTitle(),
-      this.id,
-      this.proven,
-      false, 
-      "",
-      this._weakPreCondition.export(),
-      this._strongPostCondition.export(),
-      super.position,
-      this.statement?.export()
-    )
-  }
-
-  /**
-   * Refresh the link between this and the child statement
-   */
-  public override refreshLinkState(): void {
-    super.refreshLinkState()
-    if (!this._statement) return
-    this.statement?.refreshLinkState()
-  }
+    /**
+     * Refresh the link between this and the child statement
+     */
+    public override refreshLinkState(): void {
+        super.refreshLinkState()
+        if (!this._statement) return
+        this.statement?.refreshLinkState()
+    }
 
 
-  public override resetPosition(position: Position, offset : Position): void {
-      this.position.set(position)
-      this.position.add(offset)
+    public override resetPosition(position: Position, offset: Position): void {
+        this.position.set(position)
+        this.position.add(offset)
 
-      this._statement?.resetPosition(this.position, new Position(100, 0))
-  }
+        this._statement?.resetPosition(this.position, new Position(100, 0))
+    }
 
-  public get statement() : Refinement | undefined {
-    return this._statement
-  }
+    public get statement(): Refinement | undefined {
+        return this._statement
+    }
 
-  public set statement(statement : Refinement | undefined) {
-    this._statement = statement
-  }
+    public set statement(statement: Refinement | undefined) {
+        this._statement = statement
+    }
 
-  public get statementRef() : ElementRef | undefined {
-    return this._statementRef
-  }
+    public get statementRef(): ElementRef | undefined {
+        return this._statementRef
+    }
 
-  public set statementRef(ref : ElementRef | undefined) {
-    this._statementRef = ref
-  }
+    public set statementRef(ref: ElementRef | undefined) {
+        this._statementRef = ref
+    }
 
 
-  public get weakPreCondition() : Condition {
-    return this._weakPreCondition
-  }
+    public get weakPreCondition(): Condition {
+        return this._weakPreCondition
+    }
 
-  public get strongPostCondition() : Condition {
-    return this._strongPostCondition;
-  }
+    public get strongPostCondition(): Condition {
+        return this._strongPostCondition;
+    }
 }

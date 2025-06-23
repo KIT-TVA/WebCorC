@@ -6,15 +6,6 @@
                         (click)="chooseRefinement('left')"
     >
     </app-refinement-widget>
-    <app-refinement-link *ngIf="leftStatementRef && leftStatement"  
-                        [linkedRefinement]="leftStatementRef"
-                        [onSubRefinementDragMove]="leftStatement.onDragMoveEmitter"
-                        [onSubRefinementDragEnd]="leftStatement.onDragEndEmitter"
-                        [onOriginRefinementDragMove]="onDragMoveEmitter"
-                        [onOriginRefinementDragEnd]="onDragEndEmitter"
-                        [scrollNotifier]="leftStatement.getRedrawNotifier()"
-                        [style.margin-top]="'auto'">
-    </app-refinement-link>
     <div style="position: relative; height: 100%; width: 230px;">
         <app-condition-editor [condition]="intermediateCondition" ></app-condition-editor>
     </div>
@@ -23,16 +14,6 @@
                         icon="add"
                         (click)="chooseRefinement('right')">
     </app-refinement-widget>
-    <app-refinement-link *ngIf="rightStatementRef && rightStatement"
-                     [linkedRefinement]="rightStatementRef"
-                     [onSubRefinementDragMove]="rightStatement.onDragMoveEmitter"
-                     [onSubRefinementDragEnd]="rightStatement.onDragEndEmitter"
-                     [onOriginRefinementDragMove]="onDragMoveEmitter"
-                     [onOriginRefinementDragEnd]="onDragEndEmitter"
-                     [scrollNotifier]="rightStatement.getRedrawNotifier()"
-                     [style.margin-top]="'auto'">
-    </app-refinement-link>
-
 </app-statement-base>
   
 <div style="height: 30px; width: 100%"></div>

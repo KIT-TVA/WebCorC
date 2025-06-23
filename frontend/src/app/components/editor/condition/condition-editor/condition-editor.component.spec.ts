@@ -18,7 +18,7 @@ describe('ConditionEditorComponent', () => {
     
     fixture = TestBed.createComponent(ConditionEditorComponent);
     component = fixture.componentInstance;
-    component.condition = new Condition(1)
+    component.condition.set(new Condition(""))
     fixture.detectChanges();
   });
 

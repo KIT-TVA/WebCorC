@@ -1,4 +1,4 @@
-<app-statement-base [refinement]="this">
+<app-statement-base [_node]="_node" [refinement]="this">
     <div class="statements">
         <div class="first-row">
             <div>
@@ -9,25 +9,17 @@
             </div>
         </div>
 
-        <div *ngFor="let statement of statements; let i = index" class="statement-container">
+        <div *ngFor="let guard of _node.guards; let i = index;" class="statement-container">
             <div class="guard">
-                <app-condition-editor [condition]="getGuardByIndex(i)" ></app-condition-editor>
+                <app-condition-editor [(condition)]="_node.guards[i]" ></app-condition-editor>
             </div>
             <div class="statement">
-                <app-refinement-widget *ngIf="!getStatementByIndex(i)"
+                <app-refinement-widget *ngIf="!_node.children[i]"
                                    text="Statement"
                                    icon="add"
                                    (click)="chooseRefinement(i)">
 
                 </app-refinement-widget>
-                <app-refinement-link *ngIf="getStatementElementsRefByIndex(i) && getStatementByIndex(i)"
-                                 [linkedRefinement]="getStatementElementsRefByIndex(i)"
-                                 [onSubRefinementDragMove]="getStatementByIndex(i).onDragMoveEmitter"
-                                 [onSubRefinementDragEnd]="getStatementByIndex(i).onDragEndEmitter"
-                                 [onOriginRefinementDragMove]="onDragMoveEmitter"
-                                 [onOriginRefinementDragEnd]="onDragEndEmitter"
-                                 [scrollNotifier]="getStatementByIndex(i).getRedrawNotifier()"
-                                 ></app-refinement-link>
             </div>
         </div>
 

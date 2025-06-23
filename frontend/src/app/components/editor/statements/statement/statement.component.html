@@ -2,7 +2,7 @@
   (cdkDragEnded)="onDragEnded($event)" #refinementBox>
 
   <div class="refinementBoxTitle" cdkDragHandle #boxTitle>
-    <p>{{refinement.getTitle()}} #{{refinement.id}}</p>
+    <p>{{refinement.getTitle()}} #{{0}}</p>
     <mat-icon *ngIf="!isRoot()" [style.cursor]="'pointer'" (click)="deleteRefinement()">delete</mat-icon>
   </div>
   
@@ -11,8 +11,8 @@
       <mat-drawer-container class="example-container" autosize>
         <mat-drawer #preconditionDrawer class="example-sidenav" mode="side">
           <div class="conditionParent">
-            <app-condition-editor [condition]="refinement.precondition"
-                            [editable]="refinement.isPreconditionEditable()"></app-condition-editor>
+            <app-condition-editor [(condition)]="_node.precondition"
+                            [editable]="_node.preconditionEditable()"></app-condition-editor>
           </div>
         </mat-drawer>
 
@@ -33,8 +33,8 @@
       <mat-drawer-container class="example-container" autosize>
         <mat-drawer #postconditionDrawer class="example-sidenav" mode="side" position="end">
           <div class="conditionParent">
-            <app-condition-editor [condition]="refinement.postcondition"
-                              [editable]="refinement.isPostConditionEditable()"></app-condition-editor>
+            <app-condition-editor [(condition)]="_node.postcondition"
+                              [editable]="_node.postconditionEditable()"></app-condition-editor>
           </div>
           
         </mat-drawer>

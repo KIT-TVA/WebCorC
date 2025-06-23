@@ -64,8 +64,7 @@
     <div id="editorHeightController"></div>
 
     <!-- Render container for the trees root -->
-    <ng-container *ngComponentOutlet="rootNode"></ng-container>
-
+    <app-statement-delegator *ngFor="let statement of statements; index as i;" [statement]="statement"></app-statement-delegator>
     <!-- Spawn for examples -->
     <ng-template #examplesSpawn></ng-template>
 

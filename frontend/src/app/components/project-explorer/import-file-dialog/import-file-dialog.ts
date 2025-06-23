@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { CbcFormulaMapperService } from '../../../services/project/mapper/cbc-formula-mapper.service';
-import { CBCFormula, ICBCFormula } from '../../../services/project/CBCFormula';
+import { CBCFormula, ICBCFormula } from '../../../types/CBCFormula';
 import { ProjectService } from '../../../services/project/project.service';
 import { ApiFileType } from '../../../services/project/types/api-elements';
 import { MatButtonModule } from '@angular/material/button';
@@ -62,22 +62,6 @@ export class ImportFileDialogComponent {
 
   }
 
-  private async handleCbcModelFile(file : File, nameSplitted : string[]) {
-
-    this._fileType = "diagram"
-
-    this._accepted = false
-    const content = await file.text()
-
-    this._treeNetworkService.conversionResponse.subscribe((formula : CBCFormula) => {
-      this._fileName = nameSplitted[0]
-      this._fileContent = formula
-      this._accepted = true
-    })
-
-    this._treeNetworkService.convertCBCModel(content)
-  }
-
 
   /* eslint-disable  @typescript-eslint/no-explicit-any */
   public async onFileSelected(event : any) {
@@ -91,7 +75,7 @@ export class ImportFileDialogComponent {
     const nameSplitted = file.name.split(".")
 
     if (nameSplitted.length == 2 && nameSplitted[1] == "cbcmodel") {
-      this.handleCbcModelFile(file , nameSplitted)
+      // Removed this.handleCbcModelFile(file , nameSplitted)
       return
     }
 

@@ -15,7 +15,9 @@ import {MatButtonModule} from "@angular/material/button";
 import {MatExpansionModule} from "@angular/material/expansion";
 import {MatListModule} from "@angular/material/list";
 import { Position } from '../../../../types/position';
-import { Statement } from '../../../../types/statements/statement';
+import { AbstractStatement } from '../../../../types/statements/abstract-statement';
+import {SelectionStatementNode} from "../../../../types/statements/nodes/selection-statement-node";
+import {AbstractStatementNode} from "../../../../types/statements/nodes/abstract-statement-node";
 
 /**
  * Component to present the statements.
@@ -37,6 +39,7 @@ export class StatementComponent implements AfterViewInit {
   private static readonly EDITOR_CONTAINER_EXPANSION = 200;
 
   @Input() public refinement!: Refinement;
+  @Input({required: true}) _node!: AbstractStatementNode;
 
   @ViewChild("preconditionDrawer") private preconditionDrawer!: MatDrawer;
   @ViewChild("postconditionDrawer") private postconditionDrawer!: MatDrawer;
@@ -54,13 +57,6 @@ export class StatementComponent implements AfterViewInit {
 
     // set the position to the saved position in the file
     this.refreshDragPosition()
-
-    if (this.refinement.isPreconditionEditable()) {
-      this.toggleConditionEditorView(false);
-    }
-    if (this.refinement.isPostConditionEditable()) {
-      this.toggleConditionEditorView(true);
-    }
 
     this.treeService.verificationResultNotifier.subscribe(
       verificationResult => this.setVerifcationState(verificationResult));
@@ -137,8 +133,10 @@ export class StatementComponent implements AfterViewInit {
     }
   }
 
-  private setVerifcationState(statement : Statement) {
-    if (this.refinement.id == statement.id) {
+  //TODO reimplement this
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private setVerifcationState(statement : AbstractStatement) {
+    /*if (this.refinement.id == statement.id) {
       this.refinement.proven = statement.proven
       if (this.refinement.proven) {
         this.boxTitleRef.nativeElement.style.backgroundColor = "rgb(140,182,60)";
@@ -147,7 +145,7 @@ export class StatementComponent implements AfterViewInit {
         this.boxTitleRef.nativeElement.style.backgroundColor = "rgb(163,34,35)";
         this.refinementBoxRef.nativeElement.style.borderColor = "rgb(163,34,35)";
       }
-    }
+    }*/
   }
 
   /**

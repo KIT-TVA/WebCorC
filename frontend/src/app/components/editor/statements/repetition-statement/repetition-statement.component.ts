@@ -1,5 +1,5 @@
-import {Component, ElementRef, ViewChild, ViewContainerRef} from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {Component, ElementRef, Input, ViewChild, ViewContainerRef} from '@angular/core';
+import {CommonModule} from '@angular/common';
 import {StatementComponent} from "../statement/statement.component";
 import {Refinement} from "../../../../types/refinement";
 import {TreeService} from "../../../../services/tree/tree.service";
@@ -14,8 +14,9 @@ import {MatDialog} from "@angular/material/dialog";
 import {ChooseRefinementComponent} from "../../../choose-refinement/choose-refinement.component";
 import {MatIconModule} from "@angular/material/icon";
 import {LinkComponent} from "../link/link.component";
-import { RepetitionStatement } from '../../../../types/statements/repetition-statement';
-import { Position } from '../../../../types/position';
+import {Position} from '../../../../types/position';
+import {RepetitionStatementNode} from "../../../../types/statements/nodes/repetition-statement-node";
+
 /**
  * Compoent in the Graphical Editor to represent an instance of {@link RepetitionStatement}
  */
@@ -27,181 +28,115 @@ import { Position } from '../../../../types/position';
     styleUrl: './repetition-statement.component.scss'
 })
 export class RepetitionStatementComponent extends Refinement {
-  private _invariantCondition : Condition;
-  private _guardCondition : Condition;
-  private _variantCondition : Condition;
+    @Input({required: true}) override _node!: RepetitionStatementNode;
+    private _invariantCondition: Condition;
+    private _guardCondition: Condition;
+    private _variantCondition: Condition;
 
-  private _loopStatement : Refinement | undefined;
-  private _loopStatementRef : ElementRef | undefined;
+    private _loopStatement: Refinement | undefined;
+    private _loopStatementRef: ElementRef | undefined;
 
-  @ViewChild("subComponentSpawn", {read: ViewContainerRef}) private componentSpawn!: ViewContainerRef;
+    @ViewChild("subComponentSpawn", {read: ViewContainerRef}) private componentSpawn!: ViewContainerRef;
 
-  public constructor(treeService : TreeService, private dialog : MatDialog) {
-    super(treeService);
-    this._invariantCondition = new Condition(this.id, "Invariant");
-    this._variantCondition = new Condition(this.id, "Variant");
-    this._guardCondition = new Condition(this.id, "Guard");
-    
-    // ensure to delete the loopStatement, when deleting
-    treeService.deletionNotifier.subscribe(refinement => {
-      if (refinement === this._loopStatement) {
-        this._loopStatement = undefined;
-        this._loopStatementRef!.nativeElement!.remove()
-      }
-    })
+    public constructor(treeService: TreeService, private dialog: MatDialog) {
+        super(treeService);
+        this._invariantCondition = new Condition("Invariant");
+        this._variantCondition = new Condition("Variant");
+        this._guardCondition = new Condition("Guard");
 
-   /**
-    * Todo: Find better fix for stopping the precondition propagation from the parent
-    * to this type of statement.
-    * Following lines forces the content to be correct, but the users sees the content of 
-    * the precondition for a split second
-    */
-    super.precondition.contentChangeObservable.subscribe(() => {
-      super.precondition.content = "((" + this._invariantCondition.content + ") & (" + this._guardCondition.content + "))"
-    })
+        // ensure to delete the loopStatement, when deleting
+        treeService.deletionNotifier.subscribe(refinement => {
+            if (refinement === this._loopStatement) {
+                this._loopStatement = undefined;
+                this._loopStatementRef!.nativeElement!.remove()
+            }
+        })
 
-    /**
-     * Propagate the changes of the invariant conditon to the pre- and postcondition of this and the loop 
-     * statement
-     */
-    this._invariantCondition.contentChangeObservable.subscribe(() => {
-      super.precondition.content = "((" + this._invariantCondition.content + ") & (" + this._guardCondition.content + "))"
-      super.postcondition.content = "(" + this._invariantCondition.content + ")"
-
-      if (this._loopStatement) {
-        this._loopStatement.precondition.content = super.precondition.content
-        this._loopStatement.precondition.originId = this.id
-      }
-
-      if (this._loopStatement) {
-        this._loopStatement.postcondition.content = super.postcondition.content
-        this._loopStatement.postcondition.originId = this.id
-      }
-    })
-
-    /**
-     * Propagate the changes of the guard condition to the precondition and the loop statement
-     */
-    this._guardCondition.contentChangeObservable.subscribe(() => {
-      super.precondition.content = "((" + this._invariantCondition.content + ") & (" + this._guardCondition.content + "))"
-      
-      if (this._loopStatement) {
-        this._loopStatement.precondition.content = super.precondition.content
-        this._loopStatement.precondition.originId = this.id
-      }
-    })
-  }
-
-  public override getTitle(): string {
-    return "Repetition";
-  }
-
-  /**
-   * Open {@link ChooseRefinementComponent} and add the child statement to the dom
-   */
-  public chooseRefinement() {
-    const dialogRef = this.dialog.open(ChooseRefinementComponent);
-    
-    dialogRef.afterClosed().subscribe(result => {
-      if (!result) {
-        return
-      }
-
-      const componentRef = this.componentSpawn.createComponent(result);
-      const createdSubComponent = componentRef.instance as Refinement;
-
-      this._loopStatementRef = componentRef.location;
-      this._loopStatement = createdSubComponent;
-      this._loopStatement.precondition.content = super.precondition.content
-      this._loopStatement.postcondition.content = super.postcondition.content
-
-      this.treeService.redrawNotifier.next()
-    })
-  }
-
-  public override refreshLinkState(): void {
-    super.refreshLinkState()
-    if (!this.loopStatement) return
-    this.loopStatement.refreshLinkState()
-  }
-
-  public override resetPosition(position: Position, offset : Position): void {
-    if (offset.xinPx < 0) {
-      offset.xinPx = offset.xinPx * 3.5 
     }
-    
-    this.position.set(position)
-    this.position.add(offset)
 
-    this._loopStatement?.resetPosition(this.position, new Position(200, 0))
-  }
+    public override getTitle(): string {
+        return "Repetition";
+    }
 
-  public get loopStatement() : Refinement | undefined {
-    return this._loopStatement;
-  }
+    /**
+     * Open {@link ChooseRefinementComponent} and add the child statement to the dom
+     */
+    public chooseRefinement() {
+        const dialogRef = this.dialog.open(ChooseRefinementComponent);
 
-  public set loopStatement(statement : Refinement | undefined) {
-    this._loopStatement = statement
-  } 
+        dialogRef.afterClosed().subscribe(result => {
+            if (!result) {
+                return
+            }
 
-  public get loopStatementRef() : ElementRef | undefined {
-    return this._loopStatementRef;
-  }
+            // Spawn the loop statement
+            this.treeService.redrawNotifier.next()
+        })
+    }
 
-  public set loopStatementRef(ref : ElementRef | undefined) {
-    this._loopStatementRef = ref
-  } 
+    public override refreshLinkState(): void {
+        super.refreshLinkState()
+        if (!this.loopStatement) return
+        this.loopStatement.refreshLinkState()
+    }
 
-  public get invariantCondition() : Condition {
-    return this._invariantCondition;
-  }
+    public override resetPosition(position: Position, offset: Position): void {
+        if (offset.xinPx < 0) {
+            offset.xinPx = offset.xinPx * 3.5
+        }
 
-  public set invariantCondition(condition : Condition) {
-    this._invariantCondition = condition
-  }
+        this.position.set(position)
+        this.position.add(offset)
 
-  public get variantCondition() : Condition {
-    return this._variantCondition;
-  }
+        this._loopStatement?.resetPosition(this.position, new Position(200, 0))
+    }
 
-  public set variantCondition(condition : Condition) {
-    this._variantCondition = condition
-  }
+    public get loopStatement(): Refinement | undefined {
+        return this._loopStatement;
+    }
 
-  public get guardCondition() : Condition {
-    return this._guardCondition;
-  }
+    public set loopStatement(statement: Refinement | undefined) {
+        this._loopStatement = statement
+    }
 
-  public set guardCondition(condition : Condition) {
-    this._guardCondition = condition
-  }
+    public get loopStatementRef(): ElementRef | undefined {
+        return this._loopStatementRef;
+    }
 
-  /**
-   * Save the state of this component to the corresponding data only class 
-   * @see RepetitionStatement
-   * @returns New Instance of data only Repetition Statement class
-   */
-  public override export() {
-    return new RepetitionStatement(
-      this.getTitle(),
-      this.id,
-      this.proven,
-      false,
-      // Todo: Implement annotation feature or drop comment attribute 
-      "",
-      this.precondition.export(),
-      this.postcondition.export(),
-      super.position,
-      // Todo: Save Statement Proven Statement
-      false,
-      // Todo: Save Statement Proven Statement
-      false,
-      // Todo: Save Statement Proven Statement
-      false,
-      this.invariantCondition.export(),
-      this.variantCondition.export(),
-      this.guardCondition.export(),
-      this.loopStatement?.export()
-    )
-  }
+    public set loopStatementRef(ref: ElementRef | undefined) {
+        this._loopStatementRef = ref
+    }
+
+    public get invariantCondition(): Condition {
+        return this._invariantCondition;
+    }
+
+    public set invariantCondition(condition: Condition) {
+        this._invariantCondition = condition
+    }
+
+    public get variantCondition(): Condition {
+        return this._variantCondition;
+    }
+
+    public set variantCondition(condition: Condition) {
+        this._variantCondition = condition
+    }
+
+    public get guardCondition(): Condition {
+        return this._guardCondition;
+    }
+
+    public set guardCondition(condition: Condition) {
+        this._guardCondition = condition
+    }
+
+    /**
+     * Save the state of this component to the corresponding data only class
+     * @see RepetitionStatement
+     * @returns New Instance of data only Repetition Statement class
+     */
+    public override export() {
+        return undefined
+    }
 }

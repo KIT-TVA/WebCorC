@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { BehaviorSubject, Observable, Subject, catchError, of } from 'rxjs';
 import { ConsoleService } from '../../console/console.service';
-import { CBCFormula, ICBCFormula } from '../CBCFormula';
+import { CBCFormula, ICBCFormula } from '../../../types/CBCFormula';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { NetProject } from './NetProject';
 import { ApiDiagrammFile, ApiDirectory, ApiTextFile, Inode } from '../types/api-elements';

@@ -20,18 +20,18 @@ import {MatTooltipModule} from "@angular/material/tooltip";
 import {MatMenuModule} from "@angular/material/menu";
 import {GlobalConditionsComponent} from './global-conditions/global-conditions.component';
 import {ProjectService} from '../../services/project/project.service';
-import {CBCFormula} from '../../services/project/CBCFormula';
+import {CBCFormula} from '../../types/CBCFormula';
 import {Router} from '@angular/router';
-import {Position} from '../../types/position';
 import {OptionsComponent} from './options/options.component';
 import {EditorService} from '../../services/editor/editor.service';
-import {SimpleStatement} from '../../types/statements/simple-statement';
 import {RenamingComponent} from './renaming/renaming.component';
 import {SimpleStatementComponent} from './statements/simple-statement/simple-statement.component';
 import {MatTab, MatTabGroup, MatTabLabel} from "@angular/material/tabs";
 import {AiChatComponent} from "../ai-chat/ai-chat.component";
 import {ConsoleComponent} from "../console/console.component";
 import {MatDrawer, MatDrawerContainer} from "@angular/material/sidenav";
+import {IAbstractStatement} from "../../types/statements/abstract-statement";
+import {StatementDelegatorComponent} from "./statements/statement-delegator/statement-delegator.component";
 
 /**
  * Component to edit {@link CBCFormula} by editing a grahical representation based of the statement components like {@link SimpleStatementComponent}.
@@ -41,7 +41,7 @@ import {MatDrawer, MatDrawerContainer} from "@angular/material/sidenav";
  */
 @Component({
     selector: 'app-editor',
-  imports: [CommonModule, MatButtonModule, MatIconModule, MatExpansionModule, VariablesComponent, MatTooltipModule, MatMenuModule, GlobalConditionsComponent, OptionsComponent, RenamingComponent, MatTab, MatTabGroup, MatTabLabel, AiChatComponent, ConsoleComponent, MatDrawerContainer, MatDrawer],
+  imports: [CommonModule, MatButtonModule, MatIconModule, MatExpansionModule, VariablesComponent, MatTooltipModule, MatMenuModule, GlobalConditionsComponent, OptionsComponent, RenamingComponent, MatTab, MatTabGroup, MatTabLabel, AiChatComponent, ConsoleComponent, MatDrawerContainer, MatDrawer, StatementDelegatorComponent],
     templateUrl: './editor.component.html',
     styleUrl: './editor.component.scss'
 })
@@ -57,6 +57,8 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
 
   private _urn : string = ''
   private _viewInit : boolean = false
+
+  protected statements: IAbstractStatement[] = []
 
   /**
    * Constructor for dependency injection of the services
@@ -99,7 +101,6 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     if (this.treeService.rootNode) {
       child = (this.treeService.rootNode as SimpleStatementComponent).statement
     }
-    Refinement.resetIDs(1)
     this._rootNode = SimpleStatementComponent
 
     // if the child is defined delete the child and all grandchildren and 
@@ -133,8 +134,6 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
         child = (this.treeService.rootNode as SimpleStatementComponent).statement
       }
 
-      Refinement.resetIDs(1)
-      
       if (child) {
         this.treeService.deletionNotifier.next(child)
       }
@@ -153,18 +152,10 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
    */
   private saveContentToFile() : void {
     // create a new Formula to save 
-    const formula = new CBCFormula()
-    if (this.treeService.rootNode) {
-
-      const rootNode = (this.treeService.rootNode as SimpleStatementComponent).export()
-      formula.statement = (rootNode as SimpleStatement).refinement
-      formula.preCondition = rootNode.preCondition
-      formula.postCondition = rootNode.postCondition
-      formula.javaVariables = this.treeService.variables
-      formula.globalConditions = this.treeService.conditions
-      formula.position = rootNode.position
-      formula.proven = rootNode.proven
-      formula.renaming = this.treeService.renaming
+    let formula = new CBCFormula()
+    if (this.treeService.rootFormula) {
+      /*TODO Implement some logic to save state of graphical editor to local model, perhaps somewhere else*/
+      formula = this.treeService.rootFormula;
     }
 
     if (this._urn !== '' && this.treeService.rootNode) {
@@ -174,19 +165,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   }
 
   private export() {
-    const formula = new CBCFormula()
-    if (this.treeService.rootNode) {
-      const rootNode = (this.treeService.rootNode as SimpleStatementComponent).export()
-      formula.statement = (rootNode as SimpleStatement).refinement
-      formula.preCondition = rootNode.preCondition
-      formula.postCondition = rootNode.postCondition
-      formula.javaVariables = this.treeService.variables
-      formula.globalConditions = this.treeService.conditions
-      formula.position = rootNode.position
-      formula.proven = rootNode.proven
-      formula.renaming = this.treeService.renaming
-    }
-
+    const formula = this.treeService.rootFormula
     const urnSplit = this._urn.split("/")
     const structure = JSON.stringify(formula, null, 2);
     const blob = new Blob([structure], {type: "application/json"});
@@ -206,7 +185,6 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     this.variables.removeAllVariables()
     this.conditions.removeAllConditions()
     this.renaming.removeAllRenaming()
-    Refinement.resetIDs(2)
 
     let newFormula : CBCFormula | undefined = undefined
     try {
@@ -219,7 +197,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
 
         this.projectService.dataChange.subscribe(async () => {
           newFormula = await this.projectService.getFileContent(this._urn) as CBCFormula
-          this.loadFileContent()
+          await this.loadFileContent()
         })
 
         this.projectService.downloadWorkspace()
@@ -229,50 +207,20 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
 
     // if the file is not empty load content
     if (newFormula && newFormula.statement) {
-
-      // manually set the attributes of the root node
-      const root = this.rootNodeOutlet['_componentRef'].instance as SimpleStatementComponent
-      root.statementElementRef = undefined
-      root.precondition.content = newFormula.preCondition.content
-      root.postcondition.content = newFormula.postCondition.content
-      root.position = newFormula.position
-      root.proven = newFormula.proven
-      // redraw the root element at the correct position
-      root.getRedrawNotifier().next()
-      
-      // import the tree under the root statement recursively
-      const newChild = (newFormula.statement as SimpleStatement).toComponent(this.examplesSpawn)
-
-      if (newChild) {
-        root.statement = newChild?.[0]
-        root.statementElementRef = newChild?.[1].location
-      }
-
-      if (root.statement?.proven) {
-        root.proven = root.statement.proven
-        this.treeService.verificationResultNotifier.next(root.export())
-      }
-
       // redraw all links between the components
-      setTimeout(() => root.refreshLinkState(), 5)
+      // TODO: Reimplement
+
+      this.statements = this.treeService.statements()
 
       this.variables.importVariables(newFormula.javaVariables)
       this.conditions.importConditions(newFormula.globalConditions)
-      this.renaming.importRenaming(newFormula.renaming)
+      this.renaming.importRenaming(newFormula.renamings)
 
       return
     }
     
     // file is empty, reset rootNode to default values
-    this._rootNode = SimpleStatementComponent
-    const root =  this.rootNodeOutlet['_componentRef'].instance as SimpleStatementComponent
-    root.precondition.content = ""
-    root.postcondition.content = ""
-    root.position = new Position(this.treeService.editorWidth / 2 - 450, 10)
-    root.proven = false
-
-    this.treeService.resetPositions()
-    this.treeService.resetVerifyNotifier.next()
+    //TODO: reimplement
   }
 
   /**

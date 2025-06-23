@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subject, first} from 'rxjs';
-import { CBCFormula } from './CBCFormula';
+import { CBCFormula } from '../../types/CBCFormula';
 import { NetworkProjectService } from './network/network-project.service';
 import { CodeFile, DiagramFile, ProjectDirectory, ProjectElement, ProjectFile, RenameProjectElement } from './types/project-elements';
 import { ProjectElementsMapperService } from './types/project-elements-mapper.service';

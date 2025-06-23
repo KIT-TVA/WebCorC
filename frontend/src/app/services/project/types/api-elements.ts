@@ -1,4 +1,4 @@
-import { CBCFormula } from "../CBCFormula"
+import { CBCFormula } from "../../../types/CBCFormula"
 
 /**
  * Enum of inode type

@@ -1,4 +1,4 @@
-import { CBCFormula } from "../CBCFormula";
+import { CBCFormula } from "../../../types/CBCFormula";
 
 /**
  * Interface to implement for a Element in the Filetree of a project
