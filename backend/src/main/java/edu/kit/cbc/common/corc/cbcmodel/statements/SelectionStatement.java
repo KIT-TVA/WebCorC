@@ -34,8 +34,9 @@ public class SelectionStatement extends AbstractStatement {
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toSet());
 
-            System.out.println("[ERROR] The proof of selection statement \"" + this.getName() + "\" failed, because of the following "
-                + "commands not being proven: ");
+            System.out.println(
+                "[ERROR] The proof of selection statement \"" + this.getName() + "\" failed, because of the following "
+                    + "commands not being proven: ");
             failedProofs.forEach(stmt -> System.out.format("%t-%s%n", stmt.getName()));
 
             this.setProven(false);
@@ -46,7 +47,6 @@ public class SelectionStatement extends AbstractStatement {
         if (this.isPreProven()) {
             return true;
         }
-        System.out.println("Now start the proof of the guards");
 
         List<Condition> renamedGuards = this.getGuards().stream()
             .map(guard -> guard.rename(proofContext.getCbCFormula().getRenamings()))
@@ -55,7 +55,11 @@ public class SelectionStatement extends AbstractStatement {
         Condition joinedGuards = Condition.fromListToConditionOr(renamedGuards);
 
         KeYProofGenerator generator = new KeYProofGenerator(proofContext);
-        KeYProof proof = generator.generateImplication(this.getPreCondition(), joinedGuards, this);
+        KeYProof proof = generator.generateImplicationProof(
+            this.getPreCondition().rename(proofContext.getCbCFormula().getRenamings()),
+            joinedGuards,
+            this
+        );
 
         this.isPreProven = proof.execute();
 

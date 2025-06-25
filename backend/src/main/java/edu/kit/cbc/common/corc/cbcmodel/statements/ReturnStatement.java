@@ -8,6 +8,6 @@ public class ReturnStatement extends AbstractStatement {
 
     @Override
     public boolean prove(ProofContext proofContext) {
-        return false;
+        throw new UnsupportedOperationException("Proving a Return Statement is not yet supported by this kernel");
     }
 }

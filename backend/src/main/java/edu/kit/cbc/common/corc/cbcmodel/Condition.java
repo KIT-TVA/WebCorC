@@ -10,6 +10,7 @@ import lombok.Data;
 public class Condition implements Representable {
 
     private static final String OR_SEPARATOR = " | ";
+    private static final String AND_SEPARATOR = " & ";
     private static final String BRACKETS = "(%s)";
     private static final String BOOLEAN_TYPE_NAME = "boolean";
     private static final String BOOLEAN_REPLACEMENT = "TRUE=";
@@ -46,6 +47,14 @@ public class Condition implements Representable {
     }
 
     public static Condition fromListToConditionOr(List<Condition> conditions) {
+        return fromListToSeparated(conditions, OR_SEPARATOR);
+    }
+
+    public static Condition fromListToConditionAnd(List<Condition> conditions) {
+        return fromListToSeparated(conditions, AND_SEPARATOR);
+    }
+
+    private static Condition fromListToSeparated(List<Condition> conditions, String separator) {
         String joinedConditionString = conditions.stream()
             .map(Condition::getCondition)
             .map(cond -> String.format(BRACKETS, cond))

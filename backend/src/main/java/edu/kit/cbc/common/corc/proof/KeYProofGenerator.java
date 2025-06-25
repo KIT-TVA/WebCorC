@@ -21,22 +21,30 @@ public final class KeYProofGenerator {
     }
 
 
-    public KeYProof generateImplication(Condition base, Condition implied, AbstractStatement parent) {
-        CbCFormula formula = this.proofContext.getCbCFormula();
+    public KeYProof generateVariantProof(Condition variant, Condition invariant, Condition guard, AbstractStatement parent) {
+        KeYProofBuilder proofBuilder = this.generateBasicProof(parent);
 
-        KeYProofBuilder proofBuilder = KeYProof.builder();
-        proofBuilder.programVariables(filterProgramVariables(formula.getJavaVariables()));
+        List<JavaVariable> javaVariables = new ArrayList<>(this.proofContext.getCbCFormula().getJavaVariables());
+        javaVariables.add(new JavaVariable("int variant", JavaVariableKind.LOCAL));
+        proofBuilder.programVariables(filterProgramVariables(javaVariables));
 
-        proofBuilder.javaSrcFiles(this.proofContext.getJavaSrcFiles());
-        proofBuilder.includedFiles(this.proofContext.getIncludeFiles());
-        proofBuilder.existingProofFiles(this.proofContext.getExistingProofFiles());
-        proofBuilder.proofFolder(this.proofContext.getProofFolder());
-        proofBuilder.globalConditions(new ArrayList<>());
+        proofBuilder.preCondition(Condition.fromListToConditionAnd(List.of(invariant, guard)));
+        //TODO: More on Variants. Code Generation for Loop Body. Assigns in KeYHeader?
 
+        return proofBuilder.build();
+    }
+
+    /**
+     * Generates a KeY proof that proves the implication base => implied.
+     * @param base the base of the implication
+     * @param implied the condition that is implied by base
+     * @param parent the parent statement, which will be used for naming
+     * @return the KeY proof generated
+     */
+    public KeYProof generateImplicationProof(Condition base, Condition implied, AbstractStatement parent) {
+        KeYProofBuilder proofBuilder = this.generateBasicProof(parent);
         proofBuilder.statementName(parent.getName() + "_implication");
-
         proofBuilder.preCondition(base);
-        proofBuilder.programStatement("");
         proofBuilder.postCondition(implied);
 
         return proofBuilder.build();
@@ -50,7 +58,14 @@ public final class KeYProofGenerator {
      * @param statement the statement that we want the KeYProof to generate for
      * @return the KeY proof generated from the statement
      */
-    public KeYProof generate(Statement statement) {
+    public KeYProof generateBasicProof(Statement statement) {
+        KeYProofBuilder proofBuilder =  new KeYProofBuilder();
+        proofBuilder.programStatement(statement.getProgramStatement());
+        return proofBuilder.build();
+    }
+
+    private KeYProofBuilder generateBasicProof(AbstractStatement statement) {
+
         CbCFormula formula = this.proofContext.getCbCFormula();
         List<Renaming> renamings = formula.getRenamings();
         List<Condition> globalConditions = formula.getGlobalConditions();
@@ -67,16 +82,17 @@ public final class KeYProofGenerator {
 
         proofBuilder.statementName(statement.getName());
 
+        List<Condition> renamedGlobalConditions = globalConditions.stream()
+            .map(cond -> cond.rename(renamings)).toList();
+        proofBuilder.globalConditions(renamedGlobalConditions);
+
         proofBuilder.preCondition(statement.getPreCondition().rename(renamings));
         proofBuilder.postCondition(statement.getPostCondition().rename(renamings));
 
-        List<Condition> renamedGlobalConditions = globalConditions.stream()
-            .map(cond -> cond.rename(renamings)).toList();
 
-        proofBuilder.globalConditions(renamedGlobalConditions);
-        proofBuilder.programStatement(statement.getProgramStatement());
+        proofBuilder.programStatement("");
 
-        return proofBuilder.build();
+        return proofBuilder;
     }
 
     /**
