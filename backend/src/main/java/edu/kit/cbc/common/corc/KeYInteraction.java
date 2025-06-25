@@ -71,8 +71,6 @@ public class KeYInteraction {
                 Path parentDir = location.getParentFile().toPath();
                 Path proofLocation = parentDir.resolve(location.getName().split("\\.")[0] + ".proof");
                 proof.saveToFile(proofLocation.toFile());
-
-                // printStatistics(proof, inlining);
             } catch (IOException e) {
                 e.printStackTrace();
             }
