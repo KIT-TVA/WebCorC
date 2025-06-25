@@ -5,8 +5,10 @@ import edu.kit.cbc.common.corc.cbcmodel.Condition;
 import edu.kit.cbc.common.corc.cbcmodel.JavaVariable;
 import edu.kit.cbc.common.corc.cbcmodel.JavaVariableKind;
 import edu.kit.cbc.common.corc.cbcmodel.Renaming;
+import edu.kit.cbc.common.corc.cbcmodel.statements.AbstractStatement;
 import edu.kit.cbc.common.corc.cbcmodel.statements.Statement;
 import edu.kit.cbc.common.corc.proof.KeYProof.KeYProofBuilder;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -16,6 +18,28 @@ public final class KeYProofGenerator {
 
     public KeYProofGenerator(ProofContext proofContext) {
         this.proofContext = proofContext;
+    }
+
+
+    public KeYProof generateImplication(Condition base, Condition implied, AbstractStatement parent) {
+        CbCFormula formula = this.proofContext.getCbCFormula();
+
+        KeYProofBuilder proofBuilder = KeYProof.builder();
+        proofBuilder.programVariables(filterProgramVariables(formula.getJavaVariables()));
+
+        proofBuilder.javaSrcFiles(this.proofContext.getJavaSrcFiles());
+        proofBuilder.includedFiles(this.proofContext.getIncludeFiles());
+        proofBuilder.existingProofFiles(this.proofContext.getExistingProofFiles());
+        proofBuilder.proofFolder(this.proofContext.getProofFolder());
+        proofBuilder.globalConditions(new ArrayList<>());
+
+        proofBuilder.statementName(parent.getName() + "_implication");
+
+        proofBuilder.preCondition(base);
+        proofBuilder.programStatement("");
+        proofBuilder.postCondition(implied);
+
+        return proofBuilder.build();
     }
 
     /**

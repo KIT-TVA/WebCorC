@@ -23,7 +23,6 @@ public final class FileUtil {
                 throw new RuntimeException(e);
             }
         });
-
         Files.delete(directory);
     }
 }

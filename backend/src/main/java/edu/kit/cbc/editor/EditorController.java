@@ -72,6 +72,10 @@ public class EditorController {
         Path proofFolder = Files.createTempDirectory(projectId.isPresent() ? "proof_" + projectId.get() : "proof");
 
         context.proofFolder(proofFolder);
+        context.includeFiles(new ArrayList<>());
+        context.javaSrcFiles(new ArrayList<>());
+        context.existingProofFiles(new ArrayList<>());
+
         if (projectId.isPresent()) {
             List<Path> includeFiles = filesController.retrieveFiles(projectId.get(), ".key", "include");
             List<Path> javaSrcFiles = filesController.retrieveFiles(projectId.get(), ".java", "javaSrc");
@@ -86,8 +90,7 @@ public class EditorController {
             context.existingProofFiles(existingKeyFiles);
         }
 
-        formula.getStatement().prove(context.build());
-
+        formula.setProven(formula.getStatement().prove(context.build()));
 
         if (projectId.isPresent()) {
             List<Path> proofFiles;
