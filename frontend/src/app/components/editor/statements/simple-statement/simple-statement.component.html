@@ -13,14 +13,6 @@
                                (click)="chooseRefinement()">
         </app-refinement-widget>
         <p *ngIf="statement" [style.width]="'100px'" [style.textAlign]="'center'"> Statement </p>
-        <app-refinement-link *ngIf="statementElementRef && statement"
-                             [linkedRefinement]="statementElementRef"
-                             [onSubRefinementDragMove]="statement.onDragMoveEmitter"
-                             [onSubRefinementDragEnd]="statement.onDragEndEmitter"
-                             [onOriginRefinementDragMove]="onDragMoveEmitter"
-                             [onOriginRefinementDragEnd]="onDragEndEmitter"
-                             [scrollNotifier]="statement.getRedrawNotifier()"
-                             [style.margin-top]="'auto'"></app-refinement-link>
     </div>
 </app-statement-base>
 <div style="height: 30px; width: 100%;"></div>

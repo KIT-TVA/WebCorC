@@ -13,7 +13,6 @@ import {MatInputModule} from "@angular/material/input";
 import {MatDialog} from "@angular/material/dialog";
 import {ChooseRefinementComponent} from "../../../choose-refinement/choose-refinement.component";
 import {MatIconModule} from "@angular/material/icon";
-import {LinkComponent} from "../link/link.component";
 import {Position} from '../../../../types/position';
 import {SkipStatementNode} from "../../../../types/statements/nodes/skip-statement-node";
 
@@ -23,7 +22,7 @@ import {SkipStatementNode} from "../../../../types/statements/nodes/skip-stateme
 @Component({
     selector: 'app-strong-weak-statement',
     imports: [CommonModule, StatementComponent, MatGridListModule,
-        RefinementWidgetComponent, ConditionEditorComponent, FormsModule, MatFormFieldModule, MatInputModule, MatIconModule, LinkComponent],
+        RefinementWidgetComponent, ConditionEditorComponent, FormsModule, MatFormFieldModule, MatInputModule, MatIconModule],
     templateUrl: './strong-weak-statement.component.html',
     styleUrl: './strong-weak-statement.component.scss'
 })

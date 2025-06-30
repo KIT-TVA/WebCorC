@@ -1,15 +1,15 @@
 
 <app-statement-base [_node]="_node" [refinement]="this">
-    <app-refinement-widget *ngIf="!leftStatement"
+    <app-refinement-widget *ngIf="!_node.firstStatementNode"
                         text="Left"
                         icon="add"
                         (click)="chooseRefinement('left')"
     >
     </app-refinement-widget>
     <div style="position: relative; height: 100%; width: 230px;">
-        <app-condition-editor [condition]="intermediateCondition" ></app-condition-editor>
+        <app-condition-editor [(condition)]="_node.intermediateCondition" ></app-condition-editor>
     </div>
-    <app-refinement-widget *ngIf="!rightStatement"
+    <app-refinement-widget *ngIf="!_node.secondStatementNode"
                         text="Right"
                         icon="add"
                         (click)="chooseRefinement('right')">

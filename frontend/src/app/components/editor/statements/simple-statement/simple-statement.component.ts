@@ -12,7 +12,6 @@ import {MatInputModule} from "@angular/material/input";
 import {MatDialog} from "@angular/material/dialog";
 import {ChooseRefinementComponent} from "../../../choose-refinement/choose-refinement.component";
 import {MatIconModule} from "@angular/material/icon";
-import {LinkComponent} from "../link/link.component";
 import {Position} from '../../../../types/position';
 import {AbstractStatement} from "../../../../types/statements/abstract-statement";
 import {SimpleStatementNode} from "../../../../types/statements/nodes/simple-statement-node";
@@ -24,7 +23,7 @@ import {SimpleStatementNode} from "../../../../types/statements/nodes/simple-sta
 @Component({
     selector: 'app-simple-statement',
     imports: [CommonModule, StatementComponent, MatGridListModule,
-        RefinementWidgetComponent, ConditionEditorComponent, FormsModule, MatFormFieldModule, MatInputModule, MatIconModule, LinkComponent, ConditionEditorComponent],
+        RefinementWidgetComponent, ConditionEditorComponent, FormsModule, MatFormFieldModule, MatInputModule, MatIconModule, ConditionEditorComponent],
     templateUrl: './simple-statement.component.html',
     styleUrl: './simple-statement.component.scss'
 })

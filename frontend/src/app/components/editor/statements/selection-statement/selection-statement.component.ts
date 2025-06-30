@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, ViewChild, ViewContainerRef} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {StatementComponent} from "../statement/statement.component";
 import {Refinement} from "../../../../types/refinement";
@@ -6,7 +6,6 @@ import {TreeService} from "../../../../services/tree/tree.service";
 import {MatGridListModule} from "@angular/material/grid-list";
 import {RefinementWidgetComponent} from "../../../../widgets/refinement-widget/refinement-widget.component";
 import {ConditionEditorComponent} from "../../condition/condition-editor/condition-editor.component";
-import {Condition} from "../../../../types/condition/condition";
 import {FormsModule} from "@angular/forms";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
@@ -17,6 +16,7 @@ import {MatButtonModule} from '@angular/material/button';
 import {AbstractStatement} from '../../../../types/statements/abstract-statement';
 import {Position} from '../../../../types/position';
 import {SelectionStatementNode} from "../../../../types/statements/nodes/selection-statement-node";
+import {createEmptyStatementNode} from "../../../../types/statements/nodes/createStatementNode";
 
 /**
  * Component in the graphical editor to represent the {@link SelectionStatement}
@@ -38,20 +38,11 @@ export class SelectionStatementComponent extends Refinement {
         return undefined
     }
 
-    private _statements: (Refinement | undefined)[]
-    private _guards: Condition[]
-
-    private _statementsElementRefs: (ElementRef | undefined)[]
-
-    @ViewChild("subComponentSpawn", {read: ViewContainerRef}) private componentSpawn!: ViewContainerRef;
 
     public constructor(treeService: TreeService, private dialog: MatDialog) {
         super(treeService)
 
         // ensure at least one element is in the array to ensure rendering without errors
-        this._guards = [new Condition("guard #" + 0)]
-        this._statements = [undefined]
-        this._statementsElementRefs = []
     }
 
 
@@ -77,13 +68,6 @@ export class SelectionStatementComponent extends Refinement {
     public override resetPosition(position: Position, offset: Position): void {
         this.position.set(position)
         this.position.add(offset)
-
-
-        for (let i = this._statements.length; i > -1; i--) {
-            if (this._node) {
-                this._statements[i]?.resetPosition(this.position, new Position(600, (this._statements.length - i + 2) * -100))
-            }
-        }
     }
 
     /**
@@ -98,8 +82,9 @@ export class SelectionStatementComponent extends Refinement {
             if (!result) {
                 return
             }
-            this.componentSpawn.createComponent(result);
-// TODO: spawn subcomponent
+            const newNode = createEmptyStatementNode(result, this._node);
+            this._node.children[index] = newNode;
+            this.treeService.addStatementNode(newNode)
         })
 
         setTimeout(() => this.refreshLinkState(), 5)

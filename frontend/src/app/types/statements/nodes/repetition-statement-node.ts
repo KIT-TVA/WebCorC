@@ -1,12 +1,15 @@
 import {AbstractStatementNode} from "./abstract-statement-node";
 import {IRepetitionStatement} from "../repetition-statement";
-import {signal, Signal, WritableSignal} from "@angular/core";
+import {signal, WritableSignal} from "@angular/core";
 import {ICondition} from "../../condition/condition";
 import {createStatementNode} from "./createStatementNode";
 
 export class RepetitionStatementNode extends AbstractStatementNode {
     public loopStatementNode: AbstractStatementNode | undefined
-    public guard: Signal<ICondition>
+    override statement!: IRepetitionStatement
+    public guard: WritableSignal<ICondition>
+    public invariant: WritableSignal<ICondition>
+    public variant: WritableSignal<ICondition>
 
     constructor(
         statement: IRepetitionStatement,
@@ -14,6 +17,8 @@ export class RepetitionStatementNode extends AbstractStatementNode {
     ) {
         super(statement, parent);
         this.guard = signal(statement.guard)
+        this.invariant = signal(statement.invariant)
+        this.variant = signal(statement.variant)
         if (statement.loopStatement) {
             this.loopStatementNode = createStatementNode(statement.loopStatement, this)
             this.children.push(this.loopStatementNode)
