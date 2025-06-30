@@ -13,7 +13,6 @@ import {MatInputModule} from "@angular/material/input";
 import {MatDialog} from "@angular/material/dialog";
 import {ChooseRefinementComponent} from "../../../choose-refinement/choose-refinement.component";
 import {MatIconModule} from "@angular/material/icon";
-import {LinkComponent} from "../link/link.component";
 import {MatButtonModule} from '@angular/material/button';
 import {AbstractStatement} from '../../../../types/statements/abstract-statement';
 import {Position} from '../../../../types/position';
@@ -28,12 +27,12 @@ import {SelectionStatementNode} from "../../../../types/statements/nodes/selecti
 @Component({
     selector: 'app-selection-statement',
     imports: [CommonModule, StatementComponent, MatGridListModule,
-        RefinementWidgetComponent, ConditionEditorComponent, FormsModule, MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule, LinkComponent, ConditionEditorComponent],
+        RefinementWidgetComponent, ConditionEditorComponent, FormsModule, MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule, ConditionEditorComponent],
     templateUrl: './selection-statement.component.html',
     styleUrl: './selection-statement.component.scss'
 })
 export class SelectionStatementComponent extends Refinement {
-    @Input({required: true}) override _node!: SelectionStatementNode;
+    @Input({required: true}) _node!: SelectionStatementNode;
 
     override export(): AbstractStatement | undefined {
         return undefined

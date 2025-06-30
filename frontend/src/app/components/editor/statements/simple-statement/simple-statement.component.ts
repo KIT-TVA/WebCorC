@@ -36,7 +36,7 @@ export class SimpleStatementComponent extends Refinement {
 
     private _statementElementRef: ElementRef | undefined;
 
-    @Input({required: true}) override _node! : SimpleStatementNode;
+    @Input({required: true}) _node! : SimpleStatementNode;
 
     @ViewChild("subComponentSpawn", {read: ViewContainerRef}) private componentSpawn!: ViewContainerRef;
 

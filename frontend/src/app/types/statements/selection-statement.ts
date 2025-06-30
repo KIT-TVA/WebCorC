@@ -1,6 +1,6 @@
 import {ICondition} from "../condition/condition";
 import {IPosition, Position} from "../position";
-import {AbstractStatement, IAbstractStatement} from "./abstract-statement";
+import {AbstractStatement, IAbstractStatement, IAbstractStatementImpl} from "./abstract-statement";
 
 /**
  * Data only representation of {@link SelectionStatementComponent}.
@@ -9,7 +9,7 @@ import {AbstractStatement, IAbstractStatement} from "./abstract-statement";
 export interface ISelectionStatement extends IAbstractStatement {
     isPreProven: boolean
     guards: ICondition[]
-    commands: (IAbstractStatement | undefined)[]
+    commands: (IAbstractStatementImpl | undefined)[]
 }
 
 
@@ -26,11 +26,10 @@ export class SelectionStatement extends AbstractStatement implements ISelectionS
         preCondition: ICondition,
         postCondition: ICondition,
         public guards: ICondition[] = [],
-        public commands: (IAbstractStatement | undefined)[] = [],
+        public commands: (IAbstractStatementImpl | undefined)[] = [],
         public isPreProven: boolean,
         position: IPosition = new Position(0, 0),
     ) {
         super(name, SelectionStatement.TYPE, preCondition, postCondition, position)
     }
-
 }

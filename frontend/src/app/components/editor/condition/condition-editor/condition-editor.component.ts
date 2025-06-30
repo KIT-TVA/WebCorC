@@ -28,7 +28,7 @@ export class ConditionEditorComponent implements OnInit {
     /**
      * Condition to edit
      */
-    public condition: ModelSignal<ICondition | undefined> = model<ICondition>();
+    public condition: ModelSignal<ICondition> = model.required<ICondition>();
 
     /**
      * Flag to allow editing the condition content

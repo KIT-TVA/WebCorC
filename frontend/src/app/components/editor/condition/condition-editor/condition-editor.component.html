@@ -1,6 +1,6 @@
 <div>
     <mat-icon class="ai-icon" (click)="askAi()" style="cursor: pointer;">psychology_alt</mat-icon>
-    <p>{{ condition()?.programStatement }}</p>
+    <p>{{ condition().programStatement }}</p>
     <form *ngIf="conditionGroup" [formGroup]="conditionGroup">
         <mat-form-field (focusout)="conditionEditingFinished.emit()" appearance="fill">
             <input matInput placeholder="Type here" formControlName="condition" #input>

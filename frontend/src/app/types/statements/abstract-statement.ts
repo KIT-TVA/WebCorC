@@ -2,6 +2,14 @@ import {ComponentRef, ViewContainerRef} from "@angular/core";
 import {IPosition, Position} from "../position";
 import {Refinement} from "../refinement";
 import {ICondition} from "../condition/condition";
+import {IStatement} from "./simple-statement";
+import {ICompositionStatement} from "./composition-statement";
+import {IRepetitionStatement} from "./repetition-statement";
+import {ISkipStatement} from "./strong-weak-statement";
+import {ISelectionStatement} from "./selection-statement";
+
+export type IAbstractStatementImpl = IStatement | ICompositionStatement | IRepetitionStatement | ISkipStatement | ISelectionStatement;
+export type StatementType = "STATEMENT" | "COMPOSITION" | "RETURN" | "SELECTION" | "SKIP" | "REPETITION";
 
 /**
  * Data only representation of the statements edited in the editor

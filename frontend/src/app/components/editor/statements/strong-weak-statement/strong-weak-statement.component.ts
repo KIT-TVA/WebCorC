@@ -32,7 +32,7 @@ export class StrongWeakStatementComponent extends Refinement {
     private _strongPostCondition: Condition;
 
     private _statement: Refinement | undefined;
-    @Input({required: true}) override _node!: SkipStatementNode;
+    @Input({required: true}) _node!: SkipStatementNode;
     private _statementRef: ElementRef | undefined;
 
     @ViewChild("subComponentSpawn", {read: ViewContainerRef}) private componentSpawn!: ViewContainerRef;

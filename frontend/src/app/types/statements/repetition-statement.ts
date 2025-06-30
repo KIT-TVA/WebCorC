@@ -1,4 +1,4 @@
-import {AbstractStatement, IAbstractStatement} from "./abstract-statement";
+import {AbstractStatement, IAbstractStatement, IAbstractStatementImpl} from "./abstract-statement";
 import {ICondition} from "../condition/condition";
 import {IPosition, Position} from "../position";
 
@@ -13,7 +13,7 @@ export interface IRepetitionStatement extends IAbstractStatement {
     invariant: ICondition
     variant: ICondition
     guard: ICondition
-    loopStatement: IAbstractStatement | undefined
+    loopStatement: IAbstractStatementImpl | undefined
 }
 
 

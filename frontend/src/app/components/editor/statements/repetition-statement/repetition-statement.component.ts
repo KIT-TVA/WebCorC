@@ -28,7 +28,7 @@ import {RepetitionStatementNode} from "../../../../types/statements/nodes/repeti
     styleUrl: './repetition-statement.component.scss'
 })
 export class RepetitionStatementComponent extends Refinement {
-    @Input({required: true}) override _node!: RepetitionStatementNode;
+    @Input({required: true}) _node!: RepetitionStatementNode;
     private _invariantCondition: Condition;
     private _guardCondition: Condition;
     private _variantCondition: Condition;

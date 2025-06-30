@@ -1,10 +1,11 @@
-import {AbstractStatementNode, createStatementNode} from "./abstract-statement-node";
+import {AbstractStatementNode} from "./abstract-statement-node";
 import {ISelectionStatement} from "../selection-statement";
-import {signal, Signal} from "@angular/core";
+import {signal, Signal, WritableSignal} from "@angular/core";
 import {ICondition} from "../../condition/condition";
+import {createStatementNode} from "./createStatementNode";
 
 export class SelectionStatementNode extends AbstractStatementNode {
-    public guards: Signal<ICondition>[]
+    public guards: WritableSignal<ICondition>[]
 
     constructor(statement: ISelectionStatement, parent: AbstractStatementNode | undefined) {
         super(statement, parent);
@@ -12,7 +13,7 @@ export class SelectionStatementNode extends AbstractStatementNode {
         this.children = statement.commands.map(c => c ? createStatementNode(c, this) : undefined)
     }
 
-    override overridePrecondition(sourceNode: AbstractStatementNode, condition: Signal<ICondition>) {
+    override overridePrecondition(sourceNode: AbstractStatementNode, condition: WritableSignal<ICondition>) {
         super.overridePrecondition(sourceNode, condition);
         this.children.forEach(c => {
             if (c) {

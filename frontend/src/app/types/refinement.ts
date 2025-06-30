@@ -1,4 +1,3 @@
-import {ICondition} from "./condition/condition";
 import {TreeService} from "../services/tree/tree.service";
 import {CdkDragEnd} from "@angular/cdk/drag-drop";
 import {ReplaySubject} from "rxjs";

@@ -7,9 +7,11 @@ import {JavaVariable, JavaVariableKind} from "../../types/JavaVariable";
 import {Renaming} from '../../types/Renaming';
 import {Condition} from "../../types/condition/condition";
 import {CBCFormula} from "../../types/CBCFormula";
-import {ICompositionStatement} from "../../types/statements/composition-statement";
+import {CompositionStatement, ICompositionStatement} from "../../types/statements/composition-statement";
 import {IRepetitionStatement} from "../../types/statements/repetition-statement";
 import {ISelectionStatement} from "../../types/statements/selection-statement";
+import {AbstractStatementNode} from "../../types/statements/nodes/abstract-statement-node";
+import {createStatementNode} from "../../types/statements/nodes/createStatementNode";
 
 /**
  * Service for the context of the tree in the graphical editor.
@@ -35,6 +37,7 @@ export class TreeService {
     private _variables: JavaVariable[] = []
     private _globalConditions: string[] = []
     private _renames: Renaming[] = []
+    private _statementNodes: AbstractStatementNode[] = []
 
     public constructor() {
         this._redrawNotifier = new ReplaySubject();
@@ -151,7 +154,34 @@ export class TreeService {
             const statement = this.rootFormula.statement;
             this.collectStatements(statement, statements)
         }
-        return  statements
+        return statements
+    }
+
+    public addStatementNode(statementNode: AbstractStatementNode) {
+        if (this._statementNodes) {
+            this._statementNodes.push(statementNode)
+        } else {
+            this._statementNodes = [statementNode]
+        }
+    }
+
+    public getStatementNodes(): AbstractStatementNode[] {
+        const rootStatementNode =
+            this.rootFormula?.statement ?
+                new AbstractStatementNode(this.rootFormula.statement, undefined)
+                //: new AbstractStatementNode(new Statement("", new Condition(""), new Condition(""), ""), undefined)
+                : createStatementNode(new CompositionStatement("", new Condition(""), new Condition(""), new Condition(""), undefined, undefined))
+        return this._statementNodes = [rootStatementNode].concat(this.collectStatementNodeChildren([rootStatementNode]))
+    }
+
+    private collectStatementNodeChildren(nodes: (AbstractStatementNode | undefined)[]): AbstractStatementNode[] {
+        let childNodes: AbstractStatementNode[] = []
+        for (const node of nodes) {
+            if (node) {
+                childNodes = childNodes.concat(node.children.filter(child => child != undefined).concat(this.collectStatementNodeChildren(node.children)))
+            }
+        }
+        return childNodes
     }
 
     private collectStatements(statement: IAbstractStatement | undefined, statements: IAbstractStatement[]) {

@@ -1,6 +1,6 @@
 import {Condition, ICondition} from "./condition/condition";
 import {IPosition, Position} from "./position";
-import {IAbstractStatement} from "./statements/abstract-statement";
+import {IAbstractStatement, IAbstractStatementImpl} from "./statements/abstract-statement";
 import {IJavaVariable} from "./JavaVariable";
 import {IRenaming} from "./Renaming";
 
@@ -10,7 +10,7 @@ import {IRenaming} from "./Renaming";
  */
 export interface ICBCFormula {
     name: string
-    statement: IAbstractStatement | undefined
+    statement: IAbstractStatementImpl | undefined
     preCondition: ICondition
     postCondition: ICondition
     javaVariables: IJavaVariable[]

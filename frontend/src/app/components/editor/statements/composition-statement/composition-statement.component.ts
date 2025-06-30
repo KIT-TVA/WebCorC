@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, ViewChild, ViewContainerRef} from '@angular/core';
+import {Component, ElementRef, Input, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {StatementComponent} from "../statement/statement.component";
 import {Refinement} from "../../../../types/refinement";
@@ -15,9 +15,9 @@ import {MatDialog} from "@angular/material/dialog";
 import {ChooseRefinementComponent} from "../../../choose-refinement/choose-refinement.component";
 import {MatIconModule} from "@angular/material/icon";
 import {AbstractStatement, IAbstractStatement} from '../../../../types/statements/abstract-statement';
-import {ICompositionStatement} from '../../../../types/statements/composition-statement';
 import {Position} from '../../../../types/position';
 import {CompositionStatementNode} from "../../../../types/statements/nodes/composition-statement-node";
+import {createEmptyStatementNode} from "../../../../types/statements/nodes/createStatementNode";
 
 /**
  * Composition statement in {@link EditorComponent}.
@@ -32,13 +32,11 @@ import {CompositionStatementNode} from "../../../../types/statements/nodes/compo
     templateUrl: './composition-statement.component.html',
     styleUrl: './composition-statement.component.scss'
 })
-export class CompositionStatementComponent extends Refinement {
-  @Input({required: true}) override _node! : CompositionStatementNode;
-  statement!: ICompositionStatement;
+export class CompositionStatementComponent extends Refinement implements OnInit {
+  @Input({required: true}) _node! : CompositionStatementNode;
 
-
-  private _leftStatement : IAbstractStatement | undefined = this.statement.firstStatement;
-  private _rightStatement : IAbstractStatement | undefined = this.statement.secondStatement;
+  private _leftStatement : IAbstractStatement | undefined;
+  private _rightStatement : IAbstractStatement | undefined;
   private _intermediateCondition : Condition;
 
   /**
@@ -48,12 +46,15 @@ export class CompositionStatementComponent extends Refinement {
   private _rightStatementRef : ElementRef | undefined;
 
   // Element used to spawn the child statements in
-  @ViewChild("subComponentSpawn", {read: ViewContainerRef}) private componentSpawn!: ViewContainerRef;
 
   public constructor(treeService : TreeService, private dialog : MatDialog) {
     super(treeService);
     this._intermediateCondition = new Condition("Intermediate Cond.")
-    this.statement = this._node.statement as ICompositionStatement;
+  }
+
+  ngOnInit() {
+    this._leftStatement = this._node.statement.firstStatement;
+    this._rightStatement = this._node.statement.secondStatement;
   }
   
   public override getTitle(): string {
@@ -73,9 +74,9 @@ export class CompositionStatementComponent extends Refinement {
         return
       }
 
-      const componentRef = this.componentSpawn.createComponent(result);
+      this.treeService.addStatementNode(createEmptyStatementNode(result, this._node));
+      console.log(result)
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const createdSubComponent = componentRef.instance as Refinement;
 
       if (side === "left") {
         //TODO Spawn statement on the left

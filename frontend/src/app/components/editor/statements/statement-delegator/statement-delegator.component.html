@@ -1,5 +1,7 @@
-<app-composition-statement *ngIf="statement.type === 'COMPOSITION'"/>
-<app-strong-weak-statement *ngIf="statement.type === 'SKIP'"/>
-<app-repetition-statement *ngIf="statement.type === 'REPETITION'"/>
-<app-selection-statement *ngIf="statement.type === 'SELECTION'"/>
-<app-simple-statement *ngIf="statement.type === 'STATEMENT'"/>
+<div>
+    <app-composition-statement [_node]="asCompositionStatementNode(statement)" *ngIf="statement.statement.type === 'COMPOSITION'"/>
+    <app-strong-weak-statement [_node]="asSkipStatementNode(statement)" *ngIf="statement.statement.type === 'SKIP'"/>
+    <app-repetition-statement [_node]="asRepetitionStatementNode(statement)" *ngIf="statement.statement.type === 'REPETITION'"/>
+    <app-selection-statement [_node]="asSelectionStatementNode(statement)" *ngIf="statement.statement.type === 'SELECTION'"/>
+    <app-simple-statement [_node]="asSimpleStatementNode(statement)" *ngIf="statement.statement.type === 'STATEMENT'"/>
+</div>

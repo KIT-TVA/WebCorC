@@ -30,8 +30,8 @@ import {MatTab, MatTabGroup, MatTabLabel} from "@angular/material/tabs";
 import {AiChatComponent} from "../ai-chat/ai-chat.component";
 import {ConsoleComponent} from "../console/console.component";
 import {MatDrawer, MatDrawerContainer} from "@angular/material/sidenav";
-import {IAbstractStatement} from "../../types/statements/abstract-statement";
 import {StatementDelegatorComponent} from "./statements/statement-delegator/statement-delegator.component";
+import {AbstractStatementNode} from "../../types/statements/nodes/abstract-statement-node";
 
 /**
  * Component to edit {@link CBCFormula} by editing a grahical representation based of the statement components like {@link SimpleStatementComponent}.
@@ -41,7 +41,7 @@ import {StatementDelegatorComponent} from "./statements/statement-delegator/stat
  */
 @Component({
     selector: 'app-editor',
-  imports: [CommonModule, MatButtonModule, MatIconModule, MatExpansionModule, VariablesComponent, MatTooltipModule, MatMenuModule, GlobalConditionsComponent, OptionsComponent, RenamingComponent, MatTab, MatTabGroup, MatTabLabel, AiChatComponent, ConsoleComponent, MatDrawerContainer, MatDrawer, StatementDelegatorComponent],
+    imports: [CommonModule, MatButtonModule, MatIconModule, MatExpansionModule, VariablesComponent, MatTooltipModule, MatMenuModule, GlobalConditionsComponent, OptionsComponent, RenamingComponent, MatTab, MatTabGroup, MatTabLabel, AiChatComponent, ConsoleComponent, MatDrawerContainer, MatDrawer, StatementDelegatorComponent],
     templateUrl: './editor.component.html',
     styleUrl: './editor.component.scss'
 })
@@ -58,7 +58,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   private _urn : string = ''
   private _viewInit : boolean = false
 
-  protected statements: IAbstractStatement[] = []
+  protected statements: AbstractStatementNode[] = []
 
   /**
    * Constructor for dependency injection of the services
@@ -76,6 +76,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     })
 
     this.treeService.exportNotifier.subscribe(() => this.export())
+    this.statements = treeService.getStatementNodes()
   }
   
   /**
@@ -210,7 +211,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       // redraw all links between the components
       // TODO: Reimplement
 
-      this.statements = this.treeService.statements()
+      this.statements = this.treeService.getStatementNodes()
 
       this.variables.importVariables(newFormula.javaVariables)
       this.conditions.importConditions(newFormula.globalConditions)

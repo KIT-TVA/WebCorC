@@ -1,11 +1,13 @@
-import {AbstractStatementNode, createStatementNode} from "./abstract-statement-node";
+import {AbstractStatementNode} from "./abstract-statement-node";
 import {IRepetitionStatement} from "../repetition-statement";
-import {signal, Signal} from "@angular/core";
+import {signal, Signal, WritableSignal} from "@angular/core";
 import {ICondition} from "../../condition/condition";
+import {createStatementNode} from "./createStatementNode";
 
 export class RepetitionStatementNode extends AbstractStatementNode {
     public loopStatementNode: AbstractStatementNode | undefined
     public guard: Signal<ICondition>
+
     constructor(
         statement: IRepetitionStatement,
         parent: AbstractStatementNode | undefined
@@ -21,12 +23,12 @@ export class RepetitionStatementNode extends AbstractStatementNode {
         }
     }
 
-    public override overridePrecondition(sourceNode: AbstractStatementNode, condition: Signal<ICondition>) {
+    public override overridePrecondition(sourceNode: AbstractStatementNode, condition: WritableSignal<ICondition>) {
         super.overridePrecondition(sourceNode, condition);
         this.loopStatementNode?.overridePrecondition(this, condition) //TODO: Compute guard && precondition
     }
 
-    public override overridePostcondition(sourceNode: AbstractStatementNode, condition: Signal<ICondition>) {
+    public override overridePostcondition(sourceNode: AbstractStatementNode, condition: WritableSignal<ICondition>) {
         super.overridePostcondition(sourceNode, condition);
         this.parent?.overridePostcondition(this, condition) //TODO Compute postcondition && ¬guard
     }

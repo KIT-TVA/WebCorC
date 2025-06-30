@@ -1,10 +1,12 @@
-import {AbstractStatementNode, createStatementNode} from "./abstract-statement-node";
 import {ICompositionStatement} from "../composition-statement";
 import {ICondition} from "../../condition/condition";
-import {signal, Signal} from "@angular/core";
+import {signal, WritableSignal} from "@angular/core";
+import {AbstractStatementNode} from "./abstract-statement-node";
+import {createStatementNode} from "./createStatementNode";
 
 export class CompositionStatementNode extends AbstractStatementNode {
-    public intermediateCondition: Signal<ICondition>
+    public intermediateCondition: WritableSignal<ICondition>
+    override statement!: ICompositionStatement
     public firstStatementNode: AbstractStatementNode | undefined
     public secondStatementNode: AbstractStatementNode | undefined
 
@@ -26,12 +28,12 @@ export class CompositionStatementNode extends AbstractStatementNode {
         }
     }
 
-    override overridePrecondition(sourceNode: AbstractStatementNode, condition: Signal<ICondition>) {
+    override overridePrecondition(sourceNode: AbstractStatementNode, condition: WritableSignal<ICondition>) {
         super.overridePrecondition(sourceNode, condition);
         this.firstStatementNode?.overridePrecondition(this, condition)
     }
 
-    override overridePostcondition(sourceNode: AbstractStatementNode, condition: Signal<ICondition>) {
+    override overridePostcondition(sourceNode: AbstractStatementNode, condition: WritableSignal<ICondition>) {
         switch (sourceNode) {
             case this.firstStatementNode:
                 this.intermediateCondition = condition
