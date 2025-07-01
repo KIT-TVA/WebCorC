@@ -19,6 +19,17 @@ public class SmallRepetitionStatement extends AbstractStatement {
 
     @Override
     public boolean prove(ProofContext proofContext) {
+
+        /*First Step: Prove that loop statement is correct*/
+        if (!loopStatement.prove(proofContext)) {
+            System.out.println("[ERROR] Proving the loop statement of statement \"" + this.getName() + "\" failed!");
+            return false;
+        }
+
+        if (!isVariantProven) {
+
+        }
+
         return false;
     }
 }
