@@ -1,5 +1,11 @@
 package edu.kit.cbc.common.corc.cbcmodel;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import edu.kit.cbc.common.corc.parsing.TokenSource;
+import edu.kit.cbc.common.corc.parsing.condition.ConditionParser;
+import edu.kit.cbc.common.corc.parsing.condition.ast.ConditionTree;
+import edu.kit.cbc.common.corc.parsing.lexer.ConditionLexer;
+import edu.kit.cbc.common.corc.parsing.lexer.Lexer;
 import io.micronaut.serde.annotation.Serdeable;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -7,7 +13,7 @@ import lombok.Data;
 
 @Data
 @Serdeable
-public class Condition implements Representable {
+public class Condition {
 
     private static final String OR_SEPARATOR = " | ";
     private static final String AND_SEPARATOR = " & ";
@@ -16,17 +22,16 @@ public class Condition implements Representable {
     private static final String BOOLEAN_REPLACEMENT = "TRUE=";
 
     private String condition;
-    private List<String> modifiables;
-    private String codeRepresentation;
+    @JsonIgnore
+    private ConditionTree parsedCondition;
 
-    @Override
-    public String getCodeRepresentation() {
-        return this.codeRepresentation;
-    }
-
-    @Override
-    public void setCodeRepresentation(String codeRepresentation) {
-        this.codeRepresentation = codeRepresentation;
+    public void setCondition(String condition) {
+        this.condition = condition;
+        System.out.println("TEST");
+        Lexer lexer = ConditionLexer.forString(condition);
+        TokenSource source = new TokenSource(lexer);
+        ConditionParser parser = new ConditionParser(source);
+        this.parsedCondition = parser.parseCondition();
     }
 
     public Condition rename(List<Renaming> renamings) {

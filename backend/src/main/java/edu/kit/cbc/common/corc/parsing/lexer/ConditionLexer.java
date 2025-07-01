@@ -1,5 +1,6 @@
 package edu.kit.cbc.common.corc.parsing.lexer;
 
+import edu.kit.cbc.common.corc.parsing.ParseException;
 import java.util.Optional;
 
 public final class ConditionLexer extends Lexer {
@@ -45,7 +46,7 @@ public final class ConditionLexer extends Lexer {
                 yield switch (readIdentifierName()) {
                     case "\\forall" -> new Operator(Operator.OperatorType.FORALL);
                     case "\\exists" -> new Operator(Operator.OperatorType.EXISTS);
-                    default ->  new ErrorToken(pos);
+                    default -> throw new ParseException("The token '" + peek() + "' at position " + this.pos + " is not a valid token!");
                 };
             }
             case '<' -> {
@@ -82,7 +83,7 @@ public final class ConditionLexer extends Lexer {
                     }
                     yield new Operator(Operator.OperatorType.EQUAL);
                 }
-                yield new ErrorToken(pos);
+                throw new ParseException("The token '=' at position " + this.pos + " is not a valid token!");
             }
             default -> {
                 advanceSteps = 0;
@@ -95,7 +96,7 @@ public final class ConditionLexer extends Lexer {
                 }
 
                 advance(1);
-                yield new ErrorToken(pos);
+                throw new ParseException("The token '" + peek() + "' at position " + this.pos + " is not a valid token!");
             }
         };
 

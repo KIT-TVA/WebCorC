@@ -1,5 +1,6 @@
 package edu.kit.cbc.common.corc.parsing;
 
+import edu.kit.cbc.common.corc.parsing.lexer.ErrorToken;
 import edu.kit.cbc.common.corc.parsing.lexer.Identifier;
 import edu.kit.cbc.common.corc.parsing.lexer.Keyword;
 import edu.kit.cbc.common.corc.parsing.lexer.Lexer;
