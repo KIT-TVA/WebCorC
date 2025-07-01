@@ -26,6 +26,7 @@ public final class ConditionLexer extends Lexer {
             case '(' -> new Separator(Separator.SeparatorType.PAREN_OPEN);
             case ')' -> new Separator(Separator.SeparatorType.PAREN_CLOSE);
             case ';' ->  new Separator(Separator.SeparatorType.SEMICOLON);
+            case ',' -> new Separator(Separator.SeparatorType.COMMA);
             case '+' -> new Operator(Operator.OperatorType.PLUS);
             case '-' -> new Operator(Operator.OperatorType.MINUS);
             case '*' -> new Operator(Operator.OperatorType.MUL);
@@ -93,6 +94,7 @@ public final class ConditionLexer extends Lexer {
                     yield lexIdentifier();
                 }
 
+                advance(1);
                 yield new ErrorToken(pos);
             }
         };

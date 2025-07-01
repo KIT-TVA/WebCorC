@@ -8,13 +8,43 @@ import edu.kit.cbc.common.corc.parsing.condition.ast.ExistsTree;
 import edu.kit.cbc.common.corc.parsing.condition.ast.ForAllTree;
 import edu.kit.cbc.common.corc.parsing.condition.ast.IdentTree;
 import edu.kit.cbc.common.corc.parsing.condition.ast.IntLiteralTree;
+import edu.kit.cbc.common.corc.parsing.condition.ast.PredicateTree;
 import edu.kit.cbc.common.corc.parsing.condition.ast.UnaryOperationTree;
 import edu.kit.cbc.common.corc.parsing.lexer.Identifier;
 import edu.kit.cbc.common.corc.parsing.lexer.Keyword;
 import edu.kit.cbc.common.corc.parsing.lexer.NumberLiteral;
 import edu.kit.cbc.common.corc.parsing.lexer.Operator;
 import edu.kit.cbc.common.corc.parsing.lexer.Separator;
+import edu.kit.cbc.common.corc.parsing.lexer.Token;
+import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * This class holds the implementation of a parser for the following grammar:
+     Condition
+     c ::= e == e
+         | e <= e
+         | e >= c
+         | e < e
+         | e > e
+         | c && c
+         | c || c
+         | c ==> c
+         | c <==> c
+         | predName(e...e)
+         | \forall (t ident); c
+         | \exists (t ident); c
+
+     e ::= ident | const
+         | (e)
+         | e + e
+         | e - e
+         | e / e
+         | e * e
+         | e % e
+
+     t ::= int | [..]
+ */
 public final class ConditionParser {
     private final TokenSource tokenSource;
 
@@ -24,6 +54,25 @@ public final class ConditionParser {
 
     public ConditionTree parseCondition() {
         return parseConditionWithPrecedence(Operator.OperatorType.maxPrecedence());
+    }
+
+    public ConditionTree parsePredicateCall() {
+        Identifier predicateName = this.tokenSource.expectIdentifier();
+        this.tokenSource.expectSeparator(Separator.SeparatorType.PAREN_OPEN);
+        List<ConditionTree> params = new ArrayList<>();
+        while(this.tokenSource.hasMore()) {
+            params.add(parseCondition());
+
+            if (this.tokenSource.peek() instanceof Separator(Separator.SeparatorType type)
+                && type == Separator.SeparatorType.PAREN_CLOSE) {
+                break;
+            }
+
+            this.tokenSource.expectSeparator(Separator.SeparatorType.COMMA);
+        }
+        this.tokenSource.expectSeparator(Separator.SeparatorType.PAREN_CLOSE);
+
+        return new PredicateTree(new IdentTree(predicateName.identifier()), params);
     }
 
     private ConditionTree parseConditionWithPrecedence(int precedence) {
@@ -82,6 +131,11 @@ public final class ConditionParser {
                 yield new ExistsTree(new IdentTree(var.identifier()), conditionTree);
             }
             case Identifier ident -> {
+                if (this.tokenSource.hasMore(1) && this.tokenSource.peek(1) instanceof Separator(Separator.SeparatorType type)) {
+                    if (type == Separator.SeparatorType.PAREN_OPEN) {
+                        yield parsePredicateCall();
+                    }
+                }
                 this.tokenSource.consume();
                 yield new IdentTree(ident.identifier());
             }

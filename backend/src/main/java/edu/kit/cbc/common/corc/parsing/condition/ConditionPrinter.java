@@ -6,8 +6,11 @@ import edu.kit.cbc.common.corc.parsing.condition.ast.ExistsTree;
 import edu.kit.cbc.common.corc.parsing.condition.ast.ForAllTree;
 import edu.kit.cbc.common.corc.parsing.condition.ast.IdentTree;
 import edu.kit.cbc.common.corc.parsing.condition.ast.IntLiteralTree;
+import edu.kit.cbc.common.corc.parsing.condition.ast.PredicateTree;
 import edu.kit.cbc.common.corc.parsing.condition.ast.UnaryOperationTree;
 import edu.kit.cbc.common.corc.parsing.lexer.Operator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public final class ConditionPrinter {
     private final ConditionTree tree;
@@ -73,6 +76,17 @@ public final class ConditionPrinter {
             }
             case IntLiteralTree(int value) -> {
                 print(String.valueOf(value));
+            }
+            case PredicateTree(IdentTree name, List<ConditionTree> params) -> {
+                printTree(name);
+                print("(");
+                for (int i = 0; i < params.size(); i++) {
+                    printTree(params.get(i));
+                    if (i < params.size() - 1) {
+                        print(", ");
+                    }
+                }
+                print(")");
             }
             default -> throw new IllegalStateException("Unexpected value: " + tree);
         }

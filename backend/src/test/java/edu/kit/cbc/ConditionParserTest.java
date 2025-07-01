@@ -11,8 +11,8 @@ public class ConditionParserTest {
 
     @Test
     public void testLexer() {
-        //
-        ConditionLexer lexer = ConditionLexer.forString("\\forall (int a;) (a + 1 == 0)");
+        //\\forall (int a;) (a + 1 == 0)
+        ConditionLexer lexer = ConditionLexer.forString("testPred(a+1,b-2) && 17");
         TokenSource source = new TokenSource(lexer);
         ConditionParser parser = new ConditionParser(source);
         System.out.println(ConditionPrinter.print(parser.parseCondition()));

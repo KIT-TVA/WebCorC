@@ -11,7 +11,8 @@ public record Separator(SeparatorType type) implements Token {
     public enum SeparatorType {
         PAREN_OPEN("("),
         PAREN_CLOSE(")"),
-        SEMICOLON(";");
+        SEMICOLON(";"),
+        COMMA(",");
 
         private final String value;
 

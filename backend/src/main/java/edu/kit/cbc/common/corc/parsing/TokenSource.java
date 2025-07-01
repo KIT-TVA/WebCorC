@@ -22,8 +22,13 @@ public class TokenSource {
     }
 
     public Token peek() {
-        expectHasMore();
+        expectHasMore(0);
         return this.tokens.get(this.idx);
+    }
+
+    public Token peek(int offset) {
+        expectHasMore(offset);
+        return this.tokens.get(this.idx + offset);
     }
 
     public Keyword expectKeyword(Keyword.KeywordType type) {
@@ -71,8 +76,12 @@ public class TokenSource {
         return this.idx < this.tokens.size();
     }
 
-    private void expectHasMore() {
-        if (this.idx >= this.tokens.size()) {
+    public boolean hasMore(int amount) {
+        return this.idx + amount < this.tokens.size();
+    }
+
+    private void expectHasMore(int amount) {
+        if (this.idx + amount >= this.tokens.size()) {
             throw new ParseException("reached end of condition");
         }
     }
