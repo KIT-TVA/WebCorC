@@ -18,7 +18,7 @@ public abstract class Lexer {
     public abstract Optional<Token> nextToken();
 
     protected void skipWhiteSpace() {
-        while(hasMore(0)) {
+        while (hasMore(0)) {
             if (!WHITESPACE_TOKEN.contains(peek())) {
                 return;
             }
@@ -84,7 +84,7 @@ public abstract class Lexer {
             || c == '_';
     }
 
-    protected boolean isNumeric(char c ) {
+    protected boolean isNumeric(char c) {
         return '0' <= c && c <= '9';
     }
 

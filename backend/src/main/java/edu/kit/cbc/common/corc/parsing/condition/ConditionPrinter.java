@@ -20,6 +20,10 @@ public final class ConditionPrinter {
         this.tree = tree;
     }
 
+    private void print(String str) {
+        this.builder.append(str);
+    }
+
     public static String print(ConditionTree ast) {
         ConditionPrinter printer = new ConditionPrinter(ast);
         printer.printRoot();
@@ -92,9 +96,7 @@ public final class ConditionPrinter {
         }
     }
 
-    private void print(String str) {
-        this.builder.append(str);
-    }
+
 
     private void lineBreak() {
         this.builder.append("\n");

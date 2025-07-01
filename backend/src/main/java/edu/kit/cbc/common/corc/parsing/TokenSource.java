@@ -58,6 +58,7 @@ public class TokenSource {
         this.idx++;
         return op;
     }
+
     public Identifier expectIdentifier() {
         Token token = peek();
         if (!(token instanceof Identifier ident)) {

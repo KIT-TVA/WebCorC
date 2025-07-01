@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class holds the implementation of a parser for the following grammar:
+ * This class holds the implementation of a parser for the following grammar.
      Condition
      c ::= e == e
          | e <= e
@@ -57,10 +57,10 @@ public final class ConditionParser {
     }
 
     public ConditionTree parsePredicateCall() {
-        Identifier predicateName = this.tokenSource.expectIdentifier();
+        final Identifier predicateName = this.tokenSource.expectIdentifier();
         this.tokenSource.expectSeparator(Separator.SeparatorType.PAREN_OPEN);
         List<ConditionTree> params = new ArrayList<>();
-        while(this.tokenSource.hasMore()) {
+        while (this.tokenSource.hasMore()) {
             params.add(parseCondition());
 
             if (this.tokenSource.peek() instanceof Separator(Separator.SeparatorType type)
@@ -78,7 +78,7 @@ public final class ConditionParser {
     private ConditionTree parseConditionWithPrecedence(int precedence) {
         ConditionTree lhs = precedence == 0 ?  parseFactor() : parseConditionWithPrecedence(precedence - 1);
 
-        while(true) {
+        while (true) {
             if (this.tokenSource.hasMore() && this.tokenSource.peek() instanceof Operator(Operator.OperatorType type)
                 && type.getPrecedence() == precedence) {
                 this.tokenSource.consume();
@@ -91,7 +91,7 @@ public final class ConditionParser {
     }
 
     private ConditionTree parseFactor() {
-        return switch(this.tokenSource.peek()) {
+        return switch (this.tokenSource.peek()) {
             case Separator(Separator.SeparatorType type) when type == Separator.SeparatorType.PAREN_OPEN -> {
                 this.tokenSource.consume();
                 ConditionTree conditionTree = parseCondition();
@@ -106,7 +106,7 @@ public final class ConditionParser {
                 this.tokenSource.consume();
                 this.tokenSource.expectSeparator(Separator.SeparatorType.PAREN_OPEN);
                 this.tokenSource.expectKeyword(Keyword.KeywordType.INT);
-                Identifier var = this.tokenSource.expectIdentifier();
+                final Identifier var = this.tokenSource.expectIdentifier();
                 this.tokenSource.expectSeparator(Separator.SeparatorType.SEMICOLON);
                 this.tokenSource.expectSeparator(Separator.SeparatorType.PAREN_CLOSE);
 
@@ -120,7 +120,7 @@ public final class ConditionParser {
                 this.tokenSource.consume();
                 this.tokenSource.expectSeparator(Separator.SeparatorType.PAREN_OPEN);
                 this.tokenSource.expectKeyword(Keyword.KeywordType.INT);
-                Identifier var = this.tokenSource.expectIdentifier();
+                final Identifier var = this.tokenSource.expectIdentifier();
                 this.tokenSource.expectSeparator(Separator.SeparatorType.SEMICOLON);
                 this.tokenSource.expectSeparator(Separator.SeparatorType.PAREN_CLOSE);
 

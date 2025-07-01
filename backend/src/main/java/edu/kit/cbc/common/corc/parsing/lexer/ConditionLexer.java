@@ -26,7 +26,7 @@ public final class ConditionLexer extends Lexer {
         Token token = switch (peek()) {
             case '(' -> new Separator(Separator.SeparatorType.PAREN_OPEN);
             case ')' -> new Separator(Separator.SeparatorType.PAREN_CLOSE);
-            case ';' ->  new Separator(Separator.SeparatorType.SEMICOLON);
+            case ';' -> new Separator(Separator.SeparatorType.SEMICOLON);
             case ',' -> new Separator(Separator.SeparatorType.COMMA);
             case '+' -> new Operator(Operator.OperatorType.PLUS);
             case '-' -> new Operator(Operator.OperatorType.MINUS);
@@ -43,11 +43,13 @@ public final class ConditionLexer extends Lexer {
             }
             case '\\' -> {
                 advanceSteps = "\\forall".length();
-                yield switch (readIdentifierName()) {
-                    case "\\forall" -> new Operator(Operator.OperatorType.FORALL);
-                    case "\\exists" -> new Operator(Operator.OperatorType.EXISTS);
-                    default -> throw new ParseException("The token '" + peek() + "' at position " + this.pos + " is not a valid token!");
-                };
+                yield
+                    switch (readIdentifierName()) {
+                        case "\\forall" -> new Operator(Operator.OperatorType.FORALL);
+                        case "\\exists" -> new Operator(Operator.OperatorType.EXISTS);
+                        default -> throw new ParseException(
+                            "The token '" + peek() + "' at position " + this.pos + " is not a valid token!");
+                    };
             }
             case '<' -> {
                 if (hasMore(1) && peek(1) == '=') {
@@ -96,7 +98,8 @@ public final class ConditionLexer extends Lexer {
                 }
 
                 advance(1);
-                throw new ParseException("The token '" + peek() + "' at position " + this.pos + " is not a valid token!");
+                throw new ParseException(
+                    "The token '" + peek() + "' at position " + this.pos + " is not a valid token!");
             }
         };
 
