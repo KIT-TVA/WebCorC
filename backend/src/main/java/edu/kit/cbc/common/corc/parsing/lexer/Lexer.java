@@ -1,5 +1,6 @@
 package edu.kit.cbc.common.corc.parsing.lexer;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,7 +15,7 @@ public abstract class Lexer {
         this.source = source;
     }
 
-    protected abstract Optional<Token> nextToken();
+    public abstract Optional<Token> nextToken();
 
     protected void skipWhiteSpace() {
         while(hasMore(0)) {
@@ -50,6 +51,15 @@ public abstract class Lexer {
     protected Token lexIdentifier() {
         String name = readIdentifierName();
         advance(name.length());
+
+        Optional<Keyword.KeywordType> matchingKeyWord = EnumSet.allOf(Keyword.KeywordType.class)
+            .stream()
+            .filter(type -> type.toString().equals(name))
+            .findFirst();
+
+        if (matchingKeyWord.isPresent()) {
+            return new Keyword(matchingKeyWord.get());
+        }
 
         return new Identifier(name);
     }

@@ -1,6 +1,7 @@
 package edu.kit.cbc.common.corc.parsing;
 
 import edu.kit.cbc.common.corc.parsing.lexer.Identifier;
+import edu.kit.cbc.common.corc.parsing.lexer.Keyword;
 import edu.kit.cbc.common.corc.parsing.lexer.Lexer;
 import edu.kit.cbc.common.corc.parsing.lexer.Operator;
 import edu.kit.cbc.common.corc.parsing.lexer.Separator;
@@ -23,6 +24,15 @@ public class TokenSource {
     public Token peek() {
         expectHasMore();
         return this.tokens.get(this.idx);
+    }
+
+    public Keyword expectKeyword(Keyword.KeywordType type) {
+        Token token = peek();
+        if (!(token instanceof Keyword kw) || kw.type() != type) {
+            throw new ParseException("expected keyword '" + type + "' but got " + token);
+        }
+        this.idx++;
+        return kw;
     }
 
     public Separator expectSeparator(Separator.SeparatorType type) {
@@ -63,7 +73,7 @@ public class TokenSource {
 
     private void expectHasMore() {
         if (this.idx >= this.tokens.size()) {
-            throw new IllegalArgumentException("reached end of file");
+            throw new ParseException("reached end of condition");
         }
     }
 }
