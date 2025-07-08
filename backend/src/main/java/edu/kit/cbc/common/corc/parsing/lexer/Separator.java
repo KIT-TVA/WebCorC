@@ -1,7 +1,11 @@
 package edu.kit.cbc.common.corc.parsing.lexer;
 
-public record Separator(SeparatorType type) implements Token {
+public record Separator(SeparatorType type, int pos) implements Token {
 
+    @Override
+    public int position() {
+        return pos();
+    }
 
     @Override
     public String toString() {
@@ -12,7 +16,10 @@ public record Separator(SeparatorType type) implements Token {
         PAREN_OPEN("("),
         PAREN_CLOSE(")"),
         SEMICOLON(";"),
-        COMMA(",");
+        COMMA(","),
+        SQR_PAREN_OPEN("["),
+        SQR_PAREN_CLOSE("]"),
+        ;
 
         private final String value;
 

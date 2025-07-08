@@ -2,7 +2,12 @@ package edu.kit.cbc.common.corc.parsing.lexer;
 
 import java.util.EnumSet;
 
-public record Operator(OperatorType type) implements Token {
+public record Operator(OperatorType type, int pos) implements Token {
+
+    @Override
+    public int position() {
+        return pos();
+    }
 
     public enum OperatorType {
 
@@ -14,14 +19,20 @@ public record Operator(OperatorType type) implements Token {
         LESS_THAN_OR_EQUAL("<=", 3),
         GREATER_THAN(">", 3),
         GREATER_THAN_OR_EQUAL(">=", 3),
-        AND("&&", 5),
-        OR("||", 6),
-        IMPLICATION("==>", 7),
-        EQUIVALENT("<=>", 7),
+        LOGICAL_AND("&&", 8),
+        LOGICAL_OR("||", 9),
+        IMPLICATION("==>", 10),
+        EQUIVALENT("<=>", 10),
         FORALL("\\forall", 0),
         EXISTS("\\exists", 0),
 
+        ASSIGN("=", 11),
+
         /*ARITHMETIC Operators*/
+        ARITH_NOT("~", 0),
+        ARITH_AND("&", 5),
+        ARITH_XOR("^", 6),
+        ARITH_OR("|", 7),
         PLUS("+", 2),
         MINUS("-", 2),
         MUL("*", 1),

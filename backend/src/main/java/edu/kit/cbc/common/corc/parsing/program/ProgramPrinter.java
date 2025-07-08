@@ -1,7 +1,5 @@
-package edu.kit.cbc.common.corc.parsing.condition;
+package edu.kit.cbc.common.corc.parsing.program;
 
-import edu.kit.cbc.common.corc.parsing.condition.ast.ExistsTree;
-import edu.kit.cbc.common.corc.parsing.condition.ast.ForAllTree;
 import edu.kit.cbc.common.corc.parsing.lexer.Operator;
 import edu.kit.cbc.common.corc.parsing.parser.ast.ArrayAcessTree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.BinaryOperationTree;
@@ -10,13 +8,17 @@ import edu.kit.cbc.common.corc.parsing.parser.ast.IdentTree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.IntLiteralTree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.Tree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.UnaryOperationTree;
+import edu.kit.cbc.common.corc.parsing.program.ast.AssignTree;
+import edu.kit.cbc.common.corc.parsing.program.ast.BlockTree;
+import edu.kit.cbc.common.corc.parsing.program.ast.LValue;
+import edu.kit.cbc.common.corc.parsing.program.ast.StatementTree;
 import java.util.List;
 
-public final class ConditionPrinter {
+public final class ProgramPrinter {
     private final Tree tree;
     private final StringBuilder builder = new StringBuilder();
 
-    private ConditionPrinter(Tree tree) {
+    private ProgramPrinter(Tree tree) {
         this.tree = tree;
     }
 
@@ -25,7 +27,7 @@ public final class ConditionPrinter {
     }
 
     public static String print(Tree ast) {
-        ConditionPrinter printer = new ConditionPrinter(ast);
+        ProgramPrinter printer = new ProgramPrinter(ast);
         printer.printRoot();
         return printer.builder.toString();
     }
@@ -53,28 +55,6 @@ public final class ConditionPrinter {
                 printTree(lhs);
                 print(")");
             }
-            case ForAllTree(IdentTree name, Tree cond) -> {
-                print("\\forall");
-                space();
-                print("(");
-                printTree(name);
-                print(")");
-                space();
-                print("(");
-                printTree(cond);
-                print(")");
-            }
-            case ExistsTree(IdentTree name, Tree cond) -> {
-                print("\\exists");
-                space();
-                print("(");
-                printTree(name);
-                print(")");
-                space();
-                print("(");
-                printTree(cond);
-                print(")");
-            }
             case IdentTree(String identifier) -> {
                 print(identifier);
             }
@@ -92,6 +72,17 @@ public final class ConditionPrinter {
                 }
                 print(")");
             }
+            case AssignTree(LValue left, Tree expr) -> {
+                printTree(left);
+                print(" = ");
+                printTree(expr);
+            }
+            case BlockTree(List<StatementTree> stmt) -> {
+                stmt.forEach(s -> {
+                    printTree(s);
+                    semicolon();
+                });
+            }
             case ArrayAcessTree(IdentTree name, Tree expr) -> {
                 printTree(name);
                 print("[");
@@ -100,6 +91,7 @@ public final class ConditionPrinter {
             }
             default -> throw new IllegalStateException("Unexpected value: " + tree);
         }
+
     }
 
 
