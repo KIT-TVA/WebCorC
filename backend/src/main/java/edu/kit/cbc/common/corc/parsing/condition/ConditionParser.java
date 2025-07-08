@@ -1,7 +1,9 @@
 package edu.kit.cbc.common.corc.parsing.condition;
 
+import edu.kit.cbc.common.corc.cbcmodel.Condition;
 import edu.kit.cbc.common.corc.parsing.ParseException;
 import edu.kit.cbc.common.corc.parsing.TokenSource;
+import edu.kit.cbc.common.corc.parsing.condition.ast.ArrayAcessTree;
 import edu.kit.cbc.common.corc.parsing.condition.ast.BinaryOperationTree;
 import edu.kit.cbc.common.corc.parsing.condition.ast.ConditionTree;
 import edu.kit.cbc.common.corc.parsing.condition.ast.ExistsTree;
@@ -75,6 +77,15 @@ public final class ConditionParser {
         return new PredicateTree(new IdentTree(predicateName.identifier()), params);
     }
 
+    private ConditionTree parseArrayAccess() {
+        final Identifier arrayName = this.tokenSource.expectIdentifier();
+        this.tokenSource.expectSeparator(Separator.SeparatorType.SQR_PAREN_OPEN);
+        ConditionTree expr = parseCondition();
+        this.tokenSource.expectSeparator(Separator.SeparatorType.SQR_PAREN_CLOSE);
+
+        return new ArrayAcessTree(new IdentTree(arrayName.identifier()), expr);
+    }
+
     private ConditionTree parseConditionWithPrecedence(int precedence) {
         ConditionTree lhs = precedence == 0 ?  parseFactor() : parseConditionWithPrecedence(precedence - 1);
 
@@ -134,6 +145,9 @@ public final class ConditionParser {
                 if (this.tokenSource.hasMore(1) && this.tokenSource.peek(1) instanceof Separator(Separator.SeparatorType type)) {
                     if (type == Separator.SeparatorType.PAREN_OPEN) {
                         yield parsePredicateCall();
+                    }
+                    if (type == Separator.SeparatorType.SQR_PAREN_OPEN) {
+                        yield parseArrayAccess();
                     }
                 }
                 this.tokenSource.consume();

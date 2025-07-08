@@ -26,6 +26,8 @@ public final class ConditionLexer extends Lexer {
         Token token = switch (peek()) {
             case '(' -> new Separator(Separator.SeparatorType.PAREN_OPEN);
             case ')' -> new Separator(Separator.SeparatorType.PAREN_CLOSE);
+            case '[' -> new Separator(Separator.SeparatorType.SQR_PAREN_OPEN);
+            case ']' -> new Separator(Separator.SeparatorType.SQR_PAREN_CLOSE);
             case ';' -> new Separator(Separator.SeparatorType.SEMICOLON);
             case ',' -> new Separator(Separator.SeparatorType.COMMA);
             case '+' -> new Operator(Operator.OperatorType.PLUS);
@@ -97,7 +99,6 @@ public final class ConditionLexer extends Lexer {
                     yield lexIdentifier();
                 }
 
-                advance(1);
                 throw new ParseException(
                     "The token '" + peek() + "' at position " + this.pos + " is not a valid token!");
             }

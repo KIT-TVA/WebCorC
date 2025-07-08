@@ -1,5 +1,6 @@
 package edu.kit.cbc.common.corc.parsing.condition;
 
+import edu.kit.cbc.common.corc.parsing.condition.ast.ArrayAcessTree;
 import edu.kit.cbc.common.corc.parsing.condition.ast.BinaryOperationTree;
 import edu.kit.cbc.common.corc.parsing.condition.ast.ConditionTree;
 import edu.kit.cbc.common.corc.parsing.condition.ast.ExistsTree;
@@ -91,6 +92,12 @@ public final class ConditionPrinter {
                     }
                 }
                 print(")");
+            }
+            case ArrayAcessTree(IdentTree name, ConditionTree expr) -> {
+                printTree(name);
+                print("[");
+                printTree(expr);
+                print("]");
             }
             default -> throw new IllegalStateException("Unexpected value: " + tree);
         }

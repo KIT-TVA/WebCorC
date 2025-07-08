@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public abstract class Lexer {
 
-    private static final List<Character> WHITESPACE_TOKEN = List.of(' ', '\t');
+    private static final List<Character> WHITESPACE_TOKEN = List.of(' ', '\t', '\r', '\n');
 
     protected final String source;
     protected int pos;

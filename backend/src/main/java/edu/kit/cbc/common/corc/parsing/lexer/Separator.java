@@ -12,7 +12,10 @@ public record Separator(SeparatorType type) implements Token {
         PAREN_OPEN("("),
         PAREN_CLOSE(")"),
         SEMICOLON(";"),
-        COMMA(",");
+        COMMA(","),
+        SQR_PAREN_OPEN("["),
+        SQR_PAREN_CLOSE("]"),
+        ;
 
         private final String value;
 

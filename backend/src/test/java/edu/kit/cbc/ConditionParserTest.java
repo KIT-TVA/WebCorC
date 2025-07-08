@@ -12,7 +12,7 @@ public class ConditionParserTest {
     @Test
     public void testLexer() {
         //\\forall (int a;) (a + 1 == 0)
-        ConditionLexer lexer = ConditionLexer.forString("testPred(a+1,b-2) && 17");
+        ConditionLexer lexer = ConditionLexer.forString("testPred(a[0],b-2) && 17");
         TokenSource source = new TokenSource(lexer);
         ConditionParser parser = new ConditionParser(source);
         System.out.println(ConditionPrinter.print(parser.parseCondition()));
