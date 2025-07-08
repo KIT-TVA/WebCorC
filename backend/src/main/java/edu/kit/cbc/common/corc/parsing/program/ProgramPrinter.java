@@ -6,11 +6,11 @@ import edu.kit.cbc.common.corc.parsing.parser.ast.BinaryOperationTree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.CallTree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.IdentTree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.IntLiteralTree;
-import edu.kit.cbc.common.corc.parsing.program.ast.BlockTree;
-import edu.kit.cbc.common.corc.parsing.program.ast.LValue;
 import edu.kit.cbc.common.corc.parsing.parser.ast.Tree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.UnaryOperationTree;
 import edu.kit.cbc.common.corc.parsing.program.ast.AssignTree;
+import edu.kit.cbc.common.corc.parsing.program.ast.BlockTree;
+import edu.kit.cbc.common.corc.parsing.program.ast.LValue;
 import edu.kit.cbc.common.corc.parsing.program.ast.StatementTree;
 import java.util.List;
 

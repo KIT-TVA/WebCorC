@@ -1,15 +1,15 @@
 package edu.kit.cbc.common.corc.parsing.condition;
 
-import edu.kit.cbc.common.corc.parsing.parser.ast.ArrayAcessTree;
-import edu.kit.cbc.common.corc.parsing.parser.ast.BinaryOperationTree;
-import edu.kit.cbc.common.corc.parsing.parser.ast.Tree;
 import edu.kit.cbc.common.corc.parsing.condition.ast.ExistsTree;
 import edu.kit.cbc.common.corc.parsing.condition.ast.ForAllTree;
+import edu.kit.cbc.common.corc.parsing.lexer.Operator;
+import edu.kit.cbc.common.corc.parsing.parser.ast.ArrayAcessTree;
+import edu.kit.cbc.common.corc.parsing.parser.ast.BinaryOperationTree;
+import edu.kit.cbc.common.corc.parsing.parser.ast.CallTree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.IdentTree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.IntLiteralTree;
-import edu.kit.cbc.common.corc.parsing.parser.ast.CallTree;
+import edu.kit.cbc.common.corc.parsing.parser.ast.Tree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.UnaryOperationTree;
-import edu.kit.cbc.common.corc.parsing.lexer.Operator;
 import java.util.List;
 
 public final class ConditionPrinter {

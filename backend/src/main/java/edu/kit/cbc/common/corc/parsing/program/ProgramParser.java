@@ -7,10 +7,10 @@ import edu.kit.cbc.common.corc.parsing.lexer.Operator;
 import edu.kit.cbc.common.corc.parsing.lexer.Separator;
 import edu.kit.cbc.common.corc.parsing.parser.Parser;
 import edu.kit.cbc.common.corc.parsing.parser.ast.IdentTree;
-import edu.kit.cbc.common.corc.parsing.program.ast.BlockTree;
-import edu.kit.cbc.common.corc.parsing.program.ast.LValue;
 import edu.kit.cbc.common.corc.parsing.parser.ast.Tree;
 import edu.kit.cbc.common.corc.parsing.program.ast.AssignTree;
+import edu.kit.cbc.common.corc.parsing.program.ast.BlockTree;
+import edu.kit.cbc.common.corc.parsing.program.ast.LValue;
 import edu.kit.cbc.common.corc.parsing.program.ast.StatementTree;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +50,7 @@ public final class ProgramParser extends Parser {
     public Tree parse() {
         List<StatementTree> statements = new ArrayList<>();
 
-        while(tokenSource.hasMore()) {
+        while (tokenSource.hasMore()) {
             statements.add((StatementTree) parseStatement());
         }
 
@@ -60,7 +60,7 @@ public final class ProgramParser extends Parser {
     @Override
     protected Tree parseStatement() {
         if (tokenSource.hasMore() && tokenSource.peek() instanceof Identifier) {
-            LValue lValue = null;
+            LValue lvalue = null;
             if (tokenSource.peek(1) instanceof Separator sep) {
                 //METHOD CALL
                 if (sep.type() == Separator.SeparatorType.PAREN_OPEN) {
@@ -71,12 +71,12 @@ public final class ProgramParser extends Parser {
                 }
                 //ARRAY ACCESS
                 if (sep.type() == Separator.SeparatorType.SQR_PAREN_OPEN) {
-                    lValue = parseArrayAccess();
+                    lvalue = parseArrayAccess();
                 }
             }
 
-            if (lValue == null) {
-                lValue = new IdentTree(tokenSource.expectIdentifier().identifier());
+            if (lvalue == null) {
+                lvalue = new IdentTree(tokenSource.expectIdentifier().identifier());
             }
             tokenSource.expectOperator(Operator.OperatorType.ASSIGN);
 
@@ -87,6 +87,7 @@ public final class ProgramParser extends Parser {
             return new AssignTree(lValue, expr);
         }
 
-        throw new ParseException("Token " + tokenSource.peek() + " is not a program statement token. Allowed statements are assign statements and method calls!");
+        throw new ParseException("Token " + tokenSource.peek()
+            + " is not a program statement token. Allowed statements are assign statements and method calls!");
     }
 }

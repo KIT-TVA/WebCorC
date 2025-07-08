@@ -11,12 +11,12 @@ import edu.kit.cbc.common.corc.parsing.lexer.Operator;
 import edu.kit.cbc.common.corc.parsing.lexer.Separator;
 import edu.kit.cbc.common.corc.parsing.parser.ast.ArrayAcessTree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.BinaryOperationTree;
+import edu.kit.cbc.common.corc.parsing.parser.ast.CallTree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.IdentTree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.IntLiteralTree;
-import edu.kit.cbc.common.corc.parsing.parser.ast.CallTree;
-import edu.kit.cbc.common.corc.parsing.program.ast.LValue;
 import edu.kit.cbc.common.corc.parsing.parser.ast.Tree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.UnaryOperationTree;
+import edu.kit.cbc.common.corc.parsing.program.ast.LValue;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +29,7 @@ public abstract class Parser {
 
     public Tree parse() {
         return parseStatement();
-    };
+    }
 
     protected Tree parseStatement() {
         return parseExpression();

@@ -2,11 +2,11 @@ package edu.kit.cbc.common.corc.cbcmodel;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import edu.kit.cbc.common.corc.parsing.TokenSource;
+import edu.kit.cbc.common.corc.parsing.condition.ConditionLexer;
 import edu.kit.cbc.common.corc.parsing.condition.ConditionParser;
 import edu.kit.cbc.common.corc.parsing.condition.ConditionPrinter;
-import edu.kit.cbc.common.corc.parsing.parser.ast.Tree;
-import edu.kit.cbc.common.corc.parsing.condition.ConditionLexer;
 import edu.kit.cbc.common.corc.parsing.lexer.Lexer;
+import edu.kit.cbc.common.corc.parsing.parser.ast.Tree;
 import io.micronaut.serde.annotation.Serdeable;
 import java.util.List;
 import java.util.stream.Collectors;
