@@ -1,4 +1,7 @@
 package edu.kit.cbc.common.corc.parsing.condition.ast;
 
-public record ForAllTree(IdentTree variable, ConditionTree condition) implements ConditionTree{
+import edu.kit.cbc.common.corc.parsing.parser.ast.IdentTree;
+import edu.kit.cbc.common.corc.parsing.parser.ast.Tree;
+
+public record ForAllTree(IdentTree variable, Tree condition) implements Tree {
 }

@@ -1,6 +1,6 @@
 package edu.kit.cbc.common.corc.parsing.lexer;
 
-public record Keyword(KeywordType type) implements Token {
+public record Keyword(KeywordType type, int pos) implements Token {
 
     public enum KeywordType {
         INT("int");
@@ -15,5 +15,10 @@ public record Keyword(KeywordType type) implements Token {
         public String toString() {
             return this.value;
         }
+    }
+
+    @Override
+    public int position() {
+        return pos();
     }
 }

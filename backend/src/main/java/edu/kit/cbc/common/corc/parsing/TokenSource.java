@@ -1,6 +1,5 @@
 package edu.kit.cbc.common.corc.parsing;
 
-import edu.kit.cbc.common.corc.parsing.lexer.ErrorToken;
 import edu.kit.cbc.common.corc.parsing.lexer.Identifier;
 import edu.kit.cbc.common.corc.parsing.lexer.Keyword;
 import edu.kit.cbc.common.corc.parsing.lexer.Lexer;
@@ -84,7 +83,7 @@ public class TokenSource {
 
     private void expectHasMore(int amount) {
         if (this.idx + amount >= this.tokens.size()) {
-            throw new ParseException("reached end of condition");
+            throw new ParseException("reached end of tokens");
         }
     }
 }
