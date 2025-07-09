@@ -7,6 +7,7 @@ import { CBCFormula, ICBCFormula } from '../../../services/project/CBCFormula';
 import { ProjectService } from '../../../services/project/project.service';
 import { ApiFileType } from '../../../services/project/types/api-elements';
 import { MatButtonModule } from '@angular/material/button';
+import { NetworkTreeService } from '../../../services/tree/network/network-tree.service';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { ConsoleService } from '../../../services/console/console.service';
@@ -31,6 +32,7 @@ export class ImportFileDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data : { parentURN : string },
     private _mapper: CbcFormulaMapperService, 
     private _projectService : ProjectService,
+    private _treeNetworkService : NetworkTreeService,
     private _consoleService : ConsoleService) {
     this._fileContent = ""
     this._fileName = ""
@@ -50,13 +52,32 @@ export class ImportFileDialogComponent {
       } else {
         this._fileContent = content
       }
-
+  
       this._accepted = true
       this._fileName = nameSplitted[0]
     } catch {
       this._consoleService.addStringError("no valid corc file", "import file into project")
     }
+      
+
   }
+
+  private async handleCbcModelFile(file : File, nameSplitted : string[]) {
+
+    this._fileType = "diagram"
+
+    this._accepted = false
+    const content = await file.text()
+
+    this._treeNetworkService.conversionResponse.subscribe((formula : CBCFormula) => {
+      this._fileName = nameSplitted[0]
+      this._fileContent = formula
+      this._accepted = true
+    })
+
+    this._treeNetworkService.convertCBCModel(content)
+  }
+
 
   /* eslint-disable  @typescript-eslint/no-explicit-any */
   public async onFileSelected(event : any) {
@@ -68,6 +89,11 @@ export class ImportFileDialogComponent {
     }
 
     const nameSplitted = file.name.split(".")
+
+    if (nameSplitted.length == 2 && nameSplitted[1] == "cbcmodel") {
+      this.handleCbcModelFile(file , nameSplitted)
+      return
+    }
 
     if (nameSplitted.length < 3) {
       this._accepted = false
