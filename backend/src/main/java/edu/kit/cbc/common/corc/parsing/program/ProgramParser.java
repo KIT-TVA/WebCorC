@@ -84,7 +84,7 @@ public final class ProgramParser extends Parser {
 
             tokenSource.expectSeparator(Separator.SeparatorType.SEMICOLON);
 
-            return new AssignTree(lValue, expr);
+            return new AssignTree(lvalue, expr);
         }
 
         throw new ParseException("Token " + tokenSource.peek()
