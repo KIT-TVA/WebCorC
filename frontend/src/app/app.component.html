@@ -2,7 +2,7 @@
     <button mat-icon-button (click)="drawer.toggle()">
         <mat-icon>menu</mat-icon>
     </button>
-    <h1>WebCorC</h1>
+    <h1 (click)="goHome()" style="cursor: pointer">WebCorC</h1>
     <span class="spacer"></span>
     <mat-form-field appearance="fill" style="margin-top: 20px">
         <input matInput [(ngModel)]="projectService.projectname" placeholder="Projectname">

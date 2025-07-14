@@ -1,6 +1,6 @@
 import {Component, HostListener} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {RouterOutlet} from '@angular/router';
+import {Router, RouterOutlet} from '@angular/router';
 import {MatToolbarModule} from "@angular/material/toolbar";
 import {MatSidenavModule} from "@angular/material/sidenav";
 import {MatSnackBar} from "@angular/material/snack-bar";
@@ -46,6 +46,7 @@ export class AppComponent {
     private networkTreeService : NetworkTreeService,
     private networkStatus : NetworkStatusService,
     private dialog: MatDialog,
+    private router: Router,
     public projectService : ProjectService,
     private snackBar : MatSnackBar,
     private consoleService : ConsoleService,
@@ -58,6 +59,10 @@ export class AppComponent {
         this._loadingState = status
       }
     })
+  }
+
+  public goHome(): void {
+      this.router.navigate([''], { queryParamsHandling: 'preserve' })
   }
 
   /**
