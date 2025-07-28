@@ -24,6 +24,10 @@ To run the project from cli ensure you have a JDK 21 installed and run:
 The frontend is a SPA developed in Angular 19 with Angular Material as the component framework.
 For the development dependencies use the devcontainers.json or install the project dependencies with
 
+from root of the project run
+```bash
+cd ./frontend/ 
+```
 ```bash
 npm install
 ```
@@ -39,11 +43,21 @@ And use the serve command in the angular cli to run the development server:
 ng serve
 ```
 
-
 - https://angular.dev/
 - https://angular.dev/tools/cli
 - https://material.angular.io/
 
+
+#### Note (Windows only)
+To use `ng serve`, add the following to the list of environtment variables in `Path`.
+Make sure to adjust `USER_NAME`
+
+```bash
+C:\Users\USER_NAME\AppData\Roaming\npm\node_modules\@angular\cli\bin
+```
+```bash
+C:\Users\USER_NAME\AppData\Roaming\npm\
+```
 
 #### Docker
 
@@ -53,6 +67,12 @@ For the full deployment of backend and frontend for development via docker-compo
 To run the stack in development:
 ```bash
 docker compose up -d -f docker-compose.dev.yml
+```
+
+Docker V2 uses the following command:
+
+```bash
+docker compose --file docker-compose.dev.yml up -d
 ```
 
 ##### Production:
@@ -110,3 +130,7 @@ server {
     }
 }
 ```
+
+#### 🛠️ Setup Issues
+
+Having trouble setting up the project? [Open an issue](https://github.com/KIT-TVA/WebCorC/issues) and we'll help you out.
