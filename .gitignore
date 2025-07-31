@@ -135,3 +135,5 @@ frontend/.angular
 
 # Data from docker production deployment
 data/
+
+frontend/yarn.lock

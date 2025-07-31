@@ -26,10 +26,11 @@ import {IRenaming} from "../../../types/Renaming";
  * @link https://angular.dev/guide/forms/reactive-forms
  */
 @Component({
-  selector: 'app-renaming',
-  imports: [CommonModule, FormsModule, MatButtonModule, MatDividerModule, MatFormFieldModule, MatInputModule, MatListModule, ReactiveFormsModule, MatIconModule, MatTooltipModule],
-  templateUrl: './renaming.component.html',
-  styleUrl: './renaming.component.scss'
+    selector: 'app-renaming',
+    imports: [CommonModule, FormsModule, MatButtonModule, MatDividerModule, MatFormFieldModule, MatInputModule, MatListModule, ReactiveFormsModule, MatIconModule, MatTooltipModule],
+    templateUrl: './renaming.component.html',
+    standalone: true,
+    styleUrl: './renaming.component.scss'
 })
 export class RenamingComponent {
 

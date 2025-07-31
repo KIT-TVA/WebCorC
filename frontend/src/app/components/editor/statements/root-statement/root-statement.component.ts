@@ -5,7 +5,6 @@ import { Refinement } from "../../../../types/refinement";
 import { TreeService } from "../../../../services/tree/tree.service";
 import { MatGridListModule } from "@angular/material/grid-list";
 import { RefinementWidgetComponent } from "../../../../widgets/refinement-widget/refinement-widget.component";
-import { ConditionEditorComponent } from "../../condition/condition-editor/condition-editor.component";
 
 import { FormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -15,8 +14,8 @@ import { ChooseRefinementComponent } from "../../../choose-refinement/choose-ref
 import { MatIconModule } from "@angular/material/icon";
 import { AbstractStatement } from "../../../../types/statements/abstract-statement";
 import { Position } from "../../../../types/position";
-import { CompositionStatementNode } from "../../../../types/statements/nodes/composition-statement-node";
 import { createEmptyStatementNode } from "../../../../types/statements/nodes/createStatementNode";
+import { RootStatementNode } from "../../../../types/statements/nodes/root-statement-node";
 
 /**
  * Composition statement in {@link EditorComponent}.
@@ -25,23 +24,22 @@ import { createEmptyStatementNode } from "../../../../types/statements/nodes/cre
  * The Composition Statement gets saved as {@link CompositionStatement}
  */
 @Component({
-  selector: "app-composition-statement",
+  selector: "app-root-statement",
   imports: [
     CommonModule,
     StatementComponent,
     MatGridListModule,
     RefinementWidgetComponent,
-    ConditionEditorComponent,
     FormsModule,
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
   ],
-  templateUrl: "./composition-statement.component.html",
-  styleUrl: "./composition-statement.component.scss",
+  templateUrl: "./root-statement.component.html",
+  styleUrl: "./root-statement.component.scss",
 })
-export class CompositionStatementComponent extends Refinement {
-  @Input({ required: true }) _node!: CompositionStatementNode;
+export class RootStatementComponent extends Refinement {
+  @Input({ required: true }) _node!: RootStatementNode;
 
   // Element used to spawn the child statements in
 
@@ -53,7 +51,7 @@ export class CompositionStatementComponent extends Refinement {
   }
 
   public override getTitle(): string {
-    return "Composition";
+    return "Root";
   }
 
   /**
@@ -61,7 +59,7 @@ export class CompositionStatementComponent extends Refinement {
    * The new child statement then get created in component
    * @param side hardcoded string from the template to identify which button got used
    */
-  public chooseRefinement(side: "left" | "right"): void {
+  public chooseRefinement(): void {
     const dialogRef = this.dialog.open(ChooseRefinementComponent);
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -70,11 +68,7 @@ export class CompositionStatementComponent extends Refinement {
       }
 
       const newNode = createEmptyStatementNode(result, this._node);
-      if (side === "left") {
-        this._node.firstStatementNode = newNode;
-      } else {
-        this._node.secondStatementNode = newNode;
-      }
+      this._node.childStatementNode = newNode;
       this.treeService.addStatementNode(newNode);
       this.treeService.redrawNotifier.next(); //TODO This may be redundant soon
       this._node.children.push(newNode);

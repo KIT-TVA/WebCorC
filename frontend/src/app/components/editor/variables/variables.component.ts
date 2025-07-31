@@ -29,6 +29,7 @@ import {IJavaVariable} from "../../../types/JavaVariable";
     selector: 'app-variables',
     imports: [CommonModule, FormsModule, MatButtonModule, MatDividerModule, MatFormFieldModule, MatInputModule, MatListModule, ReactiveFormsModule, MatIconModule, MatTooltipModule],
     templateUrl: './variables.component.html',
+    standalone: true,
     styleUrl: './variables.component.scss'
 })
 export class VariablesComponent {

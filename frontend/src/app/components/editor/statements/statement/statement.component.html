@@ -1,7 +1,6 @@
-<div class="refinementBox" cdkDrag cdkDragBoundary="#editorContainer" (cdkDragMoved)="onDragMoved($event)" [cdkDragFreeDragPosition]="dragPosition"
-  (cdkDragEnded)="onDragEnded($event)" #refinementBox>
+<div class="refinementBox" cdkDragBoundary="#editorContainer" #refinementBox>
 
-  <div class="refinementBoxTitle" cdkDragHandle #boxTitle>
+  <div class="refinementBoxTitle" #boxTitle>
     <p>{{refinement.getTitle()}} #{{0}}</p>
     <mat-icon *ngIf="!isRoot()" [style.cursor]="'pointer'" (click)="deleteRefinement()">delete</mat-icon>
   </div>

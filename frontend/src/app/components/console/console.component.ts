@@ -16,6 +16,7 @@ import { HttpErrorResponse } from '@angular/common/http';
     selector: 'app-console',
     imports: [CommonModule, MatButtonModule, MatIconModule, MatListModule],
     templateUrl: './console.component.html',
+    standalone: true,
     styleUrl: './console.component.scss'
 })
 export class ConsoleComponent {

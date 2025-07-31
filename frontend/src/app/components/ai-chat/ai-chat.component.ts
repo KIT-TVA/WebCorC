@@ -19,10 +19,11 @@ import { MatTooltipModule } from '@angular/material/tooltip';
  * Component for showing a dialog between user and the llm chat defined in the backend.
  */
 @Component({
-  selector: 'app-ai-chat',
-  imports: [MatChipsModule, MatInputModule, MatFormFieldModule, MatListModule, MatCardModule, MatButtonModule, MatIconModule, MatMenuModule, MatCheckboxModule, FormsModule, ReactiveFormsModule, MatTooltipModule],
-  templateUrl: './ai-chat.component.html',
-  styleUrl: './ai-chat.component.scss'
+    selector: 'app-ai-chat',
+    imports: [MatChipsModule, MatInputModule, MatFormFieldModule, MatListModule, MatCardModule, MatButtonModule, MatIconModule, MatMenuModule, MatCheckboxModule, FormsModule, ReactiveFormsModule, MatTooltipModule],
+    templateUrl: './ai-chat.component.html',
+    standalone: true,
+    styleUrl: './ai-chat.component.scss'
 })
 export class AiChatComponent {
 
