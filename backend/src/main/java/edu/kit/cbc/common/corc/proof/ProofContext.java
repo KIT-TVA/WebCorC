@@ -3,6 +3,7 @@ package edu.kit.cbc.common.corc.proof;
 import edu.kit.cbc.common.corc.cbcmodel.CbCFormula;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.function.Consumer;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -15,4 +16,5 @@ public final class ProofContext {
     private final List<Path> includeFiles;
     private final List<Path> javaSrcFiles;
     private final List<Path> existingProofFiles;
+    private final Consumer<String> logger;
 }
