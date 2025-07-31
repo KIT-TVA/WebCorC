@@ -76,7 +76,6 @@ export class CompositionStatementComponent extends Refinement {
         this._node.secondStatementNode = newNode;
       }
       this.treeService.addStatementNode(newNode);
-      this.treeService.redrawNotifier.next(); //TODO This may be redundant soon
       this._node.children.push(newNode);
     });
   }

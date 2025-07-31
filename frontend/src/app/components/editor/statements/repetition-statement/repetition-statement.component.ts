@@ -53,8 +53,6 @@ export class RepetitionStatementComponent extends Refinement {
             this._node.loopStatementNode = newNode;
             this.treeService.addStatementNode(newNode)
 
-            // Spawn the loop statement
-            this.treeService.redrawNotifier.next()
         })
     }
 

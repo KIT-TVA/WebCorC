@@ -1,21 +1,28 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
+import {Component} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {MatIconModule} from '@angular/material/icon';
+import {MatButtonModule} from '@angular/material/button';
 import {MatTreeFlatDataSource, MatTreeFlattener, MatTreeModule} from '@angular/material/tree';
-import { ProjectService } from '../../services/project/project.service';
-import { FlatTreeControl } from '@angular/cdk/tree';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { Router } from '@angular/router';
-import { first } from 'rxjs';
-import { MatDialog } from '@angular/material/dialog';
-import { CreateProjectDialogComponent } from './create-project-dialog/create-project-dialog.component';
-import { ProjectElement, ProjectDirectory, CodeFile, DiagramFile, RenameProjectElement, ProjectFile } from '../../services/project/types/project-elements';
-import { ImportFileDialogComponent } from './import-file-dialog/import-file-dialog';
-import { MatMenuModule } from '@angular/material/menu';
-import { ImportProjectDialogComponent } from '../landing-page/import-project-dialog/import-project-dialog.component';
-import { CdkDrag, CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop';
+import {ProjectService} from '../../services/project/project.service';
+import {FlatTreeControl} from '@angular/cdk/tree';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+import {Router} from '@angular/router';
+import {first} from 'rxjs';
+import {MatDialog} from '@angular/material/dialog';
+import {CreateProjectDialogComponent} from './create-project-dialog/create-project-dialog.component';
+import {
+  CodeFile,
+  DiagramFile,
+  ProjectDirectory,
+  ProjectElement,
+  ProjectFile,
+  RenameProjectElement
+} from '../../services/project/types/project-elements';
+import {ImportFileDialogComponent} from './import-file-dialog/import-file-dialog';
+import {MatMenuModule} from '@angular/material/menu';
+import {ImportProjectDialogComponent} from '../landing-page/import-project-dialog/import-project-dialog.component';
+import {CdkDrag, CdkDragDrop, CdkDropList} from '@angular/cdk/drag-drop';
 
 class FlatNode {
   expandable: boolean;
@@ -40,10 +47,11 @@ class FlatNode {
  * Primarly interacts with the {@link ProjectService}, in which the state is stored
  */
 @Component({
-    selector: 'app-project-explorer',
-    imports: [CommonModule, MatTreeModule, MatIconModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatMenuModule, CdkDrag, CdkDropList],
-    templateUrl: './project-explorer.component.html',
-    styleUrl: './project-explorer.component.scss'
+  selector: 'app-project-explorer',
+  imports: [CommonModule, MatTreeModule, MatIconModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatMenuModule, CdkDrag, CdkDropList],
+  templateUrl: './project-explorer.component.html',
+  standalone: true,
+  styleUrl: './project-explorer.component.scss'
 })
 export class ProjectExplorerComponent {
 

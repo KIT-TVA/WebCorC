@@ -21,6 +21,7 @@ import {AiChatService} from '../../../../services/ai-chat/ai-chat.service';
     imports: [CommonModule, FormsModule, MatFormFieldModule, MatInputModule, MatGridListModule,
         ReactiveFormsModule, MatAutocompleteModule, MatMenuModule, MatButtonModule, MatIconModule],
     templateUrl: './condition-editor.component.html',
+    standalone: true,
     styleUrl: './condition-editor.component.scss'
 })
 export class ConditionEditorComponent implements OnInit {

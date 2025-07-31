@@ -23,8 +23,9 @@ import {SimpleStatementNode} from "../../../../types/statements/nodes/simple-sta
 @Component({
     selector: 'app-simple-statement',
     imports: [CommonModule, StatementComponent, MatGridListModule,
-        RefinementWidgetComponent, ConditionEditorComponent, FormsModule, MatFormFieldModule, MatInputModule, MatIconModule, ConditionEditorComponent],
+        ConditionEditorComponent, FormsModule, MatFormFieldModule, MatInputModule, MatIconModule, ConditionEditorComponent],
     templateUrl: './simple-statement.component.html',
+    standalone: true,
     styleUrl: './simple-statement.component.scss'
 })
 export class SimpleStatementComponent extends Refinement {
@@ -41,32 +42,10 @@ export class SimpleStatementComponent extends Refinement {
 
     public constructor(treeService: TreeService, private dialog: MatDialog) {
         super(treeService);
-
-        // If root enable the conditions to be edited
-        if (this.isRoot()) {
-            super.toggleEditableCondition()
-        }
     }
 
     public override getTitle(): string {
-        return this.isRoot() ? "Root" : "Statement";
-    }
-
-
-    public chooseRefinement(): void {
-        if (!this.isRoot()) {
-            return
-        }
-
-        const dialogRef = this.dialog.open(ChooseRefinementComponent);
-        dialogRef.afterClosed().subscribe(result => {
-            if (!result) {
-                return
-            }
-
-            this.componentSpawn.createComponent(result);
-            //TODO: check if dependencies changed for conditions
-        })
+        return "Statement";
     }
 
     public override refreshLinkState(): void {
@@ -84,10 +63,6 @@ export class SimpleStatementComponent extends Refinement {
         if (this._statement) {
             this._statement.resetPosition(this.position, new Position(100, -10))
         }
-    }
-
-    public isRoot(): boolean {
-        return this.treeService.isRootNode(this);
     }
 
 

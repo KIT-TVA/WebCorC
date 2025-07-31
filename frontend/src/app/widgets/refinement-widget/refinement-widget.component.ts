@@ -9,24 +9,26 @@ import {MatIconModule} from "@angular/material/icon";
     selector: 'app-refinement-widget',
     imports: [CommonModule, MatIconModule],
     template: `
-    <div id="background">
-      <mat-icon>{{icon}}</mat-icon><br>
-      <span>{{text}}</span>
-    </div>
-  `,
+        <div id="background">
+            <mat-icon>{{ icon }}</mat-icon>
+            <br>
+            <span>{{ text }}</span>
+        </div>
+    `,
+    standalone: true,
     styles: `
-    #background {
-      width: fit-content;
-      padding: 10px;
-      text-align: center;
-      border-radius: 5px;
-      color: gray;
-      margin: auto;
-      width: 100px;
-      margin-top: 20px;
-      cursor: pointer;
-    }
-  `
+      #background {
+        width: fit-content;
+        padding: 10px;
+        text-align: center;
+        border-radius: 5px;
+        color: gray;
+        margin: auto;
+        width: 100px;
+        margin-top: 20px;
+        cursor: pointer;
+      }
+    `
 })
 export class RefinementWidgetComponent {
   @Input() icon: string = "";

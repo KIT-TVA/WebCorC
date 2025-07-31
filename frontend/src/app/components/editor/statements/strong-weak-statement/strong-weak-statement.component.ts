@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, ViewChild, ViewContainerRef} from '@angular/core';
+import {Component, ElementRef, Input} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {StatementComponent} from "../statement/statement.component";
 import {Refinement} from "../../../../types/refinement";
@@ -24,6 +24,7 @@ import {SkipStatementNode} from "../../../../types/statements/nodes/skip-stateme
     imports: [CommonModule, StatementComponent, MatGridListModule,
         RefinementWidgetComponent, ConditionEditorComponent, FormsModule, MatFormFieldModule, MatInputModule, MatIconModule],
     templateUrl: './strong-weak-statement.component.html',
+    standalone: true,
     styleUrl: './strong-weak-statement.component.scss'
 })
 export class StrongWeakStatementComponent extends Refinement {
@@ -34,21 +35,10 @@ export class StrongWeakStatementComponent extends Refinement {
     @Input({required: true}) _node!: SkipStatementNode;
     private _statementRef: ElementRef | undefined;
 
-    @ViewChild("subComponentSpawn", {read: ViewContainerRef}) private componentSpawn!: ViewContainerRef;
-
     public constructor(treeService: TreeService, private dialog: MatDialog) {
         super(treeService);
         this._weakPreCondition = new Condition("Weak precondition");
         this._strongPostCondition = new Condition("Strong postcondition");
-
-        // delete the child statement on deletion
-        treeService.deletionNotifier.subscribe(refinement => {
-            if (refinement === this._statement) {
-                this._statement = undefined;
-                this._statementRef!.nativeElement!.remove();
-            }
-        })
-
     }
 
     public override getTitle(): string {
@@ -66,7 +56,6 @@ export class StrongWeakStatementComponent extends Refinement {
                 return
             }
             //TODO: Spawn subcomponent
-            this.treeService.redrawNotifier.next()
         })
     }
 

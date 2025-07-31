@@ -1,24 +1,18 @@
-import { Injectable, signal, Signal, WritableSignal } from "@angular/core";
-import { Refinement } from "../../types/refinement";
-import { ReplaySubject, Subject } from "rxjs";
-import { Position } from "../../types/position";
-import {
-  AbstractStatement,
-  IAbstractStatement,
-} from "../../types/statements/abstract-statement";
-import { JavaVariable, JavaVariableKind } from "../../types/JavaVariable";
-import { Renaming } from "../../types/Renaming";
-import { Condition } from "../../types/condition/condition";
-import { CBCFormula } from "../../types/CBCFormula";
-import {
-  CompositionStatement,
-  ICompositionStatement,
-} from "../../types/statements/composition-statement";
-import { IRepetitionStatement } from "../../types/statements/repetition-statement";
-import { ISelectionStatement } from "../../types/statements/selection-statement";
-import { AbstractStatementNode } from "../../types/statements/nodes/abstract-statement-node";
-import { createStatementNode } from "../../types/statements/nodes/createStatementNode";
-import { RootStatement } from "../../types/statements/root-statement";
+import {Injectable, signal, Signal, WritableSignal} from "@angular/core";
+import {Refinement} from "../../types/refinement";
+import {ReplaySubject, Subject} from "rxjs";
+import {Position} from "../../types/position";
+import {AbstractStatement, IAbstractStatement,} from "../../types/statements/abstract-statement";
+import {JavaVariable, JavaVariableKind} from "../../types/JavaVariable";
+import {Renaming} from "../../types/Renaming";
+import {Condition} from "../../types/condition/condition";
+import {CBCFormula} from "../../types/CBCFormula";
+import {ICompositionStatement,} from "../../types/statements/composition-statement";
+import {IRepetitionStatement} from "../../types/statements/repetition-statement";
+import {ISelectionStatement} from "../../types/statements/selection-statement";
+import {AbstractStatementNode} from "../../types/statements/nodes/abstract-statement-node";
+import {createStatementNode} from "../../types/statements/nodes/createStatementNode";
+import {IRootStatement, RootStatement} from "../../types/statements/root-statement";
 
 /**
  * Service for the context of the tree in the graphical editor.
@@ -28,8 +22,6 @@ import { RootStatement } from "../../types/statements/root-statement";
   providedIn: "root",
 })
 export class TreeService {
-  private readonly _redrawNotifier: ReplaySubject<void>;
-  private readonly _deletionNotifier: ReplaySubject<Refinement>;
   private readonly _verifyNotifier: Subject<void>;
   private readonly _exportNotifier: Subject<void>;
   private readonly _resetVerifyNotifier: Subject<void>;
@@ -39,25 +31,33 @@ export class TreeService {
   private _statementNodes: WritableSignal<AbstractStatementNode[]> = signal([]);
 
   public constructor() {
-    this._redrawNotifier = new ReplaySubject();
-    this._deletionNotifier = new ReplaySubject();
     this._verificationResultNotifier = new Subject<AbstractStatement>();
     this._verifyNotifier = new Subject<void>();
     this._exportNotifier = new Subject<void>();
     this._resetVerifyNotifier = new Subject<void>();
   }
 
-  private _title: string = "";
-
-  public get title(): string {
-    return this._title;
-  }
-
-  public set title(value: string) {
-    this._title = value;
-  }
-
   private _rootNode: Refinement | undefined;
+
+
+  setFormula(newFormula: CBCFormula) {
+    this._rootFormula = newFormula;
+    this.getStatementNodes();
+    this._variables = [];
+    this._renames = [];
+    this._globalConditions = [];
+    newFormula.javaVariables.forEach(variable => {
+      this.addVariable(variable.name, variable.kind);
+    });
+    if (newFormula.renamings) {
+      newFormula.renamings.forEach((renaming) => {
+        this.addRenaming(renaming.type, renaming.function, renaming.newName);
+      })
+    }
+    newFormula.globalConditions.forEach(condition => {
+      this.addGlobalCondition(condition.programStatement)
+    })
+  }
 
   public get rootNode(): Refinement | undefined {
     return this._rootNode;
@@ -75,10 +75,6 @@ export class TreeService {
 
   private _editorWidth: number = 0;
 
-  public set editorWidth(editorWidth: number) {
-    this._editorWidth = editorWidth;
-  }
-
   private _variables: JavaVariable[] = [];
 
   public get variables(): string[] {
@@ -89,16 +85,8 @@ export class TreeService {
     return variablesArray;
   }
 
-  public get deletionNotifier(): ReplaySubject<Refinement> {
-    return this._deletionNotifier;
-  }
-
   public get exportNotifier(): Subject<void> {
     return this._exportNotifier;
-  }
-
-  public get redrawNotifier(): ReplaySubject<void> {
-    return this._redrawNotifier;
   }
 
   public get conditions(): Condition[] {
@@ -134,7 +122,6 @@ export class TreeService {
       new Position(this._editorWidth / 2, 0),
       new Position(-450, 10),
     );
-    this._redrawNotifier.next();
   }
 
   /**
@@ -143,22 +130,6 @@ export class TreeService {
    */
   public export(): void {
     this._exportNotifier.next();
-  }
-
-  /**
-   * Redraw the links between the statements on scrolling in the editor.
-   */
-  public onEditorContainerScrolled(): void {
-    this._redrawNotifier.next();
-  }
-
-  /**
-   * Check for given refinement if the statement is the root node
-   * @param refinement The refinement to check for root node attributes
-   * @returns true, if refinement is root node else false
-   */
-  public isRootNode(refinement: Refinement): boolean {
-    return this._rootNode == refinement;
   }
 
   /**
@@ -234,8 +205,7 @@ export class TreeService {
   public statements(): IAbstractStatement[] {
     const statements: IAbstractStatement[] = [];
     if (this.rootFormula && this.rootFormula.statement) {
-      const statement = this.rootFormula.statement;
-      this.collectStatements(statement, statements);
+      this.collectStatements(this.rootFormula.statement, statements);
     }
     return statements;
   }
@@ -301,8 +271,6 @@ export class TreeService {
     );
   }
 
-  private nodeTree() {}
-
   private collectStatementNodeChildren(
     nodes: (AbstractStatementNode | undefined)[],
   ): AbstractStatementNode[] {
@@ -357,6 +325,10 @@ export class TreeService {
           (statement as ISelectionStatement).commands.forEach((command) =>
             this.collectStatements(command, statements),
           );
+          return;
+        case "ROOT":
+          statements.push(statement);
+          this.collectStatements((statement as IRootStatement).statement, statements);
       }
     }
   }

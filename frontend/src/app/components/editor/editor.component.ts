@@ -1,44 +1,37 @@
 import {
   AfterViewInit,
   Component,
-  ComponentRef,
   computed,
   effect,
-  ElementRef,
-  HostListener,
   Input,
   OnDestroy,
-  QueryList,
   signal,
   Signal,
-  Type,
   ViewChild,
-  ViewChildren,
   ViewContainerRef,
 } from "@angular/core";
-import { CommonModule, NgComponentOutlet } from "@angular/common";
-import { Refinement } from "../../types/refinement";
-import { MatButtonModule } from "@angular/material/button";
-import { TreeService } from "../../services/tree/tree.service";
-import { MatIconModule } from "@angular/material/icon";
-import { MatExpansionModule } from "@angular/material/expansion";
-import { VariablesComponent } from "./variables/variables.component";
-import { MatTooltipModule } from "@angular/material/tooltip";
-import { MatMenuModule } from "@angular/material/menu";
-import { GlobalConditionsComponent } from "./global-conditions/global-conditions.component";
-import { ProjectService } from "../../services/project/project.service";
-import { CBCFormula } from "../../types/CBCFormula";
-import { Router } from "@angular/router";
-import { OptionsComponent } from "./options/options.component";
-import { EditorService } from "../../services/editor/editor.service";
-import { RenamingComponent } from "./renaming/renaming.component";
-import { SimpleStatementComponent } from "./statements/simple-statement/simple-statement.component";
-import { MatTab, MatTabGroup, MatTabLabel } from "@angular/material/tabs";
-import { AiChatComponent } from "../ai-chat/ai-chat.component";
-import { ConsoleComponent } from "../console/console.component";
-import { MatDrawer, MatDrawerContainer } from "@angular/material/sidenav";
-import { StatementDelegatorComponent } from "./statements/statement-delegator/statement-delegator.component";
-import { AbstractStatementNode } from "../../types/statements/nodes/abstract-statement-node";
+import {CommonModule} from "@angular/common";
+import {MatButtonModule} from "@angular/material/button";
+import {TreeService} from "../../services/tree/tree.service";
+import {MatIconModule} from "@angular/material/icon";
+import {MatExpansionModule} from "@angular/material/expansion";
+import {VariablesComponent} from "./variables/variables.component";
+import {MatTooltipModule} from "@angular/material/tooltip";
+import {MatMenuModule} from "@angular/material/menu";
+import {GlobalConditionsComponent} from "./global-conditions/global-conditions.component";
+import {ProjectService} from "../../services/project/project.service";
+import {CBCFormula} from "../../types/CBCFormula";
+import {Router} from "@angular/router";
+import {OptionsComponent} from "./options/options.component";
+import {EditorService} from "../../services/editor/editor.service";
+import {RenamingComponent} from "./renaming/renaming.component";
+import {SimpleStatementComponent} from "./statements/simple-statement/simple-statement.component";
+import {MatTab, MatTabGroup, MatTabLabel} from "@angular/material/tabs";
+import {AiChatComponent} from "../ai-chat/ai-chat.component";
+import {ConsoleComponent} from "../console/console.component";
+import {MatDrawer, MatDrawerContainer} from "@angular/material/sidenav";
+import {StatementDelegatorComponent} from "./statements/statement-delegator/statement-delegator.component";
+import {AbstractStatementNode} from "../../types/statements/nodes/abstract-statement-node";
 import {
   DynamicNode,
   Edge,
@@ -84,51 +77,22 @@ import {
   styleUrl: "./editor.component.scss",
 })
 export class EditorComponent implements AfterViewInit, OnDestroy {
-  protected nodes: DynamicNode[] = [];
-  protected edges: Edge[] = [];
-  protected statements: Signal<AbstractStatementNode[]> = signal([]);
-  protected nodez: Signal<DynamicNode[]> = computed(() =>
-    this.statements().map((statement) => {
-      return {
-        id: statement.statement.id,
-        type: "html-template",
-        point: signal({
-          x: statement.position().xinPx,
-          y: statement.position().yinPx,
-        }),
-        data: signal(statement),
-      };
-    }),
-  );
-  protected readonly AbstractStatementNode = AbstractStatementNode;
   @ViewChild("examplesSpawn", { read: ViewContainerRef, static: false })
   private examplesSpawn!: ViewContainerRef;
-  @ViewChild(NgComponentOutlet, { static: false })
-  private rootNodeOutlet!: NgComponentOutlet;
   @ViewChild("variables") private variables!: VariablesComponent;
   @ViewChild("conditions") private conditions!: GlobalConditionsComponent;
   @ViewChild("renaming") private renaming!: RenamingComponent;
-  @ViewChild("editorContainer", { static: false })
-  private editorContainer!: ElementRef;
-  @ViewChildren("statementDelegator", { read: ComponentRef })
-  private statementNodeRefs!: QueryList<
-    ComponentRef<StatementDelegatorComponent>
-  >;
-  private statementToNodeMap = computed(() => {
-    const map = new Map<
-      AbstractStatementNode,
-      ComponentRef<StatementDelegatorComponent>
-    >();
-    this.statementNodeRefs.forEach((node) =>
-      map.set(node.instance.statement, node),
-    );
-  });
+
   private _viewInit: boolean = false;
+
+  protected statements: Signal<AbstractStatementNode[]> = signal([]);
 
   /**
    * Constructor for dependency injection of the services
    * @param treeService The service to interact with the refinements
    * @param projectService The service to persist and laod the file content
+   * @param editorService
+   * @param router
    */
   public constructor(
     private treeService: TreeService,
@@ -139,19 +103,9 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     this.projectService.editorNotify.subscribe(() => {
       this.saveContentToFile();
     });
-    effect(() => {});
-    effect(() => {
-      this.nodes = this.nodez();
-      this.edges = this.computeEdges(this.statements());
-    });
+    this.setupVFlowSync();
     this.treeService.exportNotifier.subscribe(() => this.export());
     this.statements = treeService.getStatementNodes();
-  }
-
-  private _rootNode: Type<SimpleStatementComponent> | undefined;
-
-  public get rootNode() {
-    return this._rootNode ? this._rootNode : null;
   }
 
   private _urn: string = "";
@@ -173,23 +127,8 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     }
     this._urn = uniformRessourceName;
     this.editorService.currentFileName = uniformRessourceName.substring(
-      uniformRessourceName.lastIndexOf("/"),
+        uniformRessourceName.lastIndexOf("/"),
     );
-    let child: Refinement | undefined;
-
-    // get the child of the root element
-    if (this.treeService.rootNode) {
-      child = (this.treeService.rootNode as SimpleStatementComponent).statement;
-    }
-    this._rootNode = SimpleStatementComponent;
-
-    // if the child is defined delete the child and all grandchildren and
-    if (child) {
-      this.treeService.deletionNotifier.next(child);
-      if (this.examplesSpawn) {
-        this.examplesSpawn.clear();
-      }
-    }
 
     if (this._viewInit) {
       this.loadFileContent();
@@ -207,18 +146,8 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       this.saveContentToFile();
     });
 
-    this.treeService.editorWidth =
-      this.editorContainer.nativeElement.offsetWidth;
     this.editorService.reload.subscribe(() => {
-      let child: Refinement | undefined;
-      if (this.treeService.rootNode) {
-        child = (this.treeService.rootNode as SimpleStatementComponent)
-          .statement;
-      }
 
-      if (child) {
-        this.treeService.deletionNotifier.next(child);
-      }
       this.examplesSpawn.clear();
       this.loadFileContent();
     });
@@ -230,23 +159,12 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   }
 
   /**
-   * Event listener for resizing the browser window.
-   * The editorwidth is so used in the Reset Poisiton action to prevent overlapping of the statements.
-   */
-  @HostListener("window:resize", ["event"])
-  public onHostWindowResize() {
-    this.treeService.editorWidth =
-      this.editorContainer.nativeElement.offsetWidth;
-  }
-
-  /**
    * Save current editor content to {@link CBCFormula}
    */
   private saveContentToFile(): void {
     // create a new Formula to save
     let formula = new CBCFormula();
     if (this.treeService.rootFormula) {
-      /*TODO Implement some logic to save state of graphical editor to local model, perhaps somewhere else*/
       formula = this.treeService.rootFormula;
     }
 
@@ -269,24 +187,6 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     window.URL.revokeObjectURL(url);
   }
 
-  private computeEdges(statements: AbstractStatementNode[]): Edge[] {
-    const edges: Edge[] = [];
-    statements.forEach((parent) => {
-      parent.children.forEach((child) => {
-        if (child) {
-          edges.push({
-            id: parent.statement.id + " -> " + child.statement.id,
-            type: "default",
-            source: parent.statement.id,
-            target: child.statement.id,
-            curve: "smooth-step",
-          });
-        }
-      });
-    });
-    return edges;
-  }
-
   /**
    * Load {@link CBCFormula} in to editor to be edited
    */
@@ -307,7 +207,6 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
         .queryParamMap.get("projectId");
       if (!this.projectService.projectId && projectId) {
         this.projectService.projectId = projectId;
-
         this.projectService.dataChange.subscribe(async () => {
           newFormula = (await this.projectService.getFileContent(
             this._urn,
@@ -321,9 +220,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
 
     // if the file is not empty load content
     if (newFormula && newFormula.statement) {
-      // redraw all links between the components
-      // TODO: Reimplement
-
+      this.treeService.setFormula(newFormula);
       this.statements = this.treeService.getStatementNodes();
 
       this.variables.importVariables(newFormula.javaVariables);
@@ -337,6 +234,56 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     //TODO: reimplement
   }
 
+  /**
+   * VFlow doesn't support using computed signals as inputs for the graph, so we manually set the values here.
+   *
+   */
+  protected nodes: DynamicNode[] = [];
+  protected edges: Edge[] = [];
+  protected nodez: Signal<DynamicNode[]> = computed(() =>
+      this.statements().map((statement) => {
+        return {
+          id: statement.statement.id,
+          type: "html-template",
+          point: signal({
+            x: statement.position().xinPx,
+            y: statement.position().yinPx,
+          }),
+          data: signal(statement),
+        };
+      }),
+  );
+
+  private setupVFlowSync() {
+    effect(() => {
+    });
+    effect(() => {
+      this.nodes = this.nodez();
+      this.edges = this.computeEdges(this.statements());
+    });
+  }
+
+  private computeEdges(statements: AbstractStatementNode[]): Edge[] {
+    const edges: Edge[] = [];
+    statements.forEach((parent) => {
+      parent.children.forEach((child) => {
+        if (child) {
+          edges.push({
+            id: parent.statement.id + " -> " + child.statement.id,
+            type: "default",
+            source: parent.statement.id,
+            target: child.statement.id,
+            curve: "smooth-step",
+          });
+        }
+      });
+    });
+    return edges;
+  }
+
+  /**
+   * When the nodes are moved around in the editor by VFlow, save the new positions to the model.
+   */
   handlePositionChange($event: NodePositionChange[]) {
     $event.forEach((change) => {
       this.statements()

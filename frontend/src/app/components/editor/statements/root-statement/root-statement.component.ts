@@ -70,7 +70,6 @@ export class RootStatementComponent extends Refinement {
       const newNode = createEmptyStatementNode(result, this._node);
       this._node.childStatementNode = newNode;
       this.treeService.addStatementNode(newNode);
-      this.treeService.redrawNotifier.next(); //TODO This may be redundant soon
       this._node.children.push(newNode);
     });
   }

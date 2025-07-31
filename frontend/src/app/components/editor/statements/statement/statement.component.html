@@ -2,7 +2,7 @@
 
   <div class="refinementBoxTitle" #boxTitle>
     <p>{{refinement.getTitle()}} #{{0}}</p>
-    <mat-icon *ngIf="!isRoot()" [style.cursor]="'pointer'" (click)="deleteRefinement()">delete</mat-icon>
+    <mat-icon [style.cursor]="'pointer'" (click)="deleteRefinement()">delete</mat-icon>
   </div>
   
   <div style="display: flex">

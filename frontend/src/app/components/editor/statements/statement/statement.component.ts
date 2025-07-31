@@ -50,8 +50,9 @@ import { AbstractStatementNode } from "../../../../types/statements/nodes/abstra
   ],
   templateUrl: "./statement.component.html",
   styleUrl: "./statement.component.scss",
+  standalone: true
 })
-export class StatementComponent implements AfterViewInit {
+export class StatementComponent {
   private static readonly EDITOR_CONTAINER_EXPANSION_TRIGGER = 150;
   private static readonly EDITOR_CONTAINER_EXPANSION = 200;
 
@@ -64,92 +65,12 @@ export class StatementComponent implements AfterViewInit {
   @ViewChild("postconditionDrawer") private postconditionDrawer!: MatDrawer;
   @ViewChild("preconditionDiv") private preconditionDivRef!: ElementRef;
   @ViewChild("postconditionDiv") private postconditionDivRef!: ElementRef;
-  @ViewChild("refinementBox") private refinementBoxRef!: ElementRef;
-  @ViewChild("boxTitle") private boxTitleRef!: ElementRef;
-
-  // position of the element in the drag and drop area
-  private _dragPosition: Point = { x: 0, y: 0 };
 
   constructor(private treeService: TreeService) {}
-
-  public ngAfterViewInit(): void {
-    // set the position to the saved position in the file
-    this.refreshDragPosition();
-
-    this.treeService.verificationResultNotifier.subscribe(
-      (verificationResult) => this.setVerifcationState(verificationResult),
-    );
-
-    if (this.isRoot()) {
-      this.refinement.getRedrawNotifier().subscribe(() => {
-        this.refreshDragPosition();
-      });
-
-      this.treeService.resetVerifyNotifier.subscribe(() => {
-        if (!this.refinement.proven) {
-          this.boxTitleRef.nativeElement.style.backgroundColor =
-            "rgb(87, 87, 87)";
-          this.refinementBoxRef.nativeElement.style.borderColor =
-            "rgb(87, 87, 87)";
-        }
-      });
-    }
-
-    if (this.refinement.proven) {
-      this.boxTitleRef.nativeElement.style.backgroundColor = "rgb(140,182,60)";
-      this.refinementBoxRef.nativeElement.style.borderColor = "rgb(140,182,60)";
-    }
-  }
 
   public deleteRefinement(): void {
     this.treeService.deleteStatementNode(this._node);
     this.delete.emit();
-  }
-
-  public onDragMoved(move: CdkDragMove): void {
-    this.refinement.onDragMoveEmitter.next();
-    this.expandEditorContainer(move);
-  }
-
-  public refreshDragPosition(): void {
-    this._dragPosition = {
-      x: this.refinement.position.xinPx,
-      y: this.refinement.position.yinPx,
-    };
-  }
-
-  /**
-   * Expands the editor container, when a refinement box is dragged to the editor containers right or bottom border.
-   * @param move event fired through a users drag.
-   */
-  public expandEditorContainer(move: CdkDragMove): void {
-    const boxPosition =
-      move.source.element.nativeElement.getBoundingClientRect();
-    const editorContainer = document.getElementById("editorContainer");
-    const widthController = document.getElementById("editorWidthController");
-    const heightController = document.getElementById("editorHeightController");
-    if (editorContainer && widthController && heightController) {
-      if (
-        boxPosition.x + boxPosition.width + editorContainer.scrollLeft >=
-        editorContainer.scrollWidth -
-          StatementComponent.EDITOR_CONTAINER_EXPANSION_TRIGGER
-      ) {
-        widthController.style.width =
-          editorContainer.scrollWidth +
-          StatementComponent.EDITOR_CONTAINER_EXPANSION +
-          "px";
-      }
-      if (
-        boxPosition.y + boxPosition.height + editorContainer.scrollTop >=
-        editorContainer.scrollHeight -
-          StatementComponent.EDITOR_CONTAINER_EXPANSION_TRIGGER
-      ) {
-        heightController.style.height =
-          editorContainer.scrollHeight +
-          StatementComponent.EDITOR_CONTAINER_EXPANSION +
-          "px";
-      }
-    }
   }
 
   public toggleConditionEditorView(postcondition: boolean): void {
@@ -163,11 +84,9 @@ export class StatementComponent implements AfterViewInit {
     if (drawer.opened) {
       drawer.toggle();
       editorRef.nativeElement.style.width = "50px";
-      this.refinement.onDragMoveEmitter.next();
     } else {
       editorRef.nativeElement.style.width = "";
       drawer.toggle();
-      this.refinement.onDragMoveEmitter.next();
     }
   }
 
@@ -184,30 +103,5 @@ export class StatementComponent implements AfterViewInit {
         this.refinementBoxRef.nativeElement.style.borderColor = "rgb(163,34,35)";
       }
     }*/
-  }
-
-  /**
-   * Used to make the root statement not deleteable by the user
-   * @returns true, if the statement is the root statement, else false
-   */
-  public isRoot(): boolean {
-    return this.treeService.isRootNode(this.refinement);
-  }
-
-  /**
-   * Emit the new posiition of the statement to the background #
-   * and sync the position to the internal state for saving the state
-   * @param $event The event, which triggered the function call
-   */
-  public onDragEnded($event: CdkDragEnd) {
-    this.refinement.onDragEndEmitter.next($event);
-    this.refinement.position = new Position(
-      $event.source.getFreeDragPosition().x,
-      $event.source.getFreeDragPosition().y,
-    );
-  }
-
-  public get dragPosition(): Point {
-    return this._dragPosition;
   }
 }
