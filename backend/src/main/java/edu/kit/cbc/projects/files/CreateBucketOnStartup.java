@@ -17,8 +17,9 @@ import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 @Singleton
 public class CreateBucketOnStartup implements ApplicationEventListener<StartupEvent> {
 
-    private static final String BUCKET_CREATED = "Created new bucket: %s";
-    private static final String BUCKET_CREATION_ERROR = "Exception occured when creating bucket %s:\n%s";
+    private static final String BUCKET_FOUND = "found bucket: %s";
+    private static final String BUCKET_CREATED = "created new bucket: %s";
+    private static final String BUCKET_CREATION_ERROR = "exception occured when creating bucket %s:\n%s";
     private static final Logger LOGGER = Logger.getGlobal();
 
     private S3ClientProvider s3ClientProvider;
@@ -41,7 +42,7 @@ public class CreateBucketOnStartup implements ApplicationEventListener<StartupEv
             );
             LOGGER.info(String.format(BUCKET_CREATED, bucketName));
         } catch (BucketAlreadyExistsException | BucketAlreadyOwnedByYouException e) {
-            e.printStackTrace();
+            LOGGER.info(String.format(BUCKET_FOUND, bucketName));
         } catch (SdkClientException e) {
             LOGGER.warning(
                     String.format(
