@@ -27,10 +27,14 @@ services:
       DEVELOPMENT: true
     ports:
       - "8081:8080"
-    volumes: 
-      - "./backend/:/app/"
-      - "./tmp/:/tmp/"
-
+    develop:
+      watch:
+        - action: sync
+          path: "./backend/"
+          target: "/app/"
+          ignore: "./backend/target/"
+        - action: rebuild
+          path: "./backend/pom.xml"
     depends_on:
       minio:
         condition: service_started
@@ -41,7 +45,14 @@ services:
     build:
       context: frontend
       dockerfile: dev.Dockerfile
-    volumes:
-      - "./frontend/src/:/app/src/"
+    develop:
+      watch:
+        - action: sync
+          path: "./frontend/"
+          target: "/app/"
+          ignore:
+            - "./frontend/node_modules"
+        - action: rebuild
+          path: "./frontend/package.json"
     ports:
       - "4200:4200"
