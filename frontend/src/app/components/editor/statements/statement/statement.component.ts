@@ -1,23 +1,30 @@
-import {AfterViewInit, Component, ElementRef, Input, ViewChild} from '@angular/core';
-import { CommonModule } from '@angular/common';
-import {MatGridListModule} from "@angular/material/grid-list";
-import {Refinement} from "../../../../types/refinement";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatInputModule} from "@angular/material/input";
-import {FormsModule} from "@angular/forms";
-import {ConditionEditorComponent} from "../../condition/condition-editor/condition-editor.component";
-import {GridTileBorderDirective} from "../../../../directives/grid-tile-border.directive";
-import {CdkDrag, CdkDragEnd, CdkDragHandle, CdkDragMove, Point} from "@angular/cdk/drag-drop";
-import {TreeService} from "../../../../services/tree/tree.service";
-import {MatIconModule} from "@angular/material/icon";
-import {MatDrawer, MatSidenavModule} from "@angular/material/sidenav";
-import {MatButtonModule} from "@angular/material/button";
-import {MatExpansionModule} from "@angular/material/expansion";
-import {MatListModule} from "@angular/material/list";
-import { Position } from '../../../../types/position';
-import { AbstractStatement } from '../../../../types/statements/abstract-statement';
-import {SelectionStatementNode} from "../../../../types/statements/nodes/selection-statement-node";
-import {AbstractStatementNode} from "../../../../types/statements/nodes/abstract-statement-node";
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  Output,
+  ViewChild,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { MatGridListModule } from "@angular/material/grid-list";
+import { Refinement } from "../../../../types/refinement";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { FormsModule } from "@angular/forms";
+import { ConditionEditorComponent } from "../../condition/condition-editor/condition-editor.component";
+import { GridTileBorderDirective } from "../../../../directives/grid-tile-border.directive";
+import { CdkDragEnd, CdkDragMove, Point } from "@angular/cdk/drag-drop";
+import { TreeService } from "../../../../services/tree/tree.service";
+import { MatIconModule } from "@angular/material/icon";
+import { MatDrawer, MatSidenavModule } from "@angular/material/sidenav";
+import { MatButtonModule } from "@angular/material/button";
+import { MatExpansionModule } from "@angular/material/expansion";
+import { MatListModule } from "@angular/material/list";
+import { Position } from "../../../../types/position";
+import { AbstractStatement } from "../../../../types/statements/abstract-statement";
+import { AbstractStatementNode } from "../../../../types/statements/nodes/abstract-statement-node";
 
 /**
  * Component to present the statements.
@@ -26,20 +33,32 @@ import {AbstractStatementNode} from "../../../../types/statements/nodes/abstract
  * This is not the (super) type Refinement.
  */
 @Component({
-    selector: 'app-statement-base',
-    imports: [CommonModule, MatGridListModule, MatFormFieldModule, MatInputModule, FormsModule,
-        ConditionEditorComponent, GridTileBorderDirective, CdkDrag,
-        CdkDragHandle, MatIconModule, MatSidenavModule, MatButtonModule, MatExpansionModule,
-        MatListModule],
-    templateUrl: './statement.component.html',
-    styleUrl: './statement.component.scss'
+  selector: "app-statement-base",
+  imports: [
+    CommonModule,
+    MatGridListModule,
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+    ConditionEditorComponent,
+    GridTileBorderDirective,
+    MatIconModule,
+    MatSidenavModule,
+    MatButtonModule,
+    MatExpansionModule,
+    MatListModule,
+  ],
+  templateUrl: "./statement.component.html",
+  styleUrl: "./statement.component.scss",
 })
 export class StatementComponent implements AfterViewInit {
   private static readonly EDITOR_CONTAINER_EXPANSION_TRIGGER = 150;
   private static readonly EDITOR_CONTAINER_EXPANSION = 200;
 
   @Input() public refinement!: Refinement;
-  @Input({required: true}) _node!: AbstractStatementNode;
+  @Input({ required: true }) _node!: AbstractStatementNode;
+
+  @Output() delete = new EventEmitter();
 
   @ViewChild("preconditionDrawer") private preconditionDrawer!: MatDrawer;
   @ViewChild("postconditionDrawer") private postconditionDrawer!: MatDrawer;
@@ -49,29 +68,31 @@ export class StatementComponent implements AfterViewInit {
   @ViewChild("boxTitle") private boxTitleRef!: ElementRef;
 
   // position of the element in the drag and drop area
-  private _dragPosition : Point = {x:0, y: 0}
+  private _dragPosition: Point = { x: 0, y: 0 };
 
   constructor(private treeService: TreeService) {}
 
   public ngAfterViewInit(): void {
-
     // set the position to the saved position in the file
-    this.refreshDragPosition()
+    this.refreshDragPosition();
 
     this.treeService.verificationResultNotifier.subscribe(
-      verificationResult => this.setVerifcationState(verificationResult));
+      (verificationResult) => this.setVerifcationState(verificationResult),
+    );
 
     if (this.isRoot()) {
       this.refinement.getRedrawNotifier().subscribe(() => {
-        this.refreshDragPosition()
-      })
+        this.refreshDragPosition();
+      });
 
       this.treeService.resetVerifyNotifier.subscribe(() => {
         if (!this.refinement.proven) {
-          this.boxTitleRef.nativeElement.style.backgroundColor = "rgb(87, 87, 87)";
-          this.refinementBoxRef.nativeElement.style.borderColor = "rgb(87, 87, 87)";
+          this.boxTitleRef.nativeElement.style.backgroundColor =
+            "rgb(87, 87, 87)";
+          this.refinementBoxRef.nativeElement.style.borderColor =
+            "rgb(87, 87, 87)";
         }
-      })
+      });
     }
 
     if (this.refinement.proven) {
@@ -81,7 +102,8 @@ export class StatementComponent implements AfterViewInit {
   }
 
   public deleteRefinement(): void {
-    this.treeService.deletionNotifier.next(this.refinement);
+    this.treeService.deleteStatementNode(this._node);
+    this.delete.emit();
   }
 
   public onDragMoved(move: CdkDragMove): void {
@@ -89,8 +111,11 @@ export class StatementComponent implements AfterViewInit {
     this.expandEditorContainer(move);
   }
 
-  public refreshDragPosition() : void {
-    this._dragPosition = {x : this.refinement.position.xinPx, y: this.refinement.position.yinPx}
+  public refreshDragPosition(): void {
+    this._dragPosition = {
+      x: this.refinement.position.xinPx,
+      y: this.refinement.position.yinPx,
+    };
   }
 
   /**
@@ -98,18 +123,31 @@ export class StatementComponent implements AfterViewInit {
    * @param move event fired through a users drag.
    */
   public expandEditorContainer(move: CdkDragMove): void {
-    const boxPosition = move.source.element.nativeElement.getBoundingClientRect();
+    const boxPosition =
+      move.source.element.nativeElement.getBoundingClientRect();
     const editorContainer = document.getElementById("editorContainer");
     const widthController = document.getElementById("editorWidthController");
     const heightController = document.getElementById("editorHeightController");
     if (editorContainer && widthController && heightController) {
-      if (boxPosition.x + boxPosition.width + editorContainer.scrollLeft >=
-          editorContainer.scrollWidth - StatementComponent.EDITOR_CONTAINER_EXPANSION_TRIGGER) {
-        widthController.style.width = editorContainer.scrollWidth+StatementComponent.EDITOR_CONTAINER_EXPANSION + "px";
+      if (
+        boxPosition.x + boxPosition.width + editorContainer.scrollLeft >=
+        editorContainer.scrollWidth -
+          StatementComponent.EDITOR_CONTAINER_EXPANSION_TRIGGER
+      ) {
+        widthController.style.width =
+          editorContainer.scrollWidth +
+          StatementComponent.EDITOR_CONTAINER_EXPANSION +
+          "px";
       }
-      if (boxPosition.y + boxPosition.height + editorContainer.scrollTop >=
-          editorContainer.scrollHeight - StatementComponent.EDITOR_CONTAINER_EXPANSION_TRIGGER) {
-        heightController.style.height = editorContainer.scrollHeight + StatementComponent.EDITOR_CONTAINER_EXPANSION + "px";
+      if (
+        boxPosition.y + boxPosition.height + editorContainer.scrollTop >=
+        editorContainer.scrollHeight -
+          StatementComponent.EDITOR_CONTAINER_EXPANSION_TRIGGER
+      ) {
+        heightController.style.height =
+          editorContainer.scrollHeight +
+          StatementComponent.EDITOR_CONTAINER_EXPANSION +
+          "px";
       }
     }
   }
@@ -135,7 +173,7 @@ export class StatementComponent implements AfterViewInit {
 
   //TODO reimplement this
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private setVerifcationState(statement : AbstractStatement) {
+  private setVerifcationState(statement: AbstractStatement) {
     /*if (this.refinement.id == statement.id) {
       this.refinement.proven = statement.proven
       if (this.refinement.proven) {
@@ -152,8 +190,8 @@ export class StatementComponent implements AfterViewInit {
    * Used to make the root statement not deleteable by the user
    * @returns true, if the statement is the root statement, else false
    */
-  public isRoot() : boolean {
-    return this.treeService.isRootNode(this.refinement)
+  public isRoot(): boolean {
+    return this.treeService.isRootNode(this.refinement);
   }
 
   /**
@@ -161,12 +199,15 @@ export class StatementComponent implements AfterViewInit {
    * and sync the position to the internal state for saving the state
    * @param $event The event, which triggered the function call
    */
-  public onDragEnded($event : CdkDragEnd) {
-    this.refinement.onDragEndEmitter.next($event)
-    this.refinement.position = new Position($event.source.getFreeDragPosition().x, $event.source.getFreeDragPosition().y)
+  public onDragEnded($event: CdkDragEnd) {
+    this.refinement.onDragEndEmitter.next($event);
+    this.refinement.position = new Position(
+      $event.source.getFreeDragPosition().x,
+      $event.source.getFreeDragPosition().y,
+    );
   }
 
-  public get dragPosition() : Point {
-    return this._dragPosition
+  public get dragPosition(): Point {
+    return this._dragPosition;
   }
 }

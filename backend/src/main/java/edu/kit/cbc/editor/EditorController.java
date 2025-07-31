@@ -20,7 +20,6 @@ import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import jakarta.validation.Valid;
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -66,15 +65,15 @@ public class EditorController {
     public HttpResponse<?> verify(@QueryValue Optional<String> projectId, @Body @Valid CbCFormula formula)
         throws IOException {
 
-        ProofContext.ProofContextBuilder context = ProofContext.builder();
-        context.cbCFormula(formula);
-
         Path proofFolder = Files.createTempDirectory(projectId.isPresent() ? "proof_" + projectId.get() : "proof");
 
-        context.proofFolder(proofFolder);
-        context.includeFiles(new ArrayList<>());
-        context.javaSrcFiles(new ArrayList<>());
-        context.existingProofFiles(new ArrayList<>());
+        ProofContext.ProofContextBuilder context = ProofContext.builder()
+            .cbCFormula(formula)
+            .proofFolder(proofFolder)
+            .includeFiles(new ArrayList<>())
+            .javaSrcFiles(new ArrayList<>())
+            .existingProofFiles(new ArrayList<>())
+            .logger((msg) -> System.out.println(msg));
 
         if (projectId.isPresent()) {
             List<Path> includeFiles = filesController.retrieveFiles(projectId.get(), ".key", "include");

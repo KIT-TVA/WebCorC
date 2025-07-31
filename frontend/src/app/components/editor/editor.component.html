@@ -3,16 +3,16 @@
         <mat-drawer #drawer class="sideMenu" mode="side" position="end">
             <mat-accordion multi="">
                 <mat-expansion-panel>
-                    <mat-expansion-panel-header expanded="false" >
-                        <mat-panel-title> Actions </mat-panel-title>
+                    <mat-expansion-panel-header expanded="false">
+                        <mat-panel-title> Actions</mat-panel-title>
                     </mat-expansion-panel-header>
                     <app-options></app-options>
                 </mat-expansion-panel>
                 <mat-expansion-panel>
                     <mat-expansion-panel-header expanded="false">
-                        <mat-panel-title> Renaming </mat-panel-title>
+                        <mat-panel-title> Renaming</mat-panel-title>
                     </mat-expansion-panel-header>
-                    <app-renaming #renaming ></app-renaming>
+                    <app-renaming #renaming></app-renaming>
                 </mat-expansion-panel>
                 <mat-expansion-panel>
                     <mat-expansion-panel-header expanded="true">
@@ -20,7 +20,7 @@
                             Global Conditions
                         </mat-panel-title>
                     </mat-expansion-panel-header>
-                    <app-global-conditions #conditions ></app-global-conditions>
+                    <app-global-conditions #conditions></app-global-conditions>
                 </mat-expansion-panel>
                 <mat-expansion-panel expanded="true">
                     <mat-expansion-panel-header>
@@ -28,13 +28,13 @@
                             Java Variables
                         </mat-panel-title>
                     </mat-expansion-panel-header>
-                    <app-variables #variables ></app-variables>
+                    <app-variables #variables></app-variables>
                 </mat-expansion-panel>
             </mat-accordion>
         </mat-drawer>
-            <button mat-icon-button class="toggleButton" (click)="drawer.toggle()">
-                <mat-icon>{{drawer.opened? 'chevron_right' : 'chevron_left'}}</mat-icon>
-            </button>
+        <button mat-icon-button class="toggleButton" (click)="drawer.toggle()">
+            <mat-icon>{{ drawer.opened ? 'chevron_right' : 'chevron_left' }}</mat-icon>
+        </button>
     </mat-drawer-container>
 </div>
 <div class="bottomContainer">
@@ -58,13 +58,21 @@
         </mat-tab>
     </mat-tab-group>
 </div>
-<div id="editorContainer" (scroll)="onEditorContainerScrolled()" #editorContainer>
+<div id="editorContainer" #editorContainer>
     <!-- Control elements for the scrollWidth and scrollHeight of the editor container -->
     <div id="editorWidthController"></div>
     <div id="editorHeightController"></div>
 
     <!-- Render container for the trees root -->
-    <app-statement-delegator *ngFor="let statement of statements; index as i;" [statement]="statement"></app-statement-delegator>
+    <vflow view="auto" [nodes]="nodes" [edges]="edges" [connection]="{curve: 'smooth-step'}" (onNodesChange.position)="handlePositionChange($event)">
+        <ng-template let-ctx nodeHtml>
+            <app-statement-delegator [statement]="ctx.node.data()">
+                <handle type="source" position="bottom"/>
+                <handle type="target" position="top"/>
+            </app-statement-delegator>
+        </ng-template>
+    </vflow>
+    <svg #lines/>
     <!-- Spawn for examples -->
     <ng-template #examplesSpawn></ng-template>
 

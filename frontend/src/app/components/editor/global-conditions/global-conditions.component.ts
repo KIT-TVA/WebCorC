@@ -30,6 +30,7 @@ import {AiChatService} from '../../../services/ai-chat/ai-chat.service';
     selector: 'app-global-conditions',
     imports: [CommonModule, FormsModule, MatButtonModule, MatDividerModule, MatFormFieldModule, MatInputModule, MatListModule, ReactiveFormsModule, MatIconModule, MatTooltipModule],
     templateUrl: './global-conditions.component.html',
+    standalone: true,
     styleUrl: './global-conditions.component.scss'
 })
 export class GlobalConditionsComponent {
