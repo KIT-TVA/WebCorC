@@ -91,6 +91,15 @@ export class ProjectExplorerComponent {
     this.treeControl.expand(node)
   }
 
+  public addFolderToRoot(name: string) {
+
+    if (!name) {
+      return;
+    }
+
+    this.projectService.addDirectory(this.root.path, name)
+    this.treeControl.expand(this.root)
+  }
   /**
    * Add a new file to the file tree
    * @param node The parent node
@@ -111,6 +120,15 @@ export class ProjectExplorerComponent {
 
     this.projectService.addFile(node.path, name, type)
     this.treeControl.expand(node)
+  }
+
+  public addFileToRoot(name: string, type: string) {
+    if (!name) {
+      return;
+    }
+
+    this.projectService.addFile(this.root.path, name, type)
+    this.treeControl.expand(this.root)
   }
 
 

@@ -1,12 +1,11 @@
 <div class="drawer-content">
     <div class="project-actions">
         <button mat-button (click)="save()" > <mat-icon> save </mat-icon> Save </button>
-<!--        <button mat-button (click)="addElement(root)"> <mat-icon> add </mat-icon> Add File </button>-->
         <button mat-button [matMenuTriggerFor]="addMenu" id="add"> <mat-icon> add </mat-icon> Add File </button>
         <mat-menu #addMenu="matMenu">
-            <button mat-menu-item>a</button>
-            <button mat-menu-item>b</button>
-            <button mat-menu-item>c</button>
+            <button mat-menu-item (click)="addFileToRoot('schema', 'diagram')"> New Schema <mat-icon> schema </mat-icon></button>
+            <button mat-menu-item (click)="addFileToRoot('helper', 'java')"> New Helper <mat-icon> code </mat-icon> </button>
+            <button mat-menu-item (click)="addFolderToRoot('directory')"> New Directory <mat-icon> create_new_folder </mat-icon> </button>
         </mat-menu>
         <button mat-button [matMenuTriggerFor]="importMenu" id="import"> <mat-icon> publish</mat-icon> Import </button>
         <mat-menu #importMenu="matMenu">
