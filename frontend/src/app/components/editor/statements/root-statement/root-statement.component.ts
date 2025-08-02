@@ -66,11 +66,9 @@ export class RootStatementComponent extends Refinement {
       if (!result) {
         return;
       }
-
       const newNode = createEmptyStatementNode(result, this._node);
-      this._node.childStatementNode = newNode;
+      (this._node as RootStatementNode).childStatementNode = newNode;
       this.treeService.addStatementNode(newNode);
-      this._node.children.push(newNode);
     });
   }
 

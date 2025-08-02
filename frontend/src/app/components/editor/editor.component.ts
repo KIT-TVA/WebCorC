@@ -10,28 +10,27 @@ import {
   ViewChild,
   ViewContainerRef,
 } from "@angular/core";
-import {CommonModule} from "@angular/common";
-import {MatButtonModule} from "@angular/material/button";
-import {TreeService} from "../../services/tree/tree.service";
-import {MatIconModule} from "@angular/material/icon";
-import {MatExpansionModule} from "@angular/material/expansion";
-import {VariablesComponent} from "./variables/variables.component";
-import {MatTooltipModule} from "@angular/material/tooltip";
-import {MatMenuModule} from "@angular/material/menu";
-import {GlobalConditionsComponent} from "./global-conditions/global-conditions.component";
-import {ProjectService} from "../../services/project/project.service";
-import {CBCFormula} from "../../types/CBCFormula";
-import {Router} from "@angular/router";
-import {OptionsComponent} from "./options/options.component";
-import {EditorService} from "../../services/editor/editor.service";
-import {RenamingComponent} from "./renaming/renaming.component";
-import {SimpleStatementComponent} from "./statements/simple-statement/simple-statement.component";
-import {MatTab, MatTabGroup, MatTabLabel} from "@angular/material/tabs";
-import {AiChatComponent} from "../ai-chat/ai-chat.component";
-import {ConsoleComponent} from "../console/console.component";
-import {MatDrawer, MatDrawerContainer} from "@angular/material/sidenav";
-import {StatementDelegatorComponent} from "./statements/statement-delegator/statement-delegator.component";
-import {AbstractStatementNode} from "../../types/statements/nodes/abstract-statement-node";
+import { CommonModule } from "@angular/common";
+import { MatButtonModule } from "@angular/material/button";
+import { TreeService } from "../../services/tree/tree.service";
+import { MatIconModule } from "@angular/material/icon";
+import { MatExpansionModule } from "@angular/material/expansion";
+import { VariablesComponent } from "./variables/variables.component";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatMenuModule } from "@angular/material/menu";
+import { GlobalConditionsComponent } from "./global-conditions/global-conditions.component";
+import { ProjectService } from "../../services/project/project.service";
+import { CBCFormula } from "../../types/CBCFormula";
+import { Router } from "@angular/router";
+import { OptionsComponent } from "./options/options.component";
+import { EditorService } from "../../services/editor/editor.service";
+import { RenamingComponent } from "./renaming/renaming.component";
+import { MatTab, MatTabGroup, MatTabLabel } from "@angular/material/tabs";
+import { AiChatComponent } from "../ai-chat/ai-chat.component";
+import { ConsoleComponent } from "../console/console.component";
+import { MatDrawer, MatDrawerContainer } from "@angular/material/sidenav";
+import { StatementDelegatorComponent } from "./statements/statement-delegator/statement-delegator.component";
+import { AbstractStatementNode } from "../../types/statements/nodes/abstract-statement-node";
 import {
   DynamicNode,
   Edge,
@@ -127,9 +126,8 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     }
     this._urn = uniformRessourceName;
     this.editorService.currentFileName = uniformRessourceName.substring(
-        uniformRessourceName.lastIndexOf("/"),
+      uniformRessourceName.lastIndexOf("/"),
     );
-
     if (this._viewInit) {
       this.loadFileContent();
     }
@@ -141,13 +139,14 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   public ngAfterViewInit(): void {
     this._viewInit = true;
     // workaround to ensure proper loading of file content on switch between files
-    setTimeout(() => this.loadFileContent(), 10);
+    setTimeout(() => {
+      this.loadFileContent();
+    }, 10);
     this.projectService.editorNotify.subscribe(() => {
       this.saveContentToFile();
     });
 
     this.editorService.reload.subscribe(() => {
-
       this.examplesSpawn.clear();
       this.loadFileContent();
     });
@@ -167,8 +166,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     if (this.treeService.rootFormula) {
       formula = this.treeService.rootFormula;
     }
-
-    if (this._urn !== "" && this.treeService.rootNode) {
+    if (this._urn !== "" && this.treeService.rootFormula?.statement) {
       // save the current state outside of the component
       this.projectService.syncFileContent(this._urn, formula);
     }
@@ -219,10 +217,11 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     }
 
     // if the file is not empty load content
-    if (newFormula && newFormula.statement) {
+    if (newFormula) {
       this.treeService.setFormula(newFormula);
       this.statements = this.treeService.getStatementNodes();
 
+      //TODO: This should be done with Inputs instead.
       this.variables.importVariables(newFormula.javaVariables);
       this.conditions.importConditions(newFormula.globalConditions);
       this.renaming.importRenaming(newFormula.renamings);
@@ -241,22 +240,20 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   protected nodes: DynamicNode[] = [];
   protected edges: Edge[] = [];
   protected nodez: Signal<DynamicNode[]> = computed(() =>
-      this.statements().map((statement) => {
-        return {
-          id: statement.statement.id,
-          type: "html-template",
-          point: signal({
-            x: statement.position().xinPx,
-            y: statement.position().yinPx,
-          }),
-          data: signal(statement),
-        };
-      }),
+    this.statements().map((statement) => {
+      return {
+        id: statement.statement.id,
+        type: "html-template",
+        point: signal({
+          x: statement.position().xinPx,
+          y: statement.position().yinPx,
+        }),
+        data: signal(statement),
+      };
+    }),
   );
 
   private setupVFlowSync() {
-    effect(() => {
-    });
     effect(() => {
       this.nodes = this.nodez();
       this.edges = this.computeEdges(this.statements());

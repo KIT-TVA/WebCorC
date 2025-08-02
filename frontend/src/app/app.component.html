@@ -12,11 +12,11 @@
         <mat-icon> share</mat-icon>
         Share
     </button>
-    <button mat-raised-button (click)="generateCode()" style="margin-right: 10px" [disabled]="!treeService.rootNode">
+    <button mat-raised-button (click)="generateCode()" style="margin-right: 10px" [disabled]="!treeService.rootFormula">
         <mat-icon> code</mat-icon>
         Generate Code
     </button>
-    <button mat-raised-button (click)="verify()" [disabled]="!treeService.rootNode">
+    <button mat-raised-button (click)="verify()" [disabled]="!treeService.rootFormula">
         <mat-icon> check_circle</mat-icon>
         Verify
     </button>

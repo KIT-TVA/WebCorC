@@ -1,6 +1,6 @@
 import { signal, WritableSignal } from "@angular/core";
 import { ICondition } from "../../condition/condition";
-import { AbstractStatement, IAbstractStatement } from "../abstract-statement";
+import { IAbstractStatement } from "../abstract-statement";
 import { IPosition } from "../../position";
 
 export class AbstractStatementNode {

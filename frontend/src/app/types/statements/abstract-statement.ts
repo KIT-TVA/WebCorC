@@ -15,6 +15,7 @@ export type IAbstractStatementImpl =
   | ISkipStatement
   | ISelectionStatement;
 export type StatementType =
+  | "ROOT"
   | "STATEMENT"
   | "COMPOSITION"
   | "RETURN"

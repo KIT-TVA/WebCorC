@@ -1,63 +1,67 @@
-import { Injectable } from '@angular/core';
-import { ApiDiagrammFile, ApiDirectory, ApiTextFile } from '../types/api-elements';
-import { CBCFormula } from '../../../types/CBCFormula';
-import { ProjectElement } from '../types/project-elements';
-import { CbcFormulaMapperService } from '../mapper/cbc-formula-mapper.service';
+import { Injectable } from "@angular/core";
+import {
+  ApiDiagrammFile,
+  ApiDirectory,
+  ApiTextFile,
+} from "../types/api-elements";
+import { CBCFormula } from "../../../types/CBCFormula";
+import { ProjectElement } from "../types/project-elements";
+import { CbcFormulaMapperService } from "../mapper/cbc-formula-mapper.service";
 
 /**
  * Service to persist the project content in the session storage.
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class ProjectStorageService {
-  private static readonly projectIdKey = "projectId"
-  private static readonly projectNameKey = "projectName"
-  private static readonly projectFileTreeKey = "fileTree"
-  private static readonly projectFileUrnPrefix = "_webCorc_"
+  private static readonly projectIdKey = "projectId";
+  private static readonly projectNameKey = "projectName";
+  private static readonly projectFileTreeKey = "fileTree";
+  private static readonly projectFileUrnPrefix = "_webCorc_";
 
-  constructor(private mapper : CbcFormulaMapperService) { }
+  constructor(private mapper: CbcFormulaMapperService) {}
 
   /**
    * Set the project id in the session storage
-   * @param id 
+   * @param id
    */
-  public setProjectId(id : string) {
-    sessionStorage.setItem(ProjectStorageService.projectIdKey, id)
+  public setProjectId(id: string) {
+    sessionStorage.setItem(ProjectStorageService.projectIdKey, id);
   }
 
   /**
    * Get the project id from the session storage
-   * @returns 
+   * @returns
    */
-  public getProjectId() : string | null {
-    return sessionStorage.getItem(ProjectStorageService.projectIdKey)
+  public getProjectId(): string | null {
+    return sessionStorage.getItem(ProjectStorageService.projectIdKey);
   }
 
   /**
-   * Set the project name in the session storage 
-   * @param name 
+   * Set the project name in the session storage
+   * @param name
    */
-  public setProjectName(name : string) {
-    sessionStorage.setItem(ProjectStorageService.projectNameKey, name)
+  public setProjectName(name: string) {
+    sessionStorage.setItem(ProjectStorageService.projectNameKey, name);
   }
 
   /**
    * Get the project name from the session storage
-   * @returns 
+   * @returns
    */
-  public getProjectName() : string | null {
-    return sessionStorage.getItem(ProjectStorageService.projectNameKey)
+  public getProjectName(): string | null {
+    return sessionStorage.getItem(ProjectStorageService.projectNameKey);
   }
 
   /**
    * Remove all session storage content
    */
   public clear() {
-    for (let i = 0; i < sessionStorage.length; i++ ) {
-      const key = sessionStorage.key(i)
+    for (let i = 0; i < sessionStorage.length; i++) {
+      const key = sessionStorage.key(i);
       if (key && key.startsWith(ProjectStorageService.projectFileUrnPrefix)) {
-        sessionStorage.removeItem(key)
+        sessionStorage.removeItem(key);
       }
     }
   }
@@ -66,24 +70,29 @@ export class ProjectStorageService {
    * Set a slim version of the api directory to persist the folder structure
    * @param root the root directory to persist to session storage
    */
-  public setProjectTree(root : ApiDirectory) {
-    sessionStorage.setItem(ProjectStorageService.projectFileTreeKey, JSON.stringify(root))
+  public setProjectTree(root: ApiDirectory) {
+    sessionStorage.setItem(
+      ProjectStorageService.projectFileTreeKey,
+      JSON.stringify(root),
+    );
   }
 
-  public import(root : ApiDirectory, projectname : string) {
-    this.setProjectName(projectname)
-    this.setProjectTree(root)
-    this.importFileContent(root)
+  public import(root: ApiDirectory, projectname: string) {
+    this.setProjectName(projectname);
+    this.setProjectTree(root);
+    this.importFileContent(root);
   }
   /**
    * Get the slim version of the project tree to get the folder structure after a refresh
    * @returns The project tree without the file contents
    */
-  public getProjectTree() : ApiDirectory | null {
-    const storageContent = sessionStorage.getItem(ProjectStorageService.projectFileTreeKey)
-    if (!storageContent) return null
-    const root : ApiDirectory = JSON.parse(storageContent)
-    return this.fixDirectoryNames(new ApiDirectory("", root.content))
+  public getProjectTree(): ApiDirectory | null {
+    const storageContent = sessionStorage.getItem(
+      ProjectStorageService.projectFileTreeKey,
+    );
+    if (!storageContent) return null;
+    const root: ApiDirectory = JSON.parse(storageContent);
+    return this.fixDirectoryNames(new ApiDirectory("", root.content));
   }
 
   /**
@@ -91,11 +100,19 @@ export class ProjectStorageService {
    * @param urn The file urn
    * @param content The content of the file
    */
-  public setFileContent(urn : string, content : string | CBCFormula) {
+  public setFileContent(urn: string, content: string | CBCFormula) {
     if (content instanceof CBCFormula) {
-      sessionStorage.setItem(ProjectStorageService.projectFileUrnPrefix + urn, JSON.stringify(content))
+      console.log("Saving content as instance of CBCFormula");
+      sessionStorage.setItem(
+        ProjectStorageService.projectFileUrnPrefix + urn,
+        JSON.stringify(content),
+      );
     } else {
-      sessionStorage.setItem(ProjectStorageService.projectFileUrnPrefix + urn, content)
+      console.log("Saving content as instance of string");
+      sessionStorage.setItem(
+        ProjectStorageService.projectFileUrnPrefix + urn,
+        content,
+      );
     }
   }
 
@@ -103,16 +120,18 @@ export class ProjectStorageService {
    * Delete the file content under the file urn
    * @param file the file to remove from the session storage
    */
-  public deleteFileContent(file : ProjectElement | null) {
-    sessionStorage.removeItem(ProjectStorageService.projectFileUrnPrefix + file?.path)
+  public deleteFileContent(file: ProjectElement | null) {
+    sessionStorage.removeItem(
+      ProjectStorageService.projectFileUrnPrefix + file?.path,
+    );
   }
 
   /**
    * Delete the file content under the passed path from session storage
    * @param path The path of the file to delete from session storage
    */
-  public deleteFileContentByPath(path : string) {
-    sessionStorage.removeItem(ProjectStorageService.projectFileTreeKey + path)
+  public deleteFileContentByPath(path: string) {
+    sessionStorage.removeItem(ProjectStorageService.projectFileTreeKey + path);
   }
 
   /**
@@ -120,56 +139,60 @@ export class ProjectStorageService {
    * @param urn The urn of the file to get the content from session storage
    * @returns The content of the file, if no file with the urn is in session storage null.
    */
-  public getFileContent(urn : string) : string | CBCFormula | null {
-    const storageContent = sessionStorage.getItem(ProjectStorageService.projectFileUrnPrefix + urn)
-    if (!storageContent) return null
-    const splittedUrnByDot = urn.split(".")
+  public getFileContent(urn: string): string | CBCFormula | null {
+    const storageContent = sessionStorage.getItem(
+      ProjectStorageService.projectFileUrnPrefix + urn,
+    );
+    if (!storageContent) return null;
+    const splittedUrnByDot = urn.split(".");
     if (splittedUrnByDot[splittedUrnByDot.length - 1] == "diagram") {
-      const formula = JSON.parse(storageContent)
-      return this.mapper.importFormula(formula)
-    } 
+      const formula = JSON.parse(storageContent);
+      return this.mapper.importFormula(formula);
+    }
 
-    return storageContent
+    return storageContent;
   }
 
   /**
    * Check for session storage for empty state
-   * @returns true -> session storage is empty, else false 
+   * @returns true -> session storage is empty, else false
    */
-  public isEmpty() : boolean {
-    let countOfFilesInSessionStorage = 0
-    for (let i = 0; i < sessionStorage.length; i++ ) {
-      if (sessionStorage.key(i)?.startsWith(ProjectStorageService.projectFileUrnPrefix)) {
-        countOfFilesInSessionStorage += 1
+  public isEmpty(): boolean {
+    let countOfFilesInSessionStorage = 0;
+    for (let i = 0; i < sessionStorage.length; i++) {
+      if (
+        sessionStorage
+          .key(i)
+          ?.startsWith(ProjectStorageService.projectFileUrnPrefix)
+      ) {
+        countOfFilesInSessionStorage += 1;
       }
     }
 
-    return countOfFilesInSessionStorage <= 0
+    return countOfFilesInSessionStorage <= 0;
   }
 
-  private importFileContent(directory : ApiDirectory) {
+  private importFileContent(directory: ApiDirectory) {
     for (const child of directory.content) {
       if (child instanceof ApiDirectory) {
-        this.importFileContent((child as ApiDirectory))
+        this.importFileContent(child as ApiDirectory);
       } else {
         if (child instanceof ApiDiagrammFile) {
-          this.setFileContent(child.urn, (child as ApiDiagrammFile).content)
+          this.setFileContent(child.urn, (child as ApiDiagrammFile).content);
         } else if (child instanceof ApiTextFile) {
-          this.setFileContent(child.urn, (child as ApiTextFile).content)
+          this.setFileContent(child.urn, (child as ApiTextFile).content);
         }
       }
     }
   }
 
-  private fixDirectoryNames(directory : ApiDirectory) {
+  private fixDirectoryNames(directory: ApiDirectory) {
     for (const child of directory.content) {
       if (child.inodeType === "directory") {
-        child.urn = child.urn.substring(0, child.urn.length - 1)
+        child.urn = child.urn.substring(0, child.urn.length - 1);
       }
     }
 
-    return directory
+    return directory;
   }
-
-
 }
