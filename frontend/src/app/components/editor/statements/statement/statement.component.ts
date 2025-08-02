@@ -1,5 +1,4 @@
 import {
-  AfterViewInit,
   Component,
   ElementRef,
   EventEmitter,
@@ -15,16 +14,15 @@ import { MatInputModule } from "@angular/material/input";
 import { FormsModule } from "@angular/forms";
 import { ConditionEditorComponent } from "../../condition/condition-editor/condition-editor.component";
 import { GridTileBorderDirective } from "../../../../directives/grid-tile-border.directive";
-import { CdkDragEnd, CdkDragMove, Point } from "@angular/cdk/drag-drop";
 import { TreeService } from "../../../../services/tree/tree.service";
 import { MatIconModule } from "@angular/material/icon";
 import { MatDrawer, MatSidenavModule } from "@angular/material/sidenav";
 import { MatButtonModule } from "@angular/material/button";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatListModule } from "@angular/material/list";
-import { Position } from "../../../../types/position";
 import { AbstractStatement } from "../../../../types/statements/abstract-statement";
 import { AbstractStatementNode } from "../../../../types/statements/nodes/abstract-statement-node";
+import { HandleComponent } from "ngx-vflow";
 
 /**
  * Component to present the statements.
@@ -47,16 +45,19 @@ import { AbstractStatementNode } from "../../../../types/statements/nodes/abstra
     MatButtonModule,
     MatExpansionModule,
     MatListModule,
+    HandleComponent,
   ],
   templateUrl: "./statement.component.html",
   styleUrl: "./statement.component.scss",
-  standalone: true
+  standalone: true,
 })
 export class StatementComponent {
   private static readonly EDITOR_CONTAINER_EXPANSION_TRIGGER = 150;
   private static readonly EDITOR_CONTAINER_EXPANSION = 200;
 
   @Input() public refinement!: Refinement;
+  @Input() public hideSourceHandle = false;
+  @Input() public hideTargetHandle = false;
   @Input({ required: true }) _node!: AbstractStatementNode;
 
   @Output() delete = new EventEmitter();

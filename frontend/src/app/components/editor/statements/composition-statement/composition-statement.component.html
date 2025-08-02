@@ -1,18 +1,27 @@
-
-<app-statement-base [_node]="_node" [refinement]="this">
-    <app-refinement-widget *ngIf="!_node.firstStatementNode"
-                        text="Left"
-                        icon="add"
-                        (click)="chooseRefinement('left')"
+<app-statement-base [_node]="_node" [refinement]="this" [hideSourceHandle]="true">
+  <div style="width: fit-content">
+    <app-refinement-widget
+      *ngIf="!_node.firstStatementNode"
+      text="Left"
+      icon="add"
+      (click)="chooseRefinement('left')"
     >
     </app-refinement-widget>
-    <div style="position: relative; height: 100%; width: 230px;">
-        <app-condition-editor [(condition)]="_node.intermediateCondition" ></app-condition-editor>
-    </div>
-    <app-refinement-widget *ngIf="!_node.secondStatementNode"
-                        text="Right"
-                        icon="add"
-                        (click)="chooseRefinement('right')">
+    <handle type="source" position="bottom" id="0" />
+  </div>
+  <div style="position: relative; height: 100%; width: 230px">
+    <app-condition-editor
+      [(condition)]="_node.intermediateCondition"
+    ></app-condition-editor>
+  </div>
+  <div style="width: fit-content">
+    <app-refinement-widget
+      *ngIf="!_node.secondStatementNode"
+      text="Right"
+      icon="add"
+      (click)="chooseRefinement('right')"
+    >
     </app-refinement-widget>
+    <handle type="source" position="bottom" id="1" />
+  </div>
 </app-statement-base>
-<ng-template #subComponentSpawn></ng-template>

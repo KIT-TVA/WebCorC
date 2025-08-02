@@ -1,24 +1,42 @@
 <div class="refinementBox" cdkDragBoundary="#editorContainer" #refinementBox>
-
+    <handle type="target" position="top" *ngIf="!hideTargetHandle"/>
+    <handle type="source" position="bottom" id="0" *ngIf="!hideSourceHandle"/>
   <div class="refinementBoxTitle" #boxTitle>
-    <p>{{refinement.getTitle()}} #{{0}}</p>
-    <mat-icon [style.cursor]="'pointer'" (click)="deleteRefinement()">delete</mat-icon>
+    <p>{{ refinement.getTitle() }} #{{ 0 }}</p>
+    <mat-icon [style.cursor]="'pointer'" (click)="deleteRefinement()"
+      >delete</mat-icon
+    >
   </div>
-  
+
   <div style="display: flex">
-    <div appGtBorder="r" #preconditionDiv style="width: 50px; min-height: 140px">
+    <div
+      appGtBorder="r"
+      #preconditionDiv
+      style="width: 50px; min-height: 140px"
+    >
       <mat-drawer-container class="example-container" autosize>
         <mat-drawer #preconditionDrawer class="example-sidenav" mode="side">
           <div class="conditionParent">
-            <app-condition-editor [(condition)]="_node.precondition"
-                            [editable]="_node.preconditionEditable()"></app-condition-editor>
+            <app-condition-editor
+              [(condition)]="_node.precondition"
+              [editable]="_node.preconditionEditable()"
+            ></app-condition-editor>
           </div>
         </mat-drawer>
 
         <mat-drawer-content class="example-sidenav-content">
-          <button type="button" mat-button (click)="toggleConditionEditorView(false)" class="verticalButton bottomLeft">
+          <button
+            type="button"
+            mat-button
+            (click)="toggleConditionEditorView(false)"
+            class="verticalButton bottomLeft"
+          >
             Precondition
-            <mat-icon>{{preconditionDrawer.opened ? "keyboard_arrow_up" : "keyboard_arrow_down"}}</mat-icon>
+            <mat-icon>{{
+              preconditionDrawer.opened
+                ? "keyboard_arrow_up"
+                : "keyboard_arrow_down"
+            }}</mat-icon>
           </button>
         </mat-drawer-content>
       </mat-drawer-container>
@@ -30,17 +48,32 @@
 
     <div appGtBorder="l" #postconditionDiv style="width: 50px">
       <mat-drawer-container class="example-container" autosize>
-        <mat-drawer #postconditionDrawer class="example-sidenav" mode="side" position="end">
+        <mat-drawer
+          #postconditionDrawer
+          class="example-sidenav"
+          mode="side"
+          position="end"
+        >
           <div class="conditionParent">
-            <app-condition-editor [(condition)]="_node.postcondition"
-                              [editable]="_node.postconditionEditable()"></app-condition-editor>
+            <app-condition-editor
+              [(condition)]="_node.postcondition"
+              [editable]="_node.postconditionEditable()"
+            ></app-condition-editor>
           </div>
-          
         </mat-drawer>
         <mat-drawer-content class="example-sidenav-content">
-          <button type="button" mat-button (click)="toggleConditionEditorView(true)" class="verticalButton bottomRight">
+          <button
+            type="button"
+            mat-button
+            (click)="toggleConditionEditorView(true)"
+            class="verticalButton bottomRight"
+          >
             Postcondition
-            <mat-icon>{{postconditionDrawer.opened ? "keyboard_arrow_up" : "keyboard_arrow_down"}}</mat-icon>
+            <mat-icon>{{
+              postconditionDrawer.opened
+                ? "keyboard_arrow_up"
+                : "keyboard_arrow_down"
+            }}</mat-icon>
           </button>
         </mat-drawer-content>
       </mat-drawer-container>

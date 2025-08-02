@@ -4,6 +4,6 @@
     <app-repetition-statement [_node]="asRepetitionStatementNode(statement)" *ngIf="statement.statement.type === 'REPETITION'"/>
     <app-selection-statement [_node]="asSelectionStatementNode(statement)" *ngIf="statement.statement.type === 'SELECTION'"/>
     <app-simple-statement [_node]="asSimpleStatementNode(statement)" *ngIf="statement.statement.type === 'STATEMENT'"/>
-    <app-root-statement [_node]="asRootStatement(statement)" *ngIf="statement.statement.type === 'ROOT'" />
+    <app-root-statement [_node]="asRootStatementNode(statement)" *ngIf="statement.statement.type === 'ROOT'" />
     <ng-content />
 </div>

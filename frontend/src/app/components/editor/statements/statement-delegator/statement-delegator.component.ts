@@ -11,7 +11,6 @@ import { SelectionStatementNode } from "../../../../types/statements/nodes/selec
 import { SimpleStatementNode } from "../../../../types/statements/nodes/simple-statement-node";
 import { SkipStatementNode } from "../../../../types/statements/nodes/skip-statement-node";
 import { RepetitionStatementNode } from "../../../../types/statements/nodes/repetition-statement-node";
-import { RootStatement } from "../../../../types/statements/root-statement";
 import { RootStatementComponent } from "../root-statement/root-statement.component";
 import { RootStatementNode } from "../../../../types/statements/nodes/root-statement-node";
 
@@ -53,7 +52,7 @@ export class StatementDelegatorComponent {
     return node as RepetitionStatementNode;
   }
 
-  asRootStatement(node: AbstractStatementNode) {
+  asRootStatementNode(node: AbstractStatementNode) {
     return node as RootStatementNode;
   }
 }

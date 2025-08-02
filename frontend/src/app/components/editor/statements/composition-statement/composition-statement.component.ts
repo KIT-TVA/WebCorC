@@ -17,6 +17,7 @@ import { AbstractStatement } from "../../../../types/statements/abstract-stateme
 import { Position } from "../../../../types/position";
 import { CompositionStatementNode } from "../../../../types/statements/nodes/composition-statement-node";
 import { createEmptyStatementNode } from "../../../../types/statements/nodes/createStatementNode";
+import { HandleComponent } from "ngx-vflow";
 
 /**
  * Composition statement in {@link EditorComponent}.
@@ -36,6 +37,7 @@ import { createEmptyStatementNode } from "../../../../types/statements/nodes/cre
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
+    HandleComponent,
   ],
   templateUrl: "./composition-statement.component.html",
   styleUrl: "./composition-statement.component.scss",
@@ -76,7 +78,6 @@ export class CompositionStatementComponent extends Refinement {
         this._node.secondStatementNode = newNode;
       }
       this.treeService.addStatementNode(newNode);
-      this._node.children.push(newNode);
     });
   }
 

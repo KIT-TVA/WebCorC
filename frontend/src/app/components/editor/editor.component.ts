@@ -34,7 +34,6 @@ import { AbstractStatementNode } from "../../types/statements/nodes/abstract-sta
 import {
   DynamicNode,
   Edge,
-  HandleComponent,
   NodeHtmlTemplateDirective,
   NodePositionChange,
   VflowComponent,
@@ -69,7 +68,6 @@ import {
     StatementDelegatorComponent,
     VflowComponent,
     NodeHtmlTemplateDirective,
-    HandleComponent,
   ],
   templateUrl: "./editor.component.html",
   standalone: true,
@@ -263,13 +261,14 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   private computeEdges(statements: AbstractStatementNode[]): Edge[] {
     const edges: Edge[] = [];
     statements.forEach((parent) => {
-      parent.children.forEach((child) => {
+      parent.children.forEach((child, index) => {
         if (child) {
           edges.push({
             id: parent.statement.id + " -> " + child.statement.id,
             type: "default",
             source: parent.statement.id,
             target: child.statement.id,
+            sourceHandle: String(index),
             curve: "smooth-step",
           });
         }

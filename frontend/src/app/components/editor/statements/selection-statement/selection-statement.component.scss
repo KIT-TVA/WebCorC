@@ -5,11 +5,13 @@ $refinementBoxAccentColor: rgb(87, 87, 87);
     width: 400px;
 
     .first-row {
+        height: 3em;
         display: grid;
         place-items: center;
     }
 
     .statement-container {
+        height: 5em;
         display: flex;
         flex-direction: row;
         border-top: 1px solid $refinementBoxAccentColor;

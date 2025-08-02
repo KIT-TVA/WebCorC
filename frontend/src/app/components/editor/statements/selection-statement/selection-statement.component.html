@@ -1,27 +1,44 @@
-<app-statement-base [_node]="_node" [refinement]="this">
-    <div class="statements">
-        <div class="first-row">
-            <div>
-                <button type="button" mat-icon-button (click)="addSelection()">
-                    <mat-icon>add</mat-icon>
-                </button>
-                <button type="button" mat-icon-button (click)="removeSelection()" aria-label="Add"> <mat-icon>remove</mat-icon> </button>
-            </div>
-        </div>
-
-        <div *ngFor="let guard of _node.guards; let i = index;" class="statement-container">
-            <div class="guard">
-                <app-condition-editor [(condition)]="_node.guards[i]" ></app-condition-editor>
-            </div>
-            <div class="statement">
-                <app-refinement-widget *ngIf="!_node.children[i]"
-                                   text="Statement"
-                                   icon="add"
-                                   (click)="chooseRefinement(i)">
-
-                </app-refinement-widget>
-            </div>
-        </div>
-
+<app-statement-base
+  [_node]="_node"
+  [refinement]="this"
+  [hideSourceHandle]="true"
+>
+  <div class="statements">
+    <div class="first-row">
+      <div>
+        <button type="button" mat-icon-button (click)="addSelection()">
+          <mat-icon>add</mat-icon>
+        </button>
+        <button type="button" mat-icon-button (click)="removeSelection()">
+          <mat-icon>remove</mat-icon>
+        </button>
+      </div>
     </div>
-  </app-statement-base>
+
+    <div
+      *ngFor="let guard of _node.guards; let i = index"
+      class="statement-container"
+    >
+      <div class="guard">
+        <app-condition-editor
+          [(condition)]="_node.guards[i]"
+        ></app-condition-editor>
+      </div>
+      <div class="statement">
+        <app-refinement-widget
+          *ngIf="!_node.children[i]"
+          text="Statement"
+          icon="add"
+          (click)="chooseRefinement(i)"
+        >
+        </app-refinement-widget>
+      </div>
+    </div>
+  </div>
+  <div style="display: flex; flex-direction: column; width: 0">
+    <div style="height: 3em; width: 0"></div>
+    <div style="height: 5em; width: 0" *ngFor="let guard of _node.guards; let i = index">
+      <handle position="right" type="source" [id]="i + ''" />
+    </div>
+  </div>
+</app-statement-base>
