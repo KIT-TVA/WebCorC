@@ -17,10 +17,12 @@ export class CompositionStatementNode extends AbstractStatementNode {
     return this._secondStatementNode;
   }
   public set firstStatementNode(newNode) {
+    this.statement.firstStatement = newNode?.statement;
     this._firstStatementNode = newNode;
     this.children = [this._firstStatementNode, this._secondStatementNode];
   }
   public set secondStatementNode(newNode) {
+    this.statement.secondStatement = newNode?.statement;
     this._secondStatementNode = newNode;
     this.children = [this._firstStatementNode, this._secondStatementNode];
   }

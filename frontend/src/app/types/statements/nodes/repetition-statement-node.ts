@@ -10,6 +10,7 @@ export class RepetitionStatementNode extends AbstractStatementNode {
     return this._loopStatementNode;
   }
   public set loopStatementNode(loopStatementNode) {
+    this.statement.loopStatement = loopStatementNode?.statement;
     this._loopStatementNode = loopStatementNode;
     this.children = [loopStatementNode];
   }

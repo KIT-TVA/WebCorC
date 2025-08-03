@@ -102,7 +102,7 @@ export class SelectionStatementComponent extends Refinement {
         return;
       }
       const newNode = createEmptyStatementNode(result, this._node);
-      this._node.children[index] = newNode;
+      this._node.setSelection(index, newNode);
       this.treeService.addStatementNode(newNode);
     });
 

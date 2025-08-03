@@ -6,6 +6,7 @@ import { createStatementNode } from "./createStatementNode";
 
 export class SelectionStatementNode extends AbstractStatementNode {
   public guards: WritableSignal<ICondition>[];
+  override statement!: ISelectionStatement;
 
   constructor(
     statement: ISelectionStatement,
@@ -39,12 +40,24 @@ export class SelectionStatementNode extends AbstractStatementNode {
   }
 
   addSelection() {
-    this.guards.push(signal(new Condition("")));
+    const condition = signal(new Condition(""));
+    this.guards.push(condition);
     this.children.push(undefined);
+    this.statement.guards.push(condition());
+    this.statement.commands.push(undefined);
+  }
+
+  setSelection(index: number, node: AbstractStatementNode) {
+    if (index < this.children.length) {
+      this.children[index] = node;
+      this.statement.commands[index] = node.statement;
+    }
   }
 
   removeSelection() {
     this.guards.pop();
     this.children.pop();
+    this.statement.guards.pop();
+    this.statement.commands.pop();
   }
 }
