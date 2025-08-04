@@ -25,6 +25,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Controller("/editor")
 @ExecuteOn(TaskExecutors.BLOCKING)
@@ -32,10 +33,12 @@ public class EditorController {
 
     private final FilesController filesController;
     private final OpenAIClient openai;
+    private final VerificationOrchestrator orchestrator;
 
-    EditorController(FilesController filesController, OpenAIClient openai) {
+    EditorController(FilesController filesController, OpenAIClient openai, VerificationOrchestrator orchestrator) {
         this.filesController = filesController;
         this.openai = openai;
+        this.orchestrator = orchestrator;
     }
 
     @Post(uri = "/export")
@@ -67,13 +70,16 @@ public class EditorController {
 
         Path proofFolder = Files.createTempDirectory(projectId.isPresent() ? "proof_" + projectId.get() : "proof");
 
+        UUID jobId = orchestrator.addJob();
+        System.out.println(String.format("New verification started with job id: %s", jobId));
+
         ProofContext.ProofContextBuilder context = ProofContext.builder()
             .cbCFormula(formula)
             .proofFolder(proofFolder)
             .includeFiles(new ArrayList<>())
             .javaSrcFiles(new ArrayList<>())
             .existingProofFiles(new ArrayList<>())
-            .logger((msg) -> System.out.println(msg));
+            .logger((msg) -> orchestrator.log(jobId, msg));
 
         if (projectId.isPresent()) {
             List<Path> includeFiles = filesController.retrieveFiles(projectId.get(), ".key", "include");
@@ -135,6 +141,7 @@ public class EditorController {
             });
         }
 
+        orchestrator.deleteJob(jobId);
         return HttpResponse.ok(formula);
     }
 
