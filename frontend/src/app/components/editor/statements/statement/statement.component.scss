@@ -1,13 +1,10 @@
 $refinementBoxAccentColor: rgb(87, 87, 87);
 
 .refinementBox {
-  border: 2px solid $refinementBoxAccentColor;
+  border: 2px solid slategray;
   border-radius: 5px;
   width: fit-content;
-  background-color: white;
-  box-shadow: 1px 5px 9px 0 rgba(0,0,0,0.38);
-  -webkit-box-shadow: 1px 5px 9px 0 rgba(0,0,0,0.38);
-  -moz-box-shadow: 1px 5px 9px 0 rgba(0,0,0,0.38);
+  background-color: $refinementBoxAccentColor;
 }
 
 .refinementBoxTitle {
@@ -27,17 +24,25 @@ $refinementBoxAccentColor: rgb(87, 87, 87);
 }
 
 .example-container {
+  border-left-width: 0;
+  background-color: $refinementBoxAccentColor;
   height: 100%;
+  overflow: hidden;
+}
+.example-sidenav {
+  border-left-width: 0;
+  border-right-width: 0;
+  overflow: hidden;
 }
 .example-sidenav-content {
   display: flex;
   height: 100%;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
 }
 
 .verticalButton {
+  color: #e6e6e6;
   position: absolute;
 }
 .bottomRight {
@@ -47,9 +52,12 @@ $refinementBoxAccentColor: rgb(87, 87, 87);
   transform: rotate(90deg);
 }
 
-.conditionParent  {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
+.conditionParent {
+  padding: 0.7em;
+  overflow: hidden;
+  background-color: $refinementBoxAccentColor;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
 }

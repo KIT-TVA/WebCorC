@@ -34,6 +34,7 @@ import { AbstractStatementNode } from "../../types/statements/nodes/abstract-sta
 import {
   DynamicNode,
   Edge,
+  MiniMapComponent,
   NodeHtmlTemplateDirective,
   NodePositionChange,
   VflowComponent,
@@ -68,6 +69,7 @@ import {
     StatementDelegatorComponent,
     VflowComponent,
     NodeHtmlTemplateDirective,
+    MiniMapComponent,
   ],
   templateUrl: "./editor.component.html",
   standalone: true,
@@ -270,6 +272,11 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
             target: child.statement.id,
             sourceHandle: String(index),
             curve: "smooth-step",
+            markers: {
+              end: {
+                type: "arrow",
+              },
+            },
           });
         }
       });

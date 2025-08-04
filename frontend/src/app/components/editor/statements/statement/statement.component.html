@@ -1,19 +1,15 @@
 <div class="refinementBox" cdkDragBoundary="#editorContainer" #refinementBox>
-    <handle type="target" position="top" *ngIf="!hideTargetHandle"/>
-    <handle type="source" position="bottom" id="0" *ngIf="!hideSourceHandle"/>
+  <handle type="target" position="top" *ngIf="!hideTargetHandle" />
+  <handle type="source" position="bottom" id="0" *ngIf="!hideSourceHandle" />
   <div class="refinementBoxTitle" #boxTitle>
-    <p>{{ refinement.getTitle() }} #{{ 0 }}</p>
+    <p>{{ refinement.getTitle() }} #{{ "df" ?? _node.statement.id }}</p>
     <mat-icon [style.cursor]="'pointer'" (click)="deleteRefinement()"
-      >delete</mat-icon
-    >
+      >delete
+    </mat-icon>
   </div>
 
   <div style="display: flex">
-    <div
-      appGtBorder="r"
-      #preconditionDiv
-      style="width: 50px; min-height: 140px"
-    >
+    <div appGtBorder #preconditionDiv style="width: 50px; min-height: 140px">
       <mat-drawer-container class="example-container" autosize>
         <mat-drawer #preconditionDrawer class="example-sidenav" mode="side">
           <div class="conditionParent">
@@ -32,11 +28,13 @@
             class="verticalButton bottomLeft"
           >
             Precondition
-            <mat-icon>{{
-              preconditionDrawer.opened
-                ? "keyboard_arrow_up"
-                : "keyboard_arrow_down"
-            }}</mat-icon>
+            <mat-icon
+              >{{
+                preconditionDrawer.opened
+                  ? "keyboard_arrow_up"
+                  : "keyboard_arrow_down"
+              }}
+            </mat-icon>
           </button>
         </mat-drawer-content>
       </mat-drawer-container>
@@ -46,7 +44,11 @@
       <ng-content></ng-content>
     </div>
 
-    <div appGtBorder="l" #postconditionDiv style="width: 50px">
+    <div
+      appGtBorder
+      #postconditionDiv
+      style="width: 50px"
+    >
       <mat-drawer-container class="example-container" autosize>
         <mat-drawer
           #postconditionDrawer
@@ -69,11 +71,13 @@
             class="verticalButton bottomRight"
           >
             Postcondition
-            <mat-icon>{{
-              postconditionDrawer.opened
-                ? "keyboard_arrow_up"
-                : "keyboard_arrow_down"
-            }}</mat-icon>
+            <mat-icon
+              >{{
+                postconditionDrawer.opened
+                  ? "keyboard_arrow_up"
+                  : "keyboard_arrow_down"
+              }}
+            </mat-icon>
           </button>
         </mat-drawer-content>
       </mat-drawer-container>

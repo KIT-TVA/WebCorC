@@ -13,7 +13,6 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { FormsModule } from "@angular/forms";
 import { ConditionEditorComponent } from "../../condition/condition-editor/condition-editor.component";
-import { GridTileBorderDirective } from "../../../../directives/grid-tile-border.directive";
 import { TreeService } from "../../../../services/tree/tree.service";
 import { MatIconModule } from "@angular/material/icon";
 import { MatDrawer, MatSidenavModule } from "@angular/material/sidenav";
@@ -23,6 +22,7 @@ import { MatListModule } from "@angular/material/list";
 import { AbstractStatement } from "../../../../types/statements/abstract-statement";
 import { AbstractStatementNode } from "../../../../types/statements/nodes/abstract-statement-node";
 import { HandleComponent } from "ngx-vflow";
+import { GridTileBorderDirective } from "../../../../directives/grid-tile-border.directive";
 
 /**
  * Component to present the statements.
@@ -39,13 +39,13 @@ import { HandleComponent } from "ngx-vflow";
     MatInputModule,
     FormsModule,
     ConditionEditorComponent,
-    GridTileBorderDirective,
     MatIconModule,
     MatSidenavModule,
     MatButtonModule,
     MatExpansionModule,
     MatListModule,
     HandleComponent,
+    GridTileBorderDirective,
   ],
   templateUrl: "./statement.component.html",
   styleUrl: "./statement.component.scss",

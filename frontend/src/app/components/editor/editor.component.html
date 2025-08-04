@@ -64,11 +64,12 @@
     <div id="editorHeightController"></div>
 
     <!-- Render container for the trees root -->
-    <vflow view="auto" [nodes]="nodes" [edges]="edges" [connection]="{curve: 'smooth-step'}" (onNodesChange.position)="handlePositionChange($event)">
+    <vflow view="auto" [nodes]="nodes" [edges]="edges" [connection]="{curve: 'smooth-step'}" (onNodesChange.position)="handlePositionChange($event)" [background]="{ type: 'dots' }">
         <ng-template let-ctx nodeHtml style="width: fit-content">
             <app-statement-delegator [statement]="ctx.node.data()">
             </app-statement-delegator>
         </ng-template>
+        <mini-map [position]="'top-right'"/>
     </vflow>
     <!-- Spawn for examples -->
     <ng-template #examplesSpawn></ng-template>

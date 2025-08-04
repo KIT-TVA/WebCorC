@@ -1,4 +1,4 @@
-<h1 mat-dialog-title>Choose refinement</h1>
+<h1 class="text" mat-dialog-title>Choose refinement</h1>
 <mat-dialog-content>
   <app-refinement-widget   *ngFor="let refinementWidget of REFINEMENT_WIDGETS"
                               [text]="refinementWidget.name"
@@ -8,5 +8,5 @@
   </app-refinement-widget>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button mat-button mat-dialog-close>Cancel</button>
+  <button class="text" mat-button mat-dialog-close>Cancel</button>
 </mat-dialog-actions>
