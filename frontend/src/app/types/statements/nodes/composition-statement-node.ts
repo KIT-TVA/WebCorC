@@ -77,4 +77,17 @@ export class CompositionStatementNode extends AbstractStatementNode {
       // Should never happen
     }
   }
+
+  override deleteChild(node: AbstractStatementNode) {
+    switch (node) {
+      case this.firstStatementNode:
+        this.firstStatementNode = undefined;
+        break;
+      case this.secondStatementNode:
+        this.secondStatementNode = undefined;
+        break;
+      default:
+      // Should never happen
+    }
+  }
 }

@@ -31,6 +31,12 @@ export class SelectionStatementNode extends AbstractStatementNode {
     });
   }
 
+  override deleteChild(node: AbstractStatementNode) {
+    const index = this.children.findIndex((child) => child == node);
+    this.children[index] = undefined;
+    this.statement.commands[index] = undefined;
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   override overridePostcondition(
     sourceNode: AbstractStatementNode,

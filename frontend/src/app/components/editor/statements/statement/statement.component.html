@@ -2,8 +2,8 @@
   <handle type="target" position="top" *ngIf="!hideTargetHandle" />
   <handle type="source" position="bottom" id="0" *ngIf="!hideSourceHandle" />
   <div class="refinementBoxTitle" #boxTitle>
-    <p>{{ refinement.getTitle() }} #{{ "df" ?? _node.statement.id }}</p>
-    <mat-icon [style.cursor]="'pointer'" (click)="deleteRefinement()"
+    <p>{{ refinement.getTitle() }} #{{ "insert id" ?? _node.statement.id }}</p>
+    <mat-icon *ngIf="_node.parent" [style.cursor]="'pointer'" (click)="deleteRefinement()"
       >delete
     </mat-icon>
   </div>

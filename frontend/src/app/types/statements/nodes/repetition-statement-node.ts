@@ -54,4 +54,11 @@ export class RepetitionStatementNode extends AbstractStatementNode {
     super.overridePostcondition(sourceNode, condition);
     this.parent?.overridePostcondition(this, condition); //TODO Compute postcondition && ¬guard
   }
+
+  override deleteChild(node: AbstractStatementNode) {
+    if (node == this._loopStatementNode) {
+      this._loopStatementNode = undefined;
+      this.children = [];
+    }
+  }
 }

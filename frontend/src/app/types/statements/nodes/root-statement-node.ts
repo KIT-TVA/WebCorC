@@ -50,4 +50,10 @@ export class RootStatementNode extends AbstractStatementNode {
       // Should never happen
     }
   }
+
+  override deleteChild(node: AbstractStatementNode) {
+    super.deleteChild(node);
+    this._childStatementNode = undefined;
+    this.statement.statement = undefined;
+  }
 }
