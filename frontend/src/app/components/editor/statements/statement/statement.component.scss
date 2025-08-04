@@ -40,11 +40,13 @@ $refinementBoxAccentColor: rgb(87, 87, 87);
   height: 100%;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 .verticalButton {
   color: #e6e6e6;
   position: absolute;
+  overflow: hidden;
 }
 .bottomRight {
   transform: rotate(-90deg);
