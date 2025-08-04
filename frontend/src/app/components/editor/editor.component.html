@@ -64,7 +64,7 @@
     <div id="editorHeightController"></div>
 
     <!-- Render container for the trees root -->
-    <vflow view="auto" [nodes]="nodes" [edges]="edges" [connection]="{curve: 'smooth-step'}" (onNodesChange.position)="handlePositionChange($event)" [background]="{ type: 'dots' }">
+    <vflow view="auto" [nodes]="nodes" [edges]="edges" [connection]="{curve: 'smooth-step'}" (onNodesChange.position)="handlePositionChange($event)" [background]="{ type: 'dots' }" [snapGrid]="[25, 25]">
         <ng-template let-ctx nodeHtml style="width: fit-content">
             <app-statement-delegator [statement]="ctx.node.data()">
             </app-statement-delegator>
