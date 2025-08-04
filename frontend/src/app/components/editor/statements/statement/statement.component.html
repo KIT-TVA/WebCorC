@@ -3,7 +3,7 @@
   <handle type="source" position="bottom" id="0" *ngIf="!hideSourceHandle" />
   <div class="refinementBoxTitle" #boxTitle>
     <p>{{ refinement.getTitle() }} #{{ "insert id" ?? _node.statement.id }}</p>
-    <mat-icon *ngIf="_node.parent" [style.cursor]="'pointer'" (click)="deleteRefinement()"
+    <mat-icon *ngIf="_node.parent" [style.cursor]="'pointer'" (click)="deleteRefinement()" style="color: #6c0b1f; justify-self: end;"
       >delete
     </mat-icon>
   </div>
