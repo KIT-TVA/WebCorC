@@ -1,20 +1,19 @@
-import { Component, Input } from "@angular/core";
+import {Component, Input} from "@angular/core";
 
-import { StatementComponent } from "../statement/statement.component";
-import { Refinement } from "../../../../types/refinement";
-import { TreeService } from "../../../../services/tree/tree.service";
-import { MatGridListModule } from "@angular/material/grid-list";
-import { RefinementWidgetComponent } from "../../../../widgets/refinement-widget/refinement-widget.component";
+import {StatementComponent} from "../statement/statement.component";
+import {Refinement} from "../../../../types/refinement";
+import {TreeService} from "../../../../services/tree/tree.service";
+import {MatGridListModule} from "@angular/material/grid-list";
+import {RefinementWidgetComponent} from "../../../../widgets/refinement-widget/refinement-widget.component";
 
-import { FormsModule } from "@angular/forms";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatInputModule } from "@angular/material/input";
-import { MatDialog } from "@angular/material/dialog";
-import { MatIconModule } from "@angular/material/icon";
+import {FormsModule} from "@angular/forms";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatInputModule} from "@angular/material/input";
+import {MatIconModule} from "@angular/material/icon";
 import {AbstractStatement, StatementType} from "../../../../types/statements/abstract-statement";
-import { Position } from "../../../../types/position";
-import { createEmptyStatementNode } from "../../../../types/statements/nodes/createStatementNode";
-import { RootStatementNode } from "../../../../types/statements/nodes/root-statement-node";
+import {Position} from "../../../../types/position";
+import {createEmptyStatementNode} from "../../../../types/statements/nodes/createStatementNode";
+import {RootStatementNode} from "../../../../types/statements/nodes/root-statement-node";
 
 /**
  * Composition statement in {@link EditorComponent}.
@@ -44,7 +43,6 @@ export class RootStatementComponent extends Refinement {
 
   public constructor(
     treeService: TreeService,
-    private dialog: MatDialog,
   ) {
     super(treeService);
   }
@@ -60,6 +58,7 @@ export class RootStatementComponent extends Refinement {
   public chooseRefinement($event: StatementType): void {
       const newNode = createEmptyStatementNode($event, this._node);
       (this._node as RootStatementNode).childStatementNode = newNode;
+      newNode.overridePrecondition(this._node, this._node.precondition)
       this.treeService.addStatementNode(newNode);
   }
 

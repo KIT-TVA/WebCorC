@@ -1,18 +1,33 @@
-import {Component, EventEmitter, Input, model, ModelSignal, OnInit, Output, ViewChild,} from "@angular/core";
+import {
+  Component,
+  effect,
+  EventEmitter,
+  Input,
+  model,
+  ModelSignal,
+  OnInit,
+  Output,
+  ViewChild,
+} from "@angular/core";
 
-import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule,} from "@angular/forms";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatInput, MatInputModule} from "@angular/material/input";
-import {ICondition} from "../../../../types/condition/condition";
-import {MatGridListModule} from "@angular/material/grid-list";
-import {MatAutocompleteModule} from "@angular/material/autocomplete";
-import {MatMenuModule} from "@angular/material/menu";
-import {MatButtonModule} from "@angular/material/button";
-import {MatIconModule} from "@angular/material/icon";
-import {AiChatService} from "../../../../services/ai-chat/ai-chat.service";
-import {Textarea} from "primeng/textarea";
-import {IconField} from "primeng/iconfield";
-import {InputIcon} from "primeng/inputicon";
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from "@angular/forms";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInput, MatInputModule } from "@angular/material/input";
+import { Condition, ICondition } from "../../../../types/condition/condition";
+import { MatGridListModule } from "@angular/material/grid-list";
+import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import { MatMenuModule } from "@angular/material/menu";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { AiChatService } from "../../../../services/ai-chat/ai-chat.service";
+import { Textarea } from "primeng/textarea";
+import { IconField } from "primeng/iconfield";
+import { InputIcon } from "primeng/inputicon";
 
 /**
  * Editor in the statements for the {@link Condition}
@@ -52,7 +67,7 @@ export class ConditionEditorComponent implements OnInit {
   @Input() public inline = false;
 
   /**
-   * Emitter to emit the the condition
+   * Emitter to emit the condition
    */
   @Output() public conditionEditingFinished: EventEmitter<void> =
     new EventEmitter<void>();
@@ -67,7 +82,14 @@ export class ConditionEditorComponent implements OnInit {
   public constructor(
     private fb: FormBuilder,
     private _aiChatService: AiChatService,
-  ) {}
+  ) {
+    effect(() => {
+      const newValue = this.condition().programStatement;
+      if (!(newValue == this._conditionGroup?.get("condition")?.value)) {
+        this._conditionGroup?.get("condition")?.setValue(newValue);
+      }
+    });
+  }
 
   /**
    * Initialize the input on angular initalization
@@ -78,8 +100,10 @@ export class ConditionEditorComponent implements OnInit {
       condition: "",
     });
     this._conditionGroup
-      .get("condition")!
-      .setValue(this.condition()?.programStatement);
+      .get("condition")
+      ?.valueChanges.subscribe((newString) => {
+        this.condition.set(new Condition(newString));
+      });
     if (!this.editable) {
       this._conditionGroup.get("condition")!.disable();
     }
