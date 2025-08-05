@@ -1,10 +1,9 @@
 package edu.kit.cbc.editor;
 
+import jakarta.inject.Singleton;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.function.Function;
-
-import jakarta.inject.Singleton;
 
 @Singleton
 public class VerificationOrchestrator {

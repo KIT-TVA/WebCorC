@@ -1,7 +1,5 @@
 package edu.kit.cbc.editor;
 
-import java.util.UUID;
-
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.websocket.WebSocketSession;
@@ -9,13 +7,14 @@ import io.micronaut.websocket.annotation.OnClose;
 import io.micronaut.websocket.annotation.OnMessage;
 import io.micronaut.websocket.annotation.OnOpen;
 import io.micronaut.websocket.annotation.ServerWebSocket;
+import java.util.UUID;
 
 @ServerWebSocket("/ws/verify/{jobId}")
 @ExecuteOn(TaskExecutors.BLOCKING)
 public class VerificationWebSocket {
     private final VerificationOrchestrator orchestrator;
 
-    public VerificationWebSocket (VerificationOrchestrator orchestrator) {
+    public VerificationWebSocket(VerificationOrchestrator orchestrator) {
         this.orchestrator = orchestrator;
     }
 
@@ -38,8 +37,12 @@ public class VerificationWebSocket {
     }
 
     @OnMessage
-    public void onMessage(UUID jobId, String message, WebSocketSession session) { /*unused*/ }
+    public void onMessage(UUID jobId, String message, WebSocketSession session) {
+        /*unused*/
+    }
 
     @OnClose
-    public void onClose(UUID jobId, WebSocketSession session) { /*unused*/ }
+    public void onClose(UUID jobId, WebSocketSession session) {
+        /*unused*/
+    }
 }

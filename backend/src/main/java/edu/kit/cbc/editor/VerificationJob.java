@@ -2,7 +2,6 @@ package edu.kit.cbc.editor;
 
 import java.util.HashSet;
 import java.util.function.Function;
-
 import lombok.Getter;
 
 public class VerificationJob {
