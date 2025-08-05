@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { MatButtonModule } from "@angular/material/button";
 import { TreeService } from "../../../services/tree/tree.service";
 import { ProjectService } from "../../../services/project/project.service";
@@ -13,7 +13,7 @@ import { MatIconModule } from "@angular/material/icon";
  */
 @Component({
   selector: "app-options",
-  imports: [CommonModule, MatButtonModule, MatIconModule],
+  imports: [MatButtonModule, MatIconModule],
   templateUrl: "./options.component.html",
   standalone: true,
   styleUrl: "./options.component.scss",

@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {CommonModule} from '@angular/common';
+
 import {MatDialogActions, MatDialogClose, MatDialogContent, MatDialogTitle} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
 import {RefinementWidgetComponent} from "../../widgets/refinement-widget/refinement-widget.component";
@@ -12,9 +12,7 @@ import {StatementType} from "../../types/statements/abstract-statement";
  */
 @Component({
     selector: 'app-choose-refinement',
-    imports: [CommonModule, MatDialogTitle, MatDialogContent,
-        MatDialogActions, MatButtonModule, RefinementWidgetComponent,
-        MatDialogClose],
+    imports: [MatDialogTitle, MatDialogContent, MatDialogActions, MatButtonModule, RefinementWidgetComponent, MatDialogClose],
     templateUrl: './choose-refinement.component.html',
     styleUrl: './choose-refinement.component.scss'
 })

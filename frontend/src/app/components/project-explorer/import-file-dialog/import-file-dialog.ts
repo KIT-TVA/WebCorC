@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { CbcFormulaMapperService } from '../../../services/project/mapper/cbc-formula-mapper.service';
@@ -18,7 +18,7 @@ import { ConsoleService } from '../../../services/console/console.service';
  */
 @Component({
     selector: 'app-import-graph-dialog',
-    imports: [CommonModule, MatDialogModule, MatFormFieldModule, MatButtonModule, MatInputModule, FormsModule],
+    imports: [MatDialogModule, MatFormFieldModule, MatButtonModule, MatInputModule, FormsModule],
     templateUrl: './import-file-dialog.component.html',
     styleUrl: './import-file-dialog.component.scss'
 })

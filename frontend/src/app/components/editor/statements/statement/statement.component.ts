@@ -6,7 +6,7 @@ import {
   Output,
   ViewChild,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { MatGridListModule } from "@angular/material/grid-list";
 import { Refinement } from "../../../../types/refinement";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -33,7 +33,6 @@ import { GridTileBorderDirective } from "../../../../directives/grid-tile-border
 @Component({
   selector: "app-statement-base",
   imports: [
-    CommonModule,
     MatGridListModule,
     MatFormFieldModule,
     MatInputModule,
@@ -45,8 +44,8 @@ import { GridTileBorderDirective } from "../../../../directives/grid-tile-border
     MatExpansionModule,
     MatListModule,
     HandleComponent,
-    GridTileBorderDirective,
-  ],
+    GridTileBorderDirective
+],
   templateUrl: "./statement.component.html",
   styleUrl: "./statement.component.scss",
   standalone: true,

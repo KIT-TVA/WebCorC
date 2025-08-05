@@ -1,11 +1,14 @@
 <app-statement-base [_node]="_node" [refinement]="this" [hideTargetHandle]="true">
-  <app-refinement-widget
-    *ngIf="!_node.childStatementNode"
-    text="Statement"
-    icon="add"
-    (click)="chooseRefinement()"
-  >
-  </app-refinement-widget>
-  <app-refinement-widget *ngIf="_node.childStatementNode" icon="circle">
-  </app-refinement-widget>
+  @if (!_node.childStatementNode) {
+    <app-refinement-widget
+      text="Statement"
+      icon="add"
+      (click)="chooseRefinement()"
+      >
+    </app-refinement-widget>
+  }
+  @if (_node.childStatementNode) {
+    <app-refinement-widget icon="circle">
+    </app-refinement-widget>
+  }
 </app-statement-base>

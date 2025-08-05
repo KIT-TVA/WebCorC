@@ -1,15 +1,17 @@
 <app-statement-base [_node]="_node" [refinement]="this" [hideSourceHandle]="true">
-    <div style="position: relative; height: 100%; width: 230px;">
-        <app-condition-editor [(condition)]="_node.precondition" ></app-condition-editor>
-    </div>
-    
+  <div style="position: relative; height: 100%; width: 230px;">
+    <app-condition-editor [(condition)]="_node.precondition" ></app-condition-editor>
+  </div>
 
-    <app-refinement-widget *ngIf="!_node.statement"
-                       text="Statement"
-                       icon="add"
-                       (click)="chooseRefinement()">
+
+  @if (!_node.statement) {
+    <app-refinement-widget
+      text="Statement"
+      icon="add"
+      (click)="chooseRefinement()">
     </app-refinement-widget>
-    <div style="position: relative; height: 100%; width: 230px;">
-        <app-condition-editor [(condition)]="_node.postcondition"></app-condition-editor>
-    </div>
+  }
+  <div style="position: relative; height: 100%; width: 230px;">
+    <app-condition-editor [(condition)]="_node.postcondition"></app-condition-editor>
+  </div>
 </app-statement-base>

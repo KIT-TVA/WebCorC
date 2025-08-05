@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {CommonModule} from '@angular/common';
+
 import {MatIconModule} from "@angular/material/icon";
 import {MatButtonModule} from '@angular/material/button';
 import {MatDialogActions, MatDialogClose, MatDialogContent, MatDialogTitle} from '@angular/material/dialog';
@@ -7,7 +7,7 @@ import { ApiDirectory, ApiTextFile} from '../../../services/project/types/api-el
 
 @Component({
     selector: 'app-load-example-dialog',
-    imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose],
+    imports: [MatIconModule, MatButtonModule, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose],
     templateUrl: './load-example-dialog.component.html',
     styleUrl: './load-example-dialog.component.scss'
 })

@@ -1,9 +1,21 @@
 <div style="width: fit-content">
-    <app-composition-statement [_node]="asCompositionStatementNode(statement)" *ngIf="statement.statement.type === 'COMPOSITION'"/>
-    <app-strong-weak-statement [_node]="asSkipStatementNode(statement)" *ngIf="statement.statement.type === 'SKIP'"/>
-    <app-repetition-statement [_node]="asRepetitionStatementNode(statement)" *ngIf="statement.statement.type === 'REPETITION'"/>
-    <app-selection-statement [_node]="asSelectionStatementNode(statement)" *ngIf="statement.statement.type === 'SELECTION'"/>
-    <app-simple-statement [_node]="asSimpleStatementNode(statement)" *ngIf="statement.statement.type === 'STATEMENT'"/>
-    <app-root-statement [_node]="asRootStatementNode(statement)" *ngIf="statement.statement.type === 'ROOT'" />
-    <ng-content />
+  @if (statement.statement.type === 'COMPOSITION') {
+    <app-composition-statement [_node]="asCompositionStatementNode(statement)"/>
+  }
+  @if (statement.statement.type === 'SKIP') {
+    <app-strong-weak-statement [_node]="asSkipStatementNode(statement)"/>
+  }
+  @if (statement.statement.type === 'REPETITION') {
+    <app-repetition-statement [_node]="asRepetitionStatementNode(statement)"/>
+  }
+  @if (statement.statement.type === 'SELECTION') {
+    <app-selection-statement [_node]="asSelectionStatementNode(statement)"/>
+  }
+  @if (statement.statement.type === 'STATEMENT') {
+    <app-simple-statement [_node]="asSimpleStatementNode(statement)"/>
+  }
+  @if (statement.statement.type === 'ROOT') {
+    <app-root-statement [_node]="asRootStatementNode(statement)" />
+  }
+  <ng-content />
 </div>

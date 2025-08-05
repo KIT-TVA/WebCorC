@@ -15,12 +15,13 @@
     ></app-condition-editor>
   </div>
   <div style="width: fit-content">
-    <app-refinement-widget
-      *ngIf="!_node.loopStatementNode"
-      text="Loop Statement"
-      icon="add"
-      (click)="chooseRefinement()"
-    >
-    </app-refinement-widget>
+    @if (!_node.loopStatementNode) {
+      <app-refinement-widget
+        text="Loop Statement"
+        icon="add"
+        (click)="chooseRefinement()"
+        >
+      </app-refinement-widget>
+    }
   </div>
 </app-statement-base>

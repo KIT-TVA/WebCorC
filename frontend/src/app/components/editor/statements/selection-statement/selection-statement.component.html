@@ -2,7 +2,7 @@
   [_node]="_node"
   [refinement]="this"
   [hideSourceHandle]="true"
->
+  >
   <div class="statements">
     <div class="first-row">
       <div>
@@ -15,31 +15,35 @@
       </div>
     </div>
 
-    <div
-      *ngFor="let guard of _node.guards; let i = index"
-      class="statement-container"
-    >
-      <div class="guard">
-        <app-condition-editor
-          [(condition)]="_node.guards[i]"
-          [inline]="true"
-        ></app-condition-editor>
-      </div>
-      <div class="statement">
-        <app-refinement-widget
-          *ngIf="!_node.children[i]"
-          text="Statement"
-          icon="add"
-          (click)="chooseRefinement(i)"
+    @for (guard of _node.guards; track guard; let i = $index) {
+      <div
+        class="statement-container"
         >
-        </app-refinement-widget>
+        <div class="guard">
+          <app-condition-editor
+            [(condition)]="_node.guards[i]"
+            [inline]="true"
+          ></app-condition-editor>
+        </div>
+        <div class="statement">
+          @if (!_node.children[i]) {
+            <app-refinement-widget
+              text="Statement"
+              icon="add"
+              (click)="chooseRefinement(i)"
+              >
+            </app-refinement-widget>
+          }
+        </div>
       </div>
-    </div>
+    }
   </div>
   <div style="display: flex; flex-direction: column; width: 0">
     <div style="height: 3em; width: 0"></div>
-    <div style="height: 5em; width: 0" *ngFor="let guard of _node.guards; let i = index">
-      <handle position="right" type="source" [id]="i + ''" />
-    </div>
+    @for (guard of _node.guards; track guard; let i = $index) {
+      <div style="height: 5em; width: 0">
+        <handle position="right" type="source" [id]="i + ''" />
+      </div>
+    }
   </div>
 </app-statement-base>

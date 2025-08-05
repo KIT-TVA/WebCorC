@@ -1,11 +1,12 @@
 <div>
-    <p>{{ condition().programStatement }}</p>
-    <form *ngIf="conditionGroup" [formGroup]="conditionGroup">
-        <mat-form-field color="primary" class="textarea" (focusout)="conditionEditingFinished.emit()" appearance="outline" style="max-width: 213px">
-            <textarea class="textarea" [rows]="inline? 1: 5" spellcheck="false" matInput placeholder="Type here" formControlName="condition" #input>
-
-            </textarea>
-            <mat-icon matSuffix (click)="askAi()" style="cursor: pointer;">psychology_alt</mat-icon>
-        </mat-form-field>
+  <p>{{ condition().programStatement }}</p>
+  @if (conditionGroup) {
+    <form [formGroup]="conditionGroup">
+      <mat-form-field color="primary" class="textarea" (focusout)="conditionEditingFinished.emit()" appearance="outline" style="max-width: 213px">
+        <textarea class="textarea" [rows]="inline? 1: 5" spellcheck="false" matInput placeholder="Type here" formControlName="condition" #input>
+        </textarea>
+        <mat-icon matSuffix (click)="askAi()" style="cursor: pointer;">psychology_alt</mat-icon>
+      </mat-form-field>
     </form>
+  }
 </div>

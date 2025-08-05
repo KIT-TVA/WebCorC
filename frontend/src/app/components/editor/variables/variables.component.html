@@ -1,5 +1,6 @@
 <form [formGroup]="variables">
-  <ng-container formArrayName="items" *ngFor="let variableForm of items.controls; let i = index">
+  @for (variableForm of items.controls; track variableForm; let i = $index) {
+    <ng-container formArrayName="items">
       <ng-container [formGroupName]="i">
         <mat-form-field [style.width]="'100%'" (keydown.delete)="onDelete($event, i)" (keydown.enter)="$event.preventDefault()" >
           <mat-label>Variable</mat-label>
@@ -8,17 +9,18 @@
             <mat-icon>remove</mat-icon>
           </button>
         </mat-form-field>
+      </ng-container>
     </ng-container>
-  </ng-container>
+  }
   <mat-form-field [style.width]="'100%'" (keydown.enter)="onEnter($event)">
     <mat-label>Add Variable</mat-label>
     <input matInput formControlName="newVariable"/>
-      <button matSuffix mat-icon-button aria-label="Add" (click)="addVariable()"  (keydown.enter)="$event.preventDefault()" #tooltip="matTooltip" matTooltip="Add Variable" matTooltipPosition="left">
-        <mat-icon>add</mat-icon>
-      </button>
-      @if (dirtyState) {
-        <mat-hint [style.color]="'rgb(186, 26, 26)'"> Press enter or click the plus to add the variable </mat-hint>
-      }
+    <button matSuffix mat-icon-button aria-label="Add" (click)="addVariable()"  (keydown.enter)="$event.preventDefault()" #tooltip="matTooltip" matTooltip="Add Variable" matTooltipPosition="left">
+      <mat-icon>add</mat-icon>
+    </button>
+    @if (dirtyState) {
+      <mat-hint [style.color]="'rgb(186, 26, 26)'"> Press enter or click the plus to add the variable </mat-hint>
+    }
   </mat-form-field>
-  
+
 </form>

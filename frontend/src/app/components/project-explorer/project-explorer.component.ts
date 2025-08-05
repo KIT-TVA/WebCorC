@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {CommonModule} from '@angular/common';
+
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import {MatTreeFlatDataSource, MatTreeFlattener, MatTreeModule} from '@angular/material/tree';
@@ -48,7 +48,7 @@ class FlatNode {
  */
 @Component({
   selector: 'app-project-explorer',
-  imports: [CommonModule, MatTreeModule, MatIconModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatMenuModule, CdkDrag, CdkDropList],
+  imports: [MatTreeModule, MatIconModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatMenuModule, CdkDrag, CdkDropList],
   templateUrl: './project-explorer.component.html',
   standalone: true,
   styleUrl: './project-explorer.component.scss'

@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {CommonModule} from '@angular/common';
+
 import {TreeService} from '../../../services/tree/tree.service';
 import {MatInputModule} from "@angular/material/input";
 import {MatButtonModule} from "@angular/material/button";
@@ -28,7 +28,7 @@ import {AiChatService} from '../../../services/ai-chat/ai-chat.service';
  */
 @Component({
     selector: 'app-global-conditions',
-    imports: [CommonModule, FormsModule, MatButtonModule, MatDividerModule, MatFormFieldModule, MatInputModule, MatListModule, ReactiveFormsModule, MatIconModule, MatTooltipModule],
+    imports: [FormsModule, MatButtonModule, MatDividerModule, MatFormFieldModule, MatInputModule, MatListModule, ReactiveFormsModule, MatIconModule, MatTooltipModule],
     templateUrl: './global-conditions.component.html',
     standalone: true,
     styleUrl: './global-conditions.component.scss'

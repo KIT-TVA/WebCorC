@@ -1,5 +1,5 @@
 import { Component, Input } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { StatementComponent } from "../statement/statement.component";
 import { Refinement } from "../../../../types/refinement";
 import { TreeService } from "../../../../services/tree/tree.service";
@@ -28,7 +28,6 @@ import { HandleComponent } from "ngx-vflow";
 @Component({
   selector: "app-composition-statement",
   imports: [
-    CommonModule,
     StatementComponent,
     MatGridListModule,
     RefinementWidgetComponent,
@@ -37,8 +36,8 @@ import { HandleComponent } from "ngx-vflow";
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
-    HandleComponent,
-  ],
+    HandleComponent
+],
   templateUrl: "./composition-statement.component.html",
   styleUrl: "./composition-statement.component.scss",
 })

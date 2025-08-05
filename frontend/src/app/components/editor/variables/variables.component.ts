@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {CommonModule} from '@angular/common';
+
 import {TreeService} from "../../../services/tree/tree.service";
 import {MatInputModule} from "@angular/material/input";
 import {MatButtonModule} from "@angular/material/button";
@@ -27,7 +27,7 @@ import {IJavaVariable} from "../../../types/JavaVariable";
  */
 @Component({
     selector: 'app-variables',
-    imports: [CommonModule, FormsModule, MatButtonModule, MatDividerModule, MatFormFieldModule, MatInputModule, MatListModule, ReactiveFormsModule, MatIconModule, MatTooltipModule],
+    imports: [FormsModule, MatButtonModule, MatDividerModule, MatFormFieldModule, MatInputModule, MatListModule, ReactiveFormsModule, MatIconModule, MatTooltipModule],
     templateUrl: './variables.component.html',
     standalone: true,
     styleUrl: './variables.component.scss'

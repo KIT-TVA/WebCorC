@@ -1,5 +1,5 @@
 import { Component, Input } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { StatementComponent } from "../statement/statement.component";
 import { Refinement } from "../../../../types/refinement";
 import { TreeService } from "../../../../services/tree/tree.service";
@@ -29,7 +29,6 @@ import { index } from "d3";
 @Component({
   selector: "app-selection-statement",
   imports: [
-    CommonModule,
     StatementComponent,
     MatGridListModule,
     RefinementWidgetComponent,
@@ -40,8 +39,8 @@ import { index } from "d3";
     MatIconModule,
     MatButtonModule,
     ConditionEditorComponent,
-    HandleComponent,
-  ],
+    HandleComponent
+],
   templateUrl: "./selection-statement.component.html",
   styleUrl: "./selection-statement.component.scss",
 })

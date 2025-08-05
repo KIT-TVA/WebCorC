@@ -1,5 +1,5 @@
 import {Component, ElementRef, Input, ViewChild, ViewContainerRef} from '@angular/core';
-import {CommonModule} from '@angular/common';
+
 import {StatementComponent} from "../statement/statement.component";
 import {Refinement} from "../../../../types/refinement";
 import {TreeService} from "../../../../services/tree/tree.service";
@@ -22,8 +22,7 @@ import {SimpleStatementNode} from "../../../../types/statements/nodes/simple-sta
  */
 @Component({
     selector: 'app-simple-statement',
-    imports: [CommonModule, StatementComponent, MatGridListModule,
-        ConditionEditorComponent, FormsModule, MatFormFieldModule, MatInputModule, MatIconModule, ConditionEditorComponent],
+    imports: [StatementComponent, MatGridListModule, ConditionEditorComponent, FormsModule, MatFormFieldModule, MatInputModule, MatIconModule, ConditionEditorComponent],
     templateUrl: './simple-statement.component.html',
     standalone: true,
     styleUrl: './simple-statement.component.scss'

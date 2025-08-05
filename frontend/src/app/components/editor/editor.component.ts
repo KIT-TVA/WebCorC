@@ -10,7 +10,7 @@ import {
   ViewChild,
   ViewContainerRef,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { MatButtonModule } from "@angular/material/button";
 import { TreeService } from "../../services/tree/tree.service";
 import { MatIconModule } from "@angular/material/icon";
@@ -49,7 +49,6 @@ import {
 @Component({
   selector: "app-editor",
   imports: [
-    CommonModule,
     MatButtonModule,
     MatIconModule,
     MatExpansionModule,
@@ -69,8 +68,8 @@ import {
     StatementDelegatorComponent,
     VflowComponent,
     NodeHtmlTemplateDirective,
-    MiniMapComponent,
-  ],
+    MiniMapComponent
+],
   templateUrl: "./editor.component.html",
   standalone: true,
   styleUrl: "./editor.component.scss",

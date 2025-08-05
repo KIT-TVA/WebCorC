@@ -4,7 +4,7 @@ import { StrongWeakStatementComponent } from "../strong-weak-statement/strong-we
 import { RepetitionStatementComponent } from "../repetition-statement/repetition-statement.component";
 import { SelectionStatementComponent } from "../selection-statement/selection-statement.component";
 import { SimpleStatementComponent } from "../simple-statement/simple-statement.component";
-import { NgIf } from "@angular/common";
+
 import { AbstractStatementNode } from "../../../../types/statements/nodes/abstract-statement-node";
 import { CompositionStatementNode } from "../../../../types/statements/nodes/composition-statement-node";
 import { SelectionStatementNode } from "../../../../types/statements/nodes/selection-statement-node";
@@ -22,9 +22,8 @@ import { RootStatementNode } from "../../../../types/statements/nodes/root-state
     RepetitionStatementComponent,
     SelectionStatementComponent,
     SimpleStatementComponent,
-    NgIf,
-    RootStatementComponent,
-  ],
+    RootStatementComponent
+],
   templateUrl: "./statement-delegator.component.html",
   standalone: true,
   styleUrl: "./statement-delegator.component.scss",

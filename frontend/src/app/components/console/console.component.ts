@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ConsoleService } from '../../services/console/console.service';
@@ -14,7 +14,7 @@ import { HttpErrorResponse } from '@angular/common/http';
  */
 @Component({
     selector: 'app-console',
-    imports: [CommonModule, MatButtonModule, MatIconModule, MatListModule],
+    imports: [MatButtonModule, MatIconModule, MatListModule],
     templateUrl: './console.component.html',
     standalone: true,
     styleUrl: './console.component.scss'

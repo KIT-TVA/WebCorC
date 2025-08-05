@@ -1,5 +1,5 @@
 import { Component, Input } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { MatIconModule } from "@angular/material/icon";
 
 /**
@@ -7,7 +7,7 @@ import { MatIconModule } from "@angular/material/icon";
  */
 @Component({
   selector: "app-refinement-widget",
-  imports: [CommonModule, MatIconModule],
+  imports: [MatIconModule],
   template: `
     <div id="background">
       <mat-icon>{{ icon }}</mat-icon>

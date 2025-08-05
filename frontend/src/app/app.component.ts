@@ -1,5 +1,5 @@
 import {Component, HostListener} from '@angular/core';
-import {CommonModule} from '@angular/common';
+
 import {Router, RouterOutlet} from '@angular/router';
 import {MatToolbarModule} from "@angular/material/toolbar";
 import {MatSidenavModule} from "@angular/material/sidenav";
@@ -33,7 +33,7 @@ import {AiChatService} from './services/ai-chat/ai-chat.service';
  */
 @Component({
     selector: 'app-root',
-  imports: [CommonModule, RouterOutlet, MatToolbarModule, MatSidenavModule, FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, ProjectExplorerComponent, MatIconModule, NuMonacoEditorModule, MatProgressBarModule, MatBadgeModule],
+  imports: [RouterOutlet, MatToolbarModule, MatSidenavModule, FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, ProjectExplorerComponent, MatIconModule, NuMonacoEditorModule, MatProgressBarModule, MatBadgeModule],
     templateUrl: './app.component.html',
     styleUrl: './app.component.scss'
 })

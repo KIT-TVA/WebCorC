@@ -8,7 +8,7 @@ import {
   Output,
   ViewChild,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import {
   FormBuilder,
   FormGroup,
@@ -33,7 +33,6 @@ import { AiChatService } from "../../../../services/ai-chat/ai-chat.service";
 @Component({
   selector: "app-condition-editor",
   imports: [
-    CommonModule,
     FormsModule,
     MatFormFieldModule,
     MatInputModule,
@@ -42,8 +41,8 @@ import { AiChatService } from "../../../../services/ai-chat/ai-chat.service";
     MatAutocompleteModule,
     MatMenuModule,
     MatButtonModule,
-    MatIconModule,
-  ],
+    MatIconModule
+],
   templateUrl: "./condition-editor.component.html",
   standalone: true,
   styleUrl: "./condition-editor.component.scss",

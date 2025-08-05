@@ -1,5 +1,5 @@
 import { Component, Input } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { StatementComponent } from "../statement/statement.component";
 import { Refinement } from "../../../../types/refinement";
 import { TreeService } from "../../../../services/tree/tree.service";
@@ -26,15 +26,14 @@ import { RootStatementNode } from "../../../../types/statements/nodes/root-state
 @Component({
   selector: "app-root-statement",
   imports: [
-    CommonModule,
     StatementComponent,
     MatGridListModule,
     RefinementWidgetComponent,
     FormsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatIconModule,
-  ],
+    MatIconModule
+],
   templateUrl: "./root-statement.component.html",
   styleUrl: "./root-statement.component.scss",
 })

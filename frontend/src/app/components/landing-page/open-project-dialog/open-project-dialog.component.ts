@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,7 +14,7 @@ import { ProjectService } from '../../../services/project/project.service';
  */
 @Component({
   selector: 'app-open-project-dialog',
-  imports: [CommonModule, MatDialogModule, FormsModule, MatFormFieldModule, MatButtonModule, MatInputModule],
+  imports: [MatDialogModule, FormsModule, MatFormFieldModule, MatButtonModule, MatInputModule],
   templateUrl: './open-project-dialog.component.html',
   styleUrl: './open-project-dialog.component.scss'
 })

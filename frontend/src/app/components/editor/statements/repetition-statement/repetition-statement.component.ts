@@ -1,5 +1,5 @@
 import {Component, Input, ViewChild, ViewContainerRef} from '@angular/core';
-import {CommonModule} from '@angular/common';
+
 import {StatementComponent} from "../statement/statement.component";
 import {Refinement} from "../../../../types/refinement";
 import {TreeService} from "../../../../services/tree/tree.service";
@@ -21,8 +21,7 @@ import {createEmptyStatementNode} from "../../../../types/statements/nodes/creat
  */
 @Component({
     selector: 'app-repetition-statement',
-    imports: [CommonModule, StatementComponent, MatGridListModule,
-        RefinementWidgetComponent, ConditionEditorComponent, FormsModule, MatFormFieldModule, MatInputModule, MatIconModule],
+    imports: [StatementComponent, MatGridListModule, RefinementWidgetComponent, ConditionEditorComponent, FormsModule, MatFormFieldModule, MatInputModule, MatIconModule],
     templateUrl: './repetition-statement.component.html',
     styleUrl: './repetition-statement.component.scss'
 })

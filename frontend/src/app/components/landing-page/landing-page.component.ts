@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute } from '@angular/router';
@@ -17,7 +17,7 @@ import { ImportFileDialogComponent } from '../project-explorer/import-file-dialo
  */
 @Component({
     selector: 'app-landing-page',
-    imports: [CommonModule, MatButtonModule, MatIconModule],
+    imports: [MatButtonModule, MatIconModule],
     templateUrl: './landing-page.component.html',
     styleUrl: './landing-page.component.scss'
 })

@@ -1,4 +1,4 @@
-import {CommonModule} from '@angular/common';
+
 import {Component} from '@angular/core';
 import {
   FormArray,
@@ -27,7 +27,7 @@ import {IRenaming} from "../../../types/Renaming";
  */
 @Component({
     selector: 'app-renaming',
-    imports: [CommonModule, FormsModule, MatButtonModule, MatDividerModule, MatFormFieldModule, MatInputModule, MatListModule, ReactiveFormsModule, MatIconModule, MatTooltipModule],
+    imports: [FormsModule, MatButtonModule, MatDividerModule, MatFormFieldModule, MatInputModule, MatListModule, ReactiveFormsModule, MatIconModule, MatTooltipModule],
     templateUrl: './renaming.component.html',
     standalone: true,
     styleUrl: './renaming.component.scss'

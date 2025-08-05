@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { NuMonacoEditorModule } from '@ng-util/monaco-editor';
 import { FormsModule } from '@angular/forms';
 import { ProjectService } from '../../services/project/project.service';
@@ -13,10 +13,9 @@ import { EditorService } from '../../services/editor/editor.service';
 @Component({
     selector: 'app-file-editor',
     imports: [
-        CommonModule,
-        FormsModule,
-        NuMonacoEditorModule
-    ],
+    FormsModule,
+    NuMonacoEditorModule
+],
     templateUrl: './file-editor.component.html',
     styleUrl: './file-editor.component.scss'
 })

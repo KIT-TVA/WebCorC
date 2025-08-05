@@ -1,39 +1,41 @@
 <form [formGroup]="renames">
-    <ng-container formArrayName="items" *ngFor="let renamingForm of items.controls; let i = index">
-        <ng-container [formGroupName]="i">
-            <div class="renaming">
-                <mat-form-field [style.width]="'100%'" (keydown.delete)="onDelete($event, i)" (keydown.enter)="$event.preventDefault()">
-                    <mat-label> Type </mat-label>
-                    <input matInput formControlName="type" />
-                </mat-form-field>
-                <mat-form-field [style.width]="'100%'" (keydown.delete)="onDelete($event, i)" (keydown.enter)="$event.preventDefault()">
-                    <mat-label> Original </mat-label>
-                    <input matInput formControlName="original">
-                </mat-form-field>
-                <mat-form-field [style.width]="'100%'" (keydown.delete)="onDelete($event, i)" (keydown.enter)="$event.preventDefault()">
-                    <mat-label> New Name </mat-label>
-                    <input matInput formControlName="newName">
-                    <button matSuffix mat-icon-button (click)="removeRenaming(i)"> <mat-icon> remove </mat-icon> </button>
-                </mat-form-field>
-            </div>
-        </ng-container>
-    </ng-container>
-    <ng-container [formGroupName]="'newRenaming'">
-        <div  class="addRenaming renaming">
-            <mat-form-field [style.width]="'100%'" (keydown.enter)="$event.preventDefault()" >
-                <mat-label> Type </mat-label>
-                <input matInput formControlName="type" />
-            </mat-form-field>
-            <mat-form-field [style.width]="'100%'" (keydown.enter)="$event.preventDefault()">
-                <mat-label> Original </mat-label>
-                <input matInput formControlName="original" />
-            </mat-form-field>
-            <mat-form-field [style.width]="'100%'" (keydown.enter)="onEnter($event)">
-                <mat-label> New Name </mat-label>
-                <input matInput formControlName="newName">
-                <button matSuffix mat-icon-button (click)="addRenaming()"><mat-icon> add </mat-icon></button>
-            </mat-form-field>
+  @for (renamingForm of items.controls; track renamingForm; let i = $index) {
+    <ng-container formArrayName="items">
+      <ng-container [formGroupName]="i">
+        <div class="renaming">
+          <mat-form-field [style.width]="'100%'" (keydown.delete)="onDelete($event, i)" (keydown.enter)="$event.preventDefault()">
+            <mat-label> Type </mat-label>
+            <input matInput formControlName="type" />
+          </mat-form-field>
+          <mat-form-field [style.width]="'100%'" (keydown.delete)="onDelete($event, i)" (keydown.enter)="$event.preventDefault()">
+            <mat-label> Original </mat-label>
+            <input matInput formControlName="original">
+          </mat-form-field>
+          <mat-form-field [style.width]="'100%'" (keydown.delete)="onDelete($event, i)" (keydown.enter)="$event.preventDefault()">
+            <mat-label> New Name </mat-label>
+            <input matInput formControlName="newName">
+            <button matSuffix mat-icon-button (click)="removeRenaming(i)"> <mat-icon> remove </mat-icon> </button>
+          </mat-form-field>
         </div>
+      </ng-container>
     </ng-container>
-    
+  }
+  <ng-container [formGroupName]="'newRenaming'">
+    <div  class="addRenaming renaming">
+      <mat-form-field [style.width]="'100%'" (keydown.enter)="$event.preventDefault()" >
+        <mat-label> Type </mat-label>
+        <input matInput formControlName="type" />
+      </mat-form-field>
+      <mat-form-field [style.width]="'100%'" (keydown.enter)="$event.preventDefault()">
+        <mat-label> Original </mat-label>
+        <input matInput formControlName="original" />
+      </mat-form-field>
+      <mat-form-field [style.width]="'100%'" (keydown.enter)="onEnter($event)">
+        <mat-label> New Name </mat-label>
+        <input matInput formControlName="newName">
+        <button matSuffix mat-icon-button (click)="addRenaming()"><mat-icon> add </mat-icon></button>
+      </mat-form-field>
+    </div>
+  </ng-container>
+
 </form>
