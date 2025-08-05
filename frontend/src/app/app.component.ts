@@ -25,6 +25,12 @@ import {NetworkStatusService} from './services/networkStatus/network-status.serv
 import {ConsoleService} from './services/console/console.service';
 import {EditorService} from './services/editor/editor.service';
 import {AiChatService} from './services/ai-chat/ai-chat.service';
+import { Toolbar } from 'primeng/toolbar';
+import {Button} from "primeng/button";
+import {InputText} from "primeng/inputtext";
+import {InputIcon} from "primeng/inputicon";
+import {IconField} from "primeng/iconfield";
+
 
 /**
  * Top Component of this application, 
@@ -32,10 +38,11 @@ import {AiChatService} from './services/ai-chat/ai-chat.service';
  * In which the editors and landing page get rendered in.
  */
 @Component({
-    selector: 'app-root',
-  imports: [RouterOutlet, MatToolbarModule, MatSidenavModule, FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, ProjectExplorerComponent, MatIconModule, NuMonacoEditorModule, MatProgressBarModule, MatBadgeModule],
-    templateUrl: './app.component.html',
-    styleUrl: './app.component.scss'
+  selector: 'app-root',
+  imports: [RouterOutlet, MatToolbarModule, Toolbar, MatSidenavModule, FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, ProjectExplorerComponent, MatIconModule, NuMonacoEditorModule, MatProgressBarModule, MatBadgeModule, Button, InputText, InputIcon, IconField],
+  templateUrl: './app.component.html',
+  standalone: true,
+  styleUrl: './app.component.scss'
 })
 export class AppComponent {
 
@@ -173,4 +180,6 @@ export class AppComponent {
 
     return false 
   }
+
+  protected readonly Toolbar = Toolbar;
 }

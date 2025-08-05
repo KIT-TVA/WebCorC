@@ -12,9 +12,9 @@ import {StatementType} from "../../types/statements/abstract-statement";
     selector: "app-refinement-widget",
     imports: [MatIconModule, SpeedDial],
     template: `
-        <div style="position: relative; width: 5rem; height: 5em; display: flex; justify-content: center; align-content: center; align-items: center">
-            <div style="width: fit-content; height: fit-content">
-                <div style="position: relative">
+        <div style="overflow: visible; position: relative; width: 5rem; height: 5em; display: flex; justify-content: center; align-content: center; align-items: center">
+            <div style="overflow: visible;width: fit-content; height: fit-content">
+                <div style="overflow: visible;position: relative">
                     <p-speed-dial [model]="items" id="background" radius="55" type="semi-circle" direction="down"
                                   [buttonProps]="{severity: 'secondary'}"
                                   [tooltipOptions]="{ tooltipPosition: 'top' }">

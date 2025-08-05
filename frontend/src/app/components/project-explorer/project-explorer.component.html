@@ -1,19 +1,7 @@
 <div class="drawer-content">
-    <div class="project-actions">
-        <button mat-button (click)="save()" > <mat-icon> save </mat-icon> Save </button>
-        <button mat-button [matMenuTriggerFor]="addMenu" id="add"> <mat-icon> add </mat-icon> Add File </button>
-        <mat-menu #addMenu="matMenu">
-            <button mat-menu-item (click)="addFileToRoot('schema', 'diagram')"> New Schema <mat-icon> schema </mat-icon></button>
-            <button mat-menu-item (click)="addFileToRoot('helper', 'java')"> New Helper <mat-icon> code </mat-icon> </button>
-            <button mat-menu-item (click)="addFolderToRoot('directory')"> New Directory <mat-icon> create_new_folder </mat-icon> </button>
-        </mat-menu>
-        <button mat-button [matMenuTriggerFor]="importMenu" id="import"> <mat-icon> publish</mat-icon> Import </button>
-        <mat-menu #importMenu="matMenu">
-            <button mat-menu-item (click)="importProject()"> Import Project </button>
-            <button mat-menu-item (click)="import()" > Import File </button>
-        </mat-menu>
-        <button mat-button (click)="export()"> <mat-icon> download </mat-icon> Export </button>
-    </div>
+    <p-menubar style="border-radius: 0; border: 0;" class="project-actions"
+               [model]="menuItems">
+    </p-menubar>
     <div class="project-header">
         <h4> {{ projectService.projectname ? projectService.projectname : "Projectname" }} </h4>
     </div>
@@ -23,59 +11,91 @@
             <mat-form-field [style.width]="'100%'" [style.margin-left]="'5px'" [style.margin-right]="'5px'">
                 <mat-label>New Element</mat-label>
                 <input matInput #newElement [style.width]="'100%'">
-                <button matSuffix mat-icon-button aria-label="File"      (click)="deleteElement(node)"> <mat-icon [style.color]="'rgb(162,34,35)'" > close      </mat-icon> </button>
-                <button matSuffix mat-icon-button aria-label="File"      (click)="addFile(node, newElement.value, 'diagram')"  > <mat-icon> schema      </mat-icon> </button>
-                <button matSuffix mat-icon-button aria-label="File"      (click)="addFile(node, newElement.value, 'java')"  > <mat-icon> code              </mat-icon> </button>
-                <button matSuffix mat-icon-button aria-label="Directory" (click)="addFolder(node, newElement.value)"> <mat-icon> create_new_folder </mat-icon> </button>
+                <button matSuffix mat-icon-button aria-label="File" (click)="deleteElement(node)">
+                    <mat-icon [style.color]="'rgb(162,34,35)'"> close</mat-icon>
+                </button>
+                <button matSuffix mat-icon-button aria-label="File"
+                        (click)="addFile(node, newElement.value, 'diagram')">
+                    <mat-icon> schema</mat-icon>
+                </button>
+                <button matSuffix mat-icon-button aria-label="File" (click)="addFile(node, newElement.value, 'java')">
+                    <mat-icon> code</mat-icon>
+                </button>
+                <button matSuffix mat-icon-button aria-label="Directory" (click)="addFolder(node, newElement.value)">
+                    <mat-icon> create_new_folder</mat-icon>
+                </button>
             </mat-form-field>
         </mat-tree-node>
 
-        <mat-tree-node *matTreeNodeDef="let node; when: isFile" matTreeNodePadding cdkDrag [cdkDragData]="node" (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()">
-            <button mat-icon-button> <mat-icon> {{getFileIcon(node)}} </mat-icon> </button>
-            <button mat-button (click)="navigate(node)" > {{ node.name }} </button>
+        <mat-tree-node *matTreeNodeDef="let node; when: isFile" matTreeNodePadding cdkDrag [cdkDragData]="node"
+                       (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()">
+            <button mat-icon-button>
+                <mat-icon> {{ getFileIcon(node) }}</mat-icon>
+            </button>
+            <button mat-button (click)="navigate(node)"> {{ node.name }}</button>
             <div class="node-actions">
-               <button mat-icon-button (click)="toggleRename(node)"> <mat-icon> edit </mat-icon> </button>
-                <button mat-icon-button (click)="deleteElement(node)"><mat-icon [style.color]="'rgb(162,34,35)'"> delete </mat-icon></button>
+                <button mat-icon-button (click)="toggleRename(node)">
+                    <mat-icon> edit</mat-icon>
+                </button>
+                <button mat-icon-button (click)="deleteElement(node)">
+                    <mat-icon [style.color]="'rgb(162,34,35)'"> delete</mat-icon>
+                </button>
             </div>
         </mat-tree-node>
 
         <mat-tree-node *matTreeNodeDef="let node; when: isElementToRenameFile" matTreeNodePadding>
             <mat-form-field [style.width]="'100%'" [style.margin-left]="'5px'" [style.margin-right]="'5px'">
-                <mat-label> Rename File </mat-label>
-                <input matInput #renamingElement [value]="getRenameName(node)" [style.width]="'100%'" />
-                <button matPrefix mat-icon-button aria-label="File icon"> <mat-icon> {{getFileIcon(node)}} </mat-icon>  </button>
-                <button matSuffix mat-icon-button aria-label="Rename" (click)="renameElement(node, renamingElement.value)"> <mat-icon> check </mat-icon> </button>
+                <mat-label> Rename File</mat-label>
+                <input matInput #renamingElement [value]="getRenameName(node)" [style.width]="'100%'"/>
+                <button matPrefix mat-icon-button aria-label="File icon">
+                    <mat-icon> {{ getFileIcon(node) }}</mat-icon>
+                </button>
+                <button matSuffix mat-icon-button aria-label="Rename"
+                        (click)="renameElement(node, renamingElement.value)">
+                    <mat-icon> check</mat-icon>
+                </button>
             </mat-form-field>
         </mat-tree-node>
 
-        <mat-tree-node *matTreeNodeDef="let node; when: isFolder" matTreeNodePadding cdkDrag [cdkDragData]="node" (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (mouseenter)="dragHover(node)">
-            <button  mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle' + node.name" >
-                <mat-icon class="mat-icon-rtl-mirror"> 
-                    {{treeControl.isExpanded(node) ? 'folder_open' : 'folder'}} 
+        <mat-tree-node *matTreeNodeDef="let node; when: isFolder" matTreeNodePadding cdkDrag [cdkDragData]="node"
+                       (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (mouseenter)="dragHover(node)">
+            <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle' + node.name">
+                <mat-icon class="mat-icon-rtl-mirror">
+                    {{ treeControl.isExpanded(node) ? 'folder_open' : 'folder' }}
                 </mat-icon>
             </button>
             {{ node.name }}
             <div class="node-actions">
-                <button mat-icon-button (click)="importElement(node)"> <mat-icon> publish </mat-icon> </button>
-                <button mat-icon-button (click)="toggleRename(node)"> <mat-icon> edit </mat-icon> </button>
-                <button mat-icon-button (click)="addElement(node)"> <mat-icon [style.color]="'rgb(140,182,60)'"> add</mat-icon> </button>
-                <button mat-icon-button (click)="deleteElement(node)"><mat-icon [style.color]="'rgb(162,34,35)'"> delete </mat-icon></button>
+                <button mat-icon-button (click)="importElement(node)">
+                    <mat-icon> publish</mat-icon>
+                </button>
+                <button mat-icon-button (click)="toggleRename(node)">
+                    <mat-icon> edit</mat-icon>
+                </button>
+                <button mat-icon-button (click)="addElement(node)">
+                    <mat-icon [style.color]="'rgb(140,182,60)'"> add</mat-icon>
+                </button>
+                <button mat-icon-button (click)="deleteElement(node)">
+                    <mat-icon [style.color]="'rgb(162,34,35)'"> delete</mat-icon>
+                </button>
             </div>
         </mat-tree-node>
 
         <mat-tree-node *matTreeNodeDef="let node; when: isElementToRenameFolder" matTreeNodePadding>
             <mat-form-field [style.width]="'100%'" [style.margin-left]="'5px'" [style.margin-right]="'5px'">
-                <mat-label> Rename Folder </mat-label>
-                <input matInput #renamingElement [value]="getRenameName(node)" [style.width]="'100%'" />
-                <button matPrefix mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle' + node.name"> 
-                    <mat-icon class="mat-icon-rtl-mirror"> 
-                        {{treeControl.isExpanded(node) ? 'folder_open' : 'folder'}} 
-                    </mat-icon> 
+                <mat-label> Rename Folder</mat-label>
+                <input matInput #renamingElement [value]="getRenameName(node)" [style.width]="'100%'"/>
+                <button matPrefix mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle' + node.name">
+                    <mat-icon class="mat-icon-rtl-mirror">
+                        {{ treeControl.isExpanded(node) ? 'folder_open' : 'folder' }}
+                    </mat-icon>
                 </button>
-                <button matSuffix mat-icon-button aria-label="Rename" (click)="renameElement(node, renamingElement.value)"> <mat-icon> check </mat-icon> </button>
+                <button matSuffix mat-icon-button aria-label="Rename"
+                        (click)="renameElement(node, renamingElement.value)">
+                    <mat-icon> check</mat-icon>
+                </button>
             </mat-form-field>
         </mat-tree-node>
-
 
 
     </mat-tree>
