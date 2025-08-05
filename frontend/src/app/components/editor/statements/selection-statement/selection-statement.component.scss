@@ -3,6 +3,7 @@ $refinementBoxAccentColor: rgb(87, 87, 87);
     display: flex;
     flex-direction: column;
     width: 400px;
+    overflow: visible;
 
     .first-row {
         height: 3em;

@@ -10,9 +10,8 @@ import { FormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatDialog } from "@angular/material/dialog";
-import { ChooseRefinementComponent } from "../../../choose-refinement/choose-refinement.component";
 import { MatIconModule } from "@angular/material/icon";
-import { AbstractStatement } from "../../../../types/statements/abstract-statement";
+import {AbstractStatement, StatementType} from "../../../../types/statements/abstract-statement";
 import { Position } from "../../../../types/position";
 import { createEmptyStatementNode } from "../../../../types/statements/nodes/createStatementNode";
 import { RootStatementNode } from "../../../../types/statements/nodes/root-statement-node";
@@ -33,9 +32,10 @@ import { RootStatementNode } from "../../../../types/statements/nodes/root-state
     MatFormFieldModule,
     MatInputModule,
     MatIconModule
-],
+  ],
   templateUrl: "./root-statement.component.html",
   styleUrl: "./root-statement.component.scss",
+  standalone: true
 })
 export class RootStatementComponent extends Refinement {
   @Input({ required: true }) _node!: RootStatementNode;
@@ -54,21 +54,13 @@ export class RootStatementComponent extends Refinement {
   }
 
   /**
-   * Add the child statements chosen by the user in {@link ChooseRefinementComponent} .
+   * Add the child statements chosen by the user .
    * The new child statement then get created in component
-   * @param side hardcoded string from the template to identify which button got used
    */
-  public chooseRefinement(): void {
-    const dialogRef = this.dialog.open(ChooseRefinementComponent);
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (!result) {
-        return;
-      }
-      const newNode = createEmptyStatementNode(result, this._node);
+  public chooseRefinement($event: StatementType): void {
+      const newNode = createEmptyStatementNode($event, this._node);
       (this._node as RootStatementNode).childStatementNode = newNode;
       this.treeService.addStatementNode(newNode);
-    });
   }
 
   public override resetPosition(position: Position, offset: Position): void {

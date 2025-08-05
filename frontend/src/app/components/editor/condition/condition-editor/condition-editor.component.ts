@@ -1,29 +1,18 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  model,
-  ModelSignal,
-  OnInit,
-  Output,
-  ViewChild,
-} from "@angular/core";
+import {Component, EventEmitter, Input, model, ModelSignal, OnInit, Output, ViewChild,} from "@angular/core";
 
-import {
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-} from "@angular/forms";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatInput, MatInputModule } from "@angular/material/input";
-import { ICondition } from "../../../../types/condition/condition";
-import { MatGridListModule } from "@angular/material/grid-list";
-import { MatAutocompleteModule } from "@angular/material/autocomplete";
-import { MatMenuModule } from "@angular/material/menu";
-import { MatButtonModule } from "@angular/material/button";
-import { MatIconModule } from "@angular/material/icon";
-import { AiChatService } from "../../../../services/ai-chat/ai-chat.service";
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule,} from "@angular/forms";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatInput, MatInputModule} from "@angular/material/input";
+import {ICondition} from "../../../../types/condition/condition";
+import {MatGridListModule} from "@angular/material/grid-list";
+import {MatAutocompleteModule} from "@angular/material/autocomplete";
+import {MatMenuModule} from "@angular/material/menu";
+import {MatButtonModule} from "@angular/material/button";
+import {MatIconModule} from "@angular/material/icon";
+import {AiChatService} from "../../../../services/ai-chat/ai-chat.service";
+import {Textarea} from "primeng/textarea";
+import {IconField} from "primeng/iconfield";
+import {InputIcon} from "primeng/inputicon";
 
 /**
  * Editor in the statements for the {@link Condition}
@@ -41,8 +30,11 @@ import { AiChatService } from "../../../../services/ai-chat/ai-chat.service";
     MatAutocompleteModule,
     MatMenuModule,
     MatButtonModule,
-    MatIconModule
-],
+    MatIconModule,
+    Textarea,
+    IconField,
+    InputIcon,
+  ],
   templateUrl: "./condition-editor.component.html",
   standalone: true,
   styleUrl: "./condition-editor.component.scss",

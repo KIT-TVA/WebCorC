@@ -3,12 +3,12 @@
     <app-refinement-widget
       text="Statement"
       icon="add"
-      (click)="chooseRefinement()"
+      (select)="chooseRefinement($event)"
       >
     </app-refinement-widget>
   }
   @if (_node.childStatementNode) {
-    <app-refinement-widget icon="circle">
-    </app-refinement-widget>
+    <i class="pi pi-circle">
+    </i>
   }
 </app-statement-base>

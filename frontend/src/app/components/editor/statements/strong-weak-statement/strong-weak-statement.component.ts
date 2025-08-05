@@ -11,10 +11,10 @@ import {FormsModule} from "@angular/forms";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
 import {MatDialog} from "@angular/material/dialog";
-import {ChooseRefinementComponent} from "../../../choose-refinement/choose-refinement.component";
 import {MatIconModule} from "@angular/material/icon";
 import {Position} from '../../../../types/position';
 import {SkipStatementNode} from "../../../../types/statements/nodes/skip-statement-node";
+import {StatementType} from "../../../../types/statements/abstract-statement";
 
 /**
  * Component in the graphic editor representing {@link StrongWeakStatement}
@@ -45,17 +45,11 @@ export class StrongWeakStatementComponent extends Refinement {
     }
 
     /**
-     * Open {@link ChooseRefinementComponent} and allow adding a child to this statement
+     * Open and allow adding a child to this statement
+     * TODO: Does this even exist for this statement type?
      */
-    public chooseRefinement() {
-        const dialogRef = this.dialog.open(ChooseRefinementComponent);
+    public chooseRefinement(type: StatementType) {
 
-        dialogRef.afterClosed().subscribe(result => {
-            if (!result) {
-                return
-            }
-            //TODO: Spawn subcomponent
-        })
     }
 
 

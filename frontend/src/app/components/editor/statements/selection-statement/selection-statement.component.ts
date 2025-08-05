@@ -10,10 +10,9 @@ import { FormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatDialog } from "@angular/material/dialog";
-import { ChooseRefinementComponent } from "../../../choose-refinement/choose-refinement.component";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
-import { AbstractStatement } from "../../../../types/statements/abstract-statement";
+import {AbstractStatement, StatementType} from "../../../../types/statements/abstract-statement";
 import { Position } from "../../../../types/position";
 import { SelectionStatementNode } from "../../../../types/statements/nodes/selection-statement-node";
 import { createEmptyStatementNode } from "../../../../types/statements/nodes/createStatementNode";
@@ -40,9 +39,10 @@ import { index } from "d3";
     MatButtonModule,
     ConditionEditorComponent,
     HandleComponent
-],
+  ],
   templateUrl: "./selection-statement.component.html",
   styleUrl: "./selection-statement.component.scss",
+  standalone: true
 })
 export class SelectionStatementComponent extends Refinement {
   @Input({ required: true }) _node!: SelectionStatementNode;
@@ -89,21 +89,19 @@ export class SelectionStatementComponent extends Refinement {
   }
 
   /**
-   * Open {@link ChooseRefinementComponent} and add the child statement according to the
+   * Add the child statement according to the
    * index of the guard to add the statement to.
    * @param index The position to add the statement
+   * @param type The type of statement to add
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public chooseRefinement(index: number): void {
-    const dialogRef = this.dialog.open(ChooseRefinementComponent);
-    dialogRef.afterClosed().subscribe((result) => {
-      if (!result) {
+  public chooseRefinement(index: number, type: StatementType): void {
+      if (!type) {
         return;
       }
-      const newNode = createEmptyStatementNode(result, this._node);
+      const newNode = createEmptyStatementNode(type, this._node);
       this._node.setSelection(index, newNode);
       this.treeService.addStatementNode(newNode);
-    });
 
     setTimeout(() => this.refreshLinkState(), 5);
   }

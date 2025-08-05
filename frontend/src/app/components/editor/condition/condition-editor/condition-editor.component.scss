@@ -5,14 +5,14 @@ div {
     top: 2px;
     right: 2px;
   }
-  ::ng-deep .textarea {
+  .textarea {
     resize: none;
   }
-  ::ng-deep .mat-mdc-text-field-wrapper {
+  .mat-mdc-text-field-wrapper {
     background-color: rgb(97, 97, 97) !important;
     color: #e0e0e0 !important;
   }
-  ::ng-deep .mdc-text-field__input {
+  .mdc-text-field__input {
     color: #e6e6e6 !important;
     caret-color:#e0e0e0 !important;
   }

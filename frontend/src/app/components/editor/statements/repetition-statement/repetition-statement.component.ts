@@ -9,12 +9,11 @@ import {ConditionEditorComponent} from "../../condition/condition-editor/conditi
 import {FormsModule} from "@angular/forms";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
-import {MatDialog} from "@angular/material/dialog";
-import {ChooseRefinementComponent} from "../../../choose-refinement/choose-refinement.component";
 import {MatIconModule} from "@angular/material/icon";
 import {Position} from '../../../../types/position';
 import {RepetitionStatementNode} from "../../../../types/statements/nodes/repetition-statement-node";
 import {createEmptyStatementNode} from "../../../../types/statements/nodes/createStatementNode";
+import {StatementType} from "../../../../types/statements/abstract-statement";
 
 /**
  * Compoent in the Graphical Editor to represent an instance of {@link RepetitionStatement}
@@ -23,6 +22,7 @@ import {createEmptyStatementNode} from "../../../../types/statements/nodes/creat
     selector: 'app-repetition-statement',
     imports: [StatementComponent, MatGridListModule, RefinementWidgetComponent, ConditionEditorComponent, FormsModule, MatFormFieldModule, MatInputModule, MatIconModule],
     templateUrl: './repetition-statement.component.html',
+    standalone: true,
     styleUrl: './repetition-statement.component.scss'
 })
 export class RepetitionStatementComponent extends Refinement {
@@ -30,7 +30,7 @@ export class RepetitionStatementComponent extends Refinement {
 
     @ViewChild("subComponentSpawn", {read: ViewContainerRef}) private componentSpawn!: ViewContainerRef;
 
-    public constructor(treeService: TreeService, private dialog: MatDialog) {
+    public constructor(treeService: TreeService) {
         super(treeService);
     }
 
@@ -39,20 +39,15 @@ export class RepetitionStatementComponent extends Refinement {
     }
 
     /**
-     * Open {@link ChooseRefinementComponent} and add the child statement to the dom
+     * Add the child statement to the dom
      */
-    public chooseRefinement() {
-        const dialogRef = this.dialog.open(ChooseRefinementComponent);
-
-        dialogRef.afterClosed().subscribe(result => {
-            if (!result) {
-                return
-            }
-            const newNode = createEmptyStatementNode(result, this._node)
-            this._node.loopStatementNode = newNode;
-            this.treeService.addStatementNode(newNode)
-
-        })
+    public chooseRefinement(type: StatementType) {
+        if (!type) {
+            return
+        }
+        const newNode = createEmptyStatementNode(type, this._node)
+        this._node.loopStatementNode = newNode;
+        this.treeService.addStatementNode(newNode)
     }
 
     public override resetPosition(position: Position, offset: Position): void {

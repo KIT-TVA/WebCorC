@@ -4,7 +4,7 @@
       <app-refinement-widget
         text="Left"
         icon="add"
-        (click)="chooseRefinement('left')"
+        (select)="chooseRefinement('left', $event)"
         >
       </app-refinement-widget>
     }
@@ -20,7 +20,7 @@
       <app-refinement-widget
         text="Right"
         icon="add"
-        (click)="chooseRefinement('right')"
+        (select)="chooseRefinement('right', $event)"
         >
       </app-refinement-widget>
     }

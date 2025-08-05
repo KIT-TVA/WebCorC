@@ -1,12 +1,15 @@
 <div>
-  <p>{{ condition().programStatement }}</p>
-  @if (conditionGroup) {
-    <form [formGroup]="conditionGroup">
-      <mat-form-field color="primary" class="textarea" (focusout)="conditionEditingFinished.emit()" appearance="outline" style="max-width: 213px">
-        <textarea class="textarea" [rows]="inline? 1: 5" spellcheck="false" matInput placeholder="Type here" formControlName="condition" #input>
-        </textarea>
-        <mat-icon matSuffix (click)="askAi()" style="cursor: pointer;">psychology_alt</mat-icon>
-      </mat-form-field>
-    </form>
-  }
+    <p>{{ condition().programStatement }}</p>
+    @if (conditionGroup) {
+        <form [formGroup]="conditionGroup">
+            <div (focusout)="conditionEditingFinished.emit()" style="max-width: 213px">
+                <p-icon-field>
+                    <textarea pTextarea class="textarea" spellcheck="false" [rows]="inline? 1: 5"
+                              placeholder="Type here" formControlName="condition" #input variant="filled">
+                    </textarea>
+                    <p-inputicon (click)="askAi()" style="cursor: pointer;" class="pi pi-microchip-ai"></p-inputicon>
+                </p-icon-field>
+            </div>
+        </form>
+    }
 </div>
