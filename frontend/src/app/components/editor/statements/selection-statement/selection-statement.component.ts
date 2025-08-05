@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, signal } from "@angular/core";
 
 import { StatementComponent } from "../statement/statement.component";
 import { Refinement } from "../../../../types/refinement";
@@ -12,12 +12,16 @@ import { MatInputModule } from "@angular/material/input";
 import { MatDialog } from "@angular/material/dialog";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
-import {AbstractStatement, StatementType} from "../../../../types/statements/abstract-statement";
+import {
+  AbstractStatement,
+  StatementType,
+} from "../../../../types/statements/abstract-statement";
 import { Position } from "../../../../types/position";
 import { SelectionStatementNode } from "../../../../types/statements/nodes/selection-statement-node";
 import { createEmptyStatementNode } from "../../../../types/statements/nodes/createStatementNode";
 import { HandleComponent } from "ngx-vflow";
 import { index } from "d3";
+import { Condition } from "../../../../types/condition/condition";
 
 /**
  * Component in the graphical editor to represent the {@link SelectionStatement}
@@ -38,11 +42,11 @@ import { index } from "d3";
     MatIconModule,
     MatButtonModule,
     ConditionEditorComponent,
-    HandleComponent
+    HandleComponent,
   ],
   templateUrl: "./selection-statement.component.html",
   styleUrl: "./selection-statement.component.scss",
-  standalone: true
+  standalone: true,
 })
 export class SelectionStatementComponent extends Refinement {
   @Input({ required: true }) _node!: SelectionStatementNode;
@@ -62,13 +66,6 @@ export class SelectionStatementComponent extends Refinement {
 
   public override getTitle(): string {
     return "Selection";
-  }
-
-  /**
-   * Refresh the link state of this statement and all child statements
-   */
-  public override refreshLinkState(): void {
-    super.refreshLinkState();
   }
 
   public addSelection() {
@@ -96,12 +93,22 @@ export class SelectionStatementComponent extends Refinement {
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public chooseRefinement(index: number, type: StatementType): void {
-      if (!type) {
-        return;
-      }
-      const newNode = createEmptyStatementNode(type, this._node);
-      this._node.setSelection(index, newNode);
-      this.treeService.addStatementNode(newNode);
+    if (!type) {
+      return;
+    }
+    const newNode = createEmptyStatementNode(type, this._node);
+    newNode.overridePrecondition(
+      this._node,
+      signal(
+        new Condition(
+          this._node.precondition().programStatement +
+            " & " +
+            this._node.guards[index]().programStatement,
+        ),
+      ),
+    );
+    this._node.setSelection(index, newNode);
+    this.treeService.addStatementNode(newNode);
 
     setTimeout(() => this.refreshLinkState(), 5);
   }
