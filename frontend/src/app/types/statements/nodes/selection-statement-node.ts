@@ -57,6 +57,9 @@ export class SelectionStatementNode extends AbstractStatementNode {
     if (index < this.children.length) {
       this.children[index] = node;
       this.statement.commands[index] = node.statement;
+      if (node) {
+        this.overridePostcondition(node, node.postcondition)
+      }
     }
   }
 

@@ -43,12 +43,13 @@ import { Condition } from "../../../../types/condition/condition";
   styleUrl: "./simple-statement.component.scss",
 })
 export class SimpleStatementComponent extends Refinement implements OnInit{
+  @Input({ required: true }) _node!: SimpleStatementNode;
+
   override export(): AbstractStatement | undefined {
     throw new Error("Method not implemented.");
   }
-  private _statement: Refinement | undefined;
 
-  @Input({ required: true }) _node!: SimpleStatementNode;
+  private _statement: Refinement | undefined;
 
   protected pseudoCondition: WritableSignal<Condition> = signal(
     new Condition(""),

@@ -17,6 +17,12 @@ export class RootStatementNode extends AbstractStatementNode {
     this._childStatementNode = _childStatementNode;
     this.statement.statement = _childStatementNode?.statement;
     this.children = [_childStatementNode];
+    if (_childStatementNode) {
+      this.overridePostcondition(
+        _childStatementNode,
+        _childStatementNode.postcondition,
+      );
+    }
   }
 
   constructor(

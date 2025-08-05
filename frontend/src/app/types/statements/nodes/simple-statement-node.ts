@@ -6,7 +6,6 @@ import {ICondition} from "../../condition/condition";
 export class SimpleStatementNode extends AbstractStatementNode {
     constructor(statement: IStatement, parent: AbstractStatementNode | undefined) {
         super(statement, parent)
-        parent?.overridePostcondition(this, this.postcondition)
     }
 
 

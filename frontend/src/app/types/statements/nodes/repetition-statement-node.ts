@@ -13,6 +13,9 @@ export class RepetitionStatementNode extends AbstractStatementNode {
     this.statement.loopStatement = loopStatementNode?.statement;
     this._loopStatementNode = loopStatementNode;
     this.children = [loopStatementNode];
+    if(loopStatementNode) {
+      this.overridePostcondition(loopStatementNode, loopStatementNode.postcondition)
+    }
   }
   override statement!: IRepetitionStatement;
   public guard: WritableSignal<ICondition>;

@@ -20,11 +20,17 @@ export class CompositionStatementNode extends AbstractStatementNode {
     this.statement.firstStatement = newNode?.statement;
     this._firstStatementNode = newNode;
     this.children = [this._firstStatementNode, this._secondStatementNode];
+    if (newNode) {
+      this.overridePostcondition(newNode, newNode.postcondition)
+    }
   }
   public set secondStatementNode(newNode) {
     this.statement.secondStatement = newNode?.statement;
     this._secondStatementNode = newNode;
     this.children = [this._firstStatementNode, this._secondStatementNode];
+    if (newNode) {
+      this.overridePostcondition(newNode, newNode.postcondition)
+    }
   }
 
   constructor(
@@ -72,6 +78,7 @@ export class CompositionStatementNode extends AbstractStatementNode {
         break;
       case this.secondStatementNode:
         this.postcondition = condition;
+        this.parent?.overridePostcondition(this, condition);
         break;
       default:
       // Should never happen

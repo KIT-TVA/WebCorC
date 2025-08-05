@@ -19,7 +19,8 @@ export class AbstractStatementNode {
     this.statement = statement;
     this.parent = parent;
     this.precondition = signal(statement.preCondition);
-    this.postcondition = signal(statement.preCondition);
+    this.postcondition = signal(statement.postCondition);
+    parent?.overridePostcondition(this, this.postcondition);
   }
 
   public overridePrecondition(
@@ -33,6 +34,7 @@ export class AbstractStatementNode {
     sourceNode: AbstractStatementNode,
     condition: WritableSignal<ICondition>,
   ): void {
+    console.log("postcondition overridden")
     this.postcondition = condition;
   }
 

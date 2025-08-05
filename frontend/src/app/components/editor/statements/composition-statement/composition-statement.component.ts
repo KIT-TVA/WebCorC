@@ -51,7 +51,6 @@ export class CompositionStatementComponent extends Refinement {
 
   public constructor(
     treeService: TreeService,
-    private dialog: MatDialog,
   ) {
     super(treeService);
   }
