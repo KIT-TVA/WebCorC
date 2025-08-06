@@ -1,19 +1,36 @@
-<div class="refinementBox" cdkDragBoundary="#editorContainer" #refinementBox>
+<p-card class="refinementBox" cdkDragBoundary="#editorContainer" #refinementBox>
   @if (!hideTargetHandle) {
     <handle type="target" position="top" />
   }
   @if (!hideSourceHandle) {
     <handle type="source" position="bottom" id="0" />
   }
-  <div class="refinementBoxTitle" #boxTitle>
-    <!---<p>{{ refinement.getTitle() }} #{{ "insert id" ?? _node.statement.id }}</p> --->
-    <p>{{ refinement.getTitle() }} #{{ "insert id" }}</p>
-    @if (_node.parent) {
-      <mat-icon [style.cursor]="'pointer'" (click)="deleteRefinement()" style="color: #6c0b1f; justify-self: end;"
-        >delete
-      </mat-icon>
-    }
-  </div>
+  <ng-template #header>
+    <p-toolbar
+      #boxTitle
+      style="border: none; padding-top: 0; border-radius: 1em"
+    >
+      <ng-template #start>
+        <i [class]="icon"> </i>
+      </ng-template>
+      <!---<p>{{ refinement.getTitle() }} #{{ "insert id" ?? _node.statement.id }}</p> --->
+      <ng-template #center>
+        <p>{{ refinement.getTitle() }} #{{ "insert id" }}</p>
+      </ng-template>
+      <ng-template #end>
+        @if (_node.parent) {
+          <p-button
+            text
+            icon="pi pi-trash"
+            severity="danger"
+            [style.cursor]="'pointer'"
+            (click)="deleteRefinement()"
+          >
+          </p-button>
+        }
+      </ng-template>
+    </p-toolbar>
+  </ng-template>
 
   <div style="display: flex">
     <div appGtBorder #preconditionDiv style="width: 50px; min-height: 140px">
@@ -28,21 +45,20 @@
         </mat-drawer>
 
         <mat-drawer-content class="example-sidenav-content">
-          <button
-            type="button"
-            mat-button
+          <p-button
+            text
+            severity="secondary"
             (click)="toggleConditionEditorView(false)"
-            class="verticalButton bottomLeft"
-            >
-            Precondition
-            <mat-icon
-              >{{
+            class="verticalButton bottomRight"
+            iconPos="right"
+            [icon]="
               preconditionDrawer.opened
-              ? "keyboard_arrow_up"
-              : "keyboard_arrow_down"
-              }}
-            </mat-icon>
-          </button>
+                ? 'pi pi-chevron-down'
+                : 'pi pi-chevron-up'
+            "
+            label="Precondition"
+          >
+          </p-button>
         </mat-drawer-content>
       </mat-drawer-container>
     </div>
@@ -51,18 +67,14 @@
       <ng-content></ng-content>
     </div>
 
-    <div
-      appGtBorder
-      #postconditionDiv
-      style="width: 50px"
-      >
+    <div appGtBorder #postconditionDiv style="width: 50px">
       <mat-drawer-container class="example-container" autosize>
         <mat-drawer
           #postconditionDrawer
           class="example-sidenav"
           mode="side"
           position="end"
-          >
+        >
           <div class="conditionParent">
             <app-condition-editor
               [(condition)]="_node.postcondition"
@@ -71,23 +83,21 @@
           </div>
         </mat-drawer>
         <mat-drawer-content class="example-sidenav-content">
-          <button
-            type="button"
-            mat-button
+          <p-button
+            text
+            severity="secondary"
             (click)="toggleConditionEditorView(true)"
             class="verticalButton bottomRight"
-            >
-            Postcondition
-            <mat-icon
-              >{{
+            [icon]="
               postconditionDrawer.opened
-              ? "keyboard_arrow_up"
-              : "keyboard_arrow_down"
-              }}
-            </mat-icon>
-          </button>
+                ? 'pi pi-chevron-up'
+                : 'pi pi-chevron-down'
+            "
+            label="Postcondition"
+          >
+          </p-button>
         </mat-drawer-content>
       </mat-drawer-container>
     </div>
   </div>
-</div>
+</p-card>

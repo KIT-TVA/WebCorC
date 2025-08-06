@@ -1,15 +1,28 @@
 .background {
-    height: 100%;
+    min-height: 100%;
     width: 100%;
+    display: flex;
+    padding: 2em;
+    justify-content: space-evenly;
+    flex-direction: row;
+    gap: 2em;
+
+    .corcCard {
+        flex-grow: 1;
+    }
+    .logo {
+        width: 50%;
+        flex: 1 1 auto;
+    }
 
     .actions {
-        width: 50%;
+        flex-grow: 1;
         display: grid;
         place-items: center;
 
 
         .buttons {
-            width: 50%;
+            min-width: 15rem;
             display: flex;
             flex-direction: column;
             background-color: #ededed;
@@ -23,11 +36,7 @@
         right: 0;
         display: grid;
         place-items: center;
-        align-items: start; 
-
-        .logo {
-            height: 250px;
-        }
+        align-items: start;
 
         .footer {
             width: 100%;

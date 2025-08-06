@@ -1,12 +1,11 @@
 <div class="drawer-content">
-    <p-menubar style="border-radius: 0; border: 0;" class="project-actions"
+    <p-menubar style="border-radius: 0; border: 0; z-index: 1" class="project-actions"
                [model]="menuItems">
     </p-menubar>
     <div class="project-header">
         <h4> {{ projectService.projectname ? projectService.projectname : "Projectname" }} </h4>
     </div>
-    <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" cdkDropList (cdkDropListDropped)="dropNode($event)">
-
+    <mat-tree style="z-index: 0" [dataSource]="dataSource" [treeControl]="treeControl" cdkDropList (cdkDropListDropped)="dropNode($event)">
         <mat-tree-node *matTreeNodeDef="let node; when: isFakeElement" matTreeNodePadding>
             <mat-form-field [style.width]="'100%'" [style.margin-left]="'5px'" [style.margin-right]="'5px'">
                 <mat-label>New Element</mat-label>

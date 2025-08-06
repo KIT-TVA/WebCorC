@@ -1,15 +1,15 @@
-<app-statement-base [_node]="_node" [refinement]="this">
-  <div style="position: relative; height: 100%; width: 230px">
+<app-statement-base icon="pi pi-sync" [_node]="_node" [refinement]="this">
+  <div style="position: relative; display: flex; align-items: center; height: 100%; width: 230px">
     <app-condition-editor
       [(condition)]="_node.invariant"
     ></app-condition-editor>
   </div>
-  <div style="position: relative; height: 100%; width: 230px">
+  <div style="position: relative; display: flex; align-items: center; height: 100%; width: 230px">
     <app-condition-editor
       [(condition)]="_node.guard"
     ></app-condition-editor>
   </div>
-  <div style="position: relative; height: 100%; width: 230px">
+  <div style="position: relative; display: flex; align-items: center; height: 100%; width: 230px">
     <app-condition-editor
       [(condition)]="_node.variant"
     ></app-condition-editor>

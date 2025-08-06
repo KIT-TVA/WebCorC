@@ -1,59 +1,116 @@
 <div class="background">
-    <div class="actions" >
-        <div style="height: 150px;">
-
-        </div>
-        <div class="buttons" >
-            <button mat-button (click)="loadExampleDialog()"> <mat-icon> class </mat-icon> Load Example </button>
-            <button mat-button (click)="importFileDialog()"> <mat-icon> publish </mat-icon> Import File </button>
-            <button mat-button (click)="importProjectDialog()" > <mat-icon> publish </mat-icon> Import Project </button>
-            <button mat-button (click)="openProjectDialog()" > <mat-icon> open_in_new </mat-icon> Open Project </button>
-        </div>
-        <div>
-
-        </div>
-    </div>
-    <div class="info" >
-        <img class="logo" src="assets/corc-logo-color.svg" alt="Corc logo" >
-        <p>
-            Correctness-by-Construction (CbC) is an approach to
-            incrementally create correct programs. CbC starts with an
-            abstract Hoare triple &#x007B;P&#x007D; S &#x007B;Q&#x007D; consisting of a precondition P,
-            an abstract statement S, and a postcondition Q. Hoare triples
-            represent total correctness assertions that valuate only to true
-            if, beginning from the precondition, the postcondition is met
-            after executing the eventually defined concrete program. With
-            CbC, the Hoare triple is successively refined using a set of
-            refinement rules to a concrete implementation, which satisfies
-            the specification. The correctness is guaranteed because every
-            refinement rule is proven sound and preserves the correctness of
-            the program. CbC is implemented in the tool WebCorC. WebCorC is a
-            graphical IDE to construct algorithms following the
-            Correctness-by-Construction approach. It supports CbC developers
-            to refine a program by a sequence of refinement steps and to
-            verify the correctness of these refinement steps using the theorem
-            prover KeY.
-
-        </p>    
-
-        <p class="footer">
-            <b>Github </b>:<a href="https://github.com/KIT-TVA/CorC">Corc</a> <br>
-            <b>Github </b>:<a href="https://github.com/KIT-TVA/WebCorC">WebCorc</a> <br>
-            <br>
-            <b>Employees involved: </b> 
-                <a href="https://tva.kastel.kit.edu/team_bordis.php" target="_blank" rel="noopener noreferrer">Tabea Bordis</a>,
-                <a href="https://tva.kastel.kit.edu/team_kodetzki.php" target="_blank" rel="noopener noreferrer">Maximilian Kodetzki</a>,
-                <a href="https://tva.kastel.kit.edu/team_ronneberg.php" target="_blank" rel="noopener noreferrer">Rasmus Ronneberg</a>,
-                <a href="https://tva.kastel.kit.edu/team_schaefer.php" target="_blank" rel="noopener noreferrer">Ina Schaefer</a>
-
-            <br>
-            <br>
-            <a href="https://www.kit.edu/datenschutz.php" >Privacy Information</a>
-        </p>
-
+  <p-card [style]="{ maxWidth: '80rem', overflow: 'hidden' }" class="corcCard">
+    <ng-template #header>
+      <div
+        style="
+          width: 100%;
+          display: inline-flex;
+          justify-content: stretch;
+          justify-items: stretch;
+          align-content: stretch;
+          align-items: center;
+          background-color: #b8d8ed;
+        "
+      >
+        <img class="logo" src="assets/corc-logo-color.svg" alt="Corc logo" />
+        <p-divider
+          layout="vertical"
+          style="align-self: stretch; margin-top: 3em; margin-bottom: 3em"
+        />
         <div class="institutes">
-            <img class="tva" src="assets/tva-logo-banner-english-color.svg" alt="TVA logo" >
+          <img
+            class="tva"
+            src="assets/tva-logo-banner-english-color.svg"
+            alt="TVA logo"
+          />
         </div>
-    </div>
+      </div>
+    </ng-template>
+    <p-menubar class="buttons" [model]="actions">
+      <ng-template #end>
+        <a
+          pButton
+          severity="secondary"
+          style="text-decoration: none; margin-right: 1em"
+          href="https://github.com/KIT-TVA/CorC"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <i pButtonIcon class="pi pi-github"></i><span pButtonLabel>CorC</span>
+        </a>
+        <a
+          pButton
+          severity="secondary"
+          style="text-decoration: none"
+          href="https://github.com/KIT-TVA/WebCorC"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <i pButtonIcon class="pi pi-github"></i
+          ><span pButtonLabel>WebCorC</span>
+        </a>
+      </ng-template>
+    </p-menubar>
+    <p>
+      Correctness-by-Construction (CbC) is an approach to incrementally create
+      correct programs. CbC starts with an abstract Hoare triple
+      &#x007B;P&#x007D; S &#x007B;Q&#x007D; consisting of a precondition P, an
+      abstract statement S, and a postcondition Q. Hoare triples represent total
+      correctness assertions that valuate only to true if, beginning from the
+      precondition, the postcondition is met after executing the eventually
+      defined concrete program. With CbC, the Hoare triple is successively
+      refined using a set of refinement rules to a concrete implementation,
+      which satisfies the specification. The correctness is guaranteed because
+      every refinement rule is proven sound and preserves the correctness of the
+      program. CbC is implemented in the tool WebCorC. WebCorC is a graphical
+      IDE to construct algorithms following the Correctness-by-Construction
+      approach. It supports CbC developers to refine a program by a sequence of
+      refinement steps and to verify the correctness of these refinement steps
+      using the theorem prover KeY.
+    </p>
 
+    <p class="footer">
+      <br />
+      <p-divider />
+      <b>Employees involved: </b>
+      <a
+        href="https://tva.kastel.kit.edu/team_bordis.php"
+        target="_blank"
+        rel="noopener noreferrer"
+        >Tabea Bordis</a
+      >,
+      <a
+        href="https://tva.kastel.kit.edu/team_kodetzki.php"
+        target="_blank"
+        rel="noopener noreferrer"
+        >Maximilian Kodetzki</a
+      >,
+      <a
+        href="https://tva.kastel.kit.edu/team_ronneberg.php"
+        target="_blank"
+        rel="noopener noreferrer"
+        >Rasmus Ronneberg</a
+      >,
+      <a
+        href="https://tva.kastel.kit.edu/team_schaefer.php"
+        target="_blank"
+        rel="noopener noreferrer"
+        >Ina Schaefer</a
+      >
+    </p>
+    <ng-template #footer>
+      <div
+        style="
+          display: flex;
+          width: 100%;
+          justify-content: end;
+          align-content: end;
+          align-items: end;
+          justify-items: end;
+        "
+      >
+        <a href="https://www.kit.edu/datenschutz.php">Privacy Information</a>
+      </div>
+    </ng-template>
+  </p-card>
 </div>

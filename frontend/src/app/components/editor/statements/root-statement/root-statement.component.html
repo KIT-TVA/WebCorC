@@ -1,14 +1,19 @@
-<app-statement-base [_node]="_node" [refinement]="this" [hideTargetHandle]="true">
-  @if (!_node.childStatementNode) {
-    <app-refinement-widget
-      text="Statement"
-      icon="add"
-      (select)="chooseRefinement($event)"
+<app-statement-base
+  [_node]="_node"
+  [refinement]="this"
+  [hideTargetHandle]="true"
+>
+  <div style="position: relative; display: flex; justify-content: center; align-items: center; height: 100%; width: 230px;">
+    @if (!_node.childStatementNode) {
+      <app-refinement-widget
+        text="Statement"
+        icon="add"
+        (select)="chooseRefinement($event)"
       >
-    </app-refinement-widget>
-  }
-  @if (_node.childStatementNode) {
-    <i class="pi pi-circle">
-    </i>
-  }
+      </app-refinement-widget>
+    }
+    @if (_node.childStatementNode) {
+      <i class="pi pi-circle"> </i>
+    }
+  </div>
 </app-statement-base>

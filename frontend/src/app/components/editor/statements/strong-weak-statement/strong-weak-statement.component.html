@@ -1,5 +1,5 @@
-<app-statement-base [_node]="_node" [refinement]="this" [hideSourceHandle]="true">
-  <div style="position: relative; height: 100%; width: 230px;">
+<app-statement-base icon="pi pi-lock-open" [_node]="_node" [refinement]="this" [hideSourceHandle]="true">
+  <div style="position: relative; display: flex; align-items: center; height: 100%; width: 230px;">
     <app-condition-editor [(condition)]="_node.precondition" ></app-condition-editor>
   </div>
 
@@ -11,7 +11,7 @@
       (select)="chooseRefinement($event)">
     </app-refinement-widget>
   }
-  <div style="position: relative; height: 100%; width: 230px;">
+  <div style="position: relative; display: flex; align-items: center; height: 100%; width: 230px;">
     <app-condition-editor [(condition)]="_node.postcondition"></app-condition-editor>
   </div>
 </app-statement-base>

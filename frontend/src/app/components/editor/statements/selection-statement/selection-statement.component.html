@@ -1,8 +1,9 @@
 <app-statement-base
+  icon="pi pi-sitemap"
   [_node]="_node"
   [refinement]="this"
   [hideSourceHandle]="true"
-  >
+>
   <div class="statements">
     <div class="first-row">
       <div>
@@ -16,9 +17,7 @@
     </div>
 
     @for (guard of _node.guards; track guard; let i = $index) {
-      <div
-        class="statement-container"
-        >
+      <div class="statement-container">
         <div class="guard">
           <app-condition-editor
             [(condition)]="_node.guards[i]"
@@ -31,7 +30,7 @@
               text="Statement"
               icon="add"
               (select)="chooseRefinement(i, $event)"
-              >
+            >
             </app-refinement-widget>
           }
         </div>

@@ -1,13 +1,21 @@
-<h2 mat-dialog-title> Create Project </h2>
+<h2 mat-dialog-title>Create Project</h2>
 
 <mat-dialog-content>
-    <p> Your workspace is not assoziated with a project on the server. <br> Create a new project with name: </p>
-    <mat-form-field style="width: 100%;">
-        <input matInput [(ngModel)]="projectname" placeholder="Projectname" cdkFocusInitial #projectName>
-    </mat-form-field>
+  <p>
+    Your workspace is not assoziated with a project on the server. <br />
+    Create a new project with name:
+  </p>
+  <mat-form-field style="width: 100%">
+    <input
+      matInput
+      [(ngModel)]="projectname"
+      placeholder="Projectname"
+    />
+  </mat-form-field>
 </mat-dialog-content>
 <mat-dialog-actions>
-    <button mat-button mat-dialog-close>Abort</button>
-    <button mat-button mat-dialog-close (click)="confirm()" class="confirm">Confirm</button>
-  </mat-dialog-actions>
-  
+  <button mat-button mat-dialog-close>Abort</button>
+  <button mat-button mat-dialog-close (click)="confirm()" class="confirm">
+    Confirm
+  </button>
+</mat-dialog-actions>

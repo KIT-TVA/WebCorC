@@ -23,6 +23,9 @@ import { AbstractStatement } from "../../../../types/statements/abstract-stateme
 import { AbstractStatementNode } from "../../../../types/statements/nodes/abstract-statement-node";
 import { HandleComponent } from "ngx-vflow";
 import { GridTileBorderDirective } from "../../../../directives/grid-tile-border.directive";
+import {Card} from "primeng/card";
+import {Button} from "primeng/button";
+import {Toolbar} from "primeng/toolbar";
 
 /**
  * Component to present the statements.
@@ -44,8 +47,11 @@ import { GridTileBorderDirective } from "../../../../directives/grid-tile-border
     MatExpansionModule,
     MatListModule,
     HandleComponent,
-    GridTileBorderDirective
-],
+    GridTileBorderDirective,
+    Card,
+    Button,
+    Toolbar,
+  ],
   templateUrl: "./statement.component.html",
   styleUrl: "./statement.component.scss",
   standalone: true,
@@ -58,6 +64,7 @@ export class StatementComponent {
   @Input() public hideSourceHandle = false;
   @Input() public hideTargetHandle = false;
   @Input({ required: true }) _node!: AbstractStatementNode;
+  @Input() public icon = "pi pi-circle";
 
   @Output() delete = new EventEmitter();
 

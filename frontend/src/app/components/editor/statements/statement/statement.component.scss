@@ -2,17 +2,14 @@ $refinementBoxAccentColor: rgb(87, 87, 87);
 
 .refinementBox {
   border: 2px solid slategray;
-  border-radius: 5px;
+  border-radius: 1em;
   width: fit-content;
-  background-color: $refinementBoxAccentColor;
 }
 
 .refinementBoxTitle {
   width: 100%;
   align-items: center;
   justify-content: center;
-  background-color: $refinementBoxAccentColor;
-  color: white;
   gap: 2rem;
   margin: 0;
   padding-top: 5px;
@@ -26,7 +23,7 @@ $refinementBoxAccentColor: rgb(87, 87, 87);
 
 .example-container {
   border-left-width: 0;
-  background-color: $refinementBoxAccentColor;
+  background-color: transparent;
   height: 100%;
   overflow: hidden;
 }
@@ -43,8 +40,13 @@ $refinementBoxAccentColor: rgb(87, 87, 87);
   overflow: hidden;
 }
 
+
+:host {
+  --mat-sidenav-container-background-color: transparent;
+  background-color: transparent !important;
+}
+
 .verticalButton {
-  color: #e6e6e6;
   position: absolute;
   overflow: hidden;
 }
@@ -56,9 +58,9 @@ $refinementBoxAccentColor: rgb(87, 87, 87);
 }
 
 .conditionParent {
-  padding: 0.7em;
+  padding-right: 0.7em;
+  padding-left: 0.7em;
   overflow: hidden;
-  background-color: $refinementBoxAccentColor;
   display: flex;
   align-items: center;
   justify-content: center;
