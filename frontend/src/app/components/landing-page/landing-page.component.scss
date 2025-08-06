@@ -4,11 +4,14 @@
     display: flex;
     padding: 2em;
     justify-content: space-evenly;
+    align-content: center;
+    align-items: center;
     flex-direction: row;
     gap: 2em;
 
     .corcCard {
         flex-grow: 1;
+        height: fit-content;
     }
     .logo {
         width: 50%;

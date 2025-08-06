@@ -1,61 +1,71 @@
 @use "@angular/material" as mat;
 
 .actions {
-    display: flex;
-    place-content: center;
+  display: flex;
+  place-content: center;
 }
 
 .drawer-content {
-    display: flex;
-    flex-direction: column;
-    height: calc(100% - 10px);
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 10px);
+  background-color: var(--p-background);
+  color: var(--p-menubar-color);
+}
+
+:host ::ng-deep .p-tree-node-label {
+  width: 100%;
 }
 
 .project-actions {
-    display: flex;
-    place-content: center;
+  display: flex;
+  place-content: center;
 
-    button {
-        color: white;
-    }
+  button {
+    color: var(--p-button-secondary);
+  }
 
-    :nth-last-child(2) {
-        margin-left: auto;
-    }
+  :nth-last-child(2) {
+    margin-left: auto;
+  }
 }
 
 .node-actions {
-    position: relative;
-    right: 0px;
-    top: 0px;
-    margin-left: auto;
+  position: relative;
+  right: 0;
+  top: 0;
+  margin-left: auto;
+}
+
+:host ::ng-deep mat-label {
+  color: var(--p-menubar-color) !important;
 }
 
 .project-header {
-    display: flex;
-    padding-left: 15px;
+  display: flex;
+  padding-left: 15px;
 }
 
 #import {
-    margin-left: auto;
+  margin-left: auto;
 }
 
 .bottom {
-    margin-top: auto;
-    display: flex;
-    place-content: center;
+  margin-top: auto;
+  display: flex;
+  place-content: center;
 }
 
-
 .mat-tree-node {
-  //background-color: white;
   user-select: none;
   cursor: move;
-  &.cdk-drag-preview { // while dragging
+  &.cdk-drag-preview {
+    // while dragging
     @include mat.elevation(12);
     border-top: 1px solid green;
   }
-  &.cdk-drag-placeholder { // potential drop area
+  &.cdk-drag-placeholder {
+    // potential drop area
     opacity: 0;
   }
 }

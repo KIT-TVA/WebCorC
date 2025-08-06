@@ -49,16 +49,16 @@ export class AppComponent {
   private _loadingState = false
 
   constructor(
-    public treeService: TreeService,
-    private networkTreeService : NetworkTreeService,
-    private networkStatus : NetworkStatusService,
-    private dialog: MatDialog,
-    private router: Router,
-    public projectService : ProjectService,
-    private snackBar : MatSnackBar,
-    private consoleService : ConsoleService,
-    private editorService : EditorService,
-    private aiChatService : AiChatService
+      public treeService: TreeService,
+      private networkTreeService : NetworkTreeService,
+      private networkStatus : NetworkStatusService,
+      private dialog: MatDialog,
+      protected router: Router,
+      public projectService : ProjectService,
+      private snackBar : MatSnackBar,
+      private consoleService : ConsoleService,
+      private editorService : EditorService,
+      private aiChatService : AiChatService
   ) {
 
     this.networkStatus.status.subscribe((status) => {

@@ -1,102 +1,190 @@
 <div class="drawer-content">
-    <p-menubar style="border-radius: 0; border: 0; z-index: 1" class="project-actions"
-               [model]="menuItems">
-    </p-menubar>
-    <div class="project-header">
-        <h4> {{ projectService.projectname ? projectService.projectname : "Projectname" }} </h4>
-    </div>
-    <mat-tree style="z-index: 0" [dataSource]="dataSource" [treeControl]="treeControl" cdkDropList (cdkDropListDropped)="dropNode($event)">
-        <mat-tree-node *matTreeNodeDef="let node; when: isFakeElement" matTreeNodePadding>
-            <mat-form-field [style.width]="'100%'" [style.margin-left]="'5px'" [style.margin-right]="'5px'">
-                <mat-label>New Element</mat-label>
-                <input matInput #newElement [style.width]="'100%'">
-                <button matSuffix mat-icon-button aria-label="File" (click)="deleteElement(node)">
-                    <mat-icon [style.color]="'rgb(162,34,35)'"> close</mat-icon>
-                </button>
-                <button matSuffix mat-icon-button aria-label="File"
-                        (click)="addFile(node, newElement.value, 'diagram')">
-                    <mat-icon> schema</mat-icon>
-                </button>
-                <button matSuffix mat-icon-button aria-label="File" (click)="addFile(node, newElement.value, 'java')">
-                    <mat-icon> code</mat-icon>
-                </button>
-                <button matSuffix mat-icon-button aria-label="Directory" (click)="addFolder(node, newElement.value)">
-                    <mat-icon> create_new_folder</mat-icon>
-                </button>
-            </mat-form-field>
-        </mat-tree-node>
+  <p-menubar
+    style="border-radius: 0; border: 0; z-index: 1"
+    class="project-actions"
+    [model]="menuItems"
+  >
+  </p-menubar>
+  <p-tree
+    [value]="treeNodes"
+    [draggableNodes]="true"
+    [droppableNodes]="true"
+    draggableScope="self"
+    droppableScope="self"
+    (onNodeExpand)="setExpanded($event)"
+    (onNodeCollapse)="setCollapsed($event)"
+    (onNodeDrop)="dropNode($event)"
+  >
+    <ng-template #header>
+      <div class="project-header">
+        <h4>
+          {{
+            projectService.projectname
+              ? projectService.projectname
+              : "Projectname"
+          }}
+        </h4>
+      </div>
+    </ng-template>
+    <ng-template
+      let-node
+      pTemplate="directory"
+      style="width: 100%; box-sizing: content-box"
+    >
+      <div
+        style="
+          width: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        "
+      >
+        <span>
+          {{ node.label }}
+        </span>
 
-        <mat-tree-node *matTreeNodeDef="let node; when: isFile" matTreeNodePadding cdkDrag [cdkDragData]="node"
-                       (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()">
-            <button mat-icon-button>
-                <mat-icon> {{ getFileIcon(node) }}</mat-icon>
-            </button>
-            <button mat-button (click)="navigate(node)"> {{ node.name }}</button>
-            <div class="node-actions">
-                <button mat-icon-button (click)="toggleRename(node)">
-                    <mat-icon> edit</mat-icon>
-                </button>
-                <button mat-icon-button (click)="deleteElement(node)">
-                    <mat-icon [style.color]="'rgb(162,34,35)'"> delete</mat-icon>
-                </button>
-            </div>
-        </mat-tree-node>
-
-        <mat-tree-node *matTreeNodeDef="let node; when: isElementToRenameFile" matTreeNodePadding>
-            <mat-form-field [style.width]="'100%'" [style.margin-left]="'5px'" [style.margin-right]="'5px'">
-                <mat-label> Rename File</mat-label>
-                <input matInput #renamingElement [value]="getRenameName(node)" [style.width]="'100%'"/>
-                <button matPrefix mat-icon-button aria-label="File icon">
-                    <mat-icon> {{ getFileIcon(node) }}</mat-icon>
-                </button>
-                <button matSuffix mat-icon-button aria-label="Rename"
-                        (click)="renameElement(node, renamingElement.value)">
-                    <mat-icon> check</mat-icon>
-                </button>
-            </mat-form-field>
-        </mat-tree-node>
-
-        <mat-tree-node *matTreeNodeDef="let node; when: isFolder" matTreeNodePadding cdkDrag [cdkDragData]="node"
-                       (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (mouseenter)="dragHover(node)">
-            <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle' + node.name">
-                <mat-icon class="mat-icon-rtl-mirror">
-                    {{ treeControl.isExpanded(node) ? 'folder_open' : 'folder' }}
-                </mat-icon>
-            </button>
-            {{ node.name }}
-            <div class="node-actions">
-                <button mat-icon-button (click)="importElement(node)">
-                    <mat-icon> publish</mat-icon>
-                </button>
-                <button mat-icon-button (click)="toggleRename(node)">
-                    <mat-icon> edit</mat-icon>
-                </button>
-                <button mat-icon-button (click)="addElement(node)">
-                    <mat-icon [style.color]="'rgb(140,182,60)'"> add</mat-icon>
-                </button>
-                <button mat-icon-button (click)="deleteElement(node)">
-                    <mat-icon [style.color]="'rgb(162,34,35)'"> delete</mat-icon>
-                </button>
-            </div>
-        </mat-tree-node>
-
-        <mat-tree-node *matTreeNodeDef="let node; when: isElementToRenameFolder" matTreeNodePadding>
-            <mat-form-field [style.width]="'100%'" [style.margin-left]="'5px'" [style.margin-right]="'5px'">
-                <mat-label> Rename Folder</mat-label>
-                <input matInput #renamingElement [value]="getRenameName(node)" [style.width]="'100%'"/>
-                <button matPrefix mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle' + node.name">
-                    <mat-icon class="mat-icon-rtl-mirror">
-                        {{ treeControl.isExpanded(node) ? 'folder_open' : 'folder' }}
-                    </mat-icon>
-                </button>
-                <button matSuffix mat-icon-button aria-label="Rename"
-                        (click)="renameElement(node, renamingElement.value)">
-                    <mat-icon> check</mat-icon>
-                </button>
-            </mat-form-field>
-        </mat-tree-node>
-
-
-    </mat-tree>
-
+        <span style="justify-self: end">
+          <p-button icon="pi pi-upload" text (click)="importElement(node.data)">
+          </p-button>
+          <p-button
+            icon="pi pi-file-edit"
+            text
+            (click)="toggleRename(node.data)"
+          >
+          </p-button>
+          <p-button
+            icon="pi pi-plus"
+            text
+            severity="success"
+            (click)="addElement(node.data)"
+          >
+          </p-button>
+          <p-button
+            icon="pi pi-trash"
+            text
+            severity="danger"
+            (click)="deleteElement(node.data)"
+          >
+          </p-button>
+        </span>
+      </div>
+    </ng-template>
+    <ng-template
+      let-node
+      pTemplate="fake"
+      style="width: 100%; box-sizing: content-box"
+    >
+      <div
+        style="
+          width: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        "
+      >
+        <span>
+          <p-float-label variant="on">
+            <p-icon-field>
+              <input pInputText #newElement [style.width]="'100%'" />
+              <label for="newElement">New Element</label>
+              <p-inputicon
+                class="pi pi-times"
+                style="color: var(--p-danger)"
+                (click)="deleteElement(node.data)"
+              >
+              </p-inputicon>
+            </p-icon-field>
+          </p-float-label>
+        </span>
+        <span style="justify-self: end">
+          <p-button
+            icon="pi pi-sitemap"
+            text
+            (click)="addFile(node.data, newElement.value, 'diagram')"
+          >
+          </p-button>
+          <p-button
+            text
+            icon="pi pi-code"
+            (click)="addFile(node.data, newElement.value, 'java')"
+          >
+          </p-button>
+          <p-button
+            icon="pi pi-folder"
+            (click)="addFolder(node.data, newElement.value)"
+            text
+          >
+          </p-button>
+        </span>
+      </div>
+    </ng-template>
+    <ng-template
+      let-node
+      pTemplate="rename"
+      style="width: 100%; box-sizing: content-box"
+    >
+      <div
+        style="
+          width: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        "
+      >
+        <span>
+          <p-float-label variant="on">
+            <p-icon-field>
+              <input pInputText #renameInput [style.width]="'100%'" />
+              <label for="renameInput">Rename Element</label>
+              <p-inputicon
+                class="pi pi-check"
+                style="color: var(--p-success)"
+                (click)="renameElement(node.data, renameInput.value)"
+              >
+              </p-inputicon>
+            </p-icon-field>
+          </p-float-label>
+        </span>
+      </div>
+    </ng-template>
+    <ng-template
+      let-node
+      pTemplate="file"
+      style="width: 100%; box-sizing: content-box"
+    >
+      <div
+        style="
+          width: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        "
+      >
+        <p-button
+          [style]="{
+            width: '100%',
+          }"
+          (click)="navigate(node.data)"
+          text
+          [label]="node.label"
+        >
+        </p-button>
+        <span style="justify-self: end">
+          <p-button
+            icon="pi pi-file-edit"
+            text
+            (click)="toggleRename(node.data)"
+          >
+          </p-button>
+          <p-button
+            icon="pi pi-trash"
+            text
+            severity="danger"
+            (click)="deleteElement(node.data)"
+          >
+          </p-button>
+        </span>
+      </div>
+    </ng-template>
+  </p-tree>
 </div>
