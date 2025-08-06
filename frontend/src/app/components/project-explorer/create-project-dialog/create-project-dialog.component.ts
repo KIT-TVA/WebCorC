@@ -1,6 +1,5 @@
 import {Component} from "@angular/core";
 import {MatButtonModule} from "@angular/material/button";
-import {MatDialogActions, MatDialogContent, MatDialogTitle,} from "@angular/material/dialog";
 import {ProjectService} from "../../../services/project/project.service";
 import {MatInputModule} from "@angular/material/input";
 import {MatFormFieldModule} from "@angular/material/form-field";
@@ -8,8 +7,6 @@ import {FormsModule} from "@angular/forms";
 import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
 import {Button} from "primeng/button";
 import {InputText} from "primeng/inputtext";
-import {InputIcon} from "primeng/inputicon";
-import {IconField} from "primeng/iconfield";
 import {FloatLabel} from "primeng/floatlabel";
 
 /**
@@ -20,16 +17,11 @@ import {FloatLabel} from "primeng/floatlabel";
   selector: "app-create-project-dialog",
   imports: [
     MatButtonModule,
-    MatDialogActions,
-    MatDialogTitle,
-    MatDialogContent,
     MatInputModule,
     MatFormFieldModule,
     FormsModule,
     Button,
     InputText,
-    InputIcon,
-    IconField,
     FloatLabel,
   ],
   templateUrl: "./create-project-dialog.component.html",
