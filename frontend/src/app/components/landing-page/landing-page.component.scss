@@ -1,68 +1,75 @@
 .background {
-    min-height: 100%;
-    width: 100%;
-    display: flex;
-    padding: 2em;
-    justify-content: space-evenly;
-    align-content: center;
-    align-items: center;
-    flex-direction: row;
-    gap: 2em;
+  min-height: 100%;
+  width: 100%;
+  display: flex;
+  padding: 2em;
+  justify-content: space-evenly;
+  align-content: center;
+  align-items: center;
+  flex-direction: row;
+  gap: 2em;
 
-    .corcCard {
-        flex-grow: 1;
-        height: fit-content;
+  .image-background {
+    background-color: #ffffff;
+    opacity: 1;
+    background-image:
+      repeating-radial-gradient(circle at 0 0, transparent 0, #ffffff 40px),
+      repeating-linear-gradient(#1b976055, #1b9760);
+  }
+
+  .corcCard {
+    flex-grow: 1;
+    height: fit-content;
+  }
+  .logo {
+    width: 50%;
+    flex: 1 1 auto;
+  }
+
+  .actions {
+    flex-grow: 1;
+    display: grid;
+    place-items: center;
+
+    .buttons {
+      min-width: 15rem;
+      display: flex;
+      flex-direction: column;
+      background-color: #ededed;
     }
-    .logo {
-        width: 50%;
-        flex: 1 1 auto;
+  }
+
+  .info {
+    width: 50%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: grid;
+    place-items: center;
+    align-items: start;
+
+    .footer {
+      width: 100%;
+      left: 0;
     }
 
-    .actions {
-        flex-grow: 1;
-        display: grid;
-        place-items: center;
+    .institutes {
+      border-radius: 5px;
+      border: #dcdcdc 2px solid;
+      background-color: #ededed;
+      display: flex;
+      flex-direction: column;
+      margin-top: auto;
 
+      .tva {
+        margin: 5px;
+        height: 80px;
+      }
 
-        .buttons {
-            min-width: 15rem;
-            display: flex;
-            flex-direction: column;
-            background-color: #ededed;
-        }
+      .isf {
+        margin: 5px;
+        height: 85px;
+      }
     }
-
-    .info {
-        width: 50%;
-        position: absolute;
-        top: 0;
-        right: 0;
-        display: grid;
-        place-items: center;
-        align-items: start;
-
-        .footer {
-            width: 100%;
-            left: 0;
-        }
-
-        .institutes {
-            border-radius: 5px;
-            border: #dcdcdc 2px solid;
-            background-color: #ededed;
-            display: flex;
-            flex-direction: column;
-            margin-top: auto; 
-
-            .tva {
-               margin: 5px;
-               height: 80px; 
-            }
-
-            .isf {
-                margin: 5px;
-                height: 85px;
-            }
-        }
-    }
+  }
 }
