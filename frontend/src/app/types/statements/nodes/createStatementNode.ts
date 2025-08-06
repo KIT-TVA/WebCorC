@@ -28,6 +28,13 @@ import { RootStatementNode } from "./root-statement-node";
 import { RootStatement } from "../root-statement";
 import { IPosition } from "../../position";
 
+class idGenerator {
+  private static idCounter = 0;
+  public static get newId() {
+    return String(idGenerator.idCounter++);
+  }
+}
+
 export function createStatementNode(
   statement: IAbstractStatement,
   parent?: AbstractStatementNode,
@@ -77,7 +84,7 @@ export function createEmptyStatementNode(
     case "ROOT":
       return new RootStatementNode(
         new RootStatement(
-          "",
+          idGenerator.newId,
           new Condition(""),
           new Condition(""),
           undefined,
@@ -87,18 +94,29 @@ export function createEmptyStatementNode(
       );
     case "STATEMENT":
       return new SimpleStatementNode(
-        new Statement("", new Condition(""), new Condition(""), "", position),
+        new Statement(
+          idGenerator.newId,
+          new Condition(""),
+          new Condition(""),
+          "",
+          position,
+        ),
         parent,
       );
     case "SKIP":
       return new SkipStatementNode(
-        new SkipStatement("", new Condition(""), new Condition(""), position),
+        new SkipStatement(
+          idGenerator.newId,
+          new Condition(""),
+          new Condition(""),
+          position,
+        ),
         parent,
       );
     case "SELECTION":
       return new SelectionStatementNode(
         new SelectionStatement(
-          "",
+          idGenerator.newId,
           new Condition(""),
           new Condition(""),
           [],
@@ -111,7 +129,7 @@ export function createEmptyStatementNode(
     case "COMPOSITION":
       return new CompositionStatementNode(
         new CompositionStatement(
-          "",
+          idGenerator.newId,
           new Condition(""),
           new Condition(""),
           new Condition(""),
@@ -124,7 +142,7 @@ export function createEmptyStatementNode(
     case "REPETITION":
       return new RepetitionStatementNode(
         new RepetitionStatement(
-          "",
+          idGenerator.newId,
           new Condition(""),
           new Condition(""),
           undefined,
@@ -141,7 +159,7 @@ export function createEmptyStatementNode(
     case "RETURN":
       return new AbstractStatementNode(
         new AbstractStatement(
-          "",
+          idGenerator.newId,
           "RETURN",
           new Condition(""),
           new Condition(""),
