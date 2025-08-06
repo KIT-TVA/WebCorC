@@ -1,16 +1,16 @@
-import { Component } from "@angular/core";
-import { MatButtonModule } from "@angular/material/button";
-import {
-  MatDialogActions,
-  MatDialogClose,
-  MatDialogContent,
-  MatDialogRef,
-  MatDialogTitle,
-} from "@angular/material/dialog";
-import { ProjectService } from "../../../services/project/project.service";
-import { MatInputModule } from "@angular/material/input";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { FormsModule } from "@angular/forms";
+import {Component} from "@angular/core";
+import {MatButtonModule} from "@angular/material/button";
+import {MatDialogActions, MatDialogContent, MatDialogTitle,} from "@angular/material/dialog";
+import {ProjectService} from "../../../services/project/project.service";
+import {MatInputModule} from "@angular/material/input";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {FormsModule} from "@angular/forms";
+import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
+import {Button} from "primeng/button";
+import {InputText} from "primeng/inputtext";
+import {InputIcon} from "primeng/inputicon";
+import {IconField} from "primeng/iconfield";
+import {FloatLabel} from "primeng/floatlabel";
 
 /**
  * Dialog for creating a new project, when pressing the save button in the project explorer without a known projectId
@@ -21,12 +21,16 @@ import { FormsModule } from "@angular/forms";
   imports: [
     MatButtonModule,
     MatDialogActions,
-    MatDialogClose,
     MatDialogTitle,
     MatDialogContent,
     MatInputModule,
     MatFormFieldModule,
     FormsModule,
+    Button,
+    InputText,
+    InputIcon,
+    IconField,
+    FloatLabel,
   ],
   templateUrl: "./create-project-dialog.component.html",
   standalone: true,
@@ -35,11 +39,13 @@ import { FormsModule } from "@angular/forms";
 export class CreateProjectDialogComponent {
   public constructor(
     private projectService: ProjectService,
-    private dialog: MatDialogRef<CreateProjectDialogComponent>,
+    public ref: DynamicDialogRef,
+    public config: DynamicDialogConfig,
   ) {}
 
   public confirm() {
     this.projectService.createProject();
+    this.ref.close();
   }
 
   get projectname() {

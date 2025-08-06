@@ -1,21 +1,14 @@
-<h2 mat-dialog-title>Create Project</h2>
-
-<mat-dialog-content>
-  <p>
-    Your workspace is not assoziated with a project on the server. <br />
-    Create a new project with name:
-  </p>
-  <mat-form-field style="width: 100%">
-    <input
-      matInput
-      [(ngModel)]="projectname"
-      placeholder="Projectname"
-    />
-  </mat-form-field>
-</mat-dialog-content>
-<mat-dialog-actions>
-  <button mat-button mat-dialog-close>Abort</button>
-  <button mat-button mat-dialog-close (click)="confirm()" class="confirm">
-    Confirm
-  </button>
-</mat-dialog-actions>
+<p>
+  Your workspace is not assoziated with a project on the server. <br />
+  Create a new project with name:
+</p>
+<div style="width: 100%">
+  <p-float-label variant="on">
+    <input #projectName pInputText fluid [(ngModel)]="projectname" />
+    <label for="projectName">Project Name</label>
+  </p-float-label>
+</div>
+<div style="width: 100%; display: flex; justify-content: end; gap: 1rem; padding-top: 1em">
+    <p-button text (click)="ref.close()">Abort</p-button>
+    <p-button (click)="confirm()" class="confirm"> Confirm </p-button>
+</div>

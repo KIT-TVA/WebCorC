@@ -14,6 +14,7 @@
     (onNodeExpand)="setExpanded($event)"
     (onNodeCollapse)="setCollapsed($event)"
     (onNodeDrop)="dropNode($event)"
+    emptyMessage="No files yet."
   >
     <ng-template #header>
       <div class="project-header">
@@ -25,6 +26,9 @@
           }}
         </h4>
       </div>
+    </ng-template>
+    <ng-template #emptymessage>
+      <span> No files yet </span>
     </ng-template>
     <ng-template
       let-node

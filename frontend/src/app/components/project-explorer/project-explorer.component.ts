@@ -39,6 +39,7 @@ import { InputText } from "primeng/inputtext";
 import { FloatLabel } from "primeng/floatlabel";
 import { IconField } from "primeng/iconfield";
 import { InputIcon } from "primeng/inputicon";
+import { DialogService } from "primeng/dynamicdialog";
 
 /**
  * Component for the file management and navigating between the files,
@@ -62,7 +63,7 @@ import { InputIcon } from "primeng/inputicon";
     IconField,
     InputIcon,
   ],
-  providers: [TreeDragDropService],
+  providers: [TreeDragDropService, DialogService],
   templateUrl: "./project-explorer.component.html",
   standalone: true,
   styleUrl: "./project-explorer.component.scss",
@@ -126,6 +127,7 @@ export class ProjectExplorerComponent {
     public projectService: ProjectService,
     private router: Router,
     private dialog: MatDialog,
+    private dialogService: DialogService,
   ) {
     this.projectService.dataChange.subscribe((data) => {
       this.treeNodes = this.getTreeNodes(data);
@@ -266,10 +268,17 @@ export class ProjectExplorerComponent {
   public save() {
     let wait = false;
     if (this.projectService.shouldCreateProject) {
-      this.dialog.open(CreateProjectDialogComponent);
+      this.openNewProjectDialog();
       wait = true;
     }
     this.projectService.uploadWorkspace(wait);
+  }
+
+  private openNewProjectDialog() {
+    this.dialogService.open(CreateProjectDialogComponent, {
+      header: "Select Project",
+      modal: true,
+    });
   }
 
   /**
