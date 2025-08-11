@@ -35,7 +35,7 @@ public class Condition {
     }
 
     public String getCondition() {
-        return ConditionPrinter.print(parsedCondition);
+        return ConditionPrinter.print(this.parsedCondition);
     }
 
     public Condition rename(List<Renaming> renamings) {
@@ -52,7 +52,7 @@ public class Condition {
 
     @Override
     public String toString() {
-        return this.condition;
+        return ConditionPrinter.print(this.parsedCondition);
     }
 
     public static Condition fromListToConditionOr(List<Condition> conditions) {
