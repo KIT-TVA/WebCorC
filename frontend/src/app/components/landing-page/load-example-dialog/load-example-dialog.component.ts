@@ -1,30 +1,18 @@
 import { Component } from "@angular/core";
-
-import { MatIconModule } from "@angular/material/icon";
-import { MatButtonModule } from "@angular/material/button";
-import {
-  MatDialogActions,
-  MatDialogClose,
-  MatDialogContent,
-  MatDialogTitle,
-} from "@angular/material/dialog";
 import {
   ApiDirectory,
   ApiTextFile,
 } from "../../../services/project/types/api-elements";
+import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import {Listbox} from "primeng/listbox";
+import {Button} from "primeng/button";
 
 @Component({
   selector: "app-load-example-dialog",
-  imports: [
-    MatIconModule,
-    MatButtonModule,
-    MatDialogTitle,
-    MatDialogContent,
-    MatDialogActions,
-    MatDialogClose,
-  ],
+  imports: [Listbox, Button],
   templateUrl: "./load-example-dialog.component.html",
   styleUrl: "./load-example-dialog.component.scss",
+  standalone: true,
 })
 export class LoadExampleDialogComponent {
   private readonly helperfile = new ApiTextFile(
@@ -98,7 +86,10 @@ export class LoadExampleDialogComponent {
 }`,
   );
 
-  constructor() {} //private readonly mapper : Mapper
+  constructor(
+    public ref: DynamicDialogRef,
+    public config: DynamicDialogConfig,
+  ) {} //private readonly mapper : Mapper
 
   public readonly EXAMPLE_PROGRAMS: {
     name: string;

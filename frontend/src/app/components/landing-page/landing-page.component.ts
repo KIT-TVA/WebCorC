@@ -14,7 +14,7 @@ import { MenuItem } from "primeng/api";
 import { Divider } from "primeng/divider";
 import { ButtonDirective, ButtonIcon, ButtonLabel } from "primeng/button";
 import { Menubar } from "primeng/menubar";
-import {DialogService, DynamicDialogRef} from "primeng/dynamicdialog";
+import { DialogService, DynamicDialogRef } from "primeng/dynamicdialog";
 
 @Component({
   selector: "app-landing-page",
@@ -43,7 +43,7 @@ export class LandingPageComponent implements OnInit {
     private route: ActivatedRoute,
     private projectService: ProjectService,
     private dialog: MatDialog,
-    public dialogService: DialogService
+    public dialogService: DialogService,
   ) {}
 
   dialogRef: DynamicDialogRef | undefined;
@@ -82,21 +82,34 @@ export class LandingPageComponent implements OnInit {
   }
 
   public openProjectDialog() {
-    this.dialog.open(OpenProjectDialogComponent);
+    this.dialogService.open(OpenProjectDialogComponent, {
+      header: "Open Project",
+      modal: true,
+    });
   }
 
   public importProjectDialog() {
-    this.dialog.open(ImportProjectDialogComponent);
+    this.dialogService.open(ImportProjectDialogComponent, {
+      header: "Import Project",
+      modal: true,
+    });
   }
 
   public importFileDialog() {
-    this.dialogService.open(ImportFileDialogComponent, { data: { parentURN: "/" }, header: "Import File", modal: true });
+    this.dialogService.open(ImportFileDialogComponent, {
+      data: { parentURN: "/" },
+      header: "Import File",
+      modal: true,
+    });
   }
 
   public loadExampleDialog() {
-    const dialogRef = this.dialog.open(LoadExampleDialogComponent);
+    const dialogRef = this.dialogService.open(LoadExampleDialogComponent, {
+      header: "Load Example",
+      modal: true,
+    });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.onClose.subscribe((result) => {
       if (result) {
         console.log(result);
         this.projectService.import(result.project, result.name);

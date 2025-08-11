@@ -1,14 +1,18 @@
-<h1 mat-dialog-title>Choose example program</h1>
-<mat-dialog-content>
-  @for (example of EXAMPLE_PROGRAMS; track example) {
-    <div [mat-dialog-close]="example" style="float: left">
-      <div id="background">
-        <mat-icon>{{example.icon}}</mat-icon><br>
-        <span>{{example.name}}</span>
-      </div>
+<p-listbox [options]="EXAMPLE_PROGRAMS" ></p-listbox>
+  <ng-template #item let-example>
+    <div class="item">
+        <i class="pi pi-code"></i>
+      <span>{{ example.name }}</span>
     </div>
-  }
-</mat-dialog-content>
-<mat-dialog-actions>
-  <button mat-button mat-dialog-close>Cancel</button>
-</mat-dialog-actions>
+  </ng-template>
+<div
+        style="
+    width: 100%;
+    display: flex;
+    justify-content: end;
+    gap: 1rem;
+    padding-top: 1em;
+  "
+>
+  <p-button (click)="ref.close()">Cancel</p-button>
+</div>

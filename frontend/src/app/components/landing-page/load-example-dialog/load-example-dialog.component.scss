@@ -1,11 +1,5 @@
-#background {
-  width: fit-content;
-  padding: 10px;
-  text-align: center;
-  border-radius: 5px;
-  color: gray;
-  margin: auto;
-  width: 100px;
-  margin-top: 20px;
-  cursor: pointer;
+.item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }

@@ -1,13 +1,19 @@
-<h2 mat-dialog-title> Open Project </h2>
-
-<mat-dialog-content>
-    <p> Open Project by its id </p>
-    <mat-form-field appearance="fill">
-        <input matInput [(ngModel)]="projectId" placeholder="ProjectId" />
-    </mat-form-field>
-</mat-dialog-content>
-
-<mat-dialog-actions>
-    <button mat-button mat-dialog-close> Abort </button>
-    <button mat-button mat-dialog-close (click)="confirm()" class="confirm"> Confirm </button>
-</mat-dialog-actions>
+<p>Open Project by its id</p>
+<div style="width: 100%">
+  <p-float-label variant="on">
+    <input #projectName pInputText fluid [(ngModel)]="projectId" />
+    <label for="projectName">Project Id</label>
+  </p-float-label>
+</div>
+<div
+  style="
+    width: 100%;
+    display: flex;
+    justify-content: end;
+    gap: 1rem;
+    padding-top: 1em;
+  "
+>
+  <p-button text (click)="ref.close()">Abort</p-button>
+  <p-button (click)="confirm()" class="confirm"> Confirm </p-button>
+</div>
