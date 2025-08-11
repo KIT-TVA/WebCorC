@@ -1,7 +1,7 @@
 <p-toolbar style="border: none; border-radius: 0">
   <ng-template #start>
-    <p-button icon="pi pi-bars" text (click)="drawer.toggle()"> </p-button>
-    <p-button text [style]="{paddingLeft: '1rem', fontWeight: 'bold'}" (click)="router.navigateByUrl('/')"> WebCorC </p-button>
+    <p-button icon="pi pi-bars" text severity="contrast" (click)="drawer.toggle()"> </p-button>
+    <p-button text severity="contrast" [style]="{paddingLeft: '1rem', fontWeight: 'bold'}" (click)="router.navigateByUrl('/')"> WebCorC </p-button>
   </ng-template>
   <ng-template #center>
     <p-iconfield iconPosition="left">
