@@ -14,6 +14,7 @@ import { MenuItem } from "primeng/api";
 import { Divider } from "primeng/divider";
 import { ButtonDirective, ButtonIcon, ButtonLabel } from "primeng/button";
 import { Menubar } from "primeng/menubar";
+import {DialogService, DynamicDialogRef} from "primeng/dynamicdialog";
 
 @Component({
   selector: "app-landing-page",
@@ -27,6 +28,7 @@ import { Menubar } from "primeng/menubar";
     ButtonIcon,
     Menubar,
   ],
+  providers: [DialogService],
   templateUrl: "./landing-page.component.html",
   standalone: true,
   styleUrl: "./landing-page.component.scss",
@@ -41,7 +43,10 @@ export class LandingPageComponent implements OnInit {
     private route: ActivatedRoute,
     private projectService: ProjectService,
     private dialog: MatDialog,
+    public dialogService: DialogService
   ) {}
+
+  dialogRef: DynamicDialogRef | undefined;
 
   public actions: MenuItem[] = [
     {
@@ -85,7 +90,7 @@ export class LandingPageComponent implements OnInit {
   }
 
   public importFileDialog() {
-    this.dialog.open(ImportFileDialogComponent, { data: { parentURN: "/" } });
+    this.dialogService.open(ImportFileDialogComponent, { data: { parentURN: "/" }, header: "Import File", modal: true });
   }
 
   public loadExampleDialog() {

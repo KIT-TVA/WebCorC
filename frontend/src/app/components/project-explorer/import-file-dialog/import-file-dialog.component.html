@@ -1,18 +1,10 @@
-<h2 mat-dialog-title> Import File into Folder {{ data.parentURN }} </h2>
-
-<mat-dialog-content>
-    <p> Import .json files from other projects or .cbcmodel files from Corc </p>
-    <div class="customFileInput" >
-        <button mat-flat-button (click)="fileUpload.click()"> Choose File </button>
-        <mat-form-field>
-            <input matInput type="text" id="filename" placeholder="Filename" [(ngModel)] = "fileName" />
-        </mat-form-field>
-        <p> {{ fileType }}</p>
-        
-        <input type="file" id="fileUpload" class="fileInput" accept="json, cbcmodel" (change)="onFileSelected($event)" #fileUpload />
-    </div>
-</mat-dialog-content>
-<mat-dialog-actions>
-    <button mat-button mat-dialog-close> Abort </button>
-    <button mat-button mat-dialog-close (click)="confirm()" class="confirm" [disabled]="!accepted"> Confirm </button>
-</mat-dialog-actions>
+<p>Import .json files from other projects or .cbcmodel files from Corc</p>
+<div class="customFileInput">
+    <p-fileupload mode="basic" chooseIcon="pi pi-upload" chooseLabel="Choose File" (onSelect)="onFileSelected($event)">
+    </p-fileupload>
+  <p>{{ fileType }}</p>
+</div>
+<div style="width: 100%; display: flex; justify-content: end; gap: 1rem; padding-top: 1em">
+    <p-button text (click)="ref.close()">Abort</p-button>
+    <p-button (click)="confirm()" class="confirm" [disabled]="!accepted"> Confirm </p-button>
+</div>

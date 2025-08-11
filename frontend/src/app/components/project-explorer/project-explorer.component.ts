@@ -69,6 +69,7 @@ import { DialogService } from "primeng/dynamicdialog";
   styleUrl: "./project-explorer.component.scss",
 })
 export class ProjectExplorerComponent {
+
   menuItems: MenuItem[] = [
     {
       label: "Save",
@@ -291,14 +292,14 @@ export class ProjectExplorerComponent {
       return;
     }
     const path = element.path;
-    this.dialog.open(ImportFileDialogComponent, { data: { parentURN: path } });
+    this.dialogService.open(ImportFileDialogComponent, { data: { parentURN: path }, header: "Import File", modal: true });
   }
 
   /**
    * Import file with under the root node
    */
   public import() {
-    this.dialog.open(ImportFileDialogComponent, { data: { parentURN: "/" } });
+    this.dialogService.open(ImportFileDialogComponent, { data: { parentURN: "/" }, header: "Import File", modal: true });
   }
 
   /**
