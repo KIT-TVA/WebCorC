@@ -58,8 +58,8 @@ public final class KeYProofGenerator {
      * @param statement the statement that we want the KeYProof to generate for
      * @return the KeY proof generated from the statement
      */
-    public KeYProof generateBasicProof(Statement statement) {
-        KeYProofBuilder proofBuilder =  new KeYProofBuilder();
+    public KeYProof generateProof(Statement statement) {
+        KeYProofBuilder proofBuilder =  this.generateBasicProof(statement);
         proofBuilder.programStatement(statement.getProgramStatement());
         return proofBuilder.build();
     }

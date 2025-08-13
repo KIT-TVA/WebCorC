@@ -5,10 +5,10 @@
         "programStatement": "i = 1",
         "type": "statement",
         "preCondition": {
-            "condition": "i = 0"
+            "condition": "i == 0"
         },
         "postCondition": {
-            "condition": "i = 1"
+            "condition": "i == 1"
         },
         "isProven": false
     },
