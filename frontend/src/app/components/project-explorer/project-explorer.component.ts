@@ -220,7 +220,25 @@ export class ProjectExplorerComponent {
     if (!name) {
       return;
     }
-    this.projectService.addFile(this.projectService.root.path, name, type);
+
+    const baseFileName = `${name}.${type}`;
+
+    // If there is no file with the same name, create it
+    if (!this.projectService.root.content.some(pe => pe.name === baseFileName)) {
+      this.projectService.addFile(this.projectService.root.path, name, type);
+      return;
+    }
+
+    // Else create the file with the suffix name-i
+    let i = 1;
+    const existingNames = this.projectService.root.content.map(pe => pe.name);
+
+    // Keep incrementing until a unique name is found
+    while (existingNames.includes(`${name}-${i}.${type}`)) {
+      i++;
+    }
+    // Create the file with the next free suffix
+    this.projectService.addFile(this.projectService.root.path, `${name}-${i}`, type);
   }
 
   /**
