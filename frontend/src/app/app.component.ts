@@ -29,6 +29,7 @@ import { InputText } from "primeng/inputtext";
 import { InputIcon } from "primeng/inputicon";
 import { IconField } from "primeng/iconfield";
 import { DialogService } from "primeng/dynamicdialog";
+import {ToggleButton} from "primeng/togglebutton";
 
 /**
  * Top Component of this application,
@@ -55,6 +56,7 @@ import { DialogService } from "primeng/dynamicdialog";
     InputText,
     InputIcon,
     IconField,
+    ToggleButton,
   ],
   templateUrl: "./app.component.html",
   providers: [DialogService],
@@ -165,6 +167,16 @@ export class AppComponent {
   }
 
   /**
+   * Triggered on pressing the theme Button in the Top Bar.
+   * Switches between light and dark theme
+   */
+  switchTheme() {
+    const element = document.querySelector('html');
+    console.log("theme", element);
+    element?.classList.toggle('dark-mode');
+  }
+
+  /**
    * Write the url of the current project into the clipboard.
    * Sideeffect: When no project id defined create project and upload current content to backend.
    */
@@ -218,4 +230,6 @@ export class AppComponent {
   }
 
   protected readonly Toolbar = Toolbar;
+
+
 }
