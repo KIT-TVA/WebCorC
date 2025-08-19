@@ -1,8 +1,7 @@
 package edu.kit.cbc.editor;
 
-import edu.kit.cbc.common.corc.FileUtil;
+import edu.kit.cbc.common.Problem;
 import edu.kit.cbc.common.corc.cbcmodel.CbCFormula;
-import edu.kit.cbc.common.corc.proof.ProofContext;
 import edu.kit.cbc.editor.llm.LLMQueryDto;
 import edu.kit.cbc.editor.llm.LLMResponse;
 import edu.kit.cbc.editor.llm.OpenAIClient;
@@ -20,10 +19,6 @@ import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import jakarta.validation.Valid;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -55,109 +50,30 @@ public class EditorController {
         return HttpResponse.serverError(String.format("NOT IMPLEMENTED"));
     }
 
-    @Post(uri = "/xmltojson")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.ALL)
-    public HttpResponse<?> xmltojson(@Body String cbcFormulaString) {
-        return HttpResponse.serverError("NOT IMPLEMENTED ");
-    }
-
     @Post(uri = "/verify")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public HttpResponse<?> verify(@QueryValue Optional<String> projectId, @Body @Valid CbCFormula formula)
-        throws IOException {
-
-        Path proofFolder = Files.createTempDirectory(projectId.isPresent() ? "proof_" + projectId.get() : "proof");
-
-        UUID jobId = orchestrator.addJob();
-        System.out.println(String.format("New verification started with job id: %s", jobId));
-
-        ProofContext.ProofContextBuilder context = ProofContext.builder()
-            .cbCFormula(formula)
-            .proofFolder(proofFolder)
-            .includeFiles(new ArrayList<>())
-            .javaSrcFiles(new ArrayList<>())
-            .existingProofFiles(new ArrayList<>())
-            .logger((msg) -> orchestrator.log(jobId, msg));
-
-        if (projectId.isPresent()) {
-            List<Path> includeFiles = filesController.retrieveFiles(projectId.get(), ".key", "include");
-            List<Path> javaSrcFiles = filesController.retrieveFiles(projectId.get(), ".java", "javaSrc");
-
-            List<Path> existingKeyFiles = filesController.retrieveFiles(projectId.get(), ".key", "proofs");
-
-            System.out.println("Included KeY-Files: " + includeFiles);
-            System.out.println("Included Java-Files: " + javaSrcFiles);
-            System.out.println("Existing Proof-Files: " + existingKeyFiles);
-            context.includeFiles(includeFiles);
-            context.javaSrcFiles(javaSrcFiles);
-            context.existingProofFiles(existingKeyFiles);
-        }
-
-        formula.setProven(formula.getStatement().prove(context.build()));
-
-        if (projectId.isPresent()) {
-            List<Path> proofFiles;
-            proofFiles = Files.find(proofFolder, 10, (path, attributes) -> {
-                String pathStr = path.toString();
-                return pathStr.endsWith(".key") || pathStr.endsWith(".proof");
-            }).toList();
-
-            for (Path projectFile : proofFiles) {
-                String statementName = projectFile.getFileName().toString().split("_")[0];
-                Path uploadPath = Path.of("proofs/" + statementName + "/");
-                uploadPath = uploadPath.resolve(projectFile.getFileName().toString());
-                filesController.uploadBytes(Files.readAllBytes(projectFile), projectId.get(), uploadPath);
-            }
-
-        }
-
-        FileUtil.deleteDirectory(proofFolder);
-
-        if (projectId.isPresent()) {
-            context.build().getIncludeFiles().stream().findFirst().ifPresent(includeFile -> {
-                try {
-                    FileUtil.deleteDirectory(includeFile.getParent());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
-
-            context.build().getJavaSrcFiles().stream().findFirst().ifPresent(javaSrcFile -> {
-                try {
-                    FileUtil.deleteDirectory(javaSrcFile.getParent());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
-
-            context.build().getExistingProofFiles().stream().findFirst().ifPresent(existingKeyFile -> {
-                try {
-                    FileUtil.deleteDirectory(existingKeyFile.getParent().getParent());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
-        }
-
-        orchestrator.deleteJob(jobId);
-        return HttpResponse.ok(formula);
+    public HttpResponse<?> verify(@QueryValue Optional<String> projectId, @Body @Valid CbCFormula formula) throws IOException {
+        UUID jobId = orchestrator.addJob(projectId, formula, filesController);
+        return HttpResponse.ok(jobId.toString());
     }
 
+    @Get(uri = "/jobs/{jobId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public HttpResponse<?> getJobs(@QueryValue UUID jobId) {
+        CbCFormula result = orchestrator.getVerificationResult(jobId);
+        if (result == null) {
+            return HttpResponse.serverError(Problem.JOB_NOT_FINISHED);
+        } else {
+            return HttpResponse.ok(result);
+        }
+    }
 
     @Post(uri = "/javaGen")
     @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.APPLICATION_JSON)
     public HttpResponse<?> javaGen(@QueryValue Optional<String> projectId, @Body String cbcFormulaString) {
         return HttpResponse.serverError("NOT IMPLEMENTED");
-    }
-
-    @Get(uri = "/jobs/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public HttpResponse<String> getJobs(long id) {
-        // TODO: Websocket
-        return HttpResponse.serverError(String.format("NOT IMPLEMENTED %d", id));
     }
 
     @Post(uri = "/askquestion")

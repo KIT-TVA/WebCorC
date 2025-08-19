@@ -1,17 +1,122 @@
 package edu.kit.cbc.editor;
 
+import edu.kit.cbc.common.corc.FileUtil;
+import edu.kit.cbc.common.corc.cbcmodel.CbCFormula;
+import edu.kit.cbc.common.corc.proof.ProofContext;
+import edu.kit.cbc.projects.files.controller.FilesController;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.Duration;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.logging.Logger;
 import lombok.Getter;
 
-public class VerificationJob {
-    @Getter
-    private String log;
+public class VerificationJob extends Thread {
+    @Getter private String log;
+    @Getter private boolean hasResult = false;
     private HashSet<Function<String, Boolean>> listeners;
 
-    VerificationJob() {
+    private ProofContext.ProofContextBuilder context;
+    private Optional<String> projectId;
+    @Getter private CbCFormula formula;
+    private FilesController filesController;
+    private Runnable onFinished;
+
+    private static final Logger LOGGER = Logger.getGlobal();
+
+    VerificationJob(Optional<String> projectId, CbCFormula formula, FilesController filesController, Runnable onFinished) throws IOException {
         log = "";
         listeners = new HashSet<Function<String, Boolean>>();
+        this.projectId = projectId;
+        this.formula = formula;
+        this.filesController = filesController;
+        this.onFinished = onFinished;
+
+        Path proofFolder = Files.createTempDirectory(projectId.isPresent() ? "proof_" + projectId.get() : "proof");
+
+        context = ProofContext.builder()
+            .cbCFormula(formula)
+            .proofFolder(proofFolder)
+            .includeFiles(new ArrayList<>())
+            .javaSrcFiles(new ArrayList<>())
+            .existingProofFiles(new ArrayList<>())
+            .logger((msg) -> log(msg));
+
+        if (projectId.isPresent()) {
+            List<Path> includeFiles = filesController.retrieveFiles(projectId.get(), ".key", "include");
+            List<Path> javaSrcFiles = filesController.retrieveFiles(projectId.get(), ".java", "javaSrc");
+            List<Path> existingKeyFiles = filesController.retrieveFiles(projectId.get(), ".key", "proofs");
+
+            LOGGER.info("Included KeY-Files: " + includeFiles);
+            LOGGER.info("Included Java-Files: " + javaSrcFiles);
+            LOGGER.info("Existing Proof-Files: " + existingKeyFiles);
+            context.includeFiles(includeFiles);
+            context.javaSrcFiles(javaSrcFiles);
+            context.existingProofFiles(existingKeyFiles);
+        }
+    }
+
+    public void run() {
+        formula.setProven(formula.getStatement().prove(context.build()));
+
+        Path proofFolder = context.build().getProofFolder();
+        if (projectId.isPresent()) {
+            try {
+                List<Path> proofFiles;
+                proofFiles = Files.find(proofFolder, 10, (path, attributes) -> {
+                    String pathStr = path.toString();
+                    return pathStr.endsWith(".key") || pathStr.endsWith(".proof");
+                }).toList();
+
+                for (Path projectFile : proofFiles) {
+                    String statementName = projectFile.getFileName().toString().split("_")[0];
+                    Path uploadPath = Path.of("proofs/" + statementName + "/");
+                    uploadPath = uploadPath.resolve(projectFile.getFileName().toString());
+                    filesController.uploadBytes(Files.readAllBytes(projectFile), projectId.get(), uploadPath);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            FileUtil.deleteDirectory(proofFolder);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (projectId.isPresent()) {
+            Consumer<Path> delete = (p) -> {
+                try {
+                    FileUtil.deleteDirectory(p.getParent());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            };
+            context.build().getIncludeFiles().stream().findFirst().ifPresent(delete);
+            context.build().getJavaSrcFiles().stream().findFirst().ifPresent(delete);
+            context.build().getExistingProofFiles().stream().findFirst().ifPresent(existingKeyFile -> {
+                delete.accept(existingKeyFile.getParent());
+            });
+        }
+
+        hasResult = true;
+        log("verification complete");
+
+        //Keep job output and result available for some time before it is deleted
+        try {
+            Thread.sleep(Duration.ofMinutes(60));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        onFinished.run();
     }
 
     public void addListener(Function<String, Boolean> listener) {
