@@ -88,7 +88,13 @@ public class KeYProof {
     }
 
     private String printKeYBody() {
-        return String.format(KEY_BODY, preCondition, printGlobalConditions(), programStatement, postCondition);
+        return String.format(
+            KEY_BODY,
+            preCondition.asJML(),
+            printGlobalConditions(),
+            programStatement,
+            postCondition.asJML()
+        );
     }
 
     private String printProgramVariables() {

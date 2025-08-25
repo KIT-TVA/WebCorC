@@ -1,6 +1,7 @@
 package edu.kit.cbc.common.corc.cbcmodel.statements;
 
 import edu.kit.cbc.common.corc.cbcmodel.Condition;
+import edu.kit.cbc.common.corc.parsing.condition.ConditionPrinter;
 import edu.kit.cbc.common.corc.proof.KeYProof;
 import edu.kit.cbc.common.corc.proof.KeYProofGenerator;
 import edu.kit.cbc.common.corc.proof.ProofContext;
@@ -70,5 +71,20 @@ public class SelectionStatement extends AbstractStatement {
         this.isProven = this.isPreProven;
 
         return this.isProven;
+    }
+
+    @Override
+    public String generate() {
+        StringBuilder ifBuilder = new StringBuilder();
+
+        for (int i = 0; i < this.getGuards().size(); i++) {
+            ifBuilder.append("if (");
+            ifBuilder.append(ConditionPrinter.print(this.guards.get(i).getParsedCondition()));
+            ifBuilder.append(") {\n");
+            ifBuilder.append(this.commands.get(i).generate());
+            ifBuilder.append("}\n");
+        }
+
+        return ifBuilder.toString();
     }
 }

@@ -36,4 +36,9 @@ public class CompositionStatement extends AbstractStatement {
 
         return firstProve && secondProve;
     }
+
+    @Override
+    public String generate() {
+        return firstStatement.generate() + "\n" +  secondStatement.generate();
+    }
 }

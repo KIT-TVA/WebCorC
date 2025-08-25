@@ -41,11 +41,7 @@ public final class ConditionPrinter {
                 printTree(lhs);
                 print(")");
                 space();
-                if (type == Operator.OperatorType.EQUAL) {
-                    this.builder.append("=");
-                } else {
-                    this.builder.append(type);
-                }
+                this.builder.append(type);
                 space();
                 print("(");
                 printTree(rhs);

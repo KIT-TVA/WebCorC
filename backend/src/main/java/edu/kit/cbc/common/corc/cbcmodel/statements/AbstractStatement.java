@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import edu.kit.cbc.common.corc.cbcmodel.CbCFormula;
 import edu.kit.cbc.common.corc.cbcmodel.Condition;
 import edu.kit.cbc.common.corc.cbcmodel.StatementType;
+import edu.kit.cbc.common.corc.codegeneration.Generatable;
 import edu.kit.cbc.common.corc.proof.ProofContext;
 import io.micronaut.serde.annotation.Serdeable;
 import java.util.Optional;
@@ -28,7 +29,7 @@ import lombok.Setter;
     @JsonSubTypes.Type(value = SkipStatement.class, name = "skip_statement"),
     @JsonSubTypes.Type(value = SmallRepetitionStatement.class, name = "small_repetition_statement")
 })
-public abstract class AbstractStatement {
+public abstract class AbstractStatement implements Generatable {
 
     private String name;
     private StatementType type;

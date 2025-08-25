@@ -5,6 +5,7 @@ import edu.kit.cbc.common.corc.parsing.TokenSource;
 import edu.kit.cbc.common.corc.parsing.condition.ConditionLexer;
 import edu.kit.cbc.common.corc.parsing.condition.ConditionParser;
 import edu.kit.cbc.common.corc.parsing.condition.ConditionPrinter;
+import edu.kit.cbc.common.corc.parsing.condition.JMLConditionPrinter;
 import edu.kit.cbc.common.corc.parsing.lexer.Lexer;
 import edu.kit.cbc.common.corc.parsing.parser.ast.Tree;
 import io.micronaut.serde.annotation.Serdeable;
@@ -53,6 +54,10 @@ public class Condition {
     @Override
     public String toString() {
         return ConditionPrinter.print(this.parsedCondition);
+    }
+
+    public String asJML() {
+        return JMLConditionPrinter.print(this.parsedCondition);
     }
 
     public static Condition fromListToConditionOr(List<Condition> conditions) {
