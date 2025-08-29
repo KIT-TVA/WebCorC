@@ -55,7 +55,7 @@ public class EditorController {
     @Consumes(MediaType.APPLICATION_JSON)
     public HttpResponse<?> verify(@QueryValue Optional<String> projectId, @Body @Valid CbCFormula formula) throws IOException {
         UUID jobId = orchestrator.addJob(projectId, formula, filesController);
-        return HttpResponse.ok(jobId.toString());
+        return HttpResponse.ok(jobId);
     }
 
     @Get(uri = "/jobs/{jobId}")

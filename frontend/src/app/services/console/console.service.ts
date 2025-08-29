@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { ConsoleLogLine } from './log';
 
 /**
- * Service to allow interaction with the console 
+ * Service to allow interaction with the console
  * Caution: Not fully implemented
  */
 @Injectable({

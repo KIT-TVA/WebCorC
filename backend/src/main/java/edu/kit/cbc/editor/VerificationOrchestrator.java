@@ -44,15 +44,15 @@ public class VerificationOrchestrator {
         LOGGER.info(String.format("job %s removed", jobId));
     }
 
-    public String getJobLog(UUID jobId) {
-        return jobs.get(jobId).getLog();
+    public String[] getJobLog(UUID jobId) {
+        return jobs.get(jobId).getLog().split("\n");
     }
 
-    public boolean addListener(UUID jobId, Function<String, Boolean> callback) {
+    public boolean addListener(UUID jobId, Function<String, Boolean> onMessage) {
         if (!jobs.containsKey(jobId)) {
             return false;
         }
-        jobs.get(jobId).addListener(callback);
+        jobs.get(jobId).addListener(onMessage);
         return true;
     }
 }

@@ -33,7 +33,11 @@ public class VerificationWebSocket {
             session.close();
             return;
         }
-        session.sendSync(orchestrator.getJobLog(jobId));
+        for (String line : orchestrator.getJobLog(jobId)) {
+            if (!line.isEmpty()) {
+                session.sendSync(line);
+            }
+        }
     }
 
     @OnMessage
@@ -43,6 +47,8 @@ public class VerificationWebSocket {
 
     @OnClose
     public void onClose(UUID jobId, WebSocketSession session) {
-        /*unused*/
+        if (session.isOpen()) {
+            session.close();
+        }
     }
 }

@@ -60,9 +60,11 @@ public class VerificationJob extends Thread {
             context.javaSrcFiles(javaSrcFiles);
             context.existingProofFiles(existingKeyFiles);
         }
+        log("verification initialized");
     }
 
     public void run() {
+        log("verification started");
         formula.setProven(formula.getStatement().prove(context.build()));
 
         Path proofFolder = context.build().getProofFolder();
@@ -124,7 +126,7 @@ public class VerificationJob extends Thread {
     }
 
     public void log(String message) {
-        log += message;
+        log += message + "\n";
 
         //Call all listeners. The listener returns true if it detects that its WebSocket connection was closed,
         //so it will be removed from the listener pool
