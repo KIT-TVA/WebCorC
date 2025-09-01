@@ -17,7 +17,9 @@ import { MatIconModule } from "@angular/material/icon";
 import { NuMonacoEditorModule } from "@ng-util/monaco-editor";
 import { ProjectService } from "./services/project/project.service";
 import { NetworkTreeService } from "./services/tree/network/network-tree.service";
-import { CreateProjectDialogComponent } from "./components/project-explorer/create-project-dialog/create-project-dialog.component";
+import {
+  CreateProjectDialogComponent
+} from "./components/project-explorer/create-project-dialog/create-project-dialog.component";
 import { first } from "rxjs";
 import { NetworkStatusService } from "./services/networkStatus/network-status.service";
 import { ConsoleService } from "./services/console/console.service";
@@ -29,7 +31,7 @@ import { InputText } from "primeng/inputtext";
 import { InputIcon } from "primeng/inputicon";
 import { IconField } from "primeng/iconfield";
 import { DialogService } from "primeng/dynamicdialog";
-import {ToggleButton} from "primeng/togglebutton";
+import { SettingsButtonComponent } from "./components/settings/settings-button/settings-button.component";
 
 /**
  * Top Component of this application,
@@ -56,7 +58,7 @@ import {ToggleButton} from "primeng/togglebutton";
     InputText,
     InputIcon,
     IconField,
-    ToggleButton,
+    SettingsButtonComponent,
   ],
   templateUrl: "./app.component.html",
   providers: [DialogService],
@@ -122,7 +124,7 @@ export class AppComponent {
   private openNewProjectDialog() {
     this.dialogService.open(CreateProjectDialogComponent, {
       header: "Select Project",
-      modal: true
+      modal: true,
     });
   }
 
@@ -171,9 +173,9 @@ export class AppComponent {
    * Switches between light and dark theme
    */
   switchTheme() {
-    const element = document.querySelector('html');
+    const element = document.querySelector("html");
     console.log("theme", element);
-    element?.classList.toggle('dark-mode');
+    element?.classList.toggle("dark-mode");
   }
 
   /**
@@ -230,6 +232,4 @@ export class AppComponent {
   }
 
   protected readonly Toolbar = Toolbar;
-
-
 }
