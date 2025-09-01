@@ -14,9 +14,24 @@
           </p-toggle-switch>
         </span>
       </li>
+      <li style="display: flex; align-content: center; gap: 2rem">
+        <span> Conditions always open </span>
+        <span>
+          <p-toggle-switch size="large" [(ngModel)]="globalSettingsService.conditionsAlwaysOpen">
+          </p-toggle-switch>
+        </span>
+      </li>
     </ul>
   </p-fieldset>
 </div>
-<div style="width: 100%; display: flex; justify-content: end; gap: 1rem; padding-top: 1em">
-    <p-button (click)="ref.close()">Done</p-button>
+<div
+  style="
+    width: 100%;
+    display: flex;
+    justify-content: end;
+    gap: 1rem;
+    padding-top: 1em;
+  "
+>
+  <p-button (click)="ref.close()">Done</p-button>
 </div>
