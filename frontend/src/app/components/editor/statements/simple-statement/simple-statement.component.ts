@@ -60,7 +60,9 @@ export class SimpleStatementComponent extends Refinement implements OnInit{
   }
 
   public ngOnInit() {
-    this.pseudoCondition.set(new Condition(this._node.statement.name));
+    //Commented out the next line that causes the bug mentioned in issue #44
+    //Not sure if important thus the comment
+    //this.pseudoCondition.set(new Condition(this._node.statement.name));
   }
 
   public override getTitle(): string {
