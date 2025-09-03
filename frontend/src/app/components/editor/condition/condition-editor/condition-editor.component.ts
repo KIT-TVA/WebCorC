@@ -28,6 +28,7 @@ import { AiChatService } from "../../../../services/ai-chat/ai-chat.service";
 import { Textarea } from "primeng/textarea";
 import { IconField } from "primeng/iconfield";
 import { InputIcon } from "primeng/inputicon";
+import { FloatLabelModule } from 'primeng/floatlabel';
 
 /**
  * Editor in the statements for the {@link Condition}
@@ -49,6 +50,7 @@ import { InputIcon } from "primeng/inputicon";
     Textarea,
     IconField,
     InputIcon,
+    FloatLabelModule
   ],
   templateUrl: "./condition-editor.component.html",
   standalone: true,
@@ -63,6 +65,7 @@ export class ConditionEditorComponent implements OnInit {
   /**
    * Flag to allow editing the condition content
    */
+  @Input() public placeholder: string = "Type here"
   @Input() public editable = true;
   @Input() public inline = false;
 
