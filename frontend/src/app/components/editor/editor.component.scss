@@ -1,30 +1,15 @@
-.sideMenu {
-  position: absolute;
-  right: 0;
-  width: 450px;
-  height: 100%;
-  z-index: 1;
-}
-
-.sideMenuContainer {
-  position: absolute;
-  height: 100%;
-  right: 0;
-  z-index: 1;
-}
-
 .toggleButton {
   position: sticky;
   top: 0;
 }
 
 .bottomContainer {
+  display: block;
   border: 0;
   border-top: 1px;
   border-style: solid;
   border-color: var(--grey-webcorc);
   background-color: var(--grey-background-light-webcorc);
-  position: absolute;
   bottom: 0;
   width: 100%;
   z-index: 1;
@@ -36,18 +21,9 @@
 }
 
 #editorContainer {
-  width: 100%;
   height: 100%;
+  flex: auto;
   overflow: scroll;
-}
-
-#editorWidthController {
-  height: 0;
-}
-
-#editorHeightController {
-  width: 0;
-  float: left;
 }
 
 #controlsBar {
