@@ -17,7 +17,20 @@
       <li style="display: flex; align-content: center; gap: 2rem">
         <span> Conditions always open </span>
         <span>
-          <p-toggle-switch size="large" [(ngModel)]="globalSettingsService.conditionsAlwaysOpen">
+          <p-toggle-switch
+            size="large"
+            [(ngModel)]="globalSettingsService.conditionsAlwaysOpen"
+          >
+          </p-toggle-switch>
+        </span>
+      </li>
+      <li style="display: flex; align-content: center; gap: 2rem">
+        <span> Minimap in editor </span>
+        <span>
+          <p-toggle-switch
+            size="large"
+            [(ngModel)]="globalSettingsService.showMiniMap"
+          >
           </p-toggle-switch>
         </span>
       </li>

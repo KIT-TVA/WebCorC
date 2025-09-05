@@ -1,4 +1,13 @@
-<div style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: stretch; justify-items: stretch">
+<div
+  style="
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-items: stretch;
+  "
+>
   <div
     style="
       display: flex;
@@ -22,7 +31,9 @@
           <app-statement-delegator [statement]="ctx.node.data()">
           </app-statement-delegator>
         </ng-template>
-        <mini-map [position]="'top-right'" />
+        @if (globalSettingsService.showMiniMap) {
+          <mini-map [position]="'top-right'" />
+        }
       </vflow>
     </div>
     <app-editor-sidemenu
@@ -30,6 +41,6 @@
     ></app-editor-sidemenu>
   </div>
   <div class="bottomContainer">
-      <app-editor-bottommenu />
+    <app-editor-bottommenu />
   </div>
 </div>

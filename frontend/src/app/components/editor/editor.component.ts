@@ -36,6 +36,7 @@ import {
 } from "ngx-vflow";
 import {EditorSidemenuComponent} from "./editor-sidemenu/editor-sidemenu.component";
 import {EditorBottommenuComponent} from "./editor-bottommenu/editor-bottommenu.component";
+import {GlobalSettingsService} from "../../services/global-settings.service";
 
 /**
  * Component to edit {@link CBCFormula} by editing a grahical representation based of the statement components like {@link SimpleStatementComponent}.
@@ -79,12 +80,14 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
    * @param projectService The service to persist and laod the file content
    * @param editorService
    * @param router
+   * @param globalSettingsService
    */
   public constructor(
     private treeService: TreeService,
     private projectService: ProjectService,
     private editorService: EditorService,
     private router: Router,
+    protected globalSettingsService: GlobalSettingsService
   ) {
     this.projectService.editorNotify.subscribe(() => {
       this.saveContentToFile();

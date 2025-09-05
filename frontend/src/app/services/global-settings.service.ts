@@ -5,4 +5,5 @@ import { Injectable } from "@angular/core";
 })
 export class GlobalSettingsService {
   public conditionsAlwaysOpen: boolean = true;
+  public showMiniMap: boolean = false;
 }
