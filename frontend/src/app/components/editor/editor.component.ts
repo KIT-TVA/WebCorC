@@ -24,9 +24,6 @@ import {CBCFormula} from "../../types/CBCFormula";
 import {Router} from "@angular/router";
 import {EditorService} from "../../services/editor/editor.service";
 import {RenamingComponent} from "./renaming/renaming.component";
-import {MatTab, MatTabGroup, MatTabLabel} from "@angular/material/tabs";
-import {AiChatComponent} from "../ai-chat/ai-chat.component";
-import {ConsoleComponent} from "../console/console.component";
 import {StatementDelegatorComponent} from "./statements/statement-delegator/statement-delegator.component";
 import {AbstractStatementNode} from "../../types/statements/nodes/abstract-statement-node";
 import {
@@ -38,6 +35,7 @@ import {
   VflowComponent,
 } from "ngx-vflow";
 import {EditorSidemenuComponent} from "./editor-sidemenu/editor-sidemenu.component";
+import {EditorBottommenuComponent} from "./editor-bottommenu/editor-bottommenu.component";
 
 /**
  * Component to edit {@link CBCFormula} by editing a grahical representation based of the statement components like {@link SimpleStatementComponent}.
@@ -53,16 +51,12 @@ import {EditorSidemenuComponent} from "./editor-sidemenu/editor-sidemenu.compone
     MatExpansionModule,
     MatTooltipModule,
     MatMenuModule,
-    MatTab,
-    MatTabGroup,
-    MatTabLabel,
-    AiChatComponent,
-    ConsoleComponent,
     StatementDelegatorComponent,
     VflowComponent,
     NodeHtmlTemplateDirective,
     MiniMapComponent,
     EditorSidemenuComponent,
+    EditorBottommenuComponent,
   ],
   templateUrl: "./editor.component.html",
   standalone: true,
