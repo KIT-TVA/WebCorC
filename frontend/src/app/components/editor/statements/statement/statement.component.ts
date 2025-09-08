@@ -23,9 +23,10 @@ import { AbstractStatement } from "../../../../types/statements/abstract-stateme
 import { AbstractStatementNode } from "../../../../types/statements/nodes/abstract-statement-node";
 import { HandleComponent } from "ngx-vflow";
 import { GridTileBorderDirective } from "../../../../directives/grid-tile-border.directive";
-import {Card} from "primeng/card";
-import {Button} from "primeng/button";
-import {Toolbar} from "primeng/toolbar";
+import { Card } from "primeng/card";
+import { Button } from "primeng/button";
+import { Toolbar } from "primeng/toolbar";
+import { GlobalSettingsService } from "../../../../services/global-settings.service";
 
 /**
  * Component to present the statements.
@@ -73,7 +74,10 @@ export class StatementComponent {
   @ViewChild("preconditionDiv") private preconditionDivRef!: ElementRef;
   @ViewChild("postconditionDiv") private postconditionDivRef!: ElementRef;
 
-  constructor(private treeService: TreeService) {}
+  constructor(
+    private treeService: TreeService,
+    public globalSettingsService: GlobalSettingsService,
+  ) {}
 
   public deleteRefinement(): void {
     this.treeService.deleteStatementNode(this._node);

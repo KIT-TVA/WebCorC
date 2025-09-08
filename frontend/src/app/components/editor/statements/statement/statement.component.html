@@ -33,71 +33,88 @@
   </ng-template>
 
   <div style="display: flex">
-    <div appGtBorder #preconditionDiv style="width: 50px; min-height: 140px">
-      <mat-drawer-container class="example-container" autosize>
-        <mat-drawer #preconditionDrawer class="example-sidenav" mode="side">
-          <div class="conditionParent">
-            <app-condition-editor
-              [(condition)]="_node.precondition"
-              [editable]="_node.preconditionEditable()"
-            ></app-condition-editor>
-          </div>
-        </mat-drawer>
+    @if (!globalSettingsService.conditionsAlwaysOpen) {
+      <div appGtBorder #preconditionDiv style="width: 50px; min-height: 140px">
+        <mat-drawer-container class="example-container" autosize>
+          <mat-drawer #preconditionDrawer class="example-sidenav" mode="side">
+            <div class="conditionParent">
+              <app-condition-editor
+                [(condition)]="_node.precondition"
+                [editable]="_node.preconditionEditable()"
+              ></app-condition-editor>
+            </div>
+          </mat-drawer>
 
-        <mat-drawer-content class="example-sidenav-content">
-          <p-button
-            text
-            severity="secondary"
-            (click)="toggleConditionEditorView(false)"
-            class="verticalButton bottomRight"
-            iconPos="right"
-            [icon]="
-              preconditionDrawer.opened
-                ? 'pi pi-chevron-down'
-                : 'pi pi-chevron-up'
-            "
-            label="Precondition"
-          >
-          </p-button>
-        </mat-drawer-content>
-      </mat-drawer-container>
-    </div>
+          <mat-drawer-content class="example-sidenav-content">
+            <p-button
+              text
+              severity="secondary"
+              (click)="toggleConditionEditorView(false)"
+              class="verticalButton bottomRight"
+              iconPos="right"
+              [icon]="
+                preconditionDrawer.opened
+                  ? 'pi pi-chevron-down'
+                  : 'pi pi-chevron-up'
+              "
+              label="Precondition"
+            >
+            </p-button>
+          </mat-drawer-content>
+        </mat-drawer-container>
+      </div>
+    } @else {
+      <div style="width: fit-content" class="conditionParent">
+        <app-condition-editor
+          [(condition)]="_node.precondition"
+          [editable]="_node.preconditionEditable()"
+        ></app-condition-editor>
+      </div>
+    }
 
     <div style="display: flex; align-items: center">
       <ng-content></ng-content>
     </div>
-
-    <div appGtBorder #postconditionDiv style="width: 50px">
-      <mat-drawer-container class="example-container" autosize>
-        <mat-drawer
-          #postconditionDrawer
-          class="example-sidenav"
-          mode="side"
-          position="end"
-        >
-          <div class="conditionParent">
-            <app-condition-editor
-              [(condition)]="_node.postcondition"
-              [editable]="_node.postconditionEditable()"
-            ></app-condition-editor>
-          </div>
-        </mat-drawer>
-        <mat-drawer-content class="example-sidenav-content">
-          <p-button
-            text
-            severity="secondary"
-            (click)="toggleConditionEditorView(true)"
-            class="verticalButton bottomRight"
-            [icon]="
-              postconditionDrawer.opened
-                ? 'pi pi-chevron-up'
-                : 'pi pi-chevron-down'
-            "
-            label="Postcondition"
+    @if (!globalSettingsService.conditionsAlwaysOpen) {
+      <div appGtBorder #postconditionDiv style="width: 50px">
+        <mat-drawer-container class="example-container" autosize>
+          <mat-drawer
+            #postconditionDrawer
+            class="example-sidenav"
+            mode="side"
+            position="end"
           >
-          </p-button>
-        </mat-drawer-content>
-      </mat-drawer-container>
-    </div>
+            <div class="conditionParent">
+              <app-condition-editor
+                [(condition)]="_node.postcondition"
+                [editable]="_node.postconditionEditable()"
+              ></app-condition-editor>
+            </div>
+          </mat-drawer>
+          <mat-drawer-content class="example-sidenav-content">
+            <p-button
+              text
+              severity="secondary"
+              (click)="toggleConditionEditorView(true)"
+              class="verticalButton bottomRight"
+              [icon]="
+                postconditionDrawer.opened
+                  ? 'pi pi-chevron-up'
+                  : 'pi pi-chevron-down'
+              "
+              label="Postcondition"
+            >
+            </p-button>
+          </mat-drawer-content>
+        </mat-drawer-container>
+      </div>
+    } @else {
+      <div style="width: fit-content" class="conditionParent">
+        <app-condition-editor
+          [(condition)]="_node.postcondition"
+          [editable]="_node.postconditionEditable()"
+        ></app-condition-editor>
+      </div>
+    }
   </div>
 </p-card>

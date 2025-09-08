@@ -375,7 +375,7 @@ export class ProjectExplorerComponent {
   }
 
   public importProject() {
-    this.dialog.open(ImportProjectDialogComponent);
+    this.dialogService.open(ImportProjectDialogComponent, { data: { parentURN: "/" }, header: "Import Project", modal: true });
   }
 
   setExpanded(event: TreeNodeExpandEvent) {

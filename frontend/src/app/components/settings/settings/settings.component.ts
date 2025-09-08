@@ -1,0 +1,27 @@
+import { Component } from "@angular/core";
+import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { ToggleSwitch } from "primeng/toggleswitch";
+import { Fieldset } from "primeng/fieldset";
+import { Button } from "primeng/button";
+import { FormsModule } from "@angular/forms";
+import { GlobalSettingsService } from "../../../services/global-settings.service";
+
+@Component({
+  selector: "app-settings",
+  imports: [ToggleSwitch, Fieldset, Button, FormsModule],
+  templateUrl: "./settings.component.html",
+  styleUrl: "./settings.component.scss",
+})
+export class SettingsComponent {
+  constructor(
+    public ref: DynamicDialogRef,
+    public config: DynamicDialogConfig,
+    public globalSettingsService: GlobalSettingsService,
+  ) {}
+
+  switchTheme() {
+    const element = document.querySelector("html");
+    console.log("theme", element);
+    element?.classList.toggle("dark-mode");
+  }
+}

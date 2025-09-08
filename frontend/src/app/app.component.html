@@ -1,7 +1,20 @@
 <p-toolbar style="border: none; border-radius: 0">
   <ng-template #start>
-    <p-button icon="pi pi-bars" text severity="contrast" (click)="drawer.toggle()"> </p-button>
-    <p-button text severity="contrast" [style]="{paddingLeft: '1rem', fontWeight: 'bold'}" (click)="router.navigateByUrl('/')"> WebCorC </p-button>
+    <p-button
+      icon="pi pi-bars"
+      text
+      severity="contrast"
+      (click)="drawer.toggle()"
+    >
+    </p-button>
+    <p-button
+      text
+      severity="contrast"
+      [style]="{ paddingLeft: '1rem', fontWeight: 'bold' }"
+      (click)="router.navigateByUrl('/')"
+    >
+      WebCorC
+    </p-button>
   </ng-template>
   <ng-template #center>
     <p-iconfield iconPosition="left">
@@ -15,8 +28,7 @@
   </ng-template>
   <ng-template #end>
     <div style="display: flex; gap: 1rem">
-      <p-toggle-button offLabel="dark" onLabel="light" offIcon="pi pi-moon" onIcon="pi pi-sun" (onChange)="switchTheme()">
-      </p-toggle-button>
+      <app-settings-button />
       <p-button (click)="share()">
         <i class="pi pi-share-alt"></i>
         Share

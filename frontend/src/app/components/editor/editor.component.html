@@ -1,76 +1,46 @@
-<div class="sideMenuContainer">
-    <mat-drawer-container [style.height]="'100%'">
-        <mat-drawer #drawer class="sideMenu" mode="side" position="end">
-            <mat-accordion multi="">
-                <mat-expansion-panel>
-                    <mat-expansion-panel-header expanded="false">
-                        <mat-panel-title> Actions</mat-panel-title>
-                    </mat-expansion-panel-header>
-                    <app-options></app-options>
-                </mat-expansion-panel>
-                <mat-expansion-panel>
-                    <mat-expansion-panel-header expanded="false">
-                        <mat-panel-title> Renaming</mat-panel-title>
-                    </mat-expansion-panel-header>
-                    <app-renaming #renaming></app-renaming>
-                </mat-expansion-panel>
-                <mat-expansion-panel>
-                    <mat-expansion-panel-header expanded="true">
-                        <mat-panel-title>
-                            Global Conditions
-                        </mat-panel-title>
-                    </mat-expansion-panel-header>
-                    <app-global-conditions #conditions></app-global-conditions>
-                </mat-expansion-panel>
-                <mat-expansion-panel expanded="true">
-                    <mat-expansion-panel-header>
-                        <mat-panel-title>
-                            Java Variables
-                        </mat-panel-title>
-                    </mat-expansion-panel-header>
-                    <app-variables #variables></app-variables>
-                </mat-expansion-panel>
-            </mat-accordion>
-        </mat-drawer>
-        <button mat-icon-button class="toggleButton" (click)="drawer.toggle()">
-            <mat-icon>{{ drawer.opened ? 'chevron_right' : 'chevron_left' }}</mat-icon>
-        </button>
-    </mat-drawer-container>
-</div>
-<div class="bottomContainer">
-    <mat-tab-group animationDuration="0" mat-stretch-tabs=false mat-align-tabs="end">
-        <mat-tab class="tabContent">
-            <ng-template mat-tab-label>
-                <mat-icon>terminal</mat-icon>
-            </ng-template>
-            <app-console class="tabContent"></app-console>
-        </mat-tab>
-        <mat-tab class="tabContent">
-            <ng-template mat-tab-label>
-                <mat-icon>psychology_alt</mat-icon>
-            </ng-template>
-            <app-ai-chat class="tabContent"></app-ai-chat>
-        </mat-tab>
-        <mat-tab #minimize>
-            <ng-template mat-tab-label>
-                <mat-icon>keyboard_arrow_down</mat-icon>
-            </ng-template>
-        </mat-tab>
-    </mat-tab-group>
-</div>
-<div id="editorContainer" #editorContainer>
-    <!-- Control elements for the scrollWidth and scrollHeight of the editor container -->
-    <div id="editorWidthController"></div>
-    <div id="editorHeightController"></div>
-
-    <!-- Render container for the trees root -->
-    <vflow view="auto" [nodes]="nodes" [edges]="edges" [connection]="{curve: 'smooth-step'}" (onNodesChange.position)="handlePositionChange($event)" [background]="{ backgroundColor: 'var(--p-background)', type: 'dots' }" [snapGrid]="[25, 25]">
+<div
+  style="
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-items: stretch;
+  "
+>
+  <div
+    style="
+      display: flex;
+      flex: auto;
+      justify-items: stretch;
+      align-items: stretch;
+    "
+  >
+    <div id="editorContainer" #editorContainer>
+      <!-- Render container for the trees root -->
+      <vflow
+        view="auto"
+        [nodes]="nodes"
+        [edges]="edges"
+        [connection]="{ curve: 'smooth-step' }"
+        (onNodesChange.position)="handlePositionChange($event)"
+        [background]="{ backgroundColor: 'var(--p-background)', type: 'dots' }"
+        [snapGrid]="[25, 25]"
+      >
         <ng-template let-ctx nodeHtml style="width: fit-content">
-            <app-statement-delegator [statement]="ctx.node.data()">
-            </app-statement-delegator>
+          <app-statement-delegator [statement]="ctx.node.data()">
+          </app-statement-delegator>
         </ng-template>
-        <mini-map [position]="'top-right'"/>
-    </vflow>
-    <!-- Spawn for examples -->
-    <ng-template #examplesSpawn></ng-template>
+        @if (globalSettingsService.showMiniMap) {
+          <mini-map [position]="'top-right'" />
+        }
+      </vflow>
+    </div>
+    <app-editor-sidemenu
+      style="height: auto; position: relative; justify-self: right"
+    ></app-editor-sidemenu>
+  </div>
+  <div class="bottomContainer">
+    <app-editor-bottommenu />
+  </div>
 </div>

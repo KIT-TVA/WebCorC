@@ -11,26 +11,21 @@ import {
   ViewContainerRef,
 } from "@angular/core";
 
-import { MatButtonModule } from "@angular/material/button";
-import { TreeService } from "../../services/tree/tree.service";
-import { MatIconModule } from "@angular/material/icon";
-import { MatExpansionModule } from "@angular/material/expansion";
-import { VariablesComponent } from "./variables/variables.component";
-import { MatTooltipModule } from "@angular/material/tooltip";
-import { MatMenuModule } from "@angular/material/menu";
-import { GlobalConditionsComponent } from "./global-conditions/global-conditions.component";
-import { ProjectService } from "../../services/project/project.service";
-import { CBCFormula } from "../../types/CBCFormula";
-import { Router } from "@angular/router";
-import { OptionsComponent } from "./options/options.component";
-import { EditorService } from "../../services/editor/editor.service";
-import { RenamingComponent } from "./renaming/renaming.component";
-import { MatTab, MatTabGroup, MatTabLabel } from "@angular/material/tabs";
-import { AiChatComponent } from "../ai-chat/ai-chat.component";
-import { ConsoleComponent } from "../console/console.component";
-import { MatDrawer, MatDrawerContainer } from "@angular/material/sidenav";
-import { StatementDelegatorComponent } from "./statements/statement-delegator/statement-delegator.component";
-import { AbstractStatementNode } from "../../types/statements/nodes/abstract-statement-node";
+import {MatButtonModule} from "@angular/material/button";
+import {TreeService} from "../../services/tree/tree.service";
+import {MatIconModule} from "@angular/material/icon";
+import {MatExpansionModule} from "@angular/material/expansion";
+import {VariablesComponent} from "./variables/variables.component";
+import {MatTooltipModule} from "@angular/material/tooltip";
+import {MatMenuModule} from "@angular/material/menu";
+import {GlobalConditionsComponent} from "./global-conditions/global-conditions.component";
+import {ProjectService} from "../../services/project/project.service";
+import {CBCFormula} from "../../types/CBCFormula";
+import {Router} from "@angular/router";
+import {EditorService} from "../../services/editor/editor.service";
+import {RenamingComponent} from "./renaming/renaming.component";
+import {StatementDelegatorComponent} from "./statements/statement-delegator/statement-delegator.component";
+import {AbstractStatementNode} from "../../types/statements/nodes/abstract-statement-node";
 import {
   DynamicNode,
   Edge,
@@ -39,6 +34,9 @@ import {
   NodePositionChange,
   VflowComponent,
 } from "ngx-vflow";
+import {EditorSidemenuComponent} from "./editor-sidemenu/editor-sidemenu.component";
+import {EditorBottommenuComponent} from "./editor-bottommenu/editor-bottommenu.component";
+import {GlobalSettingsService} from "../../services/global-settings.service";
 
 /**
  * Component to edit {@link CBCFormula} by editing a grahical representation based of the statement components like {@link SimpleStatementComponent}.
@@ -52,24 +50,15 @@ import {
     MatButtonModule,
     MatIconModule,
     MatExpansionModule,
-    VariablesComponent,
     MatTooltipModule,
     MatMenuModule,
-    GlobalConditionsComponent,
-    OptionsComponent,
-    RenamingComponent,
-    MatTab,
-    MatTabGroup,
-    MatTabLabel,
-    AiChatComponent,
-    ConsoleComponent,
-    MatDrawerContainer,
-    MatDrawer,
     StatementDelegatorComponent,
     VflowComponent,
     NodeHtmlTemplateDirective,
-    MiniMapComponent
-],
+    MiniMapComponent,
+    EditorSidemenuComponent,
+    EditorBottommenuComponent,
+  ],
   templateUrl: "./editor.component.html",
   standalone: true,
   styleUrl: "./editor.component.scss",
@@ -91,12 +80,14 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
    * @param projectService The service to persist and laod the file content
    * @param editorService
    * @param router
+   * @param globalSettingsService
    */
   public constructor(
     private treeService: TreeService,
     private projectService: ProjectService,
     private editorService: EditorService,
     private router: Router,
+    protected globalSettingsService: GlobalSettingsService
   ) {
     this.projectService.editorNotify.subscribe(() => {
       this.saveContentToFile();
