@@ -32,7 +32,7 @@ public class Statement extends AbstractStatement {
     @Override
     public boolean prove(ProofContext proofContext) {
         KeYProofGenerator proofGenerator = new KeYProofGenerator(proofContext);
-        KeYProof proof = proofGenerator.generateProof(this);
+        KeYProof proof = proofGenerator.generateStatement(this);
 
         this.isProven = proof.execute();
 

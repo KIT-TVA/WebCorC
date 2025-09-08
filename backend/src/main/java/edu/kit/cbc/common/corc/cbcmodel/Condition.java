@@ -8,6 +8,7 @@ import edu.kit.cbc.common.corc.parsing.condition.ConditionPrinter;
 import edu.kit.cbc.common.corc.parsing.condition.JMLConditionPrinter;
 import edu.kit.cbc.common.corc.parsing.lexer.Lexer;
 import edu.kit.cbc.common.corc.parsing.parser.ast.Tree;
+import edu.kit.cbc.common.corc.parsing.lexer.Operator;
 import io.micronaut.serde.annotation.Serdeable;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -58,6 +59,13 @@ public class Condition {
 
     public String asJML() {
         return JMLConditionPrinter.print(this.parsedCondition);
+    }
+
+    public static Condition fromString(String conditionString) {
+        Condition condition = new Condition();
+        condition.setCondition(conditionString);
+
+        return condition;
     }
 
     public static Condition fromListToConditionOr(List<Condition> conditions) {
