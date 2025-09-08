@@ -1,6 +1,7 @@
 import {
   HttpClient,
   HttpErrorResponse,
+  HttpHeaders,
   HttpParams,
 } from "@angular/common/http";
 import { Injectable } from "@angular/core";
@@ -12,6 +13,7 @@ import { NetworkStatusService } from "../../networkStatus/network-status.service
 import { ConsoleService } from "../../console/console.service";
 import { ProjectService } from "../../project/project.service";
 import { CbcFormulaMapperService } from "../../project/mapper/cbc-formula-mapper.service";
+import { WebSocketService } from "./websocket";
 
 /**
  * The Service to send the editor contents over the network to the backend for verification or code generation.
@@ -23,6 +25,8 @@ import { CbcFormulaMapperService } from "../../project/mapper/cbc-formula-mapper
 })
 export class NetworkTreeService {
   private static readonly verifyPath = "/editor/verify";
+  private static readonly verifyWebSocketPath = "/ws/verify/";
+  private static readonly verifyResultPath = "/editor/jobs/";
   private static readonly generatePath = "/editor/javaGen";
 
   constructor(
@@ -47,25 +51,41 @@ export class NetworkTreeService {
     }
 
     this.networkStatusService.startNetworkRequest();
-    //Todo: Websocket?
+
     this.http
-      .post<ICBCFormula>(
+      .post<string>(
         environment.apiUrl + NetworkTreeService.verifyPath,
         root,
         { params: params },
-      )
-      .pipe(map((formula) => this.mapper.importFormula(formula)))
-      .pipe(
-        catchError((error: HttpErrorResponse): Observable<CBCFormula> => {
+      ).pipe(
+        catchError((error: HttpErrorResponse): Observable<string> => {
           this.consoleService.addErrorResponse(error, "Verification failed");
           this.networkStatusService.stopNetworkRequest();
           return of();
         }),
-      )
-      .subscribe((formula: CBCFormula) => {
-        this.verificationService.next(formula);
-        this.networkStatusService.stopNetworkRequest();
-        this.projectService.downloadWorkspace();
+      ).subscribe((uuid: string) => {
+        let ws = new WebSocketService(
+          environment.apiUrl + NetworkTreeService.verifyWebSocketPath + uuid
+        );
+        ws.messages$.subscribe((msg: string) => {
+          if (msg === "verification complete") {
+            ws.disconnect();
+            this.networkStatusService.startNetworkRequest();
+            this.http.get<ICBCFormula>(
+              environment.apiUrl + NetworkTreeService.verifyResultPath + uuid
+            ).pipe(
+              map((formula) => this.mapper.importFormula(formula))
+            ).subscribe(
+              (formula: CBCFormula) => {
+                this.verificationService.next(formula);
+                this.networkStatusService.stopNetworkRequest()
+                this.projectService.downloadWorkspace()
+              }
+            )
+          }
+          //TODO: consoleService needs an endpoint for non-errors
+          this.consoleService.addStringError("", msg);
+        })
       });
   }
 

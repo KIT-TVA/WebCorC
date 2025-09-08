@@ -11,6 +11,13 @@ public record Problem(String type, String title, int status, String detail, Stri
             "This endpoint has not been implemented yet",
             "about:blank");
 
+    public static final Problem JOB_NOT_FINISHED = new Problem(
+            "about:blank",
+            "Job not finished",
+            501,
+            "Job was not found or has not finished yet",
+            "about:blank");
+
     /**
      * Returns a {@link Problem} that includes the details of the parsing error.
      * @param detailedError the description of the error

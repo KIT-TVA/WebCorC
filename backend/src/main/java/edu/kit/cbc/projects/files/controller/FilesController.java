@@ -148,7 +148,7 @@ public class FilesController {
             .header(HttpHeaders.ETAG, response.getETag());
     }
 
-    public void uploadBytes(byte[] bytes, String id, Path uploadPath) throws IOException {
+    public void uploadBytes(byte[] bytes, String id, Path uploadPath) {
         if (!projectService.existsById(id)) {
             return;
         }
