@@ -1,6 +1,7 @@
 package edu.kit.cbc.common.corc.cbcmodel.statements;
 
 import edu.kit.cbc.common.corc.cbcmodel.Condition;
+import edu.kit.cbc.common.corc.parsing.condition.ConditionPrinter;
 import edu.kit.cbc.common.corc.proof.ProofContext;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,5 +32,17 @@ public class SmallRepetitionStatement extends AbstractStatement {
         }
 
         return false;
+    }
+
+    @Override
+    public String generate() {
+        final String whilePattern = """
+            while (%s) {
+                %s
+            }
+            
+            """;
+
+        return String.format(whilePattern, ConditionPrinter.print(guard.getParsedCondition()), loopStatement.generate());
     }
 }

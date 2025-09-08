@@ -37,6 +37,10 @@ public final class ProgramPrinter {
     }
 
     private void printTree(Tree tree) {
+        if (tree == null) {
+            throw new IllegalArgumentException("tree is null");
+        }
+
         switch (tree) {
             case BinaryOperationTree(Tree lhs, Tree rhs, Operator.OperatorType type) -> {
                 print("(");

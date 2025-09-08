@@ -2,6 +2,7 @@ package edu.kit.cbc.editor;
 
 import edu.kit.cbc.common.corc.FileUtil;
 import edu.kit.cbc.common.corc.cbcmodel.CbCFormula;
+import edu.kit.cbc.common.corc.codegeneration.CodeGenerator;
 import edu.kit.cbc.common.corc.proof.ProofContext;
 import edu.kit.cbc.editor.llm.LLMQueryDto;
 import edu.kit.cbc.editor.llm.LLMResponse;
@@ -149,8 +150,9 @@ public class EditorController {
     @Post(uri = "/javaGen")
     @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.APPLICATION_JSON)
-    public HttpResponse<?> javaGen(@QueryValue Optional<String> projectId, @Body String cbcFormulaString) {
-        return HttpResponse.serverError("NOT IMPLEMENTED");
+    public HttpResponse<?> javaGen(@QueryValue Optional<String> projectId, @Body CbCFormula cbcFormula) {
+
+        return HttpResponse.ok(CodeGenerator.generate(cbcFormula));
     }
 
     @Get(uri = "/jobs/{id}")

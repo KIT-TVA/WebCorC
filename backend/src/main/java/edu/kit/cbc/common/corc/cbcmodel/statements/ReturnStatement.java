@@ -10,4 +10,10 @@ public class ReturnStatement extends AbstractStatement {
     public boolean prove(ProofContext proofContext) {
         throw new UnsupportedOperationException("Proving a Return Statement is not yet supported by this kernel");
     }
+
+    @Override
+    public String generate() {
+        //TODO
+        return "return TODO";
+    }
 }

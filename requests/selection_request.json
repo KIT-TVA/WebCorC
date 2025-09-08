@@ -4,17 +4,17 @@
         "name": "Selection1",
         "type": "selection_statement",
         "preCondition": {
-            "condition": "i=0"
+            "condition": "i==0"
         },
         "postCondition": {
-          "condition": "i=1 | i=2"
+          "condition": "i==1 | i==2"
         },
         "guards": [
             {
-                "condition": "i=0"
+                "condition": "i==0"
             },
             {
-                "condition": "i=1"
+                "condition": "i==1"
             }
         ],
         "commands": [
@@ -22,11 +22,11 @@
                 "name": "Statement1",
                 "type": "statement",
                 "preCondition": {
-                    "condition": "i=0"
+                    "condition": "i==0"
                 },
-                "programStatement": "i=1",
+                "programStatement": "i=1;",
                 "postCondition": {
-                    "condition": "i=1"
+                    "condition": "i==1"
                 },
                 "isProven": false
             },
@@ -34,11 +34,11 @@
                 "name": "Statement2",
                 "type": "statement",
                 "preCondition": {
-                    "condition": "i=1"
+                    "condition": "i==1"
                 },
-                "programStatement": "i=2",
+                "programStatement": "i=2;",
                 "postCondition": {
-                    "condition": "i=2"
+                    "condition": "i==2"
                 },
                 "isProven": false
             }

@@ -7,4 +7,9 @@ public class SkipStatement extends AbstractStatement {
     public boolean prove(ProofContext proofContext) {
         return true;
     }
+
+    @Override
+    public String generate() {
+        return "";
+    }
 }

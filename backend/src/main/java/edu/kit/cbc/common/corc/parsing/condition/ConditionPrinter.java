@@ -37,19 +37,23 @@ public final class ConditionPrinter {
     private void printTree(Tree tree) {
         switch (tree) {
             case BinaryOperationTree(Tree lhs, Tree rhs, Operator.OperatorType type) -> {
-                print("(");
-                printTree(lhs);
-                print(")");
-                space();
-                if (type == Operator.OperatorType.EQUAL) {
-                    this.builder.append("=");
+                if (lhs instanceof  BinaryOperationTree || lhs instanceof UnaryOperationTree) {
+                    print("(");
+                    printTree(lhs);
+                    print(")");
                 } else {
-                    this.builder.append(type);
+                    printTree(lhs);
                 }
                 space();
-                print("(");
-                printTree(rhs);
-                print(")");
+                this.builder.append(type);
+                space();
+                if (rhs instanceof  BinaryOperationTree || rhs instanceof UnaryOperationTree) {
+                    print("(");
+                    printTree(rhs);
+                    print(")");
+                } else {
+                    printTree(rhs);
+                }
             }
             case UnaryOperationTree(Tree lhs, Operator.OperatorType type) -> {
                 this.builder.append(type);
