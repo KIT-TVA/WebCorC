@@ -40,7 +40,7 @@ public final class KeYProofGenerator {
                 )
             )
         );
-        proofBuilder.programStatement(parent.getLoopStatement())
+        proofBuilder.programStatement(parent.getLoopStatement().generate());
 
         return proofBuilder.build();
     }

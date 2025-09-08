@@ -2,6 +2,8 @@ package edu.kit.cbc.common.corc.cbcmodel.statements;
 
 import edu.kit.cbc.common.corc.cbcmodel.Condition;
 import edu.kit.cbc.common.corc.parsing.condition.ConditionPrinter;
+import edu.kit.cbc.common.corc.proof.KeYProof;
+import edu.kit.cbc.common.corc.proof.KeYProofGenerator;
 import edu.kit.cbc.common.corc.proof.ProofContext;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,7 +22,7 @@ public class SmallRepetitionStatement extends AbstractStatement {
 
     @Override
     public boolean prove(ProofContext proofContext) {
-
+        KeYProofGenerator proofGenerator = new KeYProofGenerator(proofContext);
         /*First Step: Prove that loop statement is correct*/
         if (!loopStatement.prove(proofContext)) {
             System.out.println("[ERROR] Proving the loop statement of statement \"" + this.getName() + "\" failed!");
@@ -29,6 +31,7 @@ public class SmallRepetitionStatement extends AbstractStatement {
 
         if (!isVariantProven) {
 
+            KeYProof variantProof = proofGenerator.generateVariantProof(variant, invariant, guard, this);
         }
 
         return false;
