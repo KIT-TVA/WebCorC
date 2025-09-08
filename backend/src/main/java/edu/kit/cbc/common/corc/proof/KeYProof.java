@@ -2,6 +2,7 @@ package edu.kit.cbc.common.corc.proof;
 
 import de.uka.ilkd.key.proof.Proof;
 import edu.kit.cbc.common.corc.KeYInteraction;
+import edu.kit.cbc.common.corc.cbcmodel.Assignment;
 import edu.kit.cbc.common.corc.cbcmodel.Condition;
 import edu.kit.cbc.common.corc.cbcmodel.JavaVariable;
 import io.micronaut.serde.annotation.Serdeable;
@@ -27,7 +28,7 @@ public class KeYProof {
         \\problem{(
             %s
             %s
-            & wellFormed(heap)) -> {heapAtPre := heap}
+            & wellFormed(heap)) -> {heapAtPre := heap %s}
         \\<{%s;}\\>
         (%s)
         }
@@ -46,6 +47,7 @@ public class KeYProof {
     private final String programStatement;
     private final List<JavaVariable> programVariables;
     private final List<Condition> globalConditions;
+    private final List<Assignment> additionalAssignments;
 
     public boolean execute() {
         try {
@@ -88,7 +90,13 @@ public class KeYProof {
     }
 
     private String printKeYBody() {
-        return String.format(KEY_BODY, preCondition, printGlobalConditions(), programStatement, postCondition);
+        StringBuilder assignments = new StringBuilder();
+        for (Assignment ass : this.additionalAssignments) {
+            assignments.append(String.format("|| %s := %s", ass.variableName(), ass.assign()));
+        }
+
+        return String.format(KEY_BODY, preCondition, printGlobalConditions(), assignments,
+            programStatement, postCondition);
     }
 
     private String printProgramVariables() {

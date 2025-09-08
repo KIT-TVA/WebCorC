@@ -6,6 +6,7 @@ import edu.kit.cbc.common.corc.parsing.condition.ConditionParser;
 import edu.kit.cbc.common.corc.parsing.condition.ast.ConditionTree;
 import edu.kit.cbc.common.corc.parsing.lexer.ConditionLexer;
 import edu.kit.cbc.common.corc.parsing.lexer.Lexer;
+import edu.kit.cbc.common.corc.parsing.lexer.Operator;
 import io.micronaut.serde.annotation.Serdeable;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,7 +28,6 @@ public class Condition {
 
     public void setCondition(String condition) {
         this.condition = condition;
-        System.out.println("TEST");
         Lexer lexer = ConditionLexer.forString(condition);
         TokenSource source = new TokenSource(lexer);
         ConditionParser parser = new ConditionParser(source);
@@ -49,6 +49,13 @@ public class Condition {
     @Override
     public String toString() {
         return this.condition;
+    }
+
+    public static Condition fromString(String conditionString) {
+        Condition condition = new Condition();
+        condition.setCondition(conditionString);
+
+        return condition;
     }
 
     public static Condition fromListToConditionOr(List<Condition> conditions) {

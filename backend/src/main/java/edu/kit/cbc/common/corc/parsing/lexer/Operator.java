@@ -1,6 +1,7 @@
 package edu.kit.cbc.common.corc.parsing.lexer;
 
 import java.util.EnumSet;
+import lombok.Getter;
 
 public record Operator(OperatorType type) implements Token {
 
@@ -31,15 +32,12 @@ public record Operator(OperatorType type) implements Token {
 
 
         private final String value;
+        @Getter
         private final int precedence;
 
         OperatorType(String value, int precedence) {
             this.value = value;
             this.precedence = precedence;
-        }
-
-        public int getPrecedence() {
-            return precedence;
         }
 
         @Override

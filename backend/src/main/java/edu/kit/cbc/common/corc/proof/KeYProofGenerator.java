@@ -1,16 +1,19 @@
 package edu.kit.cbc.common.corc.proof;
 
+import edu.kit.cbc.common.corc.cbcmodel.Assignment;
 import edu.kit.cbc.common.corc.cbcmodel.CbCFormula;
 import edu.kit.cbc.common.corc.cbcmodel.Condition;
 import edu.kit.cbc.common.corc.cbcmodel.JavaVariable;
 import edu.kit.cbc.common.corc.cbcmodel.JavaVariableKind;
 import edu.kit.cbc.common.corc.cbcmodel.Renaming;
 import edu.kit.cbc.common.corc.cbcmodel.statements.AbstractStatement;
+import edu.kit.cbc.common.corc.cbcmodel.statements.SmallRepetitionStatement;
 import edu.kit.cbc.common.corc.cbcmodel.statements.Statement;
 import edu.kit.cbc.common.corc.proof.KeYProof.KeYProofBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
+import org.antlr.codegen.CodeGenerator;
 
 public final class KeYProofGenerator {
 
@@ -21,7 +24,7 @@ public final class KeYProofGenerator {
     }
 
 
-    public KeYProof generateVariantProof(Condition variant, Condition invariant, Condition guard, AbstractStatement parent) {
+    public KeYProof generateVariantProof(Condition variant, Condition invariant, Condition guard, SmallRepetitionStatement parent) {
         KeYProofBuilder proofBuilder = this.generateBasicProof(parent);
 
         List<JavaVariable> javaVariables = new ArrayList<>(this.proofContext.getCbCFormula().getJavaVariables());
@@ -29,7 +32,15 @@ public final class KeYProofGenerator {
         proofBuilder.programVariables(filterProgramVariables(javaVariables));
 
         proofBuilder.preCondition(Condition.fromListToConditionAnd(List.of(invariant, guard)));
-        //TODO: More on Variants. Code Generation for Loop Body. Assigns in KeYHeader?
+        proofBuilder.additionalAssignments(List.of(new Assignment("variant", variant.getCondition())));
+        proofBuilder.postCondition(
+            Condition.fromListToConditionAnd(List.of(
+                Condition.fromString(String.format("(%s) < variant", variant.getCondition())),
+                Condition.fromString(String.format("(%s) >= 0", variant.getCondition()))
+                )
+            )
+        );
+        proofBuilder.programStatement(parent.getLoopStatement())
 
         return proofBuilder.build();
     }
@@ -58,8 +69,8 @@ public final class KeYProofGenerator {
      * @param statement the statement that we want the KeYProof to generate for
      * @return the KeY proof generated from the statement
      */
-    public KeYProof generateBasicProof(Statement statement) {
-        KeYProofBuilder proofBuilder =  new KeYProofBuilder();
+    public KeYProof generateStatement(Statement statement) {
+        KeYProofBuilder proofBuilder = this.generateBasicProof(statement);
         proofBuilder.programStatement(statement.getProgramStatement());
         return proofBuilder.build();
     }
@@ -79,6 +90,7 @@ public final class KeYProofGenerator {
         proofBuilder.includedFiles(this.proofContext.getIncludeFiles());
         proofBuilder.existingProofFiles(this.proofContext.getExistingProofFiles());
         proofBuilder.proofFolder(this.proofContext.getProofFolder());
+        proofBuilder.additionalAssignments(List.of());
 
         proofBuilder.statementName(statement.getName());
 
