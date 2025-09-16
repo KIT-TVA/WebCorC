@@ -1,0 +1,38 @@
+<p-fluid
+  style="display: flex; flex-direction: column; gap: 1rem; padding: 0.5rem"
+>
+  <p-input-group>
+    <p-select placeholder="Select Predicate"> </p-select>
+    <p-button icon="pi pi-plus" label="New"></p-button>
+  </p-input-group>
+  <p-float-label variant="on">
+    <input id="predicateName" pInputText />
+    <label for="predicateName">Name</label>
+  </p-float-label>
+  <p-float-label variant="on">
+    <input id="predicateSignature" pInputText />
+    <label for="predicateSignature">Signature</label>
+  </p-float-label>
+  <p-float-label variant="on">
+    <textarea id="predicateDefinition" pTextarea></textarea>
+    <label for="predicateDefinition">Definition</label>
+  </p-float-label>
+  <p-button
+    icon="pi pi-save"
+    label="Save Definition"
+    severity="primary"
+  ></p-button>
+  <p-input-group>
+    <p-button
+      icon="pi pi-refresh"
+      label="Restore Definition"
+      severity="secondary"
+    ></p-button>
+    <p-button
+      text
+      icon="pi pi-trash"
+      label="Delete Definition"
+      severity="danger"
+    ></p-button>
+  </p-input-group>
+</p-fluid>

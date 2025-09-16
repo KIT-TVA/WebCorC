@@ -13,6 +13,7 @@ import {
 } from "primeng/accordion";
 import { AiChatComponent } from "../../ai-chat/ai-chat.component";
 import { ConsoleComponent } from "../../console/console.component";
+import { PredicateManagerComponent } from "../predicate-manager/predicate-manager.component";
 
 @Component({
   selector: "app-editor-sidemenu",
@@ -31,6 +32,7 @@ import { ConsoleComponent } from "../../console/console.component";
     AccordionContent,
     AiChatComponent,
     ConsoleComponent,
+    PredicateManagerComponent,
   ],
   templateUrl: "./editor-sidemenu.component.html",
   standalone: true,
