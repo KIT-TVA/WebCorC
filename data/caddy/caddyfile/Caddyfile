@@ -8,5 +8,6 @@ corc.informatik.kit.edu {
     handle_path /api/* {
         reverse_proxy http://webcorc-backend:8080
     }
+    reverse_proxy /swagger* http://webcorc-backend:8080
     reverse_proxy http://webcorc-frontend:80
 }
