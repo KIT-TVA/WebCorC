@@ -2,8 +2,8 @@
   style="display: flex; flex-direction: column; gap: 1rem; padding: 0.5rem"
 >
   <p-input-group>
-    <p-select placeholder="Select Predicate"> </p-select>
-    <p-button icon="pi pi-plus" label="New"></p-button>
+    <p-select [(ngModel)]="selectedPredicate" [options]="predicates" optionLabel="name" placeholder="Select Predicate"> </p-select>
+    <p-button  icon="pi pi-plus" label="New" (click)="addPredicate()"></p-button>
   </p-input-group>
   <p-float-label variant="on">
     <input id="predicateName" pInputText />

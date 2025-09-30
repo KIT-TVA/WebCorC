@@ -7,6 +7,7 @@ import {
 import { CBCFormula } from "../../../types/CBCFormula";
 import { ProjectElement } from "../types/project-elements";
 import { CbcFormulaMapperService } from "../mapper/cbc-formula-mapper.service";
+import { ProjectPredicate } from "../../../types/ProjectPredicate";
 
 /**
  * Service to persist the project content in the session storage.
@@ -19,6 +20,7 @@ export class ProjectStorageService {
   private static readonly projectNameKey = "projectName";
   private static readonly projectFileTreeKey = "fileTree";
   private static readonly projectFileUrnPrefix = "_webCorc_";
+  private static readonly projectPredicatesKey = "predicates";
 
   constructor(private mapper: CbcFormulaMapperService) {}
 
@@ -93,6 +95,21 @@ export class ProjectStorageService {
     if (!storageContent) return null;
     const root: ApiDirectory = JSON.parse(storageContent);
     return this.fixDirectoryNames(new ApiDirectory("", root.content));
+  }
+
+  public getPredicates(): ProjectPredicate[] {
+    const storageContent = sessionStorage.getItem(
+      ProjectStorageService.projectPredicatesKey,
+    );
+    if (!storageContent) return [];
+    return JSON.parse(storageContent);
+  }
+
+  public setPredicates(predicates: ProjectPredicate[]) {
+    sessionStorage.setItem(
+      ProjectStorageService.projectPredicatesKey,
+      JSON.stringify(predicates),
+    );
   }
 
   /**
