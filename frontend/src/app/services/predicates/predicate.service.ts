@@ -5,18 +5,23 @@ import { ProjectPredicate } from "../../types/ProjectPredicate";
   providedIn: "root",
 })
 export class PredicateService {
-  private readonly predicates: ProjectPredicate[] = [];
+  private idCounter = 0;
+  private predicates: ProjectPredicate[] = [];
   public getPredicates() {
     return this.predicates;
   }
   public addPredicate() {
     const newPredicate: ProjectPredicate = {
-      id: "",
+      id: String(this.idCounter++),
       name: "untitled predicate",
       definition: "",
       signature: "",
     };
     this.predicates.push(newPredicate);
     return newPredicate;
+  }
+
+  public removePredicate(predicate: ProjectPredicate) {
+    this.predicates = this.predicates.filter((p) => p.id != predicate.id);
   }
 }
