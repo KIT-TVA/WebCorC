@@ -1,4 +1,4 @@
-name: Check if code compiles
+name: Check if frontend compiles
 
 on:
   push:
@@ -11,11 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-
     - name: Build frontend
       working-directory: ./frontend
       run: docker build . --file Dockerfile --tag webcorc-frontend:$(date +%s)
-
-    - name: Build backend
-      working-directory: ./backend
-      run: docker build . --file Dockerfile --tag webcorc-backend:$(date +%s)
