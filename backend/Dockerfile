@@ -1,4 +1,4 @@
-FROM maven:3.9.9 AS builder
+FROM maven:3.9.11-eclipse-temurin-21 AS builder
 COPY . /home/app
 WORKDIR /home/app
 RUN mvn mn:dockerfile -Dpackaging=docker
