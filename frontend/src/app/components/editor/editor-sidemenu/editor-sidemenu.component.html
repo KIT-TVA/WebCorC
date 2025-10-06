@@ -41,11 +41,15 @@
           <p-tabpanel [value]="3" style="display: contents">
             <app-console style="display: inline-block; width: 20rem" />
           </p-tabpanel>
+          <p-tabpanel [value]="4" style="display: contents">
+            <app-predicate-manager style="display: inline-block; width: 20rem" />
+          </p-tabpanel>
         </p-tabpanels>
       </div>
       <div
         style="
           justify-self: end;
+          width: 2rem;
           height: 100%;
           display: flex;
           flex-direction: column;
@@ -91,6 +95,19 @@
         >
           <i class="pi pi-code"></i>
           Console
+        </p-button>
+        <p-button
+          [dt]="compactButton"
+          [style.writing-mode]="'sideways-lr'"
+          [style.text-orientation]="'mixed'"
+          size="small"
+          text
+          [severity]="tabValue() == 4 ? 'primary' : 'secondary'"
+          [style.border-radius]="0"
+          (click)="setTab(4)"
+        >
+          <i class="pi pi-tags"></i>
+          Predicates
         </p-button>
       </div>
     </div>

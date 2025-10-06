@@ -4,7 +4,7 @@
       <li style="display: flex; align-content: center; gap: 2rem">
         <span> Dark Mode </span>
         <span>
-          <p-toggle-switch size="large" (onChange)="switchTheme()">
+          <p-toggle-switch size="large" [ngModel]="isDarkModeEnabled()" (onChange)="switchTheme()">
             <ng-template #handle let-checked="checked">
               <i
                 style="font-size: 0.5rem"

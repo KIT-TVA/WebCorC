@@ -31,6 +31,18 @@
       "
       ><i class="pi pi-globe"></i>Global</p-tab
     >
+    <p-tab
+      [value]="4"
+      style="
+        display: flex;
+        justify-items: center;
+        gap: 1rem;
+        align-items: center;
+      "
+    >
+      <i class="pi pi-tags"></i>
+      Predicates
+    </p-tab>
     <p-button
       icon="pi pi-minus"
       text
@@ -41,12 +53,15 @@
   </p-tablist>
   @if (tabValue() > 0) {
     <p-tabpanels>
-        <p-tabpanel [value]="1">
-            <app-console />
-        </p-tabpanel>
-        <p-tabpanel [value]="2">
-            <app-ai-chat></app-ai-chat>
-        </p-tabpanel>
+      <p-tabpanel [value]="1">
+        <app-console />
+      </p-tabpanel>
+      <p-tabpanel [value]="2">
+        <app-ai-chat></app-ai-chat>
+      </p-tabpanel>
+      <p-tabpanel [value]="4">
+        <app-predicate-manager />
+      </p-tabpanel>
     </p-tabpanels>
   }
 </p-tabs>

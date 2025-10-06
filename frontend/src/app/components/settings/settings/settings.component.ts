@@ -24,4 +24,9 @@ export class SettingsComponent {
     console.log("theme", element);
     element?.classList.toggle("dark-mode");
   }
+
+  isDarkModeEnabled() {
+    const element = document.querySelector("html");
+    return element?.classList.contains("dark-mode");
+  }
 }

@@ -109,7 +109,7 @@ export class LandingPageComponent implements OnInit {
       modal: true,
     });
 
-    dialogRef.onClose.subscribe((result) => {
+    dialogRef!.onClose.subscribe((result) => {
       if (result) {
         console.log(result);
         this.projectService.import(result.project, result.name);
