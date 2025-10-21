@@ -57,6 +57,11 @@ export class RootStatementNode extends AbstractStatementNode {
     }
   }
 
+  override finalize() {
+    super.finalize();
+    this._childStatementNode?.finalize();
+  }
+
   override deleteChild(node: AbstractStatementNode) {
     super.deleteChild(node);
     this._childStatementNode = undefined;

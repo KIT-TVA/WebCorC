@@ -1,4 +1,4 @@
-import { Component, signal } from "@angular/core";
+import { Component, signal, ViewChild } from "@angular/core";
 import { TabPanel, TabPanels, Tabs } from "primeng/tabs";
 import { Button } from "primeng/button";
 import { OptionsComponent } from "../options/options.component";
@@ -39,6 +39,10 @@ import { PredicateManagerComponent } from "../predicate-manager/predicate-manage
   styleUrl: "./editor-sidemenu.component.scss",
 })
 export class EditorSidemenuComponent {
+  @ViewChild("variables") public variables!: VariablesComponent;
+  @ViewChild("conditions") public conditions!: GlobalConditionsComponent;
+  @ViewChild("renaming") public renaming!: RenamingComponent;
+
   tabValue = signal(0);
   setTab(value: number): void {
     if (this.tabValue() == value) {

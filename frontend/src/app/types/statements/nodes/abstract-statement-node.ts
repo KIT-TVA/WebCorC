@@ -34,7 +34,7 @@ export class AbstractStatementNode {
     sourceNode: AbstractStatementNode,
     condition: WritableSignal<ICondition>,
   ): void {
-    console.log("postcondition overridden")
+    console.log("postcondition overridden");
     this.postcondition = condition;
   }
 
@@ -63,5 +63,10 @@ export class AbstractStatementNode {
       xinPx: 0,
       yinPx: 0,
     };
+  }
+
+  public finalize() {
+    this.statement.preCondition = this.precondition();
+    this.statement.postCondition = this.postcondition();
   }
 }

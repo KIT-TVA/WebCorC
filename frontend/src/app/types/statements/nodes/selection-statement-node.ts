@@ -45,6 +45,17 @@ export class SelectionStatementNode extends AbstractStatementNode {
     //TODO or all postconditions ??
   }
 
+  override finalize() {
+    super.finalize();
+    this.children.forEach((c) => {
+      c?.finalize();
+    });
+    this.statement.guards = [];
+    this.guards.forEach((g) => {
+      this.statement.guards.push(g());
+    });
+  }
+
   addSelection() {
     const condition = signal(new Condition(""));
     this.guards.push(condition);
@@ -58,7 +69,7 @@ export class SelectionStatementNode extends AbstractStatementNode {
       this.children[index] = node;
       this.statement.commands[index] = node.statement;
       if (node) {
-        this.overridePostcondition(node, node.postcondition)
+        this.overridePostcondition(node, node.postcondition);
       }
     }
   }

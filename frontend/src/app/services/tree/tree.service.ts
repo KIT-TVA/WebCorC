@@ -34,6 +34,7 @@ export class TreeService {
   private _globalConditions: string[] = [];
   private _renames: Renaming[] = [];
   private _statementNodes: WritableSignal<AbstractStatementNode[]> = signal([]);
+  private rootStatementNode: RootStatementNode | undefined;
 
   public constructor() {
     this._verificationResultNotifier = new Subject<AbstractStatement>();
@@ -237,6 +238,7 @@ export class TreeService {
         this.collectStatementNodeChildren([rootStatementNode]),
       ),
     );
+    this.rootStatementNode = rootStatementNode as RootStatementNode;
     return this._statementNodes;
   }
 
@@ -325,5 +327,12 @@ export class TreeService {
           );
       }
     }
+  }
+
+  /**
+   * Prepares all statements for export by syncing their conditions etc.
+   */
+  finalizeStatements() {
+    this.rootStatementNode?.finalize();
   }
 }

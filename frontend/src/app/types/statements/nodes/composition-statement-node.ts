@@ -21,7 +21,7 @@ export class CompositionStatementNode extends AbstractStatementNode {
     this._firstStatementNode = newNode;
     this.children = [this._firstStatementNode, this._secondStatementNode];
     if (newNode) {
-      this.overridePostcondition(newNode, newNode.postcondition)
+      this.overridePostcondition(newNode, newNode.postcondition);
     }
   }
   public set secondStatementNode(newNode) {
@@ -29,7 +29,7 @@ export class CompositionStatementNode extends AbstractStatementNode {
     this._secondStatementNode = newNode;
     this.children = [this._firstStatementNode, this._secondStatementNode];
     if (newNode) {
-      this.overridePostcondition(newNode, newNode.postcondition)
+      this.overridePostcondition(newNode, newNode.postcondition);
     }
   }
 
@@ -83,6 +83,13 @@ export class CompositionStatementNode extends AbstractStatementNode {
       default:
       // Should never happen
     }
+  }
+
+  override finalize() {
+    super.finalize();
+    this.statement.intermediateCondition = this.intermediateCondition();
+    this.firstStatementNode?.finalize();
+    this.secondStatementNode?.finalize();
   }
 
   override deleteChild(node: AbstractStatementNode) {
