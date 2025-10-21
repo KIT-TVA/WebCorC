@@ -78,7 +78,12 @@ export class ProjectExplorerComponent {
                 {
                     label: "Helper",
                     icon: "pi pi-code",
-                    command: () => this.addFileToRoot("helper", "java"),
+                    command: () => this.addFileToRoot("helper", "key"),
+                },
+                {
+                    label: "Code",
+                    icon: "pi pi-code",
+                    command: () => this.addFileToRoot("code", "java"),
                 },
                 {
                     label: "New Directory",

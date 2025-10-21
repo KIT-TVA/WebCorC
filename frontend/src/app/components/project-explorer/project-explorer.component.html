@@ -1,200 +1,207 @@
 <div class="drawer-content">
-  <p-menubar
-    style="border-radius: 0; border: 0; z-index: 1"
-    class="project-actions"
-    [model]="menuItems"
-  >
-  </p-menubar>
-  <p-tree
-    [value]="treeNodes"
-    [draggableNodes]="true"
-    [droppableNodes]="true"
-    draggableScope="self"
-    droppableScope="self"
-    (onNodeExpand)="setExpanded($event)"
-    (onNodeCollapse)="setCollapsed($event)"
-    (onNodeDrop)="dropNode($event)"
-    emptyMessage="No files yet."
-  >
-    <ng-template #header>
-      <div class="project-header">
-        <h4>
-          {{
-            projectService.projectname
-              ? projectService.projectname
-              : "Projectname"
-          }}
-        </h4>
-      </div>
-    </ng-template>
-    <ng-template #emptymessage>
-      <span> No files yet </span>
-    </ng-template>
-    <ng-template
-      let-node
-      pTemplate="directory"
-      style="width: 100%; box-sizing: content-box"
+    <p-menubar
+            style="border-radius: 0; border: 0; z-index: 1"
+            class="project-actions"
+            [model]="menuItems"
     >
-      <div
-        style="
+    </p-menubar>
+    <p-tree
+            [value]="treeNodes"
+            [draggableNodes]="true"
+            [droppableNodes]="true"
+            draggableScope="self"
+            droppableScope="self"
+            (onNodeExpand)="setExpanded($event)"
+            (onNodeCollapse)="setCollapsed($event)"
+            (onNodeDrop)="dropNode($event)"
+            emptyMessage="No files yet."
+    >
+        <ng-template #header>
+            <div class="project-header">
+                <h4>
+                    {{
+                        projectService.projectname
+                            ? projectService.projectname
+                            : "Projectname"
+                    }}
+                </h4>
+            </div>
+        </ng-template>
+        <ng-template #emptymessage>
+            <span> No files yet </span>
+        </ng-template>
+        <ng-template
+            let-node
+            pTemplate="directory"
+            style="width: 100%; box-sizing: content-box"
+        >
+            <div
+                    style="
           width: 100%;
           display: flex;
           align-items: center;
           justify-content: space-between;
         "
-      >
+            >
         <span>
           {{ node.label }}
         </span>
 
-        <span style="justify-self: end">
+                <span style="justify-self: end">
           <p-button icon="pi pi-upload" severity="contrast" text (click)="importElement(node.data)">
           </p-button>
           <p-button
-            icon="pi pi-file-edit"
-            severity="contrast"
-            text
-            (click)="toggleRename(node.data)"
+                  icon="pi pi-file-edit"
+                  severity="contrast"
+                  text
+                  (click)="toggleRename(node.data)"
           >
           </p-button>
           <p-button
-            icon="pi pi-plus"
-            text
-            severity="success"
-            (click)="addElement(node.data)"
+                  icon="pi pi-plus"
+                  text
+                  severity="success"
+                  (click)="addElement(node.data)"
           >
           </p-button>
           <p-button
-            icon="pi pi-trash"
-            text
-            severity="danger"
-            (click)="deleteElement(node.data)"
+                  icon="pi pi-trash"
+                  text
+                  severity="danger"
+                  (click)="deleteElement(node.data)"
           >
           </p-button>
         </span>
-      </div>
-    </ng-template>
-    <ng-template
-      let-node
-      pTemplate="fake"
-      style="width: 100%; box-sizing: content-box"
-    >
-      <div
-        style="
+            </div>
+        </ng-template>
+        <ng-template
+            let-node
+            pTemplate="fake"
+            style="width: 100%; box-sizing: content-box"
+        >
+            <div
+                    style="
           width: 100%;
           display: flex;
           align-items: center;
           justify-content: space-between;
         "
-      >
+            >
         <span>
           <p-float-label variant="on">
             <p-icon-field>
-              <input pInputText #newElement [style.width]="'100%'" />
+              <input pInputText #newElement [style.width]="'100%'"/>
               <label for="newElement">New Element</label>
               <p-inputicon
-                class="pi pi-times"
-                style="color: var(--p-danger)"
-                (click)="deleteElement(node.data)"
+                      class="pi pi-times"
+                      style="color: var(--p-danger)"
+                      (click)="deleteElement(node.data)"
               >
               </p-inputicon>
             </p-icon-field>
           </p-float-label>
         </span>
-        <span style="justify-self: end">
+                <span style="justify-self: end">
           <p-button
-            icon="pi pi-sitemap"
-            text
-            severity="contrast"
-            (click)="addFile(node.data, newElement.value, 'diagram')"
+                  icon="pi pi-sitemap"
+                  text
+                  severity="contrast"
+                  (click)="addFile(node.data, newElement.value, 'diagram')"
           >
           </p-button>
           <p-button
-            text
-            severity="contrast"
-            icon="pi pi-code"
-            (click)="addFile(node.data, newElement.value, 'java')"
+                  text
+                  severity="contrast"
+                  icon="pi pi-code"
+                  (click)="addFile(node.data, newElement.value, 'java')"
           >
           </p-button>
           <p-button
-            icon="pi pi-folder"
-            (click)="addFolder(node.data, newElement.value)"
-            severity="contrast"
-            text
+                  text
+                  severity="contrast"
+                  icon="pi pi-code"
+                  (click)="addFile(node.data, newElement.value, 'key')"
+          >
+          </p-button>
+          <p-button
+                  icon="pi pi-folder"
+                  (click)="addFolder(node.data, newElement.value)"
+                  severity="contrast"
+                  text
           >
           </p-button>
         </span>
-      </div>
-    </ng-template>
-    <ng-template
-      let-node
-      pTemplate="rename"
-      style="width: 100%; box-sizing: content-box"
-    >
-      <div
-        style="
+            </div>
+        </ng-template>
+        <ng-template
+            let-node
+            pTemplate="rename"
+            style="width: 100%; box-sizing: content-box"
+        >
+            <div
+                    style="
           width: 100%;
           display: flex;
           align-items: center;
           justify-content: space-between;
         "
-      >
+            >
         <span>
           <p-float-label variant="on">
             <p-icon-field>
-              <input pInputText #renameInput [style.width]="'100%'" />
+              <input pInputText #renameInput [style.width]="'100%'"/>
               <label for="renameInput">Rename Element</label>
               <p-inputicon
-                class="pi pi-check"
-                style="color: var(--p-success)"
-                (click)="renameElement(node.data, renameInput.value)"
+                      class="pi pi-check"
+                      style="color: var(--p-success)"
+                      (click)="renameElement(node.data, renameInput.value)"
               >
               </p-inputicon>
             </p-icon-field>
           </p-float-label>
         </span>
-      </div>
-    </ng-template>
-    <ng-template
-      let-node
-      pTemplate="file"
-      style="width: 100%; box-sizing: content-box"
-    >
-      <div
-        style="
+            </div>
+        </ng-template>
+        <ng-template
+            let-node
+            pTemplate="file"
+            style="width: 100%; box-sizing: content-box"
+        >
+            <div
+                    style="
           width: 100%;
           display: flex;
           align-items: center;
           justify-content: space-between;
         "
-      >
-        <p-button
-          [style]="{
+            >
+                <p-button
+                        [style]="{
             width: '100%',
           }"
-          (click)="navigate(node.data)"
-          text
-          severity="contrast"
-          [label]="node.label"
-        >
-        </p-button>
-        <span style="justify-self: end">
+                        (click)="navigate(node.data)"
+                        text
+                        severity="contrast"
+                        [label]="node.label"
+                >
+                </p-button>
+                <span style="justify-self: end">
           <p-button
-            icon="pi pi-file-edit"
-            text
-            severity="contrast"
-            (click)="toggleRename(node.data)"
+                  icon="pi pi-file-edit"
+                  text
+                  severity="contrast"
+                  (click)="toggleRename(node.data)"
           >
           </p-button>
           <p-button
-            icon="pi pi-trash"
-            text
-            severity="danger"
-            (click)="deleteElement(node.data)"
+                  icon="pi pi-trash"
+                  text
+                  severity="danger"
+                  (click)="deleteElement(node.data)"
           >
           </p-button>
         </span>
-      </div>
-    </ng-template>
-  </p-tree>
+            </div>
+        </ng-template>
+    </p-tree>
 </div>
