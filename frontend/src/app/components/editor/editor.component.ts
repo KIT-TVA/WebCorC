@@ -8,24 +8,20 @@ import {
   signal,
   Signal,
   ViewChild,
-  ViewContainerRef,
 } from "@angular/core";
 
-import {MatButtonModule} from "@angular/material/button";
-import {TreeService} from "../../services/tree/tree.service";
-import {MatIconModule} from "@angular/material/icon";
-import {MatExpansionModule} from "@angular/material/expansion";
-import {VariablesComponent} from "./variables/variables.component";
-import {MatTooltipModule} from "@angular/material/tooltip";
-import {MatMenuModule} from "@angular/material/menu";
-import {GlobalConditionsComponent} from "./global-conditions/global-conditions.component";
-import {ProjectService} from "../../services/project/project.service";
-import {CBCFormula} from "../../types/CBCFormula";
-import {Router} from "@angular/router";
-import {EditorService} from "../../services/editor/editor.service";
-import {RenamingComponent} from "./renaming/renaming.component";
-import {StatementDelegatorComponent} from "./statements/statement-delegator/statement-delegator.component";
-import {AbstractStatementNode} from "../../types/statements/nodes/abstract-statement-node";
+import { MatButtonModule } from "@angular/material/button";
+import { TreeService } from "../../services/tree/tree.service";
+import { MatIconModule } from "@angular/material/icon";
+import { MatExpansionModule } from "@angular/material/expansion";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatMenuModule } from "@angular/material/menu";
+import { ProjectService } from "../../services/project/project.service";
+import { CBCFormula } from "../../types/CBCFormula";
+import { Router } from "@angular/router";
+import { EditorService } from "../../services/editor/editor.service";
+import { StatementDelegatorComponent } from "./statements/statement-delegator/statement-delegator.component";
+import { AbstractStatementNode } from "../../types/statements/nodes/abstract-statement-node";
 import {
   DynamicNode,
   Edge,
@@ -34,9 +30,9 @@ import {
   NodePositionChange,
   VflowComponent,
 } from "ngx-vflow";
-import {EditorSidemenuComponent} from "./editor-sidemenu/editor-sidemenu.component";
-import {EditorBottommenuComponent} from "./editor-bottommenu/editor-bottommenu.component";
-import {GlobalSettingsService} from "../../services/global-settings.service";
+import { EditorSidemenuComponent } from "./editor-sidemenu/editor-sidemenu.component";
+import { EditorBottommenuComponent } from "./editor-bottommenu/editor-bottommenu.component";
+import { GlobalSettingsService } from "../../services/global-settings.service";
 
 /**
  * Component to edit {@link CBCFormula} by editing a grahical representation based of the statement components like {@link SimpleStatementComponent}.
@@ -64,11 +60,7 @@ import {GlobalSettingsService} from "../../services/global-settings.service";
   styleUrl: "./editor.component.scss",
 })
 export class EditorComponent implements AfterViewInit, OnDestroy {
-  @ViewChild("examplesSpawn", { read: ViewContainerRef, static: false })
-  private examplesSpawn!: ViewContainerRef;
-  @ViewChild("variables") private variables!: VariablesComponent;
-  @ViewChild("conditions") private conditions!: GlobalConditionsComponent;
-  @ViewChild("renaming") private renaming!: RenamingComponent;
+  @ViewChild("sidemenu") private sidemenu!: EditorSidemenuComponent;
 
   private _viewInit: boolean = false;
 
@@ -87,7 +79,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     private projectService: ProjectService,
     private editorService: EditorService,
     private router: Router,
-    protected globalSettingsService: GlobalSettingsService
+    protected globalSettingsService: GlobalSettingsService,
   ) {
     this.projectService.editorNotify.subscribe(() => {
       this.saveContentToFile();
@@ -137,7 +129,6 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     });
 
     this.editorService.reload.subscribe(() => {
-      this.examplesSpawn.clear();
       this.loadFileContent();
     });
   }
@@ -180,9 +171,9 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
    */
   private async loadFileContent(): Promise<void> {
     // load the diagram of the file into the component
-    this.variables.removeAllVariables();
-    this.conditions.removeAllConditions();
-    this.renaming.removeAllRenaming();
+    this.sidemenu.variables.removeAllVariables();
+    this.sidemenu.conditions.removeAllConditions();
+    this.sidemenu.renaming.removeAllRenaming();
 
     let newFormula: CBCFormula | undefined = undefined;
     try {
@@ -212,9 +203,9 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       this.statements = this.treeService.getStatementNodes();
 
       //TODO: This should be done with Inputs instead.
-      this.variables.importVariables(newFormula.javaVariables);
-      this.conditions.importConditions(newFormula.globalConditions);
-      this.renaming.importRenaming(newFormula.renamings);
+      this.sidemenu.variables.importVariables(newFormula.javaVariables);
+      this.sidemenu.conditions.importConditions(newFormula.globalConditions);
+      this.sidemenu.renaming.importRenaming(newFormula.renamings);
 
       return;
     }

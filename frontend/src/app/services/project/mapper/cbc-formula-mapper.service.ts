@@ -27,7 +27,10 @@ import {
 import { CBCFormula, ICBCFormula } from "../../../types/CBCFormula";
 import { IRenaming, Renaming } from "../../../types/Renaming";
 import { Condition, ICondition } from "../../../types/condition/condition";
-import { RootStatement } from "../../../types/statements/root-statement";
+import {
+  IRootStatement,
+  RootStatement,
+} from "../../../types/statements/root-statement";
 
 /**
  * Service for importing the cbcformula from the interface {@see ICBCFormula } to the only implementation {@see CBCFormula }.
@@ -93,6 +96,8 @@ export class CbcFormulaMapperService {
         );
       case SkipStatement.TYPE:
         return this.importSkipStatement(statement as ISkipStatement);
+      case RootStatement.TYPE:
+        return this.importRootStatement(statement as IRootStatement);
     }
     return;
   }
@@ -103,6 +108,15 @@ export class CbcFormulaMapperService {
       this.importCondition(statement.preCondition),
       this.importCondition(statement.postCondition),
       statement.programStatement,
+    );
+  }
+
+  private importRootStatement(statement: IRootStatement): RootStatement {
+    return new RootStatement(
+      statement.name,
+      statement.preCondition,
+      statement.postCondition,
+      this.importStatement(statement.statement),
     );
   }
 

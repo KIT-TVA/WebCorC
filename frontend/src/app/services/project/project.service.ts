@@ -182,6 +182,8 @@ export class ProjectService {
     this._movedHistory.forEach((newPath, oldPath) =>
       oldPath == newFile.path ? this._movedHistory.delete(newPath) : false,
     );
+    console.log(newFile);
+    console.log(this._rootDir);
     this.storage.setProjectTree(this.mapper.exportDirectory(this._rootDir));
     return dir;
   }
@@ -362,6 +364,7 @@ export class ProjectService {
       this._savedFinished
         .pipe(first())
         .subscribe(() => this.uploadFolder(this._rootDir));
+      console.log(this._rootDir);
 
       this._saveNotify.next();
 

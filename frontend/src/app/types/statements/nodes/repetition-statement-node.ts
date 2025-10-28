@@ -13,8 +13,11 @@ export class RepetitionStatementNode extends AbstractStatementNode {
     this.statement.loopStatement = loopStatementNode?.statement;
     this._loopStatementNode = loopStatementNode;
     this.children = [loopStatementNode];
-    if(loopStatementNode) {
-      this.overridePostcondition(loopStatementNode, loopStatementNode.postcondition)
+    if (loopStatementNode) {
+      this.overridePostcondition(
+        loopStatementNode,
+        loopStatementNode.postcondition,
+      );
     }
   }
   override statement!: IRepetitionStatement;
@@ -63,5 +66,15 @@ export class RepetitionStatementNode extends AbstractStatementNode {
       this._loopStatementNode = undefined;
       this.children = [];
     }
+  }
+
+  override finalize() {
+    super.finalize();
+    this.children.forEach((c) => {
+      c?.finalize();
+    });
+    this.statement.guard = this.guard();
+    this.statement.invariant = this.invariant();
+    this.statement.variant = this.variant();
   }
 }
