@@ -184,6 +184,9 @@ export class CbcFormulaMapperService {
   }
 
   private importCondition(condition: ICondition): Condition {
+    if (!condition) {
+      return new Condition("");
+    }
     return new Condition(condition.programStatement);
   }
 

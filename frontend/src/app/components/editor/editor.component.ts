@@ -180,6 +180,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
    */
   private async loadFileContent(): Promise<void> {
     // load the diagram of the file into the component
+    console.log("variable: " + this.variables);
     this.variables.removeAllVariables();
     this.conditions.removeAllConditions();
     this.renaming.removeAllRenaming();

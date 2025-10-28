@@ -1,18 +1,12 @@
-<p-listbox [options]="EXAMPLE_PROGRAMS" ></p-listbox>
-  <ng-template #item let-example>
-    <div class="item">
-        <i class="pi pi-code"></i>
-      <span>{{ example.name }}</span>
-    </div>
-  </ng-template>
-<div
-        style="
-    width: 100%;
-    display: flex;
-    justify-content: end;
-    gap: 1rem;
-    padding-top: 1em;
-  "
->
-  <p-button (click)="ref.close()">Cancel</p-button>
+<p-listbox
+        [options]="EXAMPLE_PROGRAMS"
+        optionLabel="name"
+        [(ngModel)]="selectedExample"
+        [style]="{ width: '100%' }">
+</p-listbox>
+
+<div style="width: 100%; display: flex; justify-content: end; gap: 1rem; padding-top: 1em;">
+    <p-button label="Cancel" (click)="ref.close()"></p-button>
+    
+    <p-button label="Load Example" (click)="ref.close(selectedExample)"></p-button>
 </div>

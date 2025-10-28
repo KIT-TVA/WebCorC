@@ -109,11 +109,14 @@ export class LandingPageComponent implements OnInit {
       modal: true,
     });
 
-    dialogRef!.onClose.subscribe((result) => {
-      if (result) {
-        console.log(result);
-        this.projectService.import(result.project, result.name);
+    dialogRef.onClose.subscribe((selectedExample) => {
+      if (selectedExample) {
+        console.log(selectedExample);
+        console.log("Import Successfully");
+        console.log(selectedExample.project);
+        this.projectService.import(selectedExample.project, selectedExample.name);
       }
     });
   }
+
 }
