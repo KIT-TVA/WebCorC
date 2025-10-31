@@ -4,6 +4,7 @@ import {Signal} from "@angular/core";
 import {ICondition} from "../../condition/condition";
 
 export class SimpleStatementNode extends AbstractStatementNode {
+    override statement!: IStatement
     constructor(statement: IStatement, parent: AbstractStatementNode | undefined) {
         super(statement, parent)
     }

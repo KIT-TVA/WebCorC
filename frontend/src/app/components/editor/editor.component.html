@@ -23,9 +23,11 @@
         [nodes]="nodes"
         [edges]="edges"
         [connection]="{ curve: 'smooth-step' }"
+        (onConnect)="createEdge($event)"
         (onNodesChange.position)="handlePositionChange($event)"
         [background]="{ backgroundColor: 'var(--p-background)', type: 'dots' }"
         [snapGrid]="[25, 25]"
+        (onEdgesChange.select)="handleEdgeSelect($event)"
       >
         <ng-template let-ctx nodeHtml style="width: fit-content">
           <app-statement-delegator [statement]="ctx.node.data()">

@@ -4,7 +4,11 @@
       <li style="display: flex; align-content: center; gap: 2rem">
         <span> Dark Mode </span>
         <span>
-          <p-toggle-switch size="large" [ngModel]="isDarkModeEnabled()" (onChange)="switchTheme()">
+          <p-toggle-switch
+            size="large"
+            [ngModel]="isDarkModeEnabled()"
+            (onChange)="switchTheme()"
+          >
             <ng-template #handle let-checked="checked">
               <i
                 style="font-size: 0.5rem"
@@ -36,10 +40,30 @@
       </li>
     </ul>
   </p-fieldset>
-    <p-fieldset legend="Debugging">
+  <p-fieldset legend="Debugging">
+    <ul>
+      <li>
         <p-button (click)="resetProjectId()" severity="danger"
-          >Reset project id</p-button>
-    </p-fieldset>
+          >Reset project id</p-button
+        >
+      </li>
+      <li>
+        Project id: {{ projectService.projectId }} -- Project name:
+        {{ projectService.projectname }} -- Should Create Project:
+        {{ projectService.shouldCreateProject }}
+      </li>
+      <li>
+        <p-button (click)="dumpProjectService()" severity="secondary">
+          Dump Project Service
+        </p-button>
+      </li>
+      <li>
+        <p-button (click)="dumpTreeService()" severity="secondary">
+          Dump Tree Service
+        </p-button>
+      </li>
+    </ul>
+  </p-fieldset>
 </div>
 <div
   style="
@@ -52,3 +76,12 @@
 >
   <p-button (click)="ref.close()">Done</p-button>
 </div>
+<p-dialog
+  header="json dump"
+  [modal]="true"
+  [(visible)]="dialogVisible"
+  [style]="{ width: '50rem' }"
+  [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+>
+  <pre [innerHTML]="dialogContent"></pre>
+</p-dialog>

@@ -23,8 +23,12 @@ import { EditorService } from "../../services/editor/editor.service";
 import { StatementDelegatorComponent } from "./statements/statement-delegator/statement-delegator.component";
 import { AbstractStatementNode } from "../../types/statements/nodes/abstract-statement-node";
 import {
+  Connection,
+  ConnectionControllerDirective,
   DynamicNode,
   Edge,
+  EdgeSelectChange,
+  HtmlTemplateDynamicNode,
   MiniMapComponent,
   NodeHtmlTemplateDirective,
   NodePositionChange,
@@ -33,6 +37,8 @@ import {
 import { EditorSidemenuComponent } from "./editor-sidemenu/editor-sidemenu.component";
 import { EditorBottommenuComponent } from "./editor-bottommenu/editor-bottommenu.component";
 import { GlobalSettingsService } from "../../services/global-settings.service";
+import { ObserversModule } from "@angular/cdk/observers";
+import { fromEvent, Observable } from "rxjs";
 
 /**
  * Component to edit {@link CBCFormula} by editing a grahical representation based of the statement components like {@link SimpleStatementComponent}.
@@ -54,6 +60,7 @@ import { GlobalSettingsService } from "../../services/global-settings.service";
     MiniMapComponent,
     EditorSidemenuComponent,
     EditorBottommenuComponent,
+    ConnectionControllerDirective,
   ],
   templateUrl: "./editor.component.html",
   standalone: true,
@@ -130,6 +137,11 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
 
     this.editorService.reload.subscribe(() => {
       this.loadFileContent();
+    });
+    fromEvent(document, "keydown").subscribe((e) => {
+      if ((e as KeyboardEvent).key === "Delete") {
+        this.deleteEdge();
+      }
     });
   }
 
@@ -214,11 +226,13 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     //TODO: reimplement
   }
 
+  protected selectedEdges: EdgeSelectChange[] = [];
+
   /**
    * VFlow doesn't support using computed signals as inputs for the graph, so we manually set the values here.
    *
    */
-  protected nodes: DynamicNode[] = [];
+  protected nodes: DynamicNode<AbstractStatementNode>[] = [];
   protected edges: Edge[] = [];
   protected nodez: Signal<DynamicNode[]> = computed(() =>
     this.statements().map((statement) => {
@@ -274,5 +288,44 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
         .find((node) => node.statement.id == change.id)
         ?.setPosition(change.point);
     });
+  }
+
+  handleEdgeSelect($event: EdgeSelectChange[]) {
+    this.selectedEdges = $event;
+  }
+
+  deleteEdge() {
+    this.selectedEdges.forEach((edgeChange) => {
+      if (edgeChange.selected) {
+        const { parent, child } = this.getNodesFromEdge(edgeChange);
+        parent.data!().deleteChild(child.data!());
+      }
+    });
+    this.edges = this.computeEdges(this.statements());
+  }
+
+  createEdge(change: Connection) {
+    const parent = this.nodes.find(
+      (node) => node.id == change.source,
+    ) as HtmlTemplateDynamicNode<AbstractStatementNode>;
+    const child = this.nodes.find(
+      (node) => node.id == change.target,
+    ) as HtmlTemplateDynamicNode<AbstractStatementNode>;
+    parent.data!().addChild(child.data!(), Number(change.sourceHandle));
+    this.edges = this.computeEdges(this.statements());
+  }
+
+  private getNodesFromEdge(edgeChange: { id: string }) {
+    const parentId = this.edges.find(
+      (edge) => edge.id == edgeChange.id,
+    )!.source;
+    const childId = this.edges.find((edge) => edge.id == edgeChange.id)!.target;
+    const parent = this.nodes.find(
+      (node) => node.id == parentId,
+    )! as HtmlTemplateDynamicNode<AbstractStatementNode>;
+    const child = this.nodes.find(
+      (node) => node.id == childId,
+    )! as HtmlTemplateDynamicNode<AbstractStatementNode>;
+    return { parent, child };
   }
 }

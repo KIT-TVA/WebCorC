@@ -3,6 +3,7 @@ import { ICondition } from "../../condition/condition";
 import { signal, WritableSignal } from "@angular/core";
 import { AbstractStatementNode } from "./abstract-statement-node";
 import { createStatementNode } from "./createStatementNode";
+import { index } from "d3";
 
 export class CompositionStatementNode extends AbstractStatementNode {
   public intermediateCondition: WritableSignal<ICondition>;
@@ -102,6 +103,16 @@ export class CompositionStatementNode extends AbstractStatementNode {
         break;
       default:
       // Should never happen
+    }
+  }
+
+  override addChild(statement: AbstractStatementNode, index: number) {
+    switch (index) {
+      case 0:
+        this.firstStatementNode = statement;
+        break;
+      case 1:
+        this.secondStatementNode = statement;
     }
   }
 }

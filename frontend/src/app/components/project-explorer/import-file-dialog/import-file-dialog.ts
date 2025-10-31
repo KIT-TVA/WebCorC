@@ -1,13 +1,13 @@
-import {Component} from "@angular/core";
-import {CbcFormulaMapperService} from "../../../services/project/mapper/cbc-formula-mapper.service";
-import {CBCFormula, ICBCFormula} from "../../../types/CBCFormula";
-import {ProjectService} from "../../../services/project/project.service";
-import {ApiFileType} from "../../../services/project/types/api-elements";
-import {FormsModule} from "@angular/forms";
-import {ConsoleService} from "../../../services/console/console.service";
-import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
-import {Button} from "primeng/button";
-import {FileUpload} from "primeng/fileupload";
+import { Component } from "@angular/core";
+import { CbcFormulaMapperService } from "../../../services/project/mapper/cbc-formula-mapper.service";
+import { CBCFormula, ICBCFormula } from "../../../types/CBCFormula";
+import { ProjectService } from "../../../services/project/project.service";
+import { ApiFileType } from "../../../services/project/types/api-elements";
+import { FormsModule } from "@angular/forms";
+import { ConsoleService } from "../../../services/console/console.service";
+import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Button } from "primeng/button";
+import { FileUpload } from "primeng/fileupload";
 
 /**
  * Dialog for importing files created with this editor or cbcmodels created with the corc editor
@@ -62,21 +62,19 @@ export class ImportFileDialogComponent {
 
   /* eslint-disable  @typescript-eslint/no-explicit-any */
   public async onFileSelected(event: any) {
-    console.log(event)
+    console.log(event);
     this._accepted = false;
     const file: File = event.files[0];
 
-    console.log("file selected")
+    console.log("file selected");
 
     if (!file) {
-      console.log("No file selected");
       return;
     }
 
     const nameSplitted = file.name.split(".");
 
     if (nameSplitted.length == 2 && nameSplitted[1] == "cbcmodel") {
-      console.log("cbcmodel")
       this._accepted = true;
       // Removed this.handleCbcModelFile(file , nameSplitted)
       return;

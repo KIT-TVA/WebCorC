@@ -182,8 +182,6 @@ export class ProjectService {
     this._movedHistory.forEach((newPath, oldPath) =>
       oldPath == newFile.path ? this._movedHistory.delete(newPath) : false,
     );
-    console.log(newFile);
-    console.log(this._rootDir);
     this.storage.setProjectTree(this.mapper.exportDirectory(this._rootDir));
     return dir;
   }
@@ -360,25 +358,28 @@ export class ProjectService {
   }
 
   public uploadWorkspace(wait: boolean = false) {
-    if (!wait) {
-      this._savedFinished
-        .pipe(first())
-        .subscribe(() => this.uploadFolder(this._rootDir));
-      console.log(this._rootDir);
+    return new Promise<void>((resolve, reject) => {
+      if (!wait) {
+        this._savedFinished
+          .pipe(first())
+          .subscribe(() => this.uploadFolder(this._rootDir));
 
-      this._saveNotify.next();
+        this._saveNotify.next();
+
+        this.editorNotify.next();
+        this.storage.clear();
+        resolve();
+        return;
+      }
 
       this.editorNotify.next();
+
+      this.network.requestFinished
+        .pipe(first())
+        .subscribe(() => this.uploadFolder(this._rootDir));
       this.storage.clear();
-      return;
-    }
-
-    this.network.requestFinished
-      .pipe(first())
-      .subscribe(() => this.uploadFolder(this._rootDir));
-
-    this.editorNotify.next();
-    this.storage.clear();
+      resolve();
+    });
   }
 
   private uploadFolder(folder: ProjectDirectory) {
@@ -410,12 +411,9 @@ export class ProjectService {
    * Create a new project in the backend
    */
   public createProject() {
-    this.network.requestFinished.pipe(first()).subscribe(() => {
-      if (!this.network.projectId) return;
-      this.storage.setProjectId(this.network.projectId);
-    });
-
-    this.network.createProject(this._projectname);
+    return this.network
+      .createProject(this._projectname)
+      .then(() => this.storage.setProjectId(this.network.projectId!));
   }
 
   /**
@@ -591,5 +589,14 @@ export class ProjectService {
 
   public get requestFinished() {
     return this.network.requestFinished;
+  }
+
+  public dump() {
+    return {
+      projectId: this.projectId,
+      projectName: this.projectname,
+      rootDir: this._rootDir,
+      movedHistory: this._movedHistory,
+    };
   }
 }

@@ -119,13 +119,11 @@ export class ProjectStorageService {
    */
   public setFileContent(urn: string, content: string | CBCFormula) {
     if (content instanceof CBCFormula) {
-      console.log("Saving content as instance of CBCFormula");
       sessionStorage.setItem(
         ProjectStorageService.projectFileUrnPrefix + urn,
         JSON.stringify(content),
       );
     } else {
-      console.log("Saving content as instance of string");
       sessionStorage.setItem(
         ProjectStorageService.projectFileUrnPrefix + urn,
         content,

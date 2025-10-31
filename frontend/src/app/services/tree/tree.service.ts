@@ -335,4 +335,28 @@ export class TreeService {
   finalizeStatements() {
     this.rootStatementNode?.finalize();
   }
+
+  public dump() {
+    return {
+      rootStatementNode: JSON.stringify(
+        this.rootStatementNode,
+        (key, value) => {
+          if (key == "parent") {
+            return undefined;
+          }
+          return value;
+        },
+      ),
+      rootFormula: this.rootFormula,
+      statementNodes: JSON.stringify(this._statementNodes(), (key, value) => {
+        if (key == "parent") {
+          return undefined;
+        }
+        return value;
+      }),
+      variables: this._variables,
+      globalConditions: this._globalConditions,
+      renames: this._renames,
+    };
+  }
 }

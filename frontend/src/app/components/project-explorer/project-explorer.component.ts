@@ -24,6 +24,7 @@ import { ImportProjectDialogComponent } from "../landing-page/import-project-dia
 import { Menubar } from "primeng/menubar";
 import {
   MenuItem,
+  MessageService,
   PrimeTemplate,
   TreeDragDropService,
   TreeNode,
@@ -41,6 +42,7 @@ import { IconField } from "primeng/iconfield";
 import { InputIcon } from "primeng/inputicon";
 import { DialogService } from "primeng/dynamicdialog";
 import { TreeService } from "../../services/tree/tree.service";
+import { PredicateService } from "../../services/predicates/predicate.service";
 
 /**
  * Component for the file management and navigating between the files,
@@ -135,6 +137,8 @@ export class ProjectExplorerComponent {
     private dialog: MatDialog,
     private dialogService: DialogService,
     private treeService: TreeService,
+    private predicateService: PredicateService,
+    private messageService: MessageService,
   ) {
     this.projectService.dataChange.subscribe((data) => {
       this.treeNodes = this.getTreeNodes(data);
@@ -327,12 +331,31 @@ export class ProjectExplorerComponent {
    */
   public save() {
     this.treeService.finalizeStatements();
+    this.predicateService.exportPredicates();
     if (this.projectService.shouldCreateProject) {
-      this.openNewProjectDialog()?.onClose.subscribe(() =>
-        this.projectService.uploadWorkspace(),
-      );
+      this.openNewProjectDialog()?.onClose.subscribe((created) => {
+        if (created) {
+          this.projectService.uploadWorkspace().then(() =>
+            this.messageService.add({
+              summary: "Save successful",
+              severity: "success",
+            }),
+          );
+        } else {
+          this.messageService.add({
+            summary: "Save cancelled",
+            detail: "No project specified to save to",
+            severity: "warn",
+          });
+        }
+      });
     } else {
-      this.projectService.uploadWorkspace();
+      this.projectService.uploadWorkspace().then(() =>
+        this.messageService.add({
+          summary: "Save successful",
+          severity: "success",
+        }),
+      );
     }
   }
 

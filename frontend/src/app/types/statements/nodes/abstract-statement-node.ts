@@ -23,6 +23,11 @@ export class AbstractStatementNode {
     parent?.overridePostcondition(this, this.postcondition);
   }
 
+  /**
+   * Used when the precondition is controlled by the parent, eg. the pre- or intermediate condition of the parent statement.
+   * @param sourceNode
+   * @param condition
+   */
   public overridePrecondition(
     sourceNode: AbstractStatementNode,
     condition: WritableSignal<ICondition>,
@@ -30,15 +35,20 @@ export class AbstractStatementNode {
     this.precondition = condition;
   }
 
+  /**
+   * Used when the postcondition is controlled by the child, probably always the postcondition of the child statement.
+   * @param sourceNode must be passed so the correct condition to override can be determined, eg. if the parent has multiple children
+   * @param condition
+   */
   public overridePostcondition(
     sourceNode: AbstractStatementNode,
     condition: WritableSignal<ICondition>,
   ): void {
-    console.log("postcondition overridden");
     this.postcondition = condition;
   }
 
   public deleteChild(node: AbstractStatementNode) {
+    //EXTEND THIS!
     if (this.children.includes(node)) {
       this.children = this.children.filter(
         (filteredNode) => filteredNode != node,
@@ -65,8 +75,15 @@ export class AbstractStatementNode {
     };
   }
 
+  /**
+   * Saves the potentially changed pre- and postconditions to the underlying statement.
+   */
   public finalize() {
     this.statement.preCondition = this.precondition();
     this.statement.postCondition = this.postcondition();
+  }
+
+  public addChild(statement: AbstractStatementNode, index: number) {
+    //EXTEND THIS!
   }
 }

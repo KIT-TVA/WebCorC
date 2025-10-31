@@ -3,6 +3,7 @@ import { WritableSignal } from "@angular/core";
 import { AbstractStatementNode } from "./abstract-statement-node";
 import { createStatementNode } from "./createStatementNode";
 import { IRootStatement } from "../root-statement";
+import { index } from "d3";
 
 export class RootStatementNode extends AbstractStatementNode {
   override statement!: IRootStatement;
@@ -66,5 +67,9 @@ export class RootStatementNode extends AbstractStatementNode {
     super.deleteChild(node);
     this._childStatementNode = undefined;
     this.statement.statement = undefined;
+  }
+
+  override addChild(statement: AbstractStatementNode, index: number) {
+    this.childStatementNode = statement;
   }
 }

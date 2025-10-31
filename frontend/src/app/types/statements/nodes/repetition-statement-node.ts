@@ -3,6 +3,7 @@ import { IRepetitionStatement } from "../repetition-statement";
 import { signal, WritableSignal } from "@angular/core";
 import { ICondition } from "../../condition/condition";
 import { createStatementNode } from "./createStatementNode";
+import { index } from "d3";
 
 export class RepetitionStatementNode extends AbstractStatementNode {
   private _loopStatementNode: AbstractStatementNode | undefined;
@@ -76,5 +77,9 @@ export class RepetitionStatementNode extends AbstractStatementNode {
     this.statement.guard = this.guard();
     this.statement.invariant = this.invariant();
     this.statement.variant = this.variant();
+  }
+
+  override addChild(statement: AbstractStatementNode, index: number) {
+    this.loopStatementNode = statement;
   }
 }

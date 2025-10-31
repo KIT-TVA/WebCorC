@@ -39,6 +39,7 @@ export interface IAbstractStatement {
     | "ROOT";
   preCondition: ICondition;
   postCondition: ICondition;
+  isProven: boolean;
 }
 
 /**
@@ -47,6 +48,7 @@ export interface IAbstractStatement {
  */
 export class AbstractStatement implements IAbstractStatement {
   public readonly id: string;
+  public isProven = false;
   constructor(
     public name: string,
     public type:

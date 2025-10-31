@@ -6,10 +6,14 @@ import { Button } from "primeng/button";
 import { FormsModule } from "@angular/forms";
 import { GlobalSettingsService } from "../../../services/global-settings.service";
 import { NetworkProjectService } from "../../../services/project/network/network-project.service";
+import { ProjectService } from "../../../services/project/project.service";
+import { Dialog } from "primeng/dialog";
+import { prettyPrintJson } from "pretty-print-json";
+import { TreeService } from "../../../services/tree/tree.service";
 
 @Component({
   selector: "app-settings",
-  imports: [ToggleSwitch, Fieldset, Button, FormsModule],
+  imports: [ToggleSwitch, Fieldset, Button, FormsModule, Dialog],
   templateUrl: "./settings.component.html",
   styleUrl: "./settings.component.scss",
 })
@@ -19,11 +23,16 @@ export class SettingsComponent {
     public config: DynamicDialogConfig,
     public globalSettingsService: GlobalSettingsService,
     public networkService: NetworkProjectService,
+    protected projectService: ProjectService,
+    protected treeService: TreeService,
   ) {}
+
+  //Note: this is not the current dialog, but used to display json dumps
+  protected dialogVisible: boolean = false;
+  protected dialogContent = prettyPrintJson.toHtml({});
 
   switchTheme() {
     const element = document.querySelector("html");
-    console.log("theme", element);
     element?.classList.toggle("dark-mode");
   }
 
@@ -36,5 +45,15 @@ export class SettingsComponent {
     this.networkService.projectId = undefined;
     localStorage.clear();
     sessionStorage.clear();
+  }
+
+  dumpProjectService() {
+    this.dialogContent = prettyPrintJson.toHtml(this.projectService.dump());
+    this.dialogVisible = true;
+  }
+
+  dumpTreeService() {
+    this.dialogContent = prettyPrintJson.toHtml(this.treeService.dump());
+    this.dialogVisible = true;
   }
 }
