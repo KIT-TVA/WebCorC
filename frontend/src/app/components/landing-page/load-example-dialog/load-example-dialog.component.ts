@@ -15,14 +15,18 @@ import {CompositionStatement} from "../../../types/statements/composition-statem
 import {SelectionStatement} from "../../../types/statements/selection-statement";
 
 @Component({
-    selector: "app-load-example-dialog",
-    imports: [Listbox, Button, FormsModule],
-    templateUrl: "./load-example-dialog.component.html",
-    styleUrl: "./load-example-dialog.component.scss",
-    standalone: true,
+  selector: "app-load-example-dialog",
+  imports: [Listbox, Button, FormsModule],
+  templateUrl: "./load-example-dialog.component.html",
+  styleUrl: "./load-example-dialog.component.scss",
+  standalone: true,
 })
 export class LoadExampleDialogComponent {
-    selectedExample: { name: string; icon: string; project: ApiDirectory } | null = null;
+  selectedExample: {
+    name: string;
+    icon: string;
+    project: ApiDirectory;
+  } | null = null;
 
     constructor(
         public ref: DynamicDialogRef,
