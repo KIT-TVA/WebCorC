@@ -51,20 +51,11 @@ public class JMLConditionPrinter {
                 printTree(rhs);
                 print(")");
             }
-            default -> ConditionPrinter.print(tree);
+            default -> this.builder.append(ConditionPrinter.print(tree));
         }
     }
 
 
-
-    private void lineBreak() {
-        this.builder.append("\n");
-    }
-
-    private void semicolon() {
-        this.builder.append(";");
-        lineBreak();
-    }
 
     private void space() {
         this.builder.append(" ");

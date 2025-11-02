@@ -22,12 +22,12 @@ import lombok.Setter;
 @Serdeable
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({
-    @JsonSubTypes.Type(value = Statement.class, name = "statement"),
-    @JsonSubTypes.Type(value = CompositionStatement.class, name = "composition_statement"),
-    @JsonSubTypes.Type(value = ReturnStatement.class, name = "return_statement"),
-    @JsonSubTypes.Type(value = SelectionStatement.class, name = "selection_statement"),
-    @JsonSubTypes.Type(value = SkipStatement.class, name = "skip_statement"),
-    @JsonSubTypes.Type(value = SmallRepetitionStatement.class, name = "small_repetition_statement")
+    @JsonSubTypes.Type(value = Statement.class, name = "STATEMENT"),
+    @JsonSubTypes.Type(value = CompositionStatement.class, name = "COMPOSITION_STATEMENT"),
+    @JsonSubTypes.Type(value = ReturnStatement.class, name = "RETURN_STATEMENT"),
+    @JsonSubTypes.Type(value = SelectionStatement.class, name = "SELECTION_STATEMENT"),
+    @JsonSubTypes.Type(value = SkipStatement.class, name = "SKIP_STATEMENT"),
+    @JsonSubTypes.Type(value = SmallRepetitionStatement.class, name = "SMALL_REPETITION_STATEMENT")
 })
 public abstract class AbstractStatement implements Generatable {
 
