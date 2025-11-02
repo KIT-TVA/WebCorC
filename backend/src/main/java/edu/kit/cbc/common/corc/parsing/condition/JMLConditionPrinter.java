@@ -51,7 +51,7 @@ public class JMLConditionPrinter {
                 printTree(rhs);
                 print(")");
             }
-            default -> ConditionPrinter.print(tree);
+            default -> this.builder.append(ConditionPrinter.print(tree));
         }
     }
 
