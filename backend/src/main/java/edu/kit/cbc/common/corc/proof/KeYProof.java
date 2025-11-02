@@ -72,6 +72,7 @@ public class KeYProof {
 
         Path keyFile = Files.createFile(keyFilePath);
         Files.write(keyFile, this.toString().getBytes());
+        System.out.println(this.toString());
         return keyFile.toFile();
     }
 

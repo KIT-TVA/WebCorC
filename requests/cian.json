@@ -1,0 +1,31 @@
+{
+  "name": "simpleAddition",
+  "statement": {
+    "name": "i = i + 1;",
+    "type": "STATEMENT",
+    "preCondition": {
+      "condition": "i > 7"
+    },
+    "postCondition": {
+      "condition": "i > 8"
+    },
+    "isProven": false,
+    "id": "1744559257092.795",
+    "programStatement": "i = i+1;"
+  },
+  "preCondition": {
+    "condition": "i > 7"
+  },
+  "postCondition": {
+    "condition": "i > 8"
+  },
+  "javaVariables": [
+    {
+      "name": "int i",
+      "kind": "LOCAL"
+    }
+  ],
+  "globalConditions": [],
+  "renamings": [],
+  "isProven": false
+}

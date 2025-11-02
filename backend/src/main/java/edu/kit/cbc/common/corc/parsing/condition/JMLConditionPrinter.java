@@ -57,15 +57,6 @@ public class JMLConditionPrinter {
 
 
 
-    private void lineBreak() {
-        this.builder.append("\n");
-    }
-
-    private void semicolon() {
-        this.builder.append(";");
-        lineBreak();
-    }
-
     private void space() {
         this.builder.append(" ");
     }
