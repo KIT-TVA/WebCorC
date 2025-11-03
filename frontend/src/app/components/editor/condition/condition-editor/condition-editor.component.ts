@@ -28,7 +28,7 @@ import { AiChatService } from "../../../../services/ai-chat/ai-chat.service";
 import { Textarea } from "primeng/textarea";
 import { IconField } from "primeng/iconfield";
 import { InputIcon } from "primeng/inputicon";
-import { FloatLabelModule } from 'primeng/floatlabel';
+import { FloatLabelModule } from "primeng/floatlabel";
 
 /**
  * Editor in the statements for the {@link Condition}
@@ -50,7 +50,7 @@ import { FloatLabelModule } from 'primeng/floatlabel';
     Textarea,
     IconField,
     InputIcon,
-    FloatLabelModule
+    FloatLabelModule,
   ],
   templateUrl: "./condition-editor.component.html",
   standalone: true,
@@ -65,7 +65,7 @@ export class ConditionEditorComponent implements OnInit {
   /**
    * Flag to allow editing the condition content
    */
-  @Input() public placeholder: string = "Type here"
+  @Input() public placeholder: string = "Type here";
   @Input() public editable = true;
   @Input() public inline = false;
 
@@ -87,7 +87,7 @@ export class ConditionEditorComponent implements OnInit {
     private _aiChatService: AiChatService,
   ) {
     effect(() => {
-      const newValue = this.condition().programStatement;
+      const newValue = this.condition().condition;
       if (!(newValue == this._conditionGroup?.get("condition")?.value)) {
         this._conditionGroup?.get("condition")?.setValue(newValue);
       }
@@ -117,7 +117,7 @@ export class ConditionEditorComponent implements OnInit {
    * @see AiChatService
    */
   public askAi(): void {
-    if (!this.condition()?.programStatement) return;
+    if (!this.condition()?.condition) return;
     this._aiChatService.addCondition(this.condition()!);
   }
 

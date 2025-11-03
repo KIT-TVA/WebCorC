@@ -58,7 +58,7 @@ export class TreeService {
       });
     }
     newFormula.globalConditions.forEach((condition) => {
-      this.addGlobalCondition(condition.programStatement);
+      this.addGlobalCondition(condition.condition);
     });
   }
 

@@ -57,8 +57,7 @@ export class SimpleStatementComponent extends Refinement implements OnInit {
   public constructor(treeService: TreeService) {
     super(treeService);
     effect(() => {
-      this._node.statement.programStatement =
-        this.pseudoCondition().programStatement;
+      this._node.statement.programStatement = this.pseudoCondition().condition;
     });
   }
 

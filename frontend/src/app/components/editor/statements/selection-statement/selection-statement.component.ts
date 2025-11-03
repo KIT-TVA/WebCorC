@@ -101,9 +101,9 @@ export class SelectionStatementComponent extends Refinement {
       this._node,
       signal(
         new Condition(
-          this._node.precondition().programStatement +
+          this._node.precondition().condition +
             " & " +
-            this._node.guards[index]().programStatement,
+            this._node.guards[index]().condition,
         ),
       ),
     );
