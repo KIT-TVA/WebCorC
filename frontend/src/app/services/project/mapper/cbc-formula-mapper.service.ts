@@ -193,6 +193,8 @@ export class CbcFormulaMapperService {
     private importPosition(position: IPosition): Position {
         return new Position(position.xinPx, position.yinPx);
     }
+    return new Condition(condition.condition);
+  }
 
     private importRenaming(renaming: IRenaming[] | null) {
         const newRenames: Renaming[] = [];
