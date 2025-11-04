@@ -2,6 +2,7 @@ import {
   Component,
   effect,
   EventEmitter,
+  Inject,
   Input,
   model,
   ModelSignal,
@@ -29,6 +30,10 @@ import { Textarea } from "primeng/textarea";
 import { IconField } from "primeng/iconfield";
 import { InputIcon } from "primeng/inputicon";
 import { FloatLabelModule } from "primeng/floatlabel";
+import {
+  GREEN_COLOURED_CONDITIONS,
+  RED_COLOURED_CONDITIONS,
+} from "../../editor.component";
 
 /**
  * Editor in the statements for the {@link Condition}
@@ -85,6 +90,8 @@ export class ConditionEditorComponent implements OnInit {
   public constructor(
     private fb: FormBuilder,
     private _aiChatService: AiChatService,
+    @Inject(GREEN_COLOURED_CONDITIONS) protected greenConditions: ICondition[],
+    @Inject(RED_COLOURED_CONDITIONS) protected redConditions: ICondition[],
   ) {
     effect(() => {
       const newValue = this.condition().condition;

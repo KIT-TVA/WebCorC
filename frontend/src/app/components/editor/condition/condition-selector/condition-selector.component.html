@@ -1,0 +1,34 @@
+<ul>
+  @for (conflict of conflicts; track conflict) {
+    <li style="display: flex; flex-direction: row; gap: 2rem">
+      <div style="display: flex; flex-direction: column">
+        <app-condition-editor [condition]="conflict.version1()">
+        </app-condition-editor>
+        <p-button
+          size="large"
+          fluid
+          label="use this condition"
+          (mouseenter)="
+            setActiveCondition(conflict.version1(), conflict.version2())
+          "
+          (mouseleave)="removeActiveCondition()"
+          (click)="_selectCondition(true, conflict)"
+        ></p-button>
+      </div>
+      <div style="display: flex; flex-direction: column">
+        <app-condition-editor [condition]="conflict.version2()">
+        </app-condition-editor>
+        <p-button
+          size="large"
+          fluid
+          label="use this condition"
+          (mouseenter)="
+            setActiveCondition(conflict.version2(), conflict.version1())
+          "
+          (mouseleave)="removeActiveCondition()"
+          (click)="_selectCondition(false, conflict)"
+        ></p-button>
+      </div>
+    </li>
+  }
+</ul>

@@ -3,7 +3,6 @@ import { ICondition } from "../../condition/condition";
 import { signal, WritableSignal } from "@angular/core";
 import { AbstractStatementNode } from "./abstract-statement-node";
 import { createStatementNode } from "./createStatementNode";
-import { index } from "d3";
 
 export class CompositionStatementNode extends AbstractStatementNode {
   public intermediateCondition: WritableSignal<ICondition>;
@@ -104,6 +103,63 @@ export class CompositionStatementNode extends AbstractStatementNode {
       default:
       // Should never happen
     }
+  }
+
+  override checkConditionSync(child: AbstractStatementNode): boolean {
+    if (child == this._firstStatementNode) {
+      return (
+        this.precondition() == child.precondition() &&
+        this.intermediateCondition() == child.postcondition()
+      );
+    }
+    return (
+      this.intermediateCondition() == child.precondition() &&
+      this.postcondition() == child.postcondition()
+    );
+  }
+
+  override getConditionConflicts(child: AbstractStatementNode): {
+    version1: WritableSignal<ICondition>;
+    version2: WritableSignal<ICondition>;
+    type: "PRECONDITION" | "POSTCONDITION";
+  }[] {
+    const conflicts = [];
+    if (child == this._firstStatementNode) {
+      if (this.precondition() != child.precondition()) {
+        conflicts.push({
+          version1: this.precondition,
+          version2: child.precondition,
+          type: "PRECONDITION",
+        });
+      }
+      if (this.intermediateCondition() != child.postcondition()) {
+        conflicts.push({
+          version1: this.intermediateCondition,
+          version2: child.postcondition,
+          type: "POSTCONDITION",
+        });
+      }
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      return conflicts;
+    }
+    if (this.intermediateCondition() != child.precondition()) {
+      conflicts.push({
+        version1: this.intermediateCondition,
+        version2: child.precondition,
+        type: "PRECONDITION",
+      });
+    }
+    if (this.postcondition() != child.postcondition()) {
+      conflicts.push({
+        version1: this.postcondition,
+        version2: child.postcondition,
+        type: "POSTCONDITION",
+      });
+    }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    return conflicts;
   }
 
   override addChild(statement: AbstractStatementNode, index: number) {

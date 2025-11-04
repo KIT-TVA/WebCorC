@@ -83,7 +83,39 @@ export class AbstractStatementNode {
     this.statement.postCondition = this.postcondition();
   }
 
+  public checkConditionSync(child: AbstractStatementNode) {
+    return (
+      this.precondition() == child.precondition() &&
+      this.postcondition() == child.postcondition()
+    );
+  }
+
   public addChild(statement: AbstractStatementNode, index: number) {
     //EXTEND THIS!
+  }
+
+  getConditionConflicts(child: AbstractStatementNode): {
+    version1: WritableSignal<ICondition>;
+    version2: WritableSignal<ICondition>;
+    type: "PRECONDITION" | "POSTCONDITION";
+  }[] {
+    const conflicts = [];
+    if (this.precondition() != child.precondition()) {
+      conflicts.push({
+        version1: this.precondition,
+        version2: child.precondition,
+        type: "PRECONDITION",
+      });
+    }
+    if (this.postcondition() != child.postcondition()) {
+      conflicts.push({
+        version1: this.postcondition,
+        version2: child.postcondition,
+        type: "POSTCONDITION",
+      });
+    }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    return conflicts;
   }
 }
