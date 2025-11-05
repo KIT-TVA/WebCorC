@@ -34,6 +34,7 @@ import {
   GREEN_COLOURED_CONDITIONS,
   RED_COLOURED_CONDITIONS,
 } from "../../editor.component";
+import { $dt } from "@primeuix/themes";
 
 /**
  * Editor in the statements for the {@link Condition}
@@ -134,4 +135,6 @@ export class ConditionEditorComponent implements OnInit {
   public get conditionGroup(): FormGroup | undefined {
     return this._conditionGroup;
   }
+
+  protected readonly $dt = $dt;
 }

@@ -70,6 +70,8 @@ export class RootStatementNode extends AbstractStatementNode {
   }
 
   override addChild(statement: AbstractStatementNode, index: number) {
-    this.childStatementNode = statement;
+    this._childStatementNode = statement;
+    this.statement.statement = statement.statement;
+    this.children = [statement];
   }
 }

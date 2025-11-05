@@ -163,12 +163,17 @@ export class CompositionStatementNode extends AbstractStatementNode {
   }
 
   override addChild(statement: AbstractStatementNode, index: number) {
+    // Here we don't use the default setter because we don't want to override conditions
     switch (index) {
       case 0:
-        this.firstStatementNode = statement;
+        this.statement.firstStatement = statement.statement;
+        this._firstStatementNode = statement;
+        this.children = [this._firstStatementNode, this._secondStatementNode];
         break;
       case 1:
-        this.secondStatementNode = statement;
+        this.statement.secondStatement = statement.statement;
+        this._secondStatementNode = statement;
+        this.children = [this._firstStatementNode, this._secondStatementNode];
     }
   }
 }

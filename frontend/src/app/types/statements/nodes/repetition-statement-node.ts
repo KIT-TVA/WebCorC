@@ -80,6 +80,8 @@ export class RepetitionStatementNode extends AbstractStatementNode {
   }
 
   override addChild(statement: AbstractStatementNode, index: number) {
-    this.loopStatementNode = statement;
+    this.statement.loopStatement = statement.statement;
+    this._loopStatementNode = statement;
+    this.children = [statement];
   }
 }

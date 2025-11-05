@@ -1,9 +1,8 @@
-<div>
+<div style="width: fit-content">
   @if (conditionGroup) {
     <form [formGroup]="conditionGroup">
       <div
         (focusout)="conditionEditingFinished.emit()"
-        style="max-width: 213px"
       >
         <p-icon-field>
           <p-float-label variant="on">
@@ -18,14 +17,13 @@
               variant="filled"
               [dt]="{
                 root: {
-                  filledBackground: redConditions.includes(condition())
-                    ? '#720719'
+                  borderColor: redConditions.includes(condition())
+                    ? '#ff7e7e'
                     : greenConditions.includes(condition())
                       ? '#6ab77a'
-                      : undefined,
+                      : $dt('textarea.border.color').value,
                 },
               }"
-              [style.background-color]=""
             >
             </textarea>
             <label for="rule">{{ placeholder }}</label>
