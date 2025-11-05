@@ -1,7 +1,6 @@
 import {
   HttpClient,
   HttpErrorResponse,
-  HttpHeaders,
   HttpParams,
 } from "@angular/common/http";
 import { Injectable } from "@angular/core";
@@ -69,7 +68,7 @@ export class NetworkTreeService {
         }),
       )
       .subscribe((uuid: string) => {
-        let ws = new WebSocketService(
+        const ws = new WebSocketService(
           environment.apiUrl + NetworkTreeService.verifyWebSocketPath + uuid,
         );
         ws.messages$.subscribe((msg: string) => {
@@ -88,7 +87,7 @@ export class NetworkTreeService {
               });
           }
           //TODO: consoleService needs an endpoint for non-errors
-          this.consoleService.addStringError("", msg);
+          this.consoleService.addStringInfo(msg);
         });
       });
   }

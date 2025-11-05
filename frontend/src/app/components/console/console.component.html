@@ -1,15 +1,22 @@
-<div class="consoleContainer" >
-    <div class="actions">
-        <h3> Console </h3>
-        <button mat-icon-button (click)="clear()" > <mat-icon> delete </mat-icon> </button>
-    </div>
-    <mat-list #logList  >
+<div class="consoleContainer">
+  <div class="actions">
+    <h3>Console</h3>
+    <button mat-icon-button (click)="clear()">
+      <mat-icon> delete </mat-icon>
+    </button>
+  </div>
+  <mat-list #logList>
     @for (line of loglines; track line) {
+      @if (isError(line)) {
         <mat-list-item>
-            <span matListItemTitle> {{ line.action }}  </span>
-            <span matListItemLine> {{ deconstructLogError(line) }} </span>
+          <span matListItemTitle> {{ line.action }} </span>
+          <span matListItemLine> {{ deconstructLogError(line) }} </span>
         </mat-list-item>
+      } @else if (isInfo(line)) {
+        <mat-list-item>
+          <span matListItemTitle> {{ line.message }} </span>
+        </mat-list-item>
+      }
     }
-        
-    </mat-list>
+  </mat-list>
 </div>
