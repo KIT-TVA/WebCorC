@@ -13,16 +13,16 @@ import lombok.Setter;
 @NoArgsConstructor
 @Serdeable
 public class JavaVariable implements Generatable {
-    private String variable;
+    private String name;
     private JavaVariableKind kind;
 
     @Override
     public String toString() {
-        return this.variable + ";";
+        return this.name + ";";
     }
 
     @Override
     public String generate() {
-        return this.variable + ";";
+        return this.name + ";";
     }
 }

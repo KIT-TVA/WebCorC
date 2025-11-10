@@ -3,7 +3,7 @@
     "statement": {
         "name": "Statement1",
         "programStatement": "i = 1;",
-        "type": "statement",
+        "type": "STATEMENT",
         "preCondition": {
             "condition": "i == 0"
         },
