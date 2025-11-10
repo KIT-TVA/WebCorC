@@ -112,8 +112,6 @@ export class LandingPageComponent implements OnInit {
     dialogRef.onClose.subscribe((selectedExample) => {
       if (selectedExample) {
         console.log(selectedExample);
-        console.log("Import Successfully");
-        console.log(selectedExample.project);
         this.projectService.import(selectedExample.project, selectedExample.name);
       }
     });
