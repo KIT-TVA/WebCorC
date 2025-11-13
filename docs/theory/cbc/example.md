@@ -24,7 +24,7 @@ the abstract hoare triple into a new refinement:
 ```
 
 As we can see, there are some new conditions `G1, G2`, called guards, and abstract statements `S1, S2`. 
-Guards `G1` and `G2` are the required side conditions for the selection refinement for our example. 
+Guards `G` and `G2` are the required side conditions for the selection refinement for our example. 
 As we will see, statements `S1` and `S2` can be further refined separately. 
 Since we want to differentiate between the number `n` being even `n % 2 = 0` and uneven `n % 2 != 0`, we use
 these as guards `G1 := n % 2 = 0` and `G2 := n % 2 != 0`.

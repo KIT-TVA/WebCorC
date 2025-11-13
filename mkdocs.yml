@@ -38,34 +38,34 @@ markdown_extensions:
 
 nav:
   - Home:
-    - Overview: index.md
-    - Publications: home/pubs.md
-    - About:
-      - People: home/members.md
-      - Contact: home/contact.md
-      - References: home/references.md
+    - Overview: index.md                              #done
+    - Publications: home/pubs.md                      #done
+    - About:                                          
+      - People: home/members.md                       #done
+      - Contact: home/contact.md                      #done
+      - References: home/references.md                # todo for some books like kw12, key etc
   - Approach:
     - CbC:
-      - Theory: theory/cbc/theory.md
-      - Practical Example: theory/cbc/example.md
-    - XbC:
-      - Theory: theory/xbc/xbctheory.md
+      - Theory: theory/cbc/theory.md                  #done
+      - Practical Example: theory/cbc/example.md      # todo need to throw out eclipse corc example
+#    - XbC:
+#      - Theory: theory/xbc/xbctheory.md
   - WebCorC:
-    - Overview:  webcorc/webcorc-overview.md
-    - Getting Started: webcorc/gettingstarted.md
-    - Features:
-      - AI Chat: webcorc/ai-chat.md
+    - Overview:  webcorc/webcorc-overview.md          # todo
+    - Getting Started: webcorc/gettingstarted.md      # todo
+#    - Features:
+#      - AI Chat: webcorc/ai-chat.md
   - CorC (Eclipse):
-    - Overview: corc/corc-overview.md
-    - Getting Started: corc/gettingstarted.md
-    - Case Studies: corc/casestudies.md
-    - Features:
-      - Code Generation: corc/code-conversion.md
-      - Counterexample Generation: corc/counterexamples.md
-      - Editors: corc/editors.md
-      - Mutation Generation: corc/mutation.md
-      - Proof Statistics: corc/proof-stats.md
-      - Project Types: corc/project-types.md
-      - Related Work: corc/related-work.md
-      - Testing: corc/testing.md
-      - Verification: corc/verification.md
+    - Overview: corc/corc-overview.md                 # todo need clean up and splitting into subpages
+    - Getting Started: corc/gettingstarted.md         # todo
+    - Case Studies: corc/casestudies.md               # todo
+#    - Features:
+#      - Code Generation: corc/code-conversion.md
+#      - Counterexample Generation: corc/counterexamples.md
+#      - Editors: corc/editors.md
+#      - Mutation Generation: corc/mutation.md
+#      - Proof Statistics: corc/proof-stats.md
+#      - Project Types: corc/project-types.md
+#      - Related Work: corc/related-work.md
+#      - Testing: corc/testing.md
+#      - Verification: corc/verification.md
