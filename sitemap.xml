@@ -2,66 +2,102 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://corc.informatik.kit.edu/</loc>
-         <lastmod>2025-08-07</lastmod>
+         <lastmod>2025-11-13</lastmod>
     </url>
     <url>
-         <loc>https://corc.informatik.kit.edu/cbc/cbc/</loc>
-         <lastmod>2025-08-07</lastmod>
-    </url>
-    <url>
-         <loc>https://corc.informatik.kit.edu/cbc/webcorc/</loc>
-         <lastmod>2025-08-07</lastmod>
-    </url>
-    <url>
-         <loc>https://corc.informatik.kit.edu/corc/</loc>
-         <lastmod>2025-08-07</lastmod>
+         <loc>https://corc.informatik.kit.edu/corc/casestudies/</loc>
+         <lastmod>2025-11-13</lastmod>
     </url>
     <url>
          <loc>https://corc.informatik.kit.edu/corc/code-conversion/</loc>
-         <lastmod>2025-08-07</lastmod>
+         <lastmod>2025-11-13</lastmod>
+    </url>
+    <url>
+         <loc>https://corc.informatik.kit.edu/corc/corc-overview/</loc>
+         <lastmod>2025-11-13</lastmod>
     </url>
     <url>
          <loc>https://corc.informatik.kit.edu/corc/counterexamples/</loc>
-         <lastmod>2025-08-07</lastmod>
+         <lastmod>2025-11-13</lastmod>
     </url>
     <url>
          <loc>https://corc.informatik.kit.edu/corc/editors/</loc>
-         <lastmod>2025-08-07</lastmod>
+         <lastmod>2025-11-13</lastmod>
+    </url>
+    <url>
+         <loc>https://corc.informatik.kit.edu/corc/gettingstarted/</loc>
+         <lastmod>2025-11-13</lastmod>
     </url>
     <url>
          <loc>https://corc.informatik.kit.edu/corc/information-flow/</loc>
-         <lastmod>2025-08-07</lastmod>
+         <lastmod>2025-11-13</lastmod>
     </url>
     <url>
          <loc>https://corc.informatik.kit.edu/corc/mutation/</loc>
-         <lastmod>2025-08-07</lastmod>
+         <lastmod>2025-11-13</lastmod>
     </url>
     <url>
          <loc>https://corc.informatik.kit.edu/corc/project-types/</loc>
-         <lastmod>2025-08-07</lastmod>
+         <lastmod>2025-11-13</lastmod>
     </url>
     <url>
          <loc>https://corc.informatik.kit.edu/corc/proof-stats/</loc>
-         <lastmod>2025-08-07</lastmod>
+         <lastmod>2025-11-13</lastmod>
     </url>
     <url>
          <loc>https://corc.informatik.kit.edu/corc/related-work/</loc>
-         <lastmod>2025-08-07</lastmod>
+         <lastmod>2025-11-13</lastmod>
+    </url>
+    <url>
+         <loc>https://corc.informatik.kit.edu/corc/spls/</loc>
+         <lastmod>2025-11-13</lastmod>
     </url>
     <url>
          <loc>https://corc.informatik.kit.edu/corc/testing/</loc>
-         <lastmod>2025-08-07</lastmod>
+         <lastmod>2025-11-13</lastmod>
     </url>
     <url>
          <loc>https://corc.informatik.kit.edu/corc/verification/</loc>
-         <lastmod>2025-08-07</lastmod>
+         <lastmod>2025-11-13</lastmod>
     </url>
     <url>
-         <loc>https://corc.informatik.kit.edu/features/</loc>
-         <lastmod>2025-08-07</lastmod>
+         <loc>https://corc.informatik.kit.edu/home/contact/</loc>
+         <lastmod>2025-11-13</lastmod>
     </url>
     <url>
-         <loc>https://corc.informatik.kit.edu/features/ai-chat/</loc>
-         <lastmod>2025-08-07</lastmod>
+         <loc>https://corc.informatik.kit.edu/home/members/</loc>
+         <lastmod>2025-11-13</lastmod>
+    </url>
+    <url>
+         <loc>https://corc.informatik.kit.edu/home/pubs/</loc>
+         <lastmod>2025-11-13</lastmod>
+    </url>
+    <url>
+         <loc>https://corc.informatik.kit.edu/home/references/</loc>
+         <lastmod>2025-11-13</lastmod>
+    </url>
+    <url>
+         <loc>https://corc.informatik.kit.edu/theory/cbc/example/</loc>
+         <lastmod>2025-11-13</lastmod>
+    </url>
+    <url>
+         <loc>https://corc.informatik.kit.edu/theory/cbc/theory/</loc>
+         <lastmod>2025-11-13</lastmod>
+    </url>
+    <url>
+         <loc>https://corc.informatik.kit.edu/theory/xbc/xbctheory/</loc>
+         <lastmod>2025-11-13</lastmod>
+    </url>
+    <url>
+         <loc>https://corc.informatik.kit.edu/webcorc/ai-chat/</loc>
+         <lastmod>2025-11-13</lastmod>
+    </url>
+    <url>
+         <loc>https://corc.informatik.kit.edu/webcorc/gettingstarted/</loc>
+         <lastmod>2025-11-13</lastmod>
+    </url>
+    <url>
+         <loc>https://corc.informatik.kit.edu/webcorc/webcorc-overview/</loc>
+         <lastmod>2025-11-13</lastmod>
     </url>
 </urlset>
