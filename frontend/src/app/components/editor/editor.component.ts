@@ -45,6 +45,7 @@ import { Button } from "primeng/button";
 import { Popover } from "primeng/popover";
 import { ConditionSelectorComponent } from "./condition/condition-selector/condition-selector.component";
 import { ICondition } from "../../types/condition/condition";
+import { disconnectNodes } from "../../types/statements/nodes/statement-node-utils";
 
 export const RED_COLOURED_CONDITIONS = new InjectionToken<ICondition[]>(
   "RedColouredConditions",
@@ -350,7 +351,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     this.selectedEdges.forEach((edgeChange) => {
       if (edgeChange.selected) {
         const { parent, child } = this.getNodesFromEdge(edgeChange);
-        parent.data!().deleteChild(child.data!());
+        disconnectNodes(parent.data!(), child.data!());
       }
     });
     this.edges = this.computeEdges(this.statements());

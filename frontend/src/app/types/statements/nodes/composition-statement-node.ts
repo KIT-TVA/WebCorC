@@ -2,7 +2,7 @@ import { ICompositionStatement } from "../composition-statement";
 import { ICondition } from "../../condition/condition";
 import { signal, WritableSignal } from "@angular/core";
 import { AbstractStatementNode } from "./abstract-statement-node";
-import { createStatementNode } from "./createStatementNode";
+import { statementNodeUtils } from "./statement-node-utils";
 
 export class CompositionStatementNode extends AbstractStatementNode {
   public intermediateCondition: WritableSignal<ICondition>;
@@ -40,7 +40,7 @@ export class CompositionStatementNode extends AbstractStatementNode {
     super(statement, parent);
     this.intermediateCondition = signal(statement.intermediateCondition);
     if (statement.firstStatement) {
-      this.firstStatementNode = createStatementNode(
+      this.firstStatementNode = statementNodeUtils(
         statement.firstStatement,
         this,
       );
@@ -48,7 +48,7 @@ export class CompositionStatementNode extends AbstractStatementNode {
       this.firstStatementNode.overridePrecondition(this, this.precondition);
     }
     if (statement.secondStatement) {
-      this.secondStatementNode = createStatementNode(
+      this.secondStatementNode = statementNodeUtils(
         statement.secondStatement,
         this,
       );

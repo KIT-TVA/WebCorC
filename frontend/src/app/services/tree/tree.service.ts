@@ -12,7 +12,7 @@ import { ICompositionStatement } from "../../types/statements/composition-statem
 import { IRepetitionStatement } from "../../types/statements/repetition-statement";
 import { ISelectionStatement } from "../../types/statements/selection-statement";
 import { AbstractStatementNode } from "../../types/statements/nodes/abstract-statement-node";
-import { createStatementNode } from "../../types/statements/nodes/createStatementNode";
+import { statementNodeUtils } from "../../types/statements/nodes/statement-node-utils";
 import {
   IRootStatement,
   RootStatement,
@@ -222,7 +222,7 @@ export class TreeService {
           this.rootFormula.statement as RootStatement,
           undefined,
         )
-      : createStatementNode(
+      : statementNodeUtils(
           new RootStatement(
             "",
             new Condition(""),

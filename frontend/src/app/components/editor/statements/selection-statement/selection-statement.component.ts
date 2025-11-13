@@ -18,7 +18,7 @@ import {
 } from "../../../../types/statements/abstract-statement";
 import { Position } from "../../../../types/position";
 import { SelectionStatementNode } from "../../../../types/statements/nodes/selection-statement-node";
-import { createEmptyStatementNode } from "../../../../types/statements/nodes/createStatementNode";
+import { createEmptyStatementNode } from "../../../../types/statements/nodes/statement-node-utils";
 import { HandleComponent } from "ngx-vflow";
 import { index } from "d3";
 import { Condition } from "../../../../types/condition/condition";

@@ -18,7 +18,7 @@ import { MatInputModule } from "@angular/material/input";
 import { MatIconModule } from "@angular/material/icon";
 import { Position } from "../../../../types/position";
 import { RepetitionStatementNode } from "../../../../types/statements/nodes/repetition-statement-node";
-import { createEmptyStatementNode } from "../../../../types/statements/nodes/createStatementNode";
+import { createEmptyStatementNode } from "../../../../types/statements/nodes/statement-node-utils";
 import { StatementType } from "../../../../types/statements/abstract-statement";
 import { Condition } from "../../../../types/condition/condition";
 

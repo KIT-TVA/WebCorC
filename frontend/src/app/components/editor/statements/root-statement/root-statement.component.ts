@@ -1,19 +1,22 @@
-import {Component, Input} from "@angular/core";
+import { Component, Input } from "@angular/core";
 
-import {StatementComponent} from "../statement/statement.component";
-import {Refinement} from "../../../../types/refinement";
-import {TreeService} from "../../../../services/tree/tree.service";
-import {MatGridListModule} from "@angular/material/grid-list";
-import {RefinementWidgetComponent} from "../../../../widgets/refinement-widget/refinement-widget.component";
+import { StatementComponent } from "../statement/statement.component";
+import { Refinement } from "../../../../types/refinement";
+import { TreeService } from "../../../../services/tree/tree.service";
+import { MatGridListModule } from "@angular/material/grid-list";
+import { RefinementWidgetComponent } from "../../../../widgets/refinement-widget/refinement-widget.component";
 
-import {FormsModule} from "@angular/forms";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatInputModule} from "@angular/material/input";
-import {MatIconModule} from "@angular/material/icon";
-import {AbstractStatement, StatementType} from "../../../../types/statements/abstract-statement";
-import {Position} from "../../../../types/position";
-import {createEmptyStatementNode} from "../../../../types/statements/nodes/createStatementNode";
-import {RootStatementNode} from "../../../../types/statements/nodes/root-statement-node";
+import { FormsModule } from "@angular/forms";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatIconModule } from "@angular/material/icon";
+import {
+  AbstractStatement,
+  StatementType,
+} from "../../../../types/statements/abstract-statement";
+import { Position } from "../../../../types/position";
+import { createEmptyStatementNode } from "../../../../types/statements/nodes/statement-node-utils";
+import { RootStatementNode } from "../../../../types/statements/nodes/root-statement-node";
 
 /**
  * Composition statement in {@link EditorComponent}.
@@ -30,20 +33,18 @@ import {RootStatementNode} from "../../../../types/statements/nodes/root-stateme
     FormsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatIconModule
+    MatIconModule,
   ],
   templateUrl: "./root-statement.component.html",
   styleUrl: "./root-statement.component.scss",
-  standalone: true
+  standalone: true,
 })
 export class RootStatementComponent extends Refinement {
   @Input({ required: true }) _node!: RootStatementNode;
 
   // Element used to spawn the child statements in
 
-  public constructor(
-    treeService: TreeService,
-  ) {
+  public constructor(treeService: TreeService) {
     super(treeService);
   }
 
@@ -56,10 +57,10 @@ export class RootStatementComponent extends Refinement {
    * The new child statement then get created in component
    */
   public chooseRefinement($event: StatementType): void {
-      const newNode = createEmptyStatementNode($event, this._node);
-      (this._node as RootStatementNode).childStatementNode = newNode;
-      newNode.overridePrecondition(this._node, this._node.precondition)
-      this.treeService.addStatementNode(newNode);
+    const newNode = createEmptyStatementNode($event, this._node);
+    (this._node as RootStatementNode).childStatementNode = newNode;
+    newNode.overridePrecondition(this._node, this._node.precondition);
+    this.treeService.addStatementNode(newNode);
   }
 
   public override resetPosition(position: Position, offset: Position): void {

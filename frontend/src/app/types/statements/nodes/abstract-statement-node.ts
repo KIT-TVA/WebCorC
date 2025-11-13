@@ -54,6 +54,8 @@ export class AbstractStatementNode {
         (filteredNode) => filteredNode != node,
       );
     }
+    this.overridePrecondition(this, signal(this.precondition()));
+    this.overridePostcondition(this, signal(this.postcondition()));
   }
 
   public setPosition(position: { x: number; y: number }) {

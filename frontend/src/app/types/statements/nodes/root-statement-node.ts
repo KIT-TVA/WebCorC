@@ -1,7 +1,7 @@
 import { ICondition } from "../../condition/condition";
 import { WritableSignal } from "@angular/core";
 import { AbstractStatementNode } from "./abstract-statement-node";
-import { createStatementNode } from "./createStatementNode";
+import { statementNodeUtils } from "./statement-node-utils";
 import { IRootStatement } from "../root-statement";
 import { index } from "d3";
 
@@ -32,7 +32,7 @@ export class RootStatementNode extends AbstractStatementNode {
   ) {
     super(statement, parent);
     if (statement.statement) {
-      this._childStatementNode = createStatementNode(statement.statement, this);
+      this._childStatementNode = statementNodeUtils(statement.statement, this);
       this.children.push(this._childStatementNode);
     }
   }
