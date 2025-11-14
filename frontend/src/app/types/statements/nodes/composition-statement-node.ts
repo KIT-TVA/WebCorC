@@ -2,7 +2,7 @@ import { ICompositionStatement } from "../composition-statement";
 import { ICondition } from "../../condition/condition";
 import { signal, WritableSignal } from "@angular/core";
 import { AbstractStatementNode } from "./abstract-statement-node";
-import { createStatementNode } from "./createStatementNode";
+import { statementNodeUtils } from "./statement-node-utils";
 
 export class CompositionStatementNode extends AbstractStatementNode {
   public intermediateCondition: WritableSignal<ICondition>;
@@ -40,7 +40,7 @@ export class CompositionStatementNode extends AbstractStatementNode {
     super(statement, parent);
     this.intermediateCondition = signal(statement.intermediateCondition);
     if (statement.firstStatement) {
-      this.firstStatementNode = createStatementNode(
+      this.firstStatementNode = statementNodeUtils(
         statement.firstStatement,
         this,
       );
@@ -48,7 +48,7 @@ export class CompositionStatementNode extends AbstractStatementNode {
       this.firstStatementNode.overridePrecondition(this, this.precondition);
     }
     if (statement.secondStatement) {
-      this.secondStatementNode = createStatementNode(
+      this.secondStatementNode = statementNodeUtils(
         statement.secondStatement,
         this,
       );
@@ -102,6 +102,78 @@ export class CompositionStatementNode extends AbstractStatementNode {
         break;
       default:
       // Should never happen
+    }
+  }
+
+  override checkConditionSync(child: AbstractStatementNode): boolean {
+    if (child == this._firstStatementNode) {
+      return (
+        this.precondition() == child.precondition() &&
+        this.intermediateCondition() == child.postcondition()
+      );
+    }
+    return (
+      this.intermediateCondition() == child.precondition() &&
+      this.postcondition() == child.postcondition()
+    );
+  }
+
+  override getConditionConflicts(child: AbstractStatementNode): {
+    version1: WritableSignal<ICondition>;
+    version2: WritableSignal<ICondition>;
+    type: "PRECONDITION" | "POSTCONDITION";
+  }[] {
+    const conflicts = [];
+    if (child == this._firstStatementNode) {
+      if (this.precondition() != child.precondition()) {
+        conflicts.push({
+          version1: this.precondition,
+          version2: child.precondition,
+          type: "PRECONDITION",
+        });
+      }
+      if (this.intermediateCondition() != child.postcondition()) {
+        conflicts.push({
+          version1: this.intermediateCondition,
+          version2: child.postcondition,
+          type: "POSTCONDITION",
+        });
+      }
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      return conflicts;
+    }
+    if (this.intermediateCondition() != child.precondition()) {
+      conflicts.push({
+        version1: this.intermediateCondition,
+        version2: child.precondition,
+        type: "PRECONDITION",
+      });
+    }
+    if (this.postcondition() != child.postcondition()) {
+      conflicts.push({
+        version1: this.postcondition,
+        version2: child.postcondition,
+        type: "POSTCONDITION",
+      });
+    }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    return conflicts;
+  }
+
+  override addChild(statement: AbstractStatementNode, index: number) {
+    // Here we don't use the default setter because we don't want to override conditions
+    switch (index) {
+      case 0:
+        this.statement.firstStatement = statement.statement;
+        this._firstStatementNode = statement;
+        this.children = [this._firstStatementNode, this._secondStatementNode];
+        break;
+      case 1:
+        this.statement.secondStatement = statement.statement;
+        this._secondStatementNode = statement;
+        this.children = [this._firstStatementNode, this._secondStatementNode];
     }
   }
 }

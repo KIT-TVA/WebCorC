@@ -23,6 +23,11 @@ export class AbstractStatementNode {
     parent?.overridePostcondition(this, this.postcondition);
   }
 
+  /**
+   * Used when the precondition is controlled by the parent, eg. the pre- or intermediate condition of the parent statement.
+   * @param sourceNode
+   * @param condition
+   */
   public overridePrecondition(
     sourceNode: AbstractStatementNode,
     condition: WritableSignal<ICondition>,
@@ -30,20 +35,27 @@ export class AbstractStatementNode {
     this.precondition = condition;
   }
 
+  /**
+   * Used when the postcondition is controlled by the child, probably always the postcondition of the child statement.
+   * @param sourceNode must be passed so the correct condition to override can be determined, eg. if the parent has multiple children
+   * @param condition
+   */
   public overridePostcondition(
     sourceNode: AbstractStatementNode,
     condition: WritableSignal<ICondition>,
   ): void {
-    console.log("postcondition overridden");
     this.postcondition = condition;
   }
 
   public deleteChild(node: AbstractStatementNode) {
+    //EXTEND THIS!
     if (this.children.includes(node)) {
       this.children = this.children.filter(
         (filteredNode) => filteredNode != node,
       );
     }
+    this.overridePrecondition(this, signal(this.precondition()));
+    this.overridePostcondition(this, signal(this.postcondition()));
   }
 
   public setPosition(position: { x: number; y: number }) {
@@ -65,8 +77,47 @@ export class AbstractStatementNode {
     };
   }
 
+  /**
+   * Saves the potentially changed pre- and postconditions to the underlying statement.
+   */
   public finalize() {
     this.statement.preCondition = this.precondition();
     this.statement.postCondition = this.postcondition();
+  }
+
+  public checkConditionSync(child: AbstractStatementNode) {
+    return (
+      this.precondition() == child.precondition() &&
+      this.postcondition() == child.postcondition()
+    );
+  }
+
+  public addChild(statement: AbstractStatementNode, index: number) {
+    //EXTEND THIS!
+  }
+
+  getConditionConflicts(child: AbstractStatementNode): {
+    version1: WritableSignal<ICondition>;
+    version2: WritableSignal<ICondition>;
+    type: "PRECONDITION" | "POSTCONDITION";
+  }[] {
+    const conflicts = [];
+    if (this.precondition() != child.precondition()) {
+      conflicts.push({
+        version1: this.precondition,
+        version2: child.precondition,
+        type: "PRECONDITION",
+      });
+    }
+    if (this.postcondition() != child.postcondition()) {
+      conflicts.push({
+        version1: this.postcondition,
+        version2: child.postcondition,
+        type: "POSTCONDITION",
+      });
+    }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    return conflicts;
   }
 }

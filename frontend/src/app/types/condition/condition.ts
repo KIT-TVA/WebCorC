@@ -2,18 +2,17 @@
  * Conditon edited in the Condtion Editor
  */
 export class Condition implements ICondition {
-    programStatement: string;
+  condition: string;
 
+  constructor(programStatement: string) {
+    this.condition = programStatement;
+  }
 
-    constructor(programStatement: string) {
-        this.programStatement = programStatement;
-    }
-
-    export(): ICondition {
-        return {
-            programStatement: this.programStatement
-        };
-    }
+  export(): ICondition {
+    return {
+      condition: this.condition,
+    };
+  }
 }
 
 /**
@@ -21,5 +20,5 @@ export class Condition implements ICondition {
  * Compatible with the api calls for the backend
  */
 export interface ICondition {
-    programStatement: string
+  condition: string;
 }

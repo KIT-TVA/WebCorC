@@ -17,9 +17,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { NuMonacoEditorModule } from "@ng-util/monaco-editor";
 import { ProjectService } from "./services/project/project.service";
 import { NetworkTreeService } from "./services/tree/network/network-tree.service";
-import {
-  CreateProjectDialogComponent
-} from "./components/project-explorer/create-project-dialog/create-project-dialog.component";
+import { CreateProjectDialogComponent } from "./components/project-explorer/create-project-dialog/create-project-dialog.component";
 import { first } from "rxjs";
 import { NetworkStatusService } from "./services/networkStatus/network-status.service";
 import { ConsoleService } from "./services/console/console.service";
@@ -32,6 +30,8 @@ import { InputIcon } from "primeng/inputicon";
 import { IconField } from "primeng/iconfield";
 import { DialogService } from "primeng/dynamicdialog";
 import { SettingsButtonComponent } from "./components/settings/settings-button/settings-button.component";
+import { Toast } from "primeng/toast";
+import { MessageService } from "primeng/api";
 
 /**
  * Top Component of this application,
@@ -59,9 +59,10 @@ import { SettingsButtonComponent } from "./components/settings/settings-button/s
     InputIcon,
     IconField,
     SettingsButtonComponent,
+    Toast,
   ],
   templateUrl: "./app.component.html",
-  providers: [DialogService],
+  providers: [DialogService, MessageService],
   standalone: true,
   styleUrl: "./app.component.scss",
 })
@@ -80,6 +81,7 @@ export class AppComponent {
     private consoleService: ConsoleService,
     private editorService: EditorService,
     private aiChatService: AiChatService,
+    private messageService: MessageService,
   ) {
     this.networkStatus.status.subscribe((status) => {
       if (status != this._loadingState) {
@@ -174,7 +176,6 @@ export class AppComponent {
    */
   switchTheme() {
     const element = document.querySelector("html");
-    console.log("theme", element);
     element?.classList.toggle("dark-mode");
   }
 

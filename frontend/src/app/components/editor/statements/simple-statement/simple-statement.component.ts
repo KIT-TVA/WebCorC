@@ -1,11 +1,10 @@
 import {
-    Component,
-    ElementRef,
-    Input, OnInit,
-    signal,
-    ViewChild,
-    ViewContainerRef,
-    WritableSignal,
+  Component,
+  effect,
+  Input,
+  OnInit,
+  signal,
+  WritableSignal,
 } from "@angular/core";
 
 import { StatementComponent } from "../statement/statement.component";
@@ -20,7 +19,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { Position } from "../../../../types/position";
 import { AbstractStatement } from "../../../../types/statements/abstract-statement";
 import { SimpleStatementNode } from "../../../../types/statements/nodes/simple-statement-node";
-import { Condition } from "../../../../types/condition/condition";
+import { Condition, ICondition } from "../../../../types/condition/condition";
 
 /**
  * Component representing an instande of {@link SimpleStatement} in the grahical editor.
@@ -42,7 +41,7 @@ import { Condition } from "../../../../types/condition/condition";
   standalone: true,
   styleUrl: "./simple-statement.component.scss",
 })
-export class SimpleStatementComponent extends Refinement implements OnInit{
+export class SimpleStatementComponent extends Refinement implements OnInit {
   @Input({ required: true }) _node!: SimpleStatementNode;
 
   override export(): AbstractStatement | undefined {
@@ -51,18 +50,23 @@ export class SimpleStatementComponent extends Refinement implements OnInit{
 
   private _statement: Refinement | undefined;
 
-  protected pseudoCondition: WritableSignal<Condition> = signal(
+  protected pseudoCondition: WritableSignal<ICondition> = signal(
     new Condition(""),
   );
 
   public constructor(treeService: TreeService) {
     super(treeService);
+    effect(() => {
+      this._node.statement.programStatement = this.pseudoCondition().condition;
+    });
   }
 
   public ngOnInit() {
     //Commented out the next line that causes the bug mentioned in issue #44
     //Not sure if important thus the comment
-    //this.pseudoCondition.set(new Condition(this._node.statement.name));
+    this.pseudoCondition.set(
+      new Condition(this._node.statement.programStatement),
+    );
   }
 
   public override getTitle(): string {

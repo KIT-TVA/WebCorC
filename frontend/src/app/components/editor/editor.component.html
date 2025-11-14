@@ -23,13 +23,36 @@
         [nodes]="nodes"
         [edges]="edges"
         [connection]="{ curve: 'smooth-step' }"
+        (onConnect)="createEdge($event)"
         (onNodesChange.position)="handlePositionChange($event)"
         [background]="{ backgroundColor: 'var(--p-background)', type: 'dots' }"
         [snapGrid]="[25, 25]"
+        (onEdgesChange.select)="handleEdgeSelect($event)"
       >
         <ng-template let-ctx nodeHtml style="width: fit-content">
           <app-statement-delegator [statement]="ctx.node.data()">
           </app-statement-delegator>
+        </ng-template>
+        <ng-template let-ctx edgeLabelHtml>
+          <p-button
+            label="condition conflict"
+            size="small"
+            severity="warn"
+            (click)="conditionPopover.toggle($event)"
+          >
+          </p-button>
+          <p-popover
+            #conditionPopover
+            (onHide)="selector.removeActiveCondition()"
+          >
+            <app-condition-selector
+              #selector
+              [child]="ctx.label.data.child"
+              [parent]="ctx.label.data.parent"
+              (selectCondition)="edges = computeEdges(statements())"
+            >
+            </app-condition-selector>
+          </p-popover>
         </ng-template>
         @if (globalSettingsService.showMiniMap) {
           <mini-map [position]="'top-right'" />

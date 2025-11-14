@@ -201,7 +201,7 @@ export class CbcFormulaMapperService {
     if (!condition) {
       return new Condition("");
     }
-    return new Condition(condition.programStatement);
+    return new Condition(condition.condition);
   }
 
   private importPosition(position: IPosition): Position {

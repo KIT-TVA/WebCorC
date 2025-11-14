@@ -2,7 +2,8 @@ import { AbstractStatementNode } from "./abstract-statement-node";
 import { ISelectionStatement } from "../selection-statement";
 import { signal, Signal, WritableSignal } from "@angular/core";
 import { Condition, ICondition } from "../../condition/condition";
-import { createStatementNode } from "./createStatementNode";
+import { statementNodeUtils } from "./statement-node-utils";
+import { index } from "d3";
 
 export class SelectionStatementNode extends AbstractStatementNode {
   public guards: WritableSignal<ICondition>[];
@@ -15,7 +16,7 @@ export class SelectionStatementNode extends AbstractStatementNode {
     super(statement, parent);
     this.guards = statement.guards.map((g) => signal(g));
     this.children = statement.commands.map((c) =>
-      c ? createStatementNode(c, this) : undefined,
+      c ? statementNodeUtils(c, this) : undefined,
     );
   }
 
@@ -79,5 +80,9 @@ export class SelectionStatementNode extends AbstractStatementNode {
     this.children.pop();
     this.statement.guards.pop();
     this.statement.commands.pop();
+  }
+
+  override addChild(statement: AbstractStatementNode, index: number) {
+    this.setSelection(index, statement);
   }
 }

@@ -1,17 +1,40 @@
-<div>
-    @if (conditionGroup) {
+<div style="width: fit-content">
+  @if (conditionGroup) {
     <form [formGroup]="conditionGroup">
-        <div (focusout)="conditionEditingFinished.emit()" style="max-width: 213px">
-            <p-icon-field>
-                <p-float-label variant="on">
-                    <textarea id="rule" pTextarea class="textarea" spellcheck="false" [rows]="inline? 1: 5"
-                                formControlName="condition" #input variant="filled">
-                    </textarea>
-                    <label for="rule">{{placeholder}}</label>
-                </p-float-label>
-                <p-inputicon (click)="askAi()" style="cursor: pointer;" class="pi pi-microchip-ai"></p-inputicon>
-            </p-icon-field>
-        </div>
+      <div
+        (focusout)="conditionEditingFinished.emit()"
+      >
+        <p-icon-field>
+          <p-float-label variant="on">
+            <textarea
+              id="rule"
+              pTextarea
+              class="textarea"
+              spellcheck="false"
+              [rows]="inline ? 1 : 5"
+              formControlName="condition"
+              #input
+              variant="filled"
+              [dt]="{
+                root: {
+                  borderColor: redConditions.includes(condition())
+                    ? '#ff7e7e'
+                    : greenConditions.includes(condition())
+                      ? '#6ab77a'
+                      : $dt('textarea.border.color').value,
+                },
+              }"
+            >
+            </textarea>
+            <label for="rule">{{ placeholder }}</label>
+          </p-float-label>
+          <p-inputicon
+            (click)="askAi()"
+            style="cursor: pointer"
+            class="pi pi-microchip-ai"
+          ></p-inputicon>
+        </p-icon-field>
+      </div>
     </form>
-    }
+  }
 </div>

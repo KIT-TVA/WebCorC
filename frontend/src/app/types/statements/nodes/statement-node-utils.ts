@@ -27,6 +27,7 @@ import { SkipStatement } from "../strong-weak-statement";
 import { RootStatementNode } from "./root-statement-node";
 import { RootStatement } from "../root-statement";
 import { IPosition } from "../../position";
+import { signal } from "@angular/core";
 
 class idGenerator {
   private static idCounter = 0;
@@ -35,7 +36,7 @@ class idGenerator {
   }
 }
 
-export function createStatementNode(
+export function statementNodeUtils(
   statement: IAbstractStatement,
   parent?: AbstractStatementNode,
 ) {
@@ -168,4 +169,20 @@ export function createEmptyStatementNode(
         parent,
       );
   }
+}
+
+export function disconnectNodes(
+  parent: AbstractStatementNode,
+  child: AbstractStatementNode,
+) {
+  parent.overridePostcondition(
+    child,
+    signal(new Condition(child.postcondition().condition)),
+  );
+  parent.deleteChild(child);
+  child.overridePrecondition(
+    parent,
+    signal(new Condition(child.precondition().condition)),
+  );
+  child.parent = undefined;
 }

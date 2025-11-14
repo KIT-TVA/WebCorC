@@ -7,7 +7,7 @@
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
-          "style": "scss"
+          "style": "css"
         }
       },
       "root": "",
@@ -35,8 +35,8 @@
               }
             ],
             "styles": [
-              "src/styles.css",
-              "src/global.scss"
+              "src/global.scss",
+              "src/styles.css"
             ],
             "scripts": []
           },

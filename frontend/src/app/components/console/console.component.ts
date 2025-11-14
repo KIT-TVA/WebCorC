@@ -1,33 +1,31 @@
-import { Component } from '@angular/core';
+import { Component } from "@angular/core";
 
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { ConsoleService } from '../../services/console/console.service';
-import { MatListModule } from '@angular/material/list';
-import { ConsoleLogLine } from '../../services/console/log';
-import { HttpErrorResponse } from '@angular/common/http';
-
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { ConsoleService } from "../../services/console/console.service";
+import { MatListModule } from "@angular/material/list";
+import { ConsoleErrorLine, isError, isInfo } from "../../services/console/log";
+import { HttpErrorResponse } from "@angular/common/http";
 
 /**
  * Visual representation of the errors in the application
  * This component is placed in a sidebar under the root app component.
  */
 @Component({
-    selector: 'app-console',
-    imports: [MatButtonModule, MatIconModule, MatListModule],
-    templateUrl: './console.component.html',
-    standalone: true,
-    styleUrl: './console.component.scss'
+  selector: "app-console",
+  imports: [MatButtonModule, MatIconModule, MatListModule],
+  templateUrl: "./console.component.html",
+  standalone: true,
+  styleUrl: "./console.component.scss",
 })
 export class ConsoleComponent {
-
   public constructor(private service: ConsoleService) {}
 
   /**
    * Remove the errors from the console
    */
   public clear() {
-    this.service.clear()
+    this.service.clear();
   }
 
   /**
@@ -35,15 +33,18 @@ export class ConsoleComponent {
    * @param line The line to represent as string
    * @returns The formated string of HTTP errors to passing through the string in the error
    */
-  public deconstructLogError(line : ConsoleLogLine) : string {
+  public deconstructLogError(line: ConsoleErrorLine): string {
     if (line.error instanceof HttpErrorResponse) {
-      return "(" + line.error.status + ") " + line.error.statusText  
+      return "(" + line.error.status + ") " + line.error.statusText;
     }
 
-    return line.error as string
+    return line.error as string;
   }
 
   public get loglines() {
-    return this.service.logs
+    return this.service.logs;
   }
+
+  protected readonly isError = isError;
+  protected readonly isInfo = isInfo;
 }

@@ -12,7 +12,7 @@ import { ICompositionStatement } from "../../types/statements/composition-statem
 import { IRepetitionStatement } from "../../types/statements/repetition-statement";
 import { ISelectionStatement } from "../../types/statements/selection-statement";
 import { AbstractStatementNode } from "../../types/statements/nodes/abstract-statement-node";
-import { createStatementNode } from "../../types/statements/nodes/createStatementNode";
+import { statementNodeUtils } from "../../types/statements/nodes/statement-node-utils";
 import {
   IRootStatement,
   RootStatement,
@@ -58,7 +58,7 @@ export class TreeService {
       });
     }
     newFormula.globalConditions.forEach((condition) => {
-      this.addGlobalCondition(condition.programStatement);
+      this.addGlobalCondition(condition.condition);
     });
   }
 
@@ -222,7 +222,7 @@ export class TreeService {
           this.rootFormula.statement as RootStatement,
           undefined,
         )
-      : createStatementNode(
+      : statementNodeUtils(
           new RootStatement(
             "",
             new Condition(""),
@@ -334,5 +334,29 @@ export class TreeService {
    */
   finalizeStatements() {
     this.rootStatementNode?.finalize();
+  }
+
+  public dump() {
+    return {
+      rootStatementNode: JSON.stringify(
+        this.rootStatementNode,
+        (key, value) => {
+          if (key == "parent") {
+            return undefined;
+          }
+          return value;
+        },
+      ),
+      rootFormula: this.rootFormula,
+      statementNodes: JSON.stringify(this._statementNodes(), (key, value) => {
+        if (key == "parent") {
+          return undefined;
+        }
+        return value;
+      }),
+      variables: this._variables,
+      globalConditions: this._globalConditions,
+      renames: this._renames,
+    };
   }
 }

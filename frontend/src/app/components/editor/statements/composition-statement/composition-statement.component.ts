@@ -18,7 +18,7 @@ import {
 } from "../../../../types/statements/abstract-statement";
 import { Position } from "../../../../types/position";
 import { CompositionStatementNode } from "../../../../types/statements/nodes/composition-statement-node";
-import { createEmptyStatementNode } from "../../../../types/statements/nodes/createStatementNode";
+import { createEmptyStatementNode } from "../../../../types/statements/nodes/statement-node-utils";
 import { HandleComponent } from "ngx-vflow";
 
 /**
@@ -49,9 +49,7 @@ export class CompositionStatementComponent extends Refinement {
 
   // Element used to spawn the child statements in
 
-  public constructor(
-    treeService: TreeService,
-  ) {
+  public constructor(treeService: TreeService) {
     super(treeService);
   }
 
@@ -72,7 +70,10 @@ export class CompositionStatementComponent extends Refinement {
       newNode.overridePrecondition(this._node, this._node.precondition);
     } else {
       this._node.secondStatementNode = newNode;
-      newNode.overridePrecondition(this._node, this._node.intermediateCondition);
+      newNode.overridePrecondition(
+        this._node,
+        this._node.intermediateCondition,
+      );
     }
     this.treeService.addStatementNode(newNode);
   }

@@ -74,6 +74,7 @@ export class ApiDiagrammFile implements Inode {
     formattedContent.renamings = content.renamings;
     formattedContent.isProven = content.isProven;
     this.content = formattedContent;
+    console.log("formatted content", this.content);
   }
 }
 
