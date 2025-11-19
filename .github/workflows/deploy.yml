@@ -1,12 +1,18 @@
 name: Deploy to Dev Server
 
 on:
+  workflow_run:
+    workflows: ["compile-backend"] 
+    branches: [dev]
+    types: 
+      - completed
   push:
     branches:
-      - dev  # Trigger on push to main branch
+      - dev 
 
 jobs:
   deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
