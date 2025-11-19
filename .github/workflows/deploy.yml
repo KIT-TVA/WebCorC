@@ -1,0 +1,24 @@
+name: Deploy to Dev Server
+
+on:
+  push:
+    branches:
+      - dev  # Trigger on push to main branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Execute remote SSH commands
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEV_HOST }}
+          username: ${{ secrets.DEV_USER }}
+          key: ${{ secrets.DEV_PRIVATE_KEY }}
+          port: 22
+          script: |
+            # 1. Go to the project folder
+            cd /opt/WebCorC
+            chmod +x deploy.sh
+            sudo ./deploy.sh
