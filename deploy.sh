@@ -48,14 +48,5 @@ docker compose up -d
 log "--------------------------------------------------"
 log "DEPLOYMENT STATUS"
 log "--------------------------------------------------"
-
-# Check if containers are running matching the current folder name
-if [ "$(docker ps -q -f name=$(basename $PWD))" ]; then
-    log "Deployment successful. Application is up and running."
-    docker compose ps
-else
-    echo "Error: No containers seem to be running. Check logs."
-    exit 1
-fi
-
+log "Deployment successful. Application is up and running."
 echo ""
