@@ -11,8 +11,22 @@ on:
       - dev 
 
 jobs:
+  be-compile:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build backend
+      working-directory: ./backend
+      run: docker build . --file Dockerfile --tag webcorc-backend:$(date +%s)
+  fe-compile:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build frontend
+      working-directory: ./frontend
+      run: docker build . --file Dockerfile --tag webcorc-frontend:$(date +%s)
   deploy:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    needs: ["be-compile", "fe-compile"]
     runs-on: ubuntu-latest
 
     steps:
