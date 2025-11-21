@@ -3,7 +3,6 @@ import {ApiDiagrammFile, ApiDirectory, ApiTextFile,} from "../../../services/pro
 import {Listbox} from "primeng/listbox";
 import {Button} from "primeng/button";
 import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
-import {JavaVariable} from "../../../types/JavaVariable";
 import {Condition} from "../../../types/condition/condition";
 import {CBCFormula} from "../../../types/CBCFormula";
 import {Position} from "../../../types/position";
@@ -25,14 +24,6 @@ import {SelectionStatement} from "../../../types/statements/selection-statement"
 export class LoadExampleDialogComponent {
     selectedExample: { name: string; icon: string; project: ApiDirectory } | null = null;
 
-    loadExample() {
-        if (this.selectedExample) {
-            console.log("Selected Example:", this.selectedExample.name);
-            console.log("Project data:", this.selectedExample.project);
-        } else {
-            console.warn("No example selected!");
-        }
-    }
 
     private readonly helperfile = new ApiTextFile(
         "helper.key",
@@ -141,8 +132,7 @@ export class LoadExampleDialogComponent {
         ,
         {
             name: "LinearSearch",
-            icon:
-                "manage_search",
+            icon: "manage_search",
             project:
                 new ApiDirectory("/", [
                     new ApiDiagrammFile(
@@ -190,8 +180,7 @@ export class LoadExampleDialogComponent {
         ,
         {
             name: "DutchFlag",
-            icon:
-                "flag",
+            icon: "flag",
             project:
                 new ApiDirectory("/", [
                     new ApiDiagrammFile(
@@ -264,8 +253,7 @@ export class LoadExampleDialogComponent {
         ,
         {
             name: "MaxElement",
-            icon:
-                "trending_up",
+            icon: "trending_up",
             project:
                 new ApiDirectory("/", [
                     new ApiDiagrammFile(
