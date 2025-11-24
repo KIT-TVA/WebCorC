@@ -1,41 +1,36 @@
 services:
-  minio:
-    image: quay.io/minio/minio
-    command: 
-      - 'server'
-      - '/data'
-      - '--console-address'
-      - ':9001'
+   rustfs:
+    image: rustfs/rustfs:latest
     env_file:
       - docker-compose.env
-    volumes:
-      - ./data/minio/:/data
-    restart: always
+    ports:
+      - "9000:9000"
+      - "9001:9001"
 
-  mongo:
+   mongo:
     image: mongo
     volumes:
       - ./data/mongo/:/data/db
     restart: always
 
-  webcorc-backend:
+   webcorc-backend:
     build:
       context: backend
     env_file:
       - docker-compose.env
     depends_on:
-      minio:
+      rustfs:
         condition: service_started
       mongo:
         condition: service_started
     restart: always
 
-  webcorc-frontend:
+   webcorc-frontend:
     build:
       context: frontend
     restart: always
 
-  webserver:
+   webserver:
     image: caddy
     ports:
       - "80:80"
