@@ -30,13 +30,13 @@ mongodb:
   uri: '${MONGODB_URI}'
 
 aws:
-  accessKeyId: '${MINIO_ROOT_USER:root}'
-  secretKey: '${MINIO_ROOT_PASSWORD:changeme}'
+  accessKeyId: '${RUSTFS_ACCESS_KEY:root}'
+  secretKey: '${RUSTFS_SECRET_KEY:changeme}'
   region: 'eu-west-1'
   s3:
     enabled: true
     path-style-access-enabled: true
-  services.s3.endpoint-override: "${MINIO_URL:`http://localhost:9000`}"
+  services.s3.endpoint-override: "${RUSTFS_ADDRESS:`http://localhost:9000`}"
 
 openai.accessToken: '${OPENAI_ACCESS_TOKEN:changeme}'
 
