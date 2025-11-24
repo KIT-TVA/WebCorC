@@ -1,16 +1,11 @@
 services:
-  minio:
-    image: quay.io/minio/minio
-    command: 
-      - 'server'
-      - '/data'
-      - '--console-address'
-      - ':9001'
+   rustfs:
+    image: rustfs/rustfs:latest
     env_file:
       - docker-compose.env
-    volumes:
-      - ./data/minio/:/data
-    restart: always
+    ports:
+      - "9000:9000"
+      - "9001:9001"
 
   mongo:
     image: mongo
@@ -24,7 +19,7 @@ services:
     env_file:
       - docker-compose.env
     depends_on:
-      minio:
+      rustfs:
         condition: service_started
       mongo:
         condition: service_started
