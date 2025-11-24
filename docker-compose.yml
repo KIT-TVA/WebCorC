@@ -7,13 +7,13 @@ services:
       - "9000:9000"
       - "9001:9001"
 
-  mongo:
+   mongo:
     image: mongo
     volumes:
       - ./data/mongo/:/data/db
     restart: always
 
-  webcorc-backend:
+   webcorc-backend:
     build:
       context: backend
     env_file:
@@ -25,12 +25,12 @@ services:
         condition: service_started
     restart: always
 
-  webcorc-frontend:
+   webcorc-frontend:
     build:
       context: frontend
     restart: always
 
-  webserver:
+   webserver:
     image: caddy
     ports:
       - "80:80"
