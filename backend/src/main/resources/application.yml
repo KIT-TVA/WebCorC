@@ -36,7 +36,7 @@ aws:
   s3:
     enabled: true
     path-style-access-enabled: true
-  services.s3.endpoint-override: "${RUSTFS_ADDRESS:`http://localhost:9000`}"
+  services.s3.endpoint-override: "${MICRONAUT_RUSTFS_ADDRESS:`http://localhost:9000`}"
 
 openai.accessToken: '${OPENAI_ACCESS_TOKEN:changeme}'
 

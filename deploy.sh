@@ -12,7 +12,7 @@ log "Stopping currently running containers..."
 docker compose down --remove-orphans
 
 log "Cleaning up disk space (pruning dangling images)..."
-docker image prune -f || true
+docker system prune -f || true
 
 # --- Step 2: Git Operations ---
 log "--------------------------------------------------"

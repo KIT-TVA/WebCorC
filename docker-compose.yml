@@ -3,6 +3,8 @@ services:
     image: rustfs/rustfs:latest
     env_file:
       - docker-compose.env
+    volumes:
+      - ./data/rustfs/:/data/rustfs
     ports:
       - "9000:9000"
       - "9001:9001"
