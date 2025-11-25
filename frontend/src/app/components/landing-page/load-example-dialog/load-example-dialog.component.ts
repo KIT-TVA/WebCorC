@@ -23,6 +23,7 @@ import {SelectionStatement} from "../../../types/statements/selection-statement"
 })
 export class LoadExampleDialogComponent {
     selectedExample: { name: string; icon: string; project: ApiDirectory } | null = null;
+
     constructor(
         public ref: DynamicDialogRef,
         public config: DynamicDialogConfig,
@@ -48,7 +49,7 @@ export class LoadExampleDialogComponent {
                                 new Condition("i > 7"),
                                 new Condition("i > 8"),
                                 "i = i + 1",
-                                new Position(300, 300)
+                                new Position(0, 400)
                             ),
                             new Position(0, 0)
                         ),
@@ -80,7 +81,8 @@ export class LoadExampleDialogComponent {
                                         "Statement",
                                         new Condition("appears(A, x, 0, A.length)"),
                                         new Condition("appears(A, x, 0, A.length)"),
-                                        "i = A.length-1;"
+                                        "i = A.length-1;",
+                                        new Position(0, 800)
                                     ),
                                     new RepetitionStatement(
                                         "Repetition",
@@ -90,7 +92,8 @@ export class LoadExampleDialogComponent {
                                             "Statement2",
                                             new Condition("!appears(A, x, 0, A.length)"),
                                             new Condition("!appears(A, x, 0, A.length)"),
-                                            "i = i-1;"
+                                            "i = i-1;",
+                                            new Position(0, 1600)
                                         ),
                                         new Condition("!appears(A, x, i+1, A.length)"),
                                         new Condition("i"),
@@ -98,8 +101,11 @@ export class LoadExampleDialogComponent {
                                         false,
                                         false,
                                         false,
-                                    )
-                                )
+                                        new Position(0, 1200)
+                                    ),
+                                    new Position(0, 400)
+                                ),
+                                new Position(0, 0)
                             ),
                         ),
                     ),
@@ -129,6 +135,7 @@ export class LoadExampleDialogComponent {
                                         new Condition("s(A, 0, 0, A.length)"),
                                         new Condition("s(A, wb, wt, bb)"),
                                         "wb = 0; wt = 0; bb = A.length;",
+                                        new Position(0, 1200)
                                     ),
                                     new RepetitionStatement(
                                         "Repetition",
@@ -148,22 +155,26 @@ export class LoadExampleDialogComponent {
                                                     "Statement3",
                                                     new Condition("((s(A, wb, wt, bb)) & (wt != bb)) & (A[wt] = 0)"),
                                                     new Condition("s(A, wb, wt, bb)"),
-                                                    "t = A[wt]; A[wt] = A[wb]; A[wb] = t; wt = wt+1; wb = wb+1;"
+                                                    "t = A[wt]; A[wt] = A[wb]; A[wb] = t; wt = wt+1; wb = wb+1;",
+                                                    new Position(0, 1800)
                                                 ),
                                                 new Statement(
                                                     "Statement4",
                                                     new Condition("((s(A, wb, wt, bb)) & (wt != bb)) & (A[wt] = 0)"),
                                                     new Condition("s(A, wb, wt, bb)"),
-                                                    "wt = wt+1;"
+                                                    "wt = wt+1;",
+                                                    new Position(800, 1800)
                                                 ),
                                                 new Statement(
                                                     "Statement5",
                                                     new Condition("((s(A, wb, wt, bb)) & (wt != bb)) & (A[wt] = 0)"),
                                                     new Condition("s(A, wb, wt, bb)"),
-                                                    "t = A[wt]; A[wt] = A[bb-1]; A[bb-1] = t; bb = bb-1;"
+                                                    "t = A[wt]; A[wt] = A[bb-1]; A[bb-1] = t; bb = bb-1;",
+                                                    new Position(1600, 1800)
                                                 ),
                                             ],
                                             false,
+                                            new Position(800, 1200)
                                         ),
                                         new Condition("s(A, wb, wt, bb)"),
                                         new Condition("wt != bb"),
@@ -171,8 +182,11 @@ export class LoadExampleDialogComponent {
                                         false,
                                         false,
                                         false,
+                                        new Position(0, 800)
                                     ),
+                                    new Position(0, 400)
                                 ),
+                                new Position(0, 0)
                             )
                         ),
                     ),
@@ -206,14 +220,17 @@ export class LoadExampleDialogComponent {
                                             "Statement1",
                                             new Condition("A.length > 0"),
                                             new Condition("A.length > 0 & i = 0"),
-                                            "i = 0;"
+                                            "i = 0;",
+                                            new Position(800, 1200)
                                         ),
                                         new Statement(
                                             "Statement2",
                                             new Condition("A.length > 0 & i = 0"),
                                             new Condition("A.length > 0 & i = 0 & j = 1"),
-                                            "j = 1;"
-                                        )
+                                            "j = 1;",
+                                            new Position(1600, 1200)
+                                        ),
+                                        new Position(1300, 800)
                                     ),
                                     new RepetitionStatement(
                                         "Repetition",
@@ -232,27 +249,33 @@ export class LoadExampleDialogComponent {
                                                     new Condition(""),
                                                     new Condition("s(A, wb, wt, bb)"),
                                                 ],
-                                                [new Statement(
-                                                    "Statement3",
-                                                    new Condition("((max(A, 0, j, i)) & (j != A.length)) & (A[j] > A[i])"),
-                                                    new Condition("max(A, 0, j+1, i)"),
-                                                    "i = j;",
-                                                ),
+                                                [
+                                                    new Statement(
+                                                        "Statement3",
+                                                        new Condition("((max(A, 0, j, i)) & (j != A.length)) & (A[j] > A[i])"),
+                                                        new Condition("max(A, 0, j+1, i)"),
+                                                        "i = j;",
+                                                        new Position(0, 2000)
+                                                    ),
                                                     new Statement(
                                                         "Statement4",
                                                         new Condition("((max(A, 0, j, i)) & (j != A.length)) & (A[j] > A[i])"),
                                                         new Condition("max(A, 0, j+1, i)"),
                                                         ";",
-                                                    ),
+                                                        new Position(800, 2000)
+                                                    )
                                                 ],
-                                                false
+                                                false,
+                                                new Position(800, 1600)
                                             ),
                                             new Statement(
                                                 "Statement5",
                                                 new Condition("max(A, 0, j+1, i)"),
                                                 new Condition("max(A, 0, j, i)"),
-                                                "j = j+1;"
-                                            )
+                                                "j = j+1;",
+                                                new Position(0, 1600)
+                                            ),
+                                            new Position(0, 1200)
                                         ),
                                         new Condition("max(A, 0, j, i)"),
                                         new Condition("A.length - j"),
@@ -260,8 +283,11 @@ export class LoadExampleDialogComponent {
                                         false,
                                         false,
                                         false,
-                                    )
-                                )
+                                        new Position(0, 800)
+                                    ),
+                                    new Position(0, 400)
+                                ),
+                                new Position(0, 0)
                             )
                         ),
                     ),
