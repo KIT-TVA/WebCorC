@@ -40,6 +40,7 @@ export interface IAbstractStatement {
   preCondition: ICondition;
   postCondition: ICondition;
   isProven: boolean;
+  position?: IPosition;
 }
 
 /**
