@@ -22,6 +22,7 @@ export class RootStatementNode extends AbstractStatementNode {
       this.overridePostcondition(
         _childStatementNode,
         _childStatementNode.postcondition,
+        true,
       );
     }
   }
@@ -48,11 +49,17 @@ export class RootStatementNode extends AbstractStatementNode {
   override overridePostcondition(
     sourceNode: AbstractStatementNode,
     condition: WritableSignal<ICondition>,
+    preserveIfNewConditionEmpty = false,
   ) {
     switch (sourceNode) {
-      case this._childStatementNode:
+      case this._childStatementNode: {
+        const oldCondition = this.postcondition();
         this.postcondition = condition;
+        if (preserveIfNewConditionEmpty && condition().condition.length < 1) {
+          this.postcondition.set(oldCondition);
+        }
         break;
+      }
       default:
       // Should never happen
     }

@@ -100,6 +100,7 @@ export class AppComponent {
    * This is needed for the backend to use the contents of helper.key
    */
   public verify(): void {
+    this.treeService.finalizeStatements();
     if (
       this.projectService.findByPath("helper.key") &&
       this.projectService.shouldCreateProject

@@ -28,12 +28,25 @@ export class PredicateService {
   }
 
   public exportPredicates(): string {
-    let result = "\predicates {\n";
+    let result = "\\predicates {\n";
     for (const predicate of this.predicates) {
-      result += `${predicate.name}(${predicate.signature});\n`;
+      result += `${predicate.signature};\n`;
     }
+    result += "}\n";
+    result += "\\rules {\n";
     for (const predicate of this.predicates) {
-      result += `${predicate.name} {\n${predicate.definition}\n}\n`;
+      result += `${predicate.name} {\n`;
+      const signatureTokens = this.parseSignatureTokens(predicate.signature);
+      const notFreeVariables = this.parseBoundVariables(predicate.definition);
+      for (let i = 0; i < signatureTokens.length; i++) {
+        result += `\\schemaVar \\term ${signatureTokens[i]};\n`;
+      }
+      notFreeVariables.forEach((variable) => {
+        result += `\\schemaVar \\variable ${variable};\n`;
+      });
+      result += `find(${predicate.name}(${this.signatureWithOnlyNames(predicate.signature)}))\n`;
+      result += `\\replacewith (${predicate.definition})\n`;
+      result += "\\heuristics(simplify)\n};\n";
     }
     result += "}\n";
     if (!this.projectService.findByPath("predicates.key")) {
@@ -41,5 +54,34 @@ export class PredicateService {
     }
     this.projectService.syncFileContent("predicates.key", result);
     return result;
+  }
+
+  private parseBoundVariables(definition: string) {
+    const allTokens = definition.split(RegExp(/\\forall|\\exists/gm));
+    const tokens: string[] = [];
+    // eg "\forall @private @whatnot int k; if (k < 4 && [...]" will return "@private @whatnot int k"
+    allTokens.forEach((expression) => {
+      if (expression.length > 0) {
+        const split = expression.split(";", 1);
+        tokens.push(split[0]);
+      }
+    });
+    return tokens;
+  }
+
+  private parseSignatureTokens(signature: string) {
+    return signature.split(RegExp(/, |,/gm)).map((token) => token.trim());
+  }
+
+  private extractNamesFromSignatureTokens(signatureTokens: string[]) {
+    return signatureTokens.map((expression) => {
+      return expression.split(" ").pop()?.trim() ?? expression.trim();
+    });
+  }
+
+  private signatureWithOnlyNames(signature: string) {
+    return this.extractNamesFromSignatureTokens(
+      this.parseSignatureTokens(signature),
+    ).reduce((prev = "", current) => prev + " " + current);
   }
 }

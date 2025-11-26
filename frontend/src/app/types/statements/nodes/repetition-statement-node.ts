@@ -18,6 +18,7 @@ export class RepetitionStatementNode extends AbstractStatementNode {
       this.overridePostcondition(
         loopStatementNode,
         loopStatementNode.postcondition,
+        true,
       );
     }
   }
@@ -57,6 +58,7 @@ export class RepetitionStatementNode extends AbstractStatementNode {
   public override overridePostcondition(
     sourceNode: AbstractStatementNode,
     condition: WritableSignal<ICondition>,
+    preserveIfNewConditionEmpty = false,
   ) {
     super.overridePostcondition(sourceNode, condition);
     this.parent?.overridePostcondition(this, condition); //TODO Compute postcondition && ¬guard

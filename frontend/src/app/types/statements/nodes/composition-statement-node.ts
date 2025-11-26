@@ -21,7 +21,7 @@ export class CompositionStatementNode extends AbstractStatementNode {
     this._firstStatementNode = newNode;
     this.children = [this._firstStatementNode, this._secondStatementNode];
     if (newNode) {
-      this.overridePostcondition(newNode, newNode.postcondition);
+      this.overridePostcondition(newNode, newNode.postcondition, true);
     }
   }
   public set secondStatementNode(newNode) {
@@ -29,7 +29,7 @@ export class CompositionStatementNode extends AbstractStatementNode {
     this._secondStatementNode = newNode;
     this.children = [this._firstStatementNode, this._secondStatementNode];
     if (newNode) {
-      this.overridePostcondition(newNode, newNode.postcondition);
+      this.overridePostcondition(newNode, newNode.postcondition, true);
     }
   }
 
@@ -71,17 +71,25 @@ export class CompositionStatementNode extends AbstractStatementNode {
   override overridePostcondition(
     sourceNode: AbstractStatementNode,
     condition: WritableSignal<ICondition>,
+    preserveIfNewConditionEmpty = false,
   ) {
+    let oldCondition: ICondition;
     switch (sourceNode) {
       case this.firstStatementNode:
+        oldCondition = this.intermediateCondition();
         this.intermediateCondition = condition;
         break;
       case this.secondStatementNode:
+        oldCondition = this.postcondition();
         this.postcondition = condition;
         this.parent?.overridePostcondition(this, condition);
         break;
       default:
-      // Should never happen
+        // Should never happen
+        return;
+    }
+    if (preserveIfNewConditionEmpty && condition().condition.length < 1) {
+      condition.set(oldCondition);
     }
   }
 
@@ -106,16 +114,29 @@ export class CompositionStatementNode extends AbstractStatementNode {
   }
 
   override checkConditionSync(child: AbstractStatementNode): boolean {
+    let inSync;
     if (child == this._firstStatementNode) {
-      return (
+      inSync =
         this.precondition() == child.precondition() &&
-        this.intermediateCondition() == child.postcondition()
-      );
+        this.intermediateCondition() == child.postcondition();
+      if (!inSync) {
+        this.getConditionConflicts(child);
+      }
+      inSync =
+        this.precondition() == child.precondition() &&
+        this.intermediateCondition() == child.postcondition();
+      return inSync;
     }
-    return (
+    inSync =
       this.intermediateCondition() == child.precondition() &&
-      this.postcondition() == child.postcondition()
-    );
+      this.postcondition() == child.postcondition();
+    if (!inSync) {
+      this.getConditionConflicts(child);
+    }
+    inSync =
+      this.intermediateCondition() == child.precondition() &&
+      this.postcondition() == child.postcondition();
+    return inSync;
   }
 
   override getConditionConflicts(child: AbstractStatementNode): {
@@ -126,36 +147,58 @@ export class CompositionStatementNode extends AbstractStatementNode {
     const conflicts = [];
     if (child == this._firstStatementNode) {
       if (this.precondition() != child.precondition()) {
-        conflicts.push({
-          version1: this.precondition,
-          version2: child.precondition,
-          type: "PRECONDITION",
-        });
+        if (this.precondition().condition === child.precondition().condition) {
+          this.overridePrecondition(child, child.precondition);
+        } else {
+          conflicts.push({
+            version1: this.precondition,
+            version2: child.precondition,
+            type: "PRECONDITION",
+          });
+        }
       }
       if (this.intermediateCondition() != child.postcondition()) {
-        conflicts.push({
-          version1: this.intermediateCondition,
-          version2: child.postcondition,
-          type: "POSTCONDITION",
-        });
+        if (
+          this.intermediateCondition().condition ===
+          child.postcondition().condition
+        ) {
+          this.intermediateCondition = child.postcondition;
+        } else {
+          conflicts.push({
+            version1: this.intermediateCondition,
+            version2: child.postcondition,
+            type: "POSTCONDITION",
+          });
+        }
       }
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
       return conflicts;
     }
     if (this.intermediateCondition() != child.precondition()) {
-      conflicts.push({
-        version1: this.intermediateCondition,
-        version2: child.precondition,
-        type: "PRECONDITION",
-      });
+      if (
+        this.intermediateCondition().condition ===
+        child.precondition().condition
+      ) {
+        this.intermediateCondition = child.postcondition;
+      } else {
+        conflicts.push({
+          version1: this.intermediateCondition,
+          version2: child.precondition,
+          type: "PRECONDITION",
+        });
+      }
     }
     if (this.postcondition() != child.postcondition()) {
-      conflicts.push({
-        version1: this.postcondition,
-        version2: child.postcondition,
-        type: "POSTCONDITION",
-      });
+      if (this.postcondition().condition === child.postcondition().condition) {
+        this.overridePostcondition(child, child.postcondition);
+      } else {
+        conflicts.push({
+          version1: this.postcondition,
+          version2: child.postcondition,
+          type: "POSTCONDITION",
+        });
+      }
     }
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
