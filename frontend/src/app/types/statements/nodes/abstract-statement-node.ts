@@ -39,12 +39,18 @@ export class AbstractStatementNode {
    * Used when the postcondition is controlled by the child, probably always the postcondition of the child statement.
    * @param sourceNode must be passed so the correct condition to override can be determined, eg. if the parent has multiple children
    * @param condition
+   * @param preserveIfNewConditionEmpty
    */
   public overridePostcondition(
     sourceNode: AbstractStatementNode,
     condition: WritableSignal<ICondition>,
+    preserveIfNewConditionEmpty = false,
   ): void {
+    const oldCondition = this.postcondition();
     this.postcondition = condition;
+    if (preserveIfNewConditionEmpty && condition().condition.length < 1) {
+      condition.set(oldCondition);
+    }
   }
 
   public deleteChild(node: AbstractStatementNode) {
@@ -86,10 +92,16 @@ export class AbstractStatementNode {
   }
 
   public checkConditionSync(child: AbstractStatementNode) {
-    return (
+    let inSync =
       this.precondition() == child.precondition() &&
-      this.postcondition() == child.postcondition()
-    );
+      this.postcondition() == child.postcondition();
+    if (!inSync) {
+      this.getConditionConflicts(child);
+    }
+    inSync =
+      this.precondition() == child.precondition() &&
+      this.postcondition() == child.postcondition();
+    return inSync;
   }
 
   public addChild(statement: AbstractStatementNode, index: number) {
@@ -103,18 +115,26 @@ export class AbstractStatementNode {
   }[] {
     const conflicts = [];
     if (this.precondition() != child.precondition()) {
-      conflicts.push({
-        version1: this.precondition,
-        version2: child.precondition,
-        type: "PRECONDITION",
-      });
+      if (this.precondition().condition === child.precondition().condition) {
+        this.overridePrecondition(child, child.precondition);
+      } else {
+        conflicts.push({
+          version1: this.precondition,
+          version2: child.precondition,
+          type: "PRECONDITION",
+        });
+      }
     }
     if (this.postcondition() != child.postcondition()) {
-      conflicts.push({
-        version1: this.postcondition,
-        version2: child.postcondition,
-        type: "POSTCONDITION",
-      });
+      if (this.postcondition().condition === child.postcondition().condition) {
+        this.overridePostcondition(child, child.postcondition);
+      } else {
+        conflicts.push({
+          version1: this.postcondition,
+          version2: child.postcondition,
+          type: "POSTCONDITION",
+        });
+      }
     }
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
