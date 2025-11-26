@@ -334,6 +334,9 @@ export class TreeService {
    */
   finalizeStatements() {
     this.rootStatementNode?.finalize();
+    if (this.rootFormula) {
+      this.rootFormula.javaVariables = this._variables;
+    }
   }
 
   public dump() {
