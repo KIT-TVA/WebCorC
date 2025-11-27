@@ -265,16 +265,14 @@ export class TreeService {
   }
 
   private collectStatementNodeChildren(
-    nodes: (AbstractStatementNode | undefined)[],
+    parentNodes: (AbstractStatementNode | undefined)[],
   ): AbstractStatementNode[] {
     let childNodes: AbstractStatementNode[] = [];
-    for (const node of nodes) {
-      if (node) {
-        childNodes = childNodes.concat(
-          node.children
-            .filter((child) => child != undefined)
-            .concat(this.collectStatementNodeChildren(node.children)),
-        );
+    for (const parentNode of parentNodes) {
+      if (parentNode) {
+        childNodes = childNodes
+          .concat(parentNode.children.filter((child) => child != undefined))
+          .concat(this.collectStatementNodeChildren(parentNode.children));
       }
     }
     return childNodes;
