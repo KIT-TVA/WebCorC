@@ -116,7 +116,7 @@ export class VariablesComponent {
     public importVariables(variables: IJavaVariable[]) {
         for (const variable of variables) {
             const variableControl = this._fb.group({
-                name: new FormControl(variable, [Validators.required])
+                name: new FormControl(variable.name, [Validators.required])
             })
 
             this.items.push(variableControl)

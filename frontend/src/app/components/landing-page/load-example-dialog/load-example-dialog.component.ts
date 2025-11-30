@@ -13,6 +13,7 @@ import {RepetitionStatement} from "../../../types/statements/repetition-statemen
 import {RootStatement} from "../../../types/statements/root-statement";
 import {CompositionStatement} from "../../../types/statements/composition-statement";
 import {SelectionStatement} from "../../../types/statements/selection-statement";
+import {JavaVariable} from "../../../types/JavaVariable";
 
 @Component({
     selector: "app-load-example-dialog",
@@ -53,6 +54,12 @@ export class LoadExampleDialogComponent {
                             ),
                             new Position(0, 0)
                         ),
+                        undefined,
+                        undefined,
+                        [new JavaVariable(
+                            "int i",
+                            "LOCAL"
+                        )],
                     ),
                 ),
             ]),
