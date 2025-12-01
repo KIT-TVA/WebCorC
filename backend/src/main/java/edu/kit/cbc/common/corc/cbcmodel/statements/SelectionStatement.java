@@ -35,8 +35,8 @@ public class SelectionStatement extends AbstractStatement {
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toSet());
 
-            System.out.println(
-                "[ERROR] The proof of selection statement \"" + this.getName() + "\" failed, because of the following "
+            proofContext.getLogger().accept(
+                "ERROR: The proof of selection statement \"" + this.getName() + "\" failed, because of the following "
                     + "commands not being proven: ");
             failedProofs.forEach(stmt -> System.out.format("%t-%s%n", stmt.getName()));
 
@@ -65,7 +65,7 @@ public class SelectionStatement extends AbstractStatement {
         this.isPreProven = proof.execute();
 
         if (!this.isPreProven) {
-            System.out.println("[ERROR] P => G | G | G could not be proven for statement \"" + this.getName() + "\"");
+            proofContext.getLogger().accept("ERROR: P => G | G | G could not be proven for statement \"" + this.getName() + "\"");
         }
 
         this.isProven = this.isPreProven;
