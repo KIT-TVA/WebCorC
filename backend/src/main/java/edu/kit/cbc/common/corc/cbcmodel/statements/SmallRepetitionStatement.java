@@ -25,7 +25,7 @@ public class SmallRepetitionStatement extends AbstractStatement {
         KeYProofGenerator proofGenerator = new KeYProofGenerator(proofContext);
         /*First Step: Prove that loop statement is correct*/
         if (!loopStatement.prove(proofContext)) {
-            System.out.println("[ERROR] Proving the loop statement of statement \"" + this.getName() + "\" failed!");
+            proofContext.getLogger().accept("ERROR: Proving the loop statement of statement \"" + this.getName() + "\" failed!");
             return false;
         }
 
