@@ -148,7 +148,7 @@ export class TreeService {
   public removeVariables(names: string[]): void {
     const variablesToBeRemoved: string[] = [];
 
-    names.forEach((name) => variablesToBeRemoved.push(name.split(" ")[1]));
+    names.forEach((name) => variablesToBeRemoved.push(name));
 
     this._variables = this._variables.filter(
       (val) => !variablesToBeRemoved.includes(val.name),
