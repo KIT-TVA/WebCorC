@@ -42,7 +42,7 @@ log "BUILDING AND LAUNCHING"
 log "--------------------------------------------------"
 
 log "Building new images and starting containers..."
-docker compose up -d
+docker compose up -d --build
 
 # --- Step 4: Final Status ---
 log "--------------------------------------------------"
