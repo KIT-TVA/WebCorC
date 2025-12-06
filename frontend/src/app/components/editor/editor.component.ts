@@ -173,33 +173,28 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
         this._viewInit = false;
     }
 
-    /**
-     * Save current editor content to {@link CBCFormula}
-     */
-    private saveContentToFile(): void {
-        // create a new Formula to save
-        let formula = new CBCFormula();
-        if (this.treeService.rootFormula) {
-            formula = this.treeService.rootFormula;
-        }
-        if (this._urn !== "" && this.treeService.rootFormula?.statement) {
-            // save the current state outside of the component
-            this.projectService.syncFileContent(this._urn, formula);
-        }
-    }
+  /**
+   * Function to be triggered after the view got initalized.
+   */
+  public ngAfterViewInit(): void {
+    this._viewInit = true;
+    // workaround to ensure proper loading of file content on switch between files
+    setTimeout(() => {
+      this.loadFileContent();
+    }, 10);
+    this.projectService.editorNotify.subscribe(() => {
+      this.saveContentToFile();
+    });
 
-    private export() {
-        const formula = this.treeService.rootFormula;
-        const urnSplit = this._urn.split("/");
-        const structure = JSON.stringify(formula, null, 2);
-        const blob = new Blob([structure], {type: "application/json"});
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = urnSplit[urnSplit.length - 1] + ".json";
-        a.click();
-        window.URL.revokeObjectURL(url);
-    }
+    this.editorService.reload.subscribe(() => {
+      this.loadFileContent();
+    });
+    fromEvent(document, "keydown").subscribe((e) => {
+      if ((e as KeyboardEvent).key === "Delete") {
+        this.deleteEdge();
+      }
+    });
+  }
 
     /**
      * Load {@link CBCFormula} in to editor to be edited
@@ -278,12 +273,23 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
         }),
     );
 
-    private setupVFlowSync() {
-        effect(() => {
-            this.nodes = this.nodez();
-            this.edges = this.computeEdges(this.statements());
+    let newFormula: CBCFormula | undefined = undefined;
+    try {
+      newFormula = (await this.projectService.getFileContent(
+        this._urn,
+      )) as CBCFormula;
+    } catch {
+      const projectId = this.router
+        .parseUrl(this.router.url)
+        .queryParamMap.get("projectId");
+      if (!this.projectService.projectId && projectId) {
+        this.projectService.projectId = projectId;
+        this.projectService.dataChange.subscribe(async () => {
+          newFormula = (await this.projectService.getFileContent(
+            this._urn,
+          )) as CBCFormula;
+          await this.loadFileContent();
         });
-    }
 
     protected computeEdges(statements: AbstractStatementNode[]): Edge[] {
         const edges: Edge[] = [];
