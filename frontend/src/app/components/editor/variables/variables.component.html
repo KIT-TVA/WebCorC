@@ -1,26 +1,52 @@
-<form [formGroup]="variables">
+<form [formGroup]="variables" style="display: flex; flex-direction: column; gap: 0.5rem">
   @for (variableForm of items.controls; track variableForm; let i = $index) {
     <ng-container formArrayName="items">
       <ng-container [formGroupName]="i">
-        <mat-form-field [style.width]="'100%'" (keydown.delete)="onDelete($event, i)" (keydown.enter)="$event.preventDefault()" >
-          <mat-label>Variable</mat-label>
-          <input matInput formControlName="name">
-          <button matSuffix mat-icon-button aria-label="Remove" (click)="removeVariable(i)" #tooltip="matTooltip" matTooltip="Remove Variable" matTooltipPosition="left" >
-            <mat-icon>remove</mat-icon>
-          </button>
-        </mat-form-field>
+        <p-icon-field>
+          <p-float-label variant="on">
+            <input
+              [id]="'variable_' + i"
+              fluid
+              formControlName="name"
+              pInputText
+              spellcheck="false"
+              variant="filled"
+            />
+            <label [for]="'variable' + i">Variable</label>
+          </p-float-label>
+          <p-inputicon
+            (keydown.enter)="$event.preventDefault()"
+            (click)="removeVariable(i)"
+            style="cursor: pointer"
+            class="pi pi-minus"
+          ></p-inputicon>
+        </p-icon-field>
       </ng-container>
     </ng-container>
   }
-  <mat-form-field [style.width]="'100%'" (keydown.enter)="onEnter($event)">
-    <mat-label>Add Variable</mat-label>
-    <input matInput formControlName="newVariable"/>
-    <button matSuffix mat-icon-button aria-label="Add" (click)="addVariable()"  (keydown.enter)="$event.preventDefault()" #tooltip="matTooltip" matTooltip="Add Variable" matTooltipPosition="left">
-      <mat-icon>add</mat-icon>
-    </button>
-    @if (dirtyState) {
-      <mat-hint [style.color]="'rgb(186, 26, 26)'"> Press enter or click the plus to add the variable </mat-hint>
-    }
-  </mat-form-field>
-
+  <p-icon-field>
+    <p-float-label variant="on">
+      <input
+        [id]="'New_Variable'"
+        (keydown.enter)="onEnter($event)"
+        fluid
+        formControlName="newVariable"
+        pInputText
+        spellcheck="false"
+        variant="filled"
+      />
+      <label [for]="'New_Variable'">Add Variable</label>
+    </p-float-label>
+    <p-inputicon
+      (keydown.enter)="$event.preventDefault()"
+      (click)="addVariable()"
+      style="cursor: pointer"
+      class="pi pi-plus"
+    ></p-inputicon>
+  </p-icon-field>
+  @if (dirtyState) {
+    <mat-hint [style.color]="'rgb(186, 26, 26)'">
+      Press enter or click the plus to add the variable
+    </mat-hint>
+  }
 </form>

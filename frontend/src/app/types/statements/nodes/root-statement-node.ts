@@ -33,8 +33,7 @@ export class RootStatementNode extends AbstractStatementNode {
   ) {
     super(statement, parent);
     if (statement.statement) {
-      this._childStatementNode = statementNodeUtils(statement.statement, this);
-      this.children.push(this._childStatementNode);
+      this.childStatementNode = statementNodeUtils(statement.statement, this);
     }
   }
 
