@@ -110,6 +110,10 @@ export class TreeService {
     return this._resetVerifyNotifier;
   }
 
+  public get rootStatement() {
+    return this.rootStatementNode
+  }
+
   /**
    * Export the content of the tree service.
    * Including the statements, variables, global conditions and renames.
