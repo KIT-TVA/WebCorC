@@ -200,6 +200,11 @@ export class TreeService {
     return statements;
   }
 
+  public refreshNodes(): void {
+    // Re-emit the array so Angular Signals detect a change
+    this._statementNodes.update(old => [...old]);
+  }
+
   public addStatementNode(statementNode: AbstractStatementNode) {
     if (this._statementNodes()) {
       this._statementNodes.update((oldNodes) => [...oldNodes, statementNode]);
