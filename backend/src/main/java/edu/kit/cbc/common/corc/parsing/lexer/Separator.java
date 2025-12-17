@@ -17,6 +17,7 @@ public record Separator(SeparatorType type, int pos) implements Token {
         PAREN_CLOSE(")"),
         SEMICOLON(";"),
         COMMA(","),
+        DOT("."),
         SQR_PAREN_OPEN("["),
         SQR_PAREN_CLOSE("]"),
         ;

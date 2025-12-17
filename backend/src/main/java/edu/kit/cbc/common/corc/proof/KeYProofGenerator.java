@@ -13,7 +13,6 @@ import edu.kit.cbc.common.corc.proof.KeYProof.KeYProofBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
-import org.antlr.codegen.CodeGenerator;
 
 public final class KeYProofGenerator {
 

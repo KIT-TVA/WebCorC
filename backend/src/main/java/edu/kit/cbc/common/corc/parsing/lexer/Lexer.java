@@ -29,6 +29,7 @@ public abstract class Lexer {
         Token token = switch (peek()) {
             case '(' -> new Separator(Separator.SeparatorType.PAREN_OPEN, pos);
             case ')' -> new Separator(Separator.SeparatorType.PAREN_CLOSE, pos);
+            case '.' -> new Separator(Separator.SeparatorType.DOT, pos);
             case '[' -> new Separator(Separator.SeparatorType.SQR_PAREN_OPEN, pos);
             case ']' -> new Separator(Separator.SeparatorType.SQR_PAREN_CLOSE, pos);
             case ';' -> new Separator(Separator.SeparatorType.SEMICOLON, pos);
