@@ -75,6 +75,10 @@ export class SelectionStatementNode extends AbstractStatementNode {
     }
   }
 
+  override checkConditionSync(_child: AbstractStatementNode): boolean {
+    return true;
+  }
+
   removeSelection() {
     this.guards.pop();
     this.children.pop();
