@@ -1,5 +1,5 @@
 <ul>
-  @for (conflict of conflicts; track conflict) {
+  @for (conflict of conflicts; track i; let i = $index) {
     <li style="display: flex; flex-direction: row; gap: 2rem">
       <div style="display: flex; flex-direction: column">
         <app-condition-editor [condition]="conflict.version1()">

@@ -301,8 +301,7 @@ export class ProjectService {
       if (!rootDir) {
         throw new Error("Empty session storage: File not found");
       }
-
-      this._rootDir = this.mapper.importDirectory(rootDir);
+      this._rootDir = this.mapper.importProject(rootDir);
       this.dataChange.next(this._rootDir.content);
       file = this.findByPath(urn);
       if (!file) {
@@ -429,7 +428,7 @@ export class ProjectService {
         this.network.readProject();
         return;
       }
-      this._rootDir = this.mapper.importDirectory(projectTree);
+      this._rootDir = this.mapper.importProject(projectTree);
       this.dataChange.next(this._rootDir.content);
       if (!projectName) {
         this.network.readProject();
@@ -443,7 +442,7 @@ export class ProjectService {
     }
 
     if (!projectId && !this.projectId && !!projectTree) {
-      this._rootDir = this.mapper.importDirectory(projectTree);
+      this._rootDir = this.mapper.importProject(projectTree);
       this.dataChange.next(this._rootDir.content);
       return;
     }

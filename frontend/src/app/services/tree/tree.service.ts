@@ -351,6 +351,10 @@ export class TreeService {
     this.rootStatementNode?.finalize();
     if (this.rootFormula) {
       this.rootFormula.javaVariables = this._variables;
+      this.rootFormula.renamings = this._renames;
+      this.rootFormula.globalConditions = this._globalConditions.map(
+        (condition) => new Condition(condition),
+      );
     }
   }
 

@@ -6,7 +6,7 @@
     </button>
   </div>
   <mat-list #logList>
-    @for (line of loglines; track line) {
+    @for (line of loglines; track i; let i = $index) {
       @if (isError(line)) {
         <mat-list-item>
           <span matListItemTitle> {{ line.action }} </span>

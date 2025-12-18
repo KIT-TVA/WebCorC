@@ -37,17 +37,15 @@ import {
     NodePositionChange,
     VflowComponent,
 } from "ngx-vflow";
-import {EditorSidemenuComponent} from "./editor-sidemenu/editor-sidemenu.component";
-import {EditorBottommenuComponent} from "./editor-bottommenu/editor-bottommenu.component";
-import {GlobalSettingsService} from "../../services/global-settings.service";
-import {fromEvent} from "rxjs";
-import {Button} from "primeng/button";
-import {Popover} from "primeng/popover";
-import {ConditionSelectorComponent} from "./condition/condition-selector/condition-selector.component";
-import {ICondition} from "../../types/condition/condition";
-import {disconnectNodes} from "../../types/statements/nodes/statement-node-utils";
-import {NgIf} from "@angular/common";
-import {SettingsComponent} from "./settings/settings.component";
+import { EditorSidemenuComponent } from "./editor-sidemenu/editor-sidemenu.component";
+import { EditorBottommenuComponent } from "./editor-bottommenu/editor-bottommenu.component";
+import { GlobalSettingsService } from "../../services/global-settings.service";
+import { fromEvent } from "rxjs";
+import { Button } from "primeng/button";
+import { Popover } from "primeng/popover";
+import { ConditionSelectorComponent } from "./condition/condition-selector/condition-selector.component";
+import { ICondition } from "../../types/condition/condition";
+import { disconnectNodes } from "../../types/statements/nodes/statement-node-utils";
 
 export const RED_COLOURED_CONDITIONS = new InjectionToken<ICondition[]>(
     "RedColouredConditions",
@@ -119,7 +117,28 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
         this.statements = treeService.getStatementNodes();
     }
 
-    private _urn: string = "";
+  /**
+   * Constructor for dependency injection of the services
+   * @param treeService The service to interact with the refinements
+   * @param projectService The service to persist and laod the file content
+   * @param editorService
+   * @param router
+   * @param globalSettingsService
+   */
+  public constructor(
+    private treeService: TreeService,
+    private projectService: ProjectService,
+    private editorService: EditorService,
+    private router: Router,
+    protected globalSettingsService: GlobalSettingsService,
+  ) {
+    this.projectService.editorNotify.subscribe(() => {
+      this.saveContentToFile();
+    });
+    this.setupVFlowSync();
+    this.treeService.exportNotifier.subscribe(() => this.export());
+    this.statements = treeService.getStatementNodes();
+  }
 
     /**
      * Input for the urn of the file to edit.
@@ -133,44 +152,27 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
             return;
         }
 
-        if (this._viewInit) {
-            this.saveContentToFile();
-        }
-        this._urn = uniformRessourceName;
-        this.editorService.currentFileName = uniformRessourceName.substring(
-            uniformRessourceName.lastIndexOf("/"),
-        );
-        if (this._viewInit) {
-            this.loadFileContent();
-        }
+  /**
+   * Input for the urn of the file to edit.
+   * On input the file content of the current opened file gets saved and the file content of the file to be opened read and loaded into the editor.
+   * @param uniformRessourceName The path variable of the file to edit
+   */
+  @Input()
+  public set urn(uniformRessourceName: string) {
+    // prevent reloading the same context
+    if (uniformRessourceName == this._urn) {
+      return;
     }
 
-    /**
-     * Function to be triggered after the view got initalized.
-     */
-    public ngAfterViewInit(): void {
-        this._viewInit = true;
-        // workaround to ensure proper loading of file content on switch between files
-        setTimeout(() => {
-            this.loadFileContent();
-        }, 10);
-        this.projectService.editorNotify.subscribe(() => {
-            this.saveContentToFile();
-        });
-
-        this.editorService.reload.subscribe(() => {
-            this.loadFileContent();
-        });
-        fromEvent(document, "keydown").subscribe((e) => {
-            if ((e as KeyboardEvent).key === "Delete") {
-                this.deleteEdge();
-            }
-        });
+    if (this._viewInit) {
+      this.saveContentToFile();
     }
-
-    public ngOnDestroy(): void {
-        this.saveContentToFile();
-        this._viewInit = false;
+    this._urn = uniformRessourceName;
+    this.editorService.currentFileName = uniformRessourceName.substring(
+      uniformRessourceName.lastIndexOf("/"),
+    );
+    if (this._viewInit) {
+      this.loadFileContent();
     }
 
   /**
@@ -205,43 +207,14 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
         this.sidemenu.conditions.removeAllConditions();
         this.sidemenu.renaming.removeAllRenaming();
 
-        let newFormula: CBCFormula | undefined = undefined;
-        try {
-            newFormula = (await this.projectService.getFileContent(
-                this._urn,
-            )) as CBCFormula;
-        } catch {
-            const projectId = this.router
-                .parseUrl(this.router.url)
-                .queryParamMap.get("projectId");
-            if (!this.projectService.projectId && projectId) {
-                this.projectService.projectId = projectId;
-                this.projectService.dataChange.subscribe(async () => {
-                    newFormula = (await this.projectService.getFileContent(
-                        this._urn,
-                    )) as CBCFormula;
-                    await this.loadFileContent();
-                });
-
-                this.projectService.downloadWorkspace();
-            }
-        }
-
-        // if the file is not empty load content
-        if (newFormula) {
-            this.treeService.setFormula(newFormula);
-            this.statements = this.treeService.getStatementNodes();
-
-            //TODO: This should be done with Inputs instead.
-            this.sidemenu.variables.importDiagramVariables();
-            this.sidemenu.conditions.importConditions(newFormula.globalConditions);
-            this.sidemenu.renaming.importRenaming(newFormula.renamings);
-
-            return;
-        }
-
-        // file is empty, reset rootNode to default values
-        //TODO: reimplement
+  /**
+   * Save current editor content to {@link CBCFormula}
+   */
+  private saveContentToFile(): void {
+    // create a new Formula to save
+    let formula = new CBCFormula();
+    if (this.treeService.rootFormula) {
+      formula = this.treeService.rootFormula;
     }
 
     protected showConditionPopup(
@@ -275,9 +248,11 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
 
     let newFormula: CBCFormula | undefined = undefined;
     try {
+      console.log("loading file content");
       newFormula = (await this.projectService.getFileContent(
         this._urn,
       )) as CBCFormula;
+      console.log("loaded successfully");
     } catch {
       const projectId = this.router
         .parseUrl(this.router.url)
@@ -376,15 +351,14 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
         this.edges = this.computeEdges(this.statements());
     }
 
-    protected resetNodePositionsRT(): void {
-        const nodesSignal = this.treeService.getStatementNodes();
-        const nodes = nodesSignal(); // get current array
-        if (nodes.length === 0) return;
+  protected showConditionPopup(
+    source: AbstractStatementNode,
+    target: AbstractStatementNode,
+  ): void {
+    //TODO: implement
+  }
 
-        const NODE_WIDTH = 450;
-        const NODE_HEIGHT = 300;
-        const H_SPACING = 50;
-        const V_SPACING = 200;
+  protected selectedEdges: EdgeSelectChange[] = [];
 
         const root = nodes.find(n => n.parent === undefined);
         if (!root) return;
