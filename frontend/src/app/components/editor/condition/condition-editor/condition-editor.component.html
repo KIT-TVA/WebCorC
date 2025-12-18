@@ -1,4 +1,4 @@
-<div style="width: fit-content">
+<div style="width: fit-content" (mousedown)="$event.stopImmediatePropagation()">
   @if (conditionGroup) {
     <form [formGroup]="conditionGroup">
       <div
