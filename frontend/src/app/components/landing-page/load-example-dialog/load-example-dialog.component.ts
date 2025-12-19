@@ -57,7 +57,7 @@ export class LoadExampleDialogComponent {
                         undefined,
                         undefined,
                         [new JavaVariable(
-                            "int i",
+                            "int i;",
                             "LOCAL"
                         )],
                     ),
@@ -118,15 +118,15 @@ export class LoadExampleDialogComponent {
                             undefined,
                             [
                                 new JavaVariable(
-                                    "int i",
+                                    "int i;",
                                     "LOCAL"
                                 ),
                                 new JavaVariable(
-                                    "int x",
+                                    "int x;",
                                     "LOCAL"
                                 ),
                                 new JavaVariable(
-                                    "int[] A",
+                                    "int[] A;",
                                     "LOCAL"
                                 )
                             ]
@@ -215,19 +215,19 @@ export class LoadExampleDialogComponent {
                             undefined,
                             [
                                 new JavaVariable(
-                                    "int[] A",
+                                    "int[] A;",
                                     "LOCAL"
                                 ),
                                 new JavaVariable(
-                                    "int t",
+                                    "int t;",
                                     "LOCAL"
                                 ),
                                 new JavaVariable(
-                                    "int wt",
+                                    "int wt;",
                                     "LOCAL"
                                 ),
                                 new JavaVariable(
-                                    "int wb",
+                                    "int wb;",
                                     "LOCAL"
                                 ),
                                 new JavaVariable(
@@ -340,15 +340,15 @@ export class LoadExampleDialogComponent {
                             undefined,
                             [
                                 new JavaVariable(
-                                    "int j",
+                                    "int j;",
                                     "LOCAL"
                                 ),
                                 new JavaVariable(
-                                    "int i",
+                                    "int i;",
                                     "LOCAL"
                                 ),
                                 new JavaVariable(
-                                    "int[] A",
+                                    "int[] A;",
                                     "LOCAL"
                                 ),
                             ]
