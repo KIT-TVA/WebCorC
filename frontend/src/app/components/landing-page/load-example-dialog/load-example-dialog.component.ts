@@ -13,6 +13,7 @@ import {RepetitionStatement} from "../../../types/statements/repetition-statemen
 import {RootStatement} from "../../../types/statements/root-statement";
 import {CompositionStatement} from "../../../types/statements/composition-statement";
 import {SelectionStatement} from "../../../types/statements/selection-statement";
+import {JavaVariable} from "../../../types/JavaVariable";
 
 @Component({
   selector: "app-load-example-dialog",
@@ -57,6 +58,12 @@ export class LoadExampleDialogComponent {
                             ),
                             new Position(0, 0)
                         ),
+                        undefined,
+                        undefined,
+                        [new JavaVariable(
+                            "int i;",
+                            "LOCAL"
+                        )],
                     ),
                 ),
             ]),
@@ -111,6 +118,22 @@ export class LoadExampleDialogComponent {
                                 ),
                                 new Position(0, 0)
                             ),
+                            undefined,
+                            undefined,
+                            [
+                                new JavaVariable(
+                                    "int i;",
+                                    "LOCAL"
+                                ),
+                                new JavaVariable(
+                                    "int x;",
+                                    "LOCAL"
+                                ),
+                                new JavaVariable(
+                                    "int[] A;",
+                                    "LOCAL"
+                                )
+                            ]
                         ),
                     ),
                 ]),
@@ -191,7 +214,31 @@ export class LoadExampleDialogComponent {
                                     new Position(0, 400)
                                 ),
                                 new Position(0, 0)
-                            )
+                            ),
+                            undefined,
+                            undefined,
+                            [
+                                new JavaVariable(
+                                    "int[] A;",
+                                    "LOCAL"
+                                ),
+                                new JavaVariable(
+                                    "int t;",
+                                    "LOCAL"
+                                ),
+                                new JavaVariable(
+                                    "int wt;",
+                                    "LOCAL"
+                                ),
+                                new JavaVariable(
+                                    "int wb;",
+                                    "LOCAL"
+                                ),
+                                new JavaVariable(
+                                    "int bb;",
+                                    "LOCAL"
+                                ),
+                            ]
                         ),
                     ),
                 ]),
@@ -292,7 +339,23 @@ export class LoadExampleDialogComponent {
                                     new Position(0, 400)
                                 ),
                                 new Position(0, 0)
-                            )
+                            ),
+                            undefined,
+                            undefined,
+                            [
+                                new JavaVariable(
+                                    "int j;",
+                                    "LOCAL"
+                                ),
+                                new JavaVariable(
+                                    "int i;",
+                                    "LOCAL"
+                                ),
+                                new JavaVariable(
+                                    "int[] A;",
+                                    "LOCAL"
+                                ),
+                            ]
                         ),
                     ),
                 ]),

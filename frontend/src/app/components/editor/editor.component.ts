@@ -368,6 +368,11 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     this.edges = this.computeEdges(this.statements());
   }
 
+  private resetNodePositions() {
+      //TODO: Function that rearranges the nodes in a intuitive order
+
+  }
+
   private getNodesFromEdge(edgeChange: { id: string }) {
     const parentId = this.edges.find(
       (edge) => edge.id == edgeChange.id,
