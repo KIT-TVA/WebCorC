@@ -3,7 +3,6 @@ import { IRepetitionStatement } from "../repetition-statement";
 import { signal, WritableSignal } from "@angular/core";
 import { ICondition } from "../../condition/condition";
 import { statementNodeUtils } from "./statement-node-utils";
-import { index } from "d3";
 
 export class RepetitionStatementNode extends AbstractStatementNode {
   private _loopStatementNode: AbstractStatementNode | undefined;
@@ -22,6 +21,16 @@ export class RepetitionStatementNode extends AbstractStatementNode {
       );
     }
   }
+
+  override checkConditionSync(child: AbstractStatementNode) {
+    let inSync = this.postcondition() == child.postcondition();
+    if (!inSync) {
+      this.getConditionConflicts(child);
+    }
+    inSync = this.postcondition() == child.postcondition();
+    return inSync;
+  }
+
   override statement!: IRepetitionStatement;
   public guard: WritableSignal<ICondition>;
   public invariant: WritableSignal<ICondition>;
@@ -40,7 +49,6 @@ export class RepetitionStatementNode extends AbstractStatementNode {
         statement.loopStatement,
         this,
       );
-      this.children.push(this.loopStatementNode);
       this.loopStatementNode.overridePrecondition(this, this.precondition); //TODO: Compute guard && precondition
       // How its done in Component:
       //       super.precondition.content = "((" + this._invariantCondition.content + ") & (" + this._guardCondition.content + "))"
@@ -60,8 +68,12 @@ export class RepetitionStatementNode extends AbstractStatementNode {
     condition: WritableSignal<ICondition>,
     preserveIfNewConditionEmpty = false,
   ) {
-    super.overridePostcondition(sourceNode, condition);
-    this.parent?.overridePostcondition(this, condition); //TODO Compute postcondition && ¬guard
+    super.overridePostcondition(
+      sourceNode,
+      condition,
+      preserveIfNewConditionEmpty,
+    );
+    this.parent?.overridePostcondition(this, this.postcondition); //TODO Compute postcondition && ¬guard
   }
 
   override deleteChild(node: AbstractStatementNode) {

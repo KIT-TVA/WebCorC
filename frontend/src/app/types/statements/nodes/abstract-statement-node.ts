@@ -20,7 +20,7 @@ export class AbstractStatementNode {
     this.parent = parent;
     this.precondition = signal(statement.preCondition);
     this.postcondition = signal(statement.postCondition);
-    parent?.overridePostcondition(this, this.postcondition);
+    parent?.overridePostcondition(this, this.postcondition, true);
   }
 
   /**

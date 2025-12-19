@@ -133,10 +133,18 @@ public abstract class Parser {
             case Identifier ident -> {
                 if (this.tokenSource.hasMore(1) && this.tokenSource.peek(1) instanceof Separator(Separator.SeparatorType type, var ignored)) {
                     if (type == Separator.SeparatorType.PAREN_OPEN) {
-                        yield parseCall();
+                        yield this.parseCall();
                     }
                     if (type == Separator.SeparatorType.SQR_PAREN_OPEN) {
-                        yield parseArrayAccess();
+                        yield this.parseArrayAccess();
+                    }
+                    if (type == Separator.SeparatorType.DOT) {
+                        //chained call (for example this.doThat())
+                        Identifier var = this.tokenSource.expectIdentifier();
+                        this.tokenSource.expectSeparator(Separator.SeparatorType.DOT);
+                        Identifier secondVar = this.tokenSource.expectIdentifier();
+
+                        yield new IdentTree(var.identifier() + "." + secondVar.identifier());
                     }
                 }
                 this.tokenSource.consume();
