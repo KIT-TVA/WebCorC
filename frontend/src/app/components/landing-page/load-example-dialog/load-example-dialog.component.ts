@@ -235,7 +235,7 @@ export class LoadExampleDialogComponent {
                                     "LOCAL"
                                 ),
                                 new JavaVariable(
-                                    "int bb",
+                                    "int bb;",
                                     "LOCAL"
                                 ),
                             ]
