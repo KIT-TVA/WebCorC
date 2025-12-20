@@ -46,6 +46,7 @@ import { Popover } from "primeng/popover";
 import { ConditionSelectorComponent } from "./condition/condition-selector/condition-selector.component";
 import { ICondition } from "../../types/condition/condition";
 import { disconnectNodes } from "../../types/statements/nodes/statement-node-utils";
+import {NgIf} from "@angular/common";
 
 export const RED_COLOURED_CONDITIONS = new InjectionToken<ICondition[]>(
   "RedColouredConditions",
@@ -62,24 +63,25 @@ export const GREEN_COLOURED_CONDITIONS = new InjectionToken<ICondition>(
  */
 @Component({
   selector: "app-editor",
-  imports: [
-    MatButtonModule,
-    MatIconModule,
-    MatExpansionModule,
-    MatTooltipModule,
-    MatMenuModule,
-    StatementDelegatorComponent,
-    VflowComponent,
-    NodeHtmlTemplateDirective,
-    MiniMapComponent,
-    EditorSidemenuComponent,
-    EditorBottommenuComponent,
-    ConnectionControllerDirective,
-    EdgeLabelHtmlTemplateDirective,
-    Button,
-    Popover,
-    ConditionSelectorComponent,
-  ],
+    imports: [
+        MatButtonModule,
+        MatIconModule,
+        MatExpansionModule,
+        MatTooltipModule,
+        MatMenuModule,
+        StatementDelegatorComponent,
+        VflowComponent,
+        NodeHtmlTemplateDirective,
+        MiniMapComponent,
+        EditorSidemenuComponent,
+        EditorBottommenuComponent,
+        ConnectionControllerDirective,
+        EdgeLabelHtmlTemplateDirective,
+        Button,
+        Popover,
+        ConditionSelectorComponent,
+        NgIf,
+    ],
   providers: [
     { provide: GREEN_COLOURED_CONDITIONS, useValue: [] },
     { provide: RED_COLOURED_CONDITIONS, useValue: [] },
@@ -90,8 +92,8 @@ export const GREEN_COLOURED_CONDITIONS = new InjectionToken<ICondition>(
 })
 export class EditorComponent implements AfterViewInit, OnDestroy {
   @ViewChild("sidemenu") private sidemenu!: EditorSidemenuComponent;
-
   private _viewInit: boolean = false;
+  public showResetButton: boolean = true;
   protected statements: Signal<AbstractStatementNode[]> = signal([]);
 
   /**
@@ -386,4 +388,8 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     )! as HtmlTemplateDynamicNode<AbstractStatementNode>;
     return { parent, child };
   }
+
+    protected onTabOpen($event: boolean) {
+        this.showResetButton = !$event;
+    }
 }

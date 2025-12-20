@@ -59,15 +59,18 @@
                 }
             </vflow>
         </div>
-        <p-button
+        @if (showResetButton) {
+            <p-button
+                #resetButton
                 label="Reset"
                 class="resetButton"
-        >
-
-        </p-button>
+            >
+            </p-button>
+        }
         <app-editor-sidemenu
             #sidemenu
             style="height: auto; position: relative; justify-self: right"
+            (tabOpened)="onTabOpen($event)"
         ></app-editor-sidemenu>
     </div>
     <div class="bottomContainer">
