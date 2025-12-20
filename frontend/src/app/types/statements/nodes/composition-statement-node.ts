@@ -44,7 +44,6 @@ export class CompositionStatementNode extends AbstractStatementNode {
         statement.firstStatement,
         this,
       );
-      this.children.push(this.firstStatementNode);
       this.firstStatementNode.overridePrecondition(this, this.precondition);
     }
     if (statement.secondStatement) {
@@ -52,7 +51,6 @@ export class CompositionStatementNode extends AbstractStatementNode {
         statement.secondStatement,
         this,
       );
-      this.children.push(this.secondStatementNode);
       this.secondStatementNode.overridePrecondition(
         this,
         this.intermediateCondition,

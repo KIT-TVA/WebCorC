@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { AfterViewInit, Component } from "@angular/core";
 
 import { TreeService } from "../../../services/tree/tree.service";
 import { MatInputModule } from "@angular/material/input";
@@ -18,6 +18,11 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatListModule } from "@angular/material/list";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { IJavaVariable } from "../../../types/JavaVariable";
+import { FloatLabel } from "primeng/floatlabel";
+import { IconField } from "primeng/iconfield";
+import { InputIcon } from "primeng/inputicon";
+import { $dt } from "@primeuix/themes";
+import { InputText } from "primeng/inputtext";
 
 /**
  * Component to edit the variables of the file.
@@ -37,12 +42,16 @@ import { IJavaVariable } from "../../../types/JavaVariable";
     ReactiveFormsModule,
     MatIconModule,
     MatTooltipModule,
+    FloatLabel,
+    IconField,
+    InputIcon,
+    InputText,
   ],
   templateUrl: "./variables.component.html",
   standalone: true,
   styleUrl: "./variables.component.scss",
 })
-export class VariablesComponent {
+export class VariablesComponent implements AfterViewInit {
   /**
    * Forms Template
    */
@@ -55,6 +64,21 @@ export class VariablesComponent {
     private _fb: FormBuilder,
     public treeService: TreeService,
   ) {}
+  ngAfterViewInit(): void {
+    this.importDiagramVariables();
+  }
+
+  public importDiagramVariables() {
+    if (!this._variables.controls["items"].value) {
+      return;
+    }
+    this.treeService.variables.forEach((variable) => {
+      const newVariable = this._fb.group({
+        name: new FormControl(variable, [Validators.required]),
+      });
+      this.items.push(newVariable);
+    });
+  }
 
   /**
    * Add new variable and check for duplicate variable names
@@ -148,4 +172,6 @@ export class VariablesComponent {
       this._variables.controls["newVariable"].value == ""
     );
   }
+
+  protected readonly $dt = $dt;
 }

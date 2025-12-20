@@ -236,7 +236,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       this.statements = this.treeService.getStatementNodes();
 
       //TODO: This should be done with Inputs instead.
-      this.sidemenu.variables.importVariables(newFormula.javaVariables);
+      this.sidemenu.variables.importDiagramVariables();
       this.sidemenu.conditions.importConditions(newFormula.globalConditions);
       this.sidemenu.renaming.importRenaming(newFormula.renamings);
 

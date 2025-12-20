@@ -1,8 +1,8 @@
-export type JavaVariableKind = "LOCAL" | "RETURN" | "GLOBAL"
+export type JavaVariableKind = "LOCAL" | "RETURN" | "GLOBAL";
 
 export interface IJavaVariable {
-    name: string;
-    kind: JavaVariableKind;
+  name: string;
+  kind: JavaVariableKind;
 }
 
 /**
@@ -10,14 +10,16 @@ export interface IJavaVariable {
  * and ensuring signatures are unique
  */
 export class JavaVariable implements IJavaVariable {
-    constructor(public name: string, public kind: JavaVariableKind) {
-    }
+  constructor(
+    public name: string,
+    public kind: JavaVariableKind,
+  ) {}
 
-    equalName(variable: JavaVariable): boolean {
-        return this.name == variable.name
-    }
+  equalName(variable: JavaVariable): boolean {
+    return this.name == variable.name;
+  }
 
-    public toString() {
-        return this.kind + ' ' + this.name
-    }
+  public toString() {
+    return this.name;
+  }
 }
