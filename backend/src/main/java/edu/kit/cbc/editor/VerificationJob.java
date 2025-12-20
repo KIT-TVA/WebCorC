@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -18,6 +20,9 @@ import java.util.logging.Logger;
 import lombok.Getter;
 
 public class VerificationJob extends Thread {
+
+    private static final String LOGGER_FORMAT = "%s %s\n";
+
     @Getter private String log;
     @Getter private boolean hasResult = false;
     private HashSet<Function<String, Boolean>> listeners;
@@ -65,7 +70,8 @@ public class VerificationJob extends Thread {
 
     public void run() {
         log("verification started");
-        formula.setProven(formula.getStatement().prove(context.build()));
+        boolean proven = formula.getStatement().prove(context.build());
+        formula.setProven(proven);
 
         Path proofFolder = context.build().getProofFolder();
         if (projectId.isPresent()) {
@@ -110,6 +116,11 @@ public class VerificationJob extends Thread {
 
         hasResult = true;
         log("verification complete");
+        if (proven) {
+            log("all statements were proven successfully!");
+        } else {
+            log("WebCorC was unable to prove all of your statements. See the log for further information...");
+        }
 
         //Keep job output and result available for some time before it is deleted
         try {
@@ -125,11 +136,16 @@ public class VerificationJob extends Thread {
         listeners.add(listener);
     }
 
-    public void log(String message) {
-        log += message + "\n";
+    private void log(String message) {
+        log += String.format(LOGGER_FORMAT, this.getCurrentTimestamp(), message);
 
         //Call all listeners. The listener returns true if it detects that its WebSocket connection was closed,
         //so it will be removed from the listener pool
         listeners.removeIf(l -> l.apply(message));
+    }
+
+    private String getCurrentTimestamp() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("'['HH:mm:ss']'");
+        return LocalTime.now().format(formatter);
     }
 }

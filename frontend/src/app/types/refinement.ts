@@ -20,6 +20,10 @@ export abstract class Refinement {
         return this._position
     }
 
+    public set position(value: Position) {
+        this._position = value
+    }
+
     public set proven(value: boolean) {
         this._proven = value
     }

@@ -23,12 +23,12 @@ public class CompositionStatement extends AbstractStatement {
         boolean secondProve = secondStatement.prove(proofContext);
 
         if (!firstProve) {
-            System.err.println("[ERROR] The statement " + this.getName() + " could not be proven due to it's first "
+            proofContext.getLogger().accept("ERROR: The statement " + this.getName() + " could not be proven due to it's first "
                 + "statement!");
         }
 
         if (!secondProve) {
-            System.err.println("[ERROR] The statement " + this.getName() + " could not be proven due to it's second "
+            proofContext.getLogger().accept("ERROR: The statement " + this.getName() + " could not be proven due to it's second "
                 + "statement!");
         }
 

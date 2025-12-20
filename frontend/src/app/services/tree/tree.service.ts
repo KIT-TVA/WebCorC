@@ -110,6 +110,10 @@ export class TreeService {
     return this._resetVerifyNotifier;
   }
 
+  public get rootStatement() {
+    return this.rootStatementNode
+  }
+
   /**
    * Export the content of the tree service.
    * Including the statements, variables, global conditions and renames.
@@ -194,6 +198,11 @@ export class TreeService {
       this.collectStatements(this.rootFormula.statement, statements);
     }
     return statements;
+  }
+
+  public refreshNodes(): void {
+    // Re-emit the array so Angular Signals detect a change
+    this._statementNodes.update(old => [...old]);
   }
 
   public addStatementNode(statementNode: AbstractStatementNode) {
