@@ -1,1 +1,5 @@
-<p>settings works!</p>
+<label id="resetVariantSelector">Choose the reset variant</label>
+<mat-radio-group [(ngModel)]="resetVariant" aria-label="reset variant selector">
+    <mat-radio-button [value]="ResetVariant.ReingoldTilford">Reingold-Tilford</mat-radio-button>
+    <mat-radio-button [value]="ResetVariant.Stacked">Stacked</mat-radio-button>
+</mat-radio-group>
