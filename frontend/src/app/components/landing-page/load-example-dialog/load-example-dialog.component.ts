@@ -53,7 +53,7 @@ export class LoadExampleDialogComponent {
                                 "Statement",
                                 new Condition("i > 7"),
                                 new Condition("i > 8"),
-                                "i = i + 1",
+                                "i = i + 1;",
                                 new Position(0, 400)
                             ),
                             new Position(0, 0)
