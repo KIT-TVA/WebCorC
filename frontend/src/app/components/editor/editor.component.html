@@ -1,5 +1,5 @@
 <div
-  style="
+        style="
     width: 100%;
     height: 100%;
     display: flex;
@@ -8,63 +8,73 @@
     justify-items: stretch;
   "
 >
-  <div
-    style="
+    <div
+            style="
       display: flex;
       flex: auto;
       justify-items: stretch;
       align-items: stretch;
     "
-  >
-    <div id="editorContainer" #editorContainer>
-      <!-- Render container for the trees root -->
-      <vflow
-        view="auto"
-        [nodes]="nodes"
-        [edges]="edges"
-        [connection]="{ curve: 'smooth-step' }"
-        (onConnect)="createEdge($event)"
-        (onNodesChange.position)="handlePositionChange($event)"
-        [background]="{ backgroundColor: 'var(--p-background)', type: 'dots' }"
-        [snapGrid]="[25, 25]"
-        (onEdgesChange.select)="handleEdgeSelect($event)"
-      >
-        <ng-template let-ctx nodeHtml style="width: fit-content">
-          <app-statement-delegator [statement]="ctx.node.data()">
-          </app-statement-delegator>
-        </ng-template>
-        <ng-template let-ctx edgeLabelHtml>
-          <p-button
-            label="condition conflict"
-            size="small"
-            severity="warn"
-            (click)="conditionPopover.toggle($event)"
-          >
-          </p-button>
-          <p-popover
-            #conditionPopover
-            (onHide)="selector.removeActiveCondition()"
-          >
-            <app-condition-selector
-              #selector
-              [child]="ctx.label.data.child"
-              [parent]="ctx.label.data.parent"
-              (selectCondition)="edges = computeEdges(statements())"
+    >
+        <div id="editorContainer" #editorContainer>
+            <!-- Render container for the trees root -->
+            <vflow
+                    view="auto"
+                    [nodes]="nodes"
+                    [edges]="edges"
+                    [connection]="{ curve: 'smooth-step' }"
+                    (onConnect)="createEdge($event)"
+                    (onNodesChange.position)="handlePositionChange($event)"
+                    [background]="{ backgroundColor: 'var(--p-background)', type: 'dots' }"
+                    [snapGrid]="[25, 25]"
+                    (onEdgesChange.select)="handleEdgeSelect($event)"
             >
-            </app-condition-selector>
-          </p-popover>
-        </ng-template>
-        @if (globalSettingsService.showMiniMap) {
-          <mini-map [position]="'top-right'" />
+                <ng-template let-ctx nodeHtml style="width: fit-content">
+                    <app-statement-delegator [statement]="ctx.node.data()">
+                    </app-statement-delegator>
+                </ng-template>
+                <ng-template let-ctx edgeLabelHtml>
+                    <p-button
+                            label="condition conflict"
+                            size="small"
+                            severity="warn"
+                            (click)="conditionPopover.toggle($event)"
+                    >
+                    </p-button>
+                    <p-popover
+                        #conditionPopover
+                        (onHide)="selector.removeActiveCondition()"
+                    >
+                        <app-condition-selector
+                            #selector
+                            [child]="ctx.label.data.child"
+                            [parent]="ctx.label.data.parent"
+                            (selectCondition)="edges = computeEdges(statements())"
+                        >
+                        </app-condition-selector>
+                    </p-popover>
+                </ng-template>
+                @if (globalSettingsService.showMiniMap) {
+                    <mini-map [position]="'top-right'"/>
+                }
+            </vflow>
+        </div>
+        @if (showResetButton) {
+            <p-button
+                #resetButton
+                label="Reset"
+                class="resetButton"
+                (click)="resetNodePosition()"
+            >
+            </p-button>
         }
-      </vflow>
+        <app-editor-sidemenu
+            #sidemenu
+            style="height: auto; position: relative; justify-self: right"
+            (tabOpened)="onTabOpen($event)"
+        ></app-editor-sidemenu>
     </div>
-    <app-editor-sidemenu
-      #sidemenu
-      style="height: auto; position: relative; justify-self: right"
-    ></app-editor-sidemenu>
-  </div>
-  <div class="bottomContainer">
-    <app-editor-bottommenu />
-  </div>
+    <div class="bottomContainer">
+        <app-editor-bottommenu/>
+    </div>
 </div>
