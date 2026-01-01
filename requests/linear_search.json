@@ -1,0 +1,91 @@
+{
+  "name": "LinearSearch",
+  "statement": {
+    "name": "Comp",
+    "type": "COMPOSITION",
+    "preCondition": {
+      "condition": "appears(A, x, 0, A.length)"
+    },
+    "postCondition": {
+      "condition": "!appears(A, x, 0, A.length)"
+    },
+    "isProven": false,
+    "id": "749996579209.6459",
+    "intermediateCondition": {
+      "condition": "appears(A, x, 0, A.length)"
+    },
+    "firstStatement": {
+      "name": "Statement",
+      "type": "STATEMENT",
+      "preCondition": {
+        "condition": "appears(A, x, 0, A.length)"
+      },
+      "postCondition": {
+        "condition": "appears(A, x, 0, A.length)"
+      },
+      "isProven": false,
+      "id": "1069508121574.2565",
+      "programStatement": "i = A.length-1;"
+    },
+    "secondStatement": {
+      "name": "Repetition",
+      "type": "REPETITION",
+      "preCondition": {
+        "condition": "appears(A, x, 0, A.length)"
+      },
+      "postCondition": {
+        "condition": "!appears(A, x, 0, A.length)"
+      },
+      "isProven": false,
+      "id": "707865985495.0172",
+      "loopStatement": {
+        "name": "Statement2",
+        "type": "STATEMENT",
+        "preCondition": {
+          "condition": "appears(A, x, 0, A.length)"
+        },
+        "postCondition": {
+          "condition": "!appears(A, x, 0, A.length)"
+        },
+        "isProven": false,
+        "id": "730471819741.3016",
+        "programStatement": "i = i-1;"
+      },
+      "variant": {
+        "condition": "!appears(A, x, i+1, A.length)"
+      },
+      "invariant": {
+        "condition": "i"
+      },
+      "guard": {
+        "condition": "A[i] != x"
+      },
+      "isVariantProven": false,
+      "isPreProven": false,
+      "isPostProven": false
+    }
+  },
+  "preCondition": {
+    "condition": "appears(A, x, 0, A.length)"
+  },
+  "postCondition": {
+    "condition": "!appears(A, x, 0, A.length)"
+  },
+  "javaVariables": [
+      {
+          "name": "int[] A",
+           "kind": "LOCAL"
+      },
+      {
+          "name": "int x",
+           "kind": "LOCAL"
+      },
+      {
+          "name": "int i",
+           "kind": "LOCAL"
+      }
+   ],
+  "globalConditions": [],
+  "renamings": [],
+  "isProven": false
+}

@@ -91,6 +91,9 @@ public class FilesController {
             if (response.isPresent()) {
                 InputStream fileInput = response.get().body().getInputStream();
                 Files.copy(fileInput, targetFolder.resolve(file));
+                fileInput.transferTo(System.out);
+            } else {
+                throw new IOException("Response not present");
             }
         }
 
@@ -187,4 +190,6 @@ public class FilesController {
 
         return HttpResponse.ok("file deleted");
     }
+
+
 }

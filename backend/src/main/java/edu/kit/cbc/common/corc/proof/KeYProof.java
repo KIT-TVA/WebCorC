@@ -18,6 +18,7 @@ import lombok.Builder;
 @Serdeable
 public class KeYProof {
 
+    private static final String INCLUDE_FILES = "\\include  \"../../%s\";";
     private static final String KEY_HEADER = """
         \\programVariables {
             %s
@@ -34,7 +35,8 @@ public class KeYProof {
         }
         """;
 
-    private static final String PROGRAM_VARIABLE_SEPARATOR = "; ";
+    private static final String PROGRAM_VARIABLE_SEPARATOR = "\n";
+    private static final String INCLUDED_FILES_SEPARATOR = ", ";
     private static final String GLOBAL_CONDITIONS_SEPARATOR = " & ";
 
     private final List<Path> includedFiles;
@@ -62,6 +64,13 @@ public class KeYProof {
 
     private File createProofFile() throws IOException {
         Path tmpDir = Files.createTempDirectory(proofFolder, statementName);
+        this.includedFiles.forEach(file -> {
+            try {
+                Files.copy(file, tmpDir.resolve(file.getFileName()));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
 
         int currentProofNumber = 0;
         Path keyFilePath = tmpDir.resolve(String.format("%s_%d.key", statementName, currentProofNumber));
@@ -87,7 +96,19 @@ public class KeYProof {
     }
 
     private String printKeYHeader() {
-        return String.format(KEY_HEADER, printProgramVariables());
+        String header  = "";
+
+        if (!this.includedFiles.isEmpty()) {
+            header += String.format(INCLUDE_FILES, this.printIncludedFiles());
+            System.out.println("ADDED INCLUDED FILES: " + this.includedFiles.size());
+        }
+
+        header += String.format(
+            KEY_HEADER,
+            this.printProgramVariables()
+        );
+
+        return header;
     }
 
     private String printKeYBody() {
@@ -114,5 +135,10 @@ public class KeYProof {
     private String printGlobalConditions() {
         return this.globalConditions.stream().map(Condition::toString)
             .collect(Collectors.joining(GLOBAL_CONDITIONS_SEPARATOR));
+    }
+
+    private String printIncludedFiles() {
+        return this.includedFiles.stream().map(Path::getFileName).map(Path::toString)
+            .collect(Collectors.joining(INCLUDED_FILES_SEPARATOR));
     }
 }
