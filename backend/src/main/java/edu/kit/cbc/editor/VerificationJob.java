@@ -58,10 +58,6 @@ public class VerificationJob extends Thread {
             List<Path> includeFiles = filesController.retrieveFiles(projectId.get(), ".key", "include");
             List<Path> javaSrcFiles = filesController.retrieveFiles(projectId.get(), ".java", "javaSrc");
             List<Path> existingKeyFiles = filesController.retrieveFiles(projectId.get(), ".key", "proofs");
-            listDirectory(Path.of("/tmp/"));
-            if (!includeFiles.isEmpty()) {
-                listDirectory(includeFiles.get(0).getParent());
-            }
 
             LOGGER.info("Included KeY-Files: " + includeFiles);
             LOGGER.info("Included Java-Files: " + javaSrcFiles);

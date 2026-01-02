@@ -18,7 +18,7 @@ import lombok.Builder;
 @Serdeable
 public class KeYProof {
 
-    private static final String INCLUDE_FILES = "\\include  \"../../%s\";";
+    private static final String INCLUDE_FILES = "\\include  \"../../../%s\"\n;";
     private static final String KEY_HEADER = """
         \\programVariables {
             %s
@@ -30,7 +30,7 @@ public class KeYProof {
             %s
             %s
             & wellFormed(heap)) -> {heapAtPre := heap %s}
-        \\<{%s;}\\>
+        \\<{%s}\\>
         (%s)
         }
         """;
@@ -55,6 +55,7 @@ public class KeYProof {
         try {
             File keyFile = this.createProofFile();
             Proof proof = KeYInteraction.startKeyProof(keyFile, false);
+            System.out.println("Proof result: " + (proof != null && proof.closed()));
             return proof != null && proof.closed();
         } catch (IOException e) {
             e.printStackTrace();
@@ -100,7 +101,6 @@ public class KeYProof {
 
         if (!this.includedFiles.isEmpty()) {
             header += String.format(INCLUDE_FILES, this.printIncludedFiles());
-            System.out.println("ADDED INCLUDED FILES: " + this.includedFiles.size());
         }
 
         header += String.format(
@@ -138,7 +138,7 @@ public class KeYProof {
     }
 
     private String printIncludedFiles() {
-        return this.includedFiles.stream().map(Path::getFileName).map(Path::toString)
+        return this.includedFiles.stream().map(Path::toString)
             .collect(Collectors.joining(INCLUDED_FILES_SEPARATOR));
     }
 }
