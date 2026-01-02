@@ -5,6 +5,7 @@ import edu.kit.cbc.common.corc.parsing.condition.ConditionPrinter;
 import edu.kit.cbc.common.corc.proof.KeYProof;
 import edu.kit.cbc.common.corc.proof.KeYProofGenerator;
 import edu.kit.cbc.common.corc.proof.ProofContext;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,9 +32,44 @@ public class SmallRepetitionStatement extends AbstractStatement {
 
         if (!isVariantProven) {
             KeYProof variantProof = proofGenerator.generateVariantProof(variant, invariant, guard, this);
+            this.isVariantProven = variantProof.execute();
+
+            if (!this.isVariantProven) {
+                proofContext.getLogger().accept("ERROR: Proving that the variant of statement \"" + this.getName() + "\" is a variant failed!");
+                return false;
+            }
         }
 
-        return false;
+        if (!this.isPreProven) {
+            KeYProof preImpliesInvariant = proofGenerator.generateImplicationProof(
+                    this.getPreCondition(),
+                    this.invariant,
+                    this
+            );
+            this.isPreProven = preImpliesInvariant.execute();
+
+            if (!this.isPreProven) {
+                proofContext.getLogger().accept("ERROR: The implication of Pre => Invariant failed for statement: "
+                    + this.getName());
+                return false;
+            }
+        }
+
+        if (!this.isPostProven) {
+            KeYProof postImpliesGuard = proofGenerator.generateImplicationProof(
+                Condition.fromListToConditionAnd(List.of(this.invariant, Condition.not(this.guard))),
+                this.getPostCondition(),
+                this);
+            this.isPostProven = postImpliesGuard.execute();
+
+            if (!this.isPostProven) {
+                proofContext.getLogger().accept("ERROR: The implication of (Invariant && !Guard) => Post failed for statement: "
+                    + this.getName());
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @Override

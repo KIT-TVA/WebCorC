@@ -18,7 +18,7 @@ import lombok.Builder;
 @Serdeable
 public class KeYProof {
 
-    private static final String INCLUDE_FILES = "\\include  \"../../../%s\"\n;";
+    private static final String INCLUDE_FILES = "\\include  \"../../..%s\";\n";
     private static final String KEY_HEADER = """
         \\programVariables {
             %s
@@ -133,7 +133,7 @@ public class KeYProof {
     }
 
     private String printGlobalConditions() {
-        return this.globalConditions.stream().map(Condition::toString)
+        return this.globalConditions.stream().map(Condition::asJML)
             .collect(Collectors.joining(GLOBAL_CONDITIONS_SEPARATOR));
     }
 

@@ -92,7 +92,20 @@
   "globalConditions": [
 	  {
 		  "condition": "A != null"
+	  },
+	  {
+		  "condition": "i >= 0 & i < A.length"
+	  },
+	  {
+		  "condition": "A.length > 0"
+	  },
+	  {
+		  "condition": "A.length < 10"
+	  },
+	  {
+		  "condition": "appears(A,x,0,A.length)"
 	  }
+
   ],
   "renamings": [],
   "isProven": false,
