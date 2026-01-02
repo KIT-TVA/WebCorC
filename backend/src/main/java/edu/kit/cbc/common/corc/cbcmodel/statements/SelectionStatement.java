@@ -38,7 +38,7 @@ public class SelectionStatement extends AbstractStatement {
             proofContext.getLogger().accept(
                 "ERROR: The proof of selection statement \"" + this.getName() + "\" failed, because of the following "
                     + "commands not being proven: ");
-            failedProofs.forEach(stmt -> System.out.format("%t-%s%n", stmt.getName()));
+            failedProofs.forEach(stmt -> System.out.format("-%s%n", stmt.getName()));
 
             this.setProven(false);
             return false;

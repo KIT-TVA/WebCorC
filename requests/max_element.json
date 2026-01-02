@@ -1,0 +1,190 @@
+{
+  "name": "MaxElement",
+  "statement": {
+    "name": "Comp1",
+    "type": "COMPOSITION",
+    "preCondition": {
+      "condition": "A.length > 0"
+    },
+    "postCondition": {
+      "condition": "maxe(A, 0, A.length, i)"
+    },
+    "isProven": false,
+    "intermediateCondition": {
+      "condition": "A.length > 0 & i == 0 & j == 1"
+    },
+    "firstStatement": {
+      "name": "Comp2",
+      "type": "COMPOSITION",
+      "preCondition": {
+        "condition": "A.length > 0"
+      },
+      "postCondition": {
+        "condition": "A.length > 0 & i == 0 & j == 1"
+      },
+      "isProven": false,
+      "intermediateCondition": {
+        "condition": "A.length > 0 & i == 0"
+      },
+      "firstStatement": {
+        "name": "Statement1",
+        "type": "STATEMENT",
+        "preCondition": {
+          "condition": "A.length > 0"
+        },
+        "postCondition": {
+          "condition": "A.length > 0 & i == 0"
+        },
+        "isProven": false,
+        "programStatement": "i = 0;"
+      },
+      "secondStatement": {
+        "name": "Statement2",
+        "type": "STATEMENT",
+        "preCondition": {
+          "condition": "A.length > 0 & i == 0"
+        },
+        "postCondition": {
+          "condition": "A.length > 0 & i == 0 & j == 1"
+        },
+        "isProven": false,
+        "programStatement": "j = 1;"
+      }
+    },
+    "secondStatement": {
+      "name": "Repetition",
+      "type": "REPETITION",
+      "preCondition": {
+        "condition": "maxe(A,0,j,i) & (j!=A.length)"
+      },
+      "postCondition": {
+        "condition": "maxe(A, 0, j, i)"
+      },
+      "isProven": false,
+      "loopStatement": {
+        "name": "Comp2",
+        "type": "COMPOSITION",
+        "preCondition": {
+          "condition": "maxe(A,0,j,i) & (j!=A.length)"
+        },
+        "postCondition": {
+          "condition": "maxe(A,0,j,i)"
+        },
+        "isProven": false,
+        "intermediateCondition": {
+          "condition": "maxe(A, 0, j+1, i)"
+        },
+        "firstStatement": {
+          "name": "Selection",
+          "type": "SELECTION",
+          "preCondition": {
+            "condition": "maxe(A,0,j,i) & (j!=A.length)"
+          },
+          "postCondition": {
+            "condition": "maxe(A,0,j+1,i)"
+          },
+          "isProven": false,
+          "guards": [
+            {
+              "condition": "A[j] > A[i]"
+            },
+            {
+              "condition": "A[j] <= A[i]"
+            }
+          ],
+          "commands": [
+            {
+              "name": "Statement3",
+              "type": "STATEMENT",
+              "preCondition": {
+                "condition": "maxe(A,0,j,i) & (j!=A.length) & A[j] > A[i]"
+              },
+              "postCondition": {
+                "condition": "maxe(A, 0, j+1, i)"
+              },
+              "isProven": false,
+              "programStatement": "i = j;"
+            },
+            {
+              "name": "Statement4",
+              "type": "STATEMENT",
+              "preCondition": {
+                "condition": "maxe(A,0,j,i) & (j!=A.length) & A[j] <= A[i]"
+              },
+              "postCondition": {
+                "condition": "maxe(A, 0, j+1, i)"
+              },
+              "isProven": false,
+              "programStatement": "i=i;"
+            }
+          ],
+          "isPreProven": false
+        },
+        "secondStatement": {
+          "name": "Statement5",
+          "type": "STATEMENT",
+          "preCondition": {
+            "condition": "maxe(A, 0, j+1, i)"
+          },
+          "postCondition": {
+            "condition": "maxe(A, 0, j, i)"
+          },
+          "isProven": false,
+          "programStatement": "j = j+1;"
+        }
+      },
+      "variant": {
+        "condition": "A.length - j"
+      },
+      "invariant": {
+        "condition": "maxe(A,0,j,i)"
+      },
+      "guard": {
+        "condition": "j != A.length"
+      },
+      "isVariantProven": false,
+      "isPreProven": false,
+      "isPostProven": false
+    }
+  },
+  "preCondition": {
+    "condition": "A.length > 0"
+  },
+  "postCondition": {
+    "condition": "maxe(A, 0, A.length, i)"
+  },
+  "javaVariables": [
+    {
+      "name": "int j",
+      "kind": "LOCAL"
+    },
+    {
+      "name": "int i",
+      "kind": "LOCAL"
+    },
+    {
+      "name": "int[] A",
+      "kind": "LOCAL"
+    }
+  ],
+  "globalConditions": [
+	  {
+		  "condition": "A != null"
+	  },
+	  {
+		  "condition": "A.length > 0"
+	  },
+	  {
+		  "condition": "A.length < 10"
+	  },
+	  {
+		  "condition": "i >= 0 & i < A.length"
+	  },
+	  {
+		  "condition": "j >= 0 & j <= A.length"
+	  }
+
+  ],
+  "renamings": [],
+  "isProven": false
+}
