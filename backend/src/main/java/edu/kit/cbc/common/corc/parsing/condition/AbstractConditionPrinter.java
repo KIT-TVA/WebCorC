@@ -89,6 +89,7 @@ public abstract class AbstractConditionPrinter {
     }
 
     protected abstract void printBinaryOperation(Tree lhs, Tree rhs, Operator.OperatorType type);
+
     protected abstract void printLength(String variable);
 
     protected void space() {
