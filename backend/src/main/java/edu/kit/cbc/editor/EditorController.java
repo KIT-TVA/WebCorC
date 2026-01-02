@@ -47,8 +47,8 @@ public class EditorController {
     @Post(uri = "/generate")
     @Produces(MediaType.APPLICATION_ZIP)
     @Consumes(MediaType.APPLICATION_JSON)
-    public HttpResponse<String> generate() {
-        return HttpResponse.serverError(String.format("NOT IMPLEMENTED"));
+    public HttpResponse<String> generate(@Body @Valid CbCFormula formula) {
+        return HttpResponse.ok(CodeGenerator.generate(formula));
     }
 
     @Post(uri = "/verify")
