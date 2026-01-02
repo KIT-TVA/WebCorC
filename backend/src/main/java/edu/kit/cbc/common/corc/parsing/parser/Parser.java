@@ -14,6 +14,7 @@ import edu.kit.cbc.common.corc.parsing.parser.ast.BinaryOperationTree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.CallTree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.IdentTree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.IntLiteralTree;
+import edu.kit.cbc.common.corc.parsing.parser.ast.LengthTree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.Tree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.UnaryOperationTree;
 import edu.kit.cbc.common.corc.parsing.program.ast.LValue;
@@ -150,7 +151,11 @@ public abstract class Parser {
                         this.tokenSource.expectSeparator(Separator.SeparatorType.DOT);
                         Identifier secondVar = this.tokenSource.expectIdentifier();
 
-                        yield new IdentTree(var.identifier() + "." + secondVar.identifier());
+                        if (secondVar.identifier().equals("length")) {
+                            yield new LengthTree(var.identifier());
+                        } else {
+                            yield new IdentTree(var.identifier() + "." + secondVar.identifier());
+                        }
                     }
                 }
                 this.tokenSource.consume();

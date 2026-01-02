@@ -30,7 +30,6 @@ public class SmallRepetitionStatement extends AbstractStatement {
         }
 
         if (!isVariantProven) {
-
             KeYProof variantProof = proofGenerator.generateVariantProof(variant, invariant, guard, this);
         }
 

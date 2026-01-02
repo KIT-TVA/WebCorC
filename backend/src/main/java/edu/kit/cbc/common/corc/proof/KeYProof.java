@@ -28,7 +28,7 @@ public class KeYProof {
     private static final String KEY_BODY = """
         \\problem{(
             %s
-            %s
+            & %s
             & wellFormed(heap)) -> {heapAtPre := heap %s}
         \\<{%s}\\>
         (%s)

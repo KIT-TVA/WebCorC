@@ -7,12 +7,12 @@
       "condition": "appears(A, x, 0, A.length)"
     },
     "postCondition": {
-      "condition": "!appears(A, x, 0, A.length)"
+      "condition": "A[i]==x"
     },
     "isProven": false,
-    "id": "749996579209.6459",
+    "id": "738947684138.0793",
     "intermediateCondition": {
-      "condition": "appears(A, x, 0, A.length)"
+      "condition": "!appears(A,x,i+1,A.length) & (A[i] != x)"
     },
     "firstStatement": {
       "name": "Statement",
@@ -21,44 +21,48 @@
         "condition": "appears(A, x, 0, A.length)"
       },
       "postCondition": {
-        "condition": "appears(A, x, 0, A.length)"
+        "condition": "appears(A,x,0,length(A)) & (i==(length(A) - 1))"
       },
       "isProven": false,
-      "id": "1069508121574.2565",
+      "id": "691894258870.7626",
       "programStatement": "i = A.length-1;"
     },
     "secondStatement": {
       "name": "Repetition",
       "type": "REPETITION",
       "preCondition": {
-        "condition": "appears(A, x, 0, A.length)"
+        "condition": "!appears(A,x,i+1,A.length) & (A[i] != x)"
       },
       "postCondition": {
-        "condition": "!appears(A, x, 0, A.length)"
+        "condition": "A[i]==x"
+      },
+      "position": {
+        "xinPx": 200,
+        "yinPx": 850
       },
       "isProven": false,
-      "id": "707865985495.0172",
+      "id": "1309107854893.6372",
       "loopStatement": {
         "name": "Statement2",
         "type": "STATEMENT",
         "preCondition": {
-          "condition": "appears(A, x, 0, A.length)"
+          "condition": "!appears(A,x,i+1,A.length) & (A[i] != x)"
         },
         "postCondition": {
-          "condition": "!appears(A, x, 0, A.length)"
+          "condition": "!appears(A,x,i+1,A.length)"
         },
         "isProven": false,
-        "id": "730471819741.3016",
-        "programStatement": "i = i-1;"
+        "id": "1013167151840.6046",
+        "programStatement": "i=i-1;"
       },
       "variant": {
-        "condition": "!appears(A, x, i+1, A.length)"
-      },
-      "invariant": {
         "condition": "i"
       },
+      "invariant": {
+        "condition": "!appears(A, x, i+1, A.length)"
+      },
       "guard": {
-        "condition": "A[i] != x"
+        "condition": "(A[i] != x)"
       },
       "isVariantProven": false,
       "isPreProven": false,
@@ -69,23 +73,31 @@
     "condition": "appears(A, x, 0, A.length)"
   },
   "postCondition": {
-    "condition": "!appears(A, x, 0, A.length)"
+    "condition": "A[i]==x"
   },
   "javaVariables": [
-      {
-          "name": "int[] A",
-           "kind": "LOCAL"
-      },
-      {
-          "name": "int x",
-           "kind": "LOCAL"
-      },
-      {
-          "name": "int i",
-           "kind": "LOCAL"
-      }
-   ],
-  "globalConditions": [],
+    {
+      "name": "int x",
+      "kind": "LOCAL"
+    },
+    {
+      "name": "int[] A",
+      "kind": "LOCAL"
+    },
+    {
+      "name": "int i",
+      "kind": "LOCAL"
+    }
+  ],
+  "globalConditions": [
+	  {
+		  "condition": "A != null"
+	  }
+  ],
   "renamings": [],
-  "isProven": false
+  "isProven": false,
+  "position": {
+    "xinPx": 0,
+    "yinPx": 0
+  }
 }

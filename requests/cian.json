@@ -1,31 +1,24 @@
 {
-  "name": "simpleAddition",
-  "statement": {
-    "name": "i = i + 1;",
-    "type": "STATEMENT",
-    "preCondition": {
-      "condition": "i > 7"
+    "name": "TestFormula",
+    "statement": {
+        "name": "Statement1",
+        "programStatement": "i = 1;",
+        "type": "STATEMENT",
+        "preCondition": {
+            "condition": "i == 0"
+        },
+        "postCondition": {
+            "condition": "i == 1"
+        },
+        "isProven": false
     },
-    "postCondition": {
-      "condition": "i > 8"
-    },
-    "isProven": false,
-    "id": "1744559257092.795",
-    "programStatement": "i = i+1;"
-  },
-  "preCondition": {
-    "condition": "i > 7"
-  },
-  "postCondition": {
-    "condition": "i > 8"
-  },
-  "javaVariables": [
-    {
-      "name": "int i",
-      "kind": "LOCAL"
-    }
-  ],
-  "globalConditions": [],
-  "renamings": [],
-  "isProven": false
+    "javaVariables": [
+        {
+            "name": "int i",
+            "kind": "LOCAL"
+        }
+    ],
+    "globalConditions": [],
+    "renamings": [],
+    "isProven": false
 }
