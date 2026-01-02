@@ -69,6 +69,7 @@ public class SmallRepetitionStatement extends AbstractStatement {
             }
         }
 
+        this.isProven = true;
         return true;
     }
 
