@@ -7,7 +7,9 @@ import edu.kit.cbc.common.corc.parsing.condition.ConditionParser;
 import edu.kit.cbc.common.corc.parsing.condition.ConditionPrinter;
 import edu.kit.cbc.common.corc.parsing.condition.JMLConditionPrinter;
 import edu.kit.cbc.common.corc.parsing.lexer.Lexer;
+import edu.kit.cbc.common.corc.parsing.lexer.Operator;
 import edu.kit.cbc.common.corc.parsing.parser.ast.Tree;
+import edu.kit.cbc.common.corc.parsing.parser.ast.UnaryOperationTree;
 import io.micronaut.serde.annotation.Serdeable;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -75,15 +77,18 @@ public class Condition {
         return fromListToSeparated(conditions, AND_SEPARATOR);
     }
 
+    public static Condition not(Condition condition) {
+        Condition notted = new Condition();
+        notted.setParsedCondition(new UnaryOperationTree(condition.getParsedCondition(), Operator.OperatorType.NOT));
+        return notted;
+    }
+
     private static Condition fromListToSeparated(List<Condition> conditions, String separator) {
         String joinedConditionString = conditions.stream()
             .map(Condition::getCondition)
             .map(cond -> String.format(BRACKETS, cond))
-            .collect(Collectors.joining(OR_SEPARATOR));
+            .collect(Collectors.joining(separator));
 
-        Condition condition = new Condition();
-        condition.setCondition(joinedConditionString);
-
-        return condition;
+        return fromString(joinedConditionString);
     }
 }

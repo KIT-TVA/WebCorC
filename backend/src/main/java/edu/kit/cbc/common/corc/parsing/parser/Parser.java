@@ -14,6 +14,7 @@ import edu.kit.cbc.common.corc.parsing.parser.ast.BinaryOperationTree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.CallTree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.IdentTree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.IntLiteralTree;
+import edu.kit.cbc.common.corc.parsing.parser.ast.LengthTree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.Tree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.UnaryOperationTree;
 import edu.kit.cbc.common.corc.parsing.program.ast.LValue;
@@ -96,12 +97,18 @@ public abstract class Parser {
                 this.tokenSource.expectSeparator(Separator.SeparatorType.PAREN_CLOSE);
                 yield conditionTree;
             }
-            case Operator(Operator.OperatorType type, var ignored) when type == Operator.OperatorType.MINUS ->
-                new UnaryOperationTree(parseFactor(), Operator.OperatorType.MINUS);
-            case Operator(Operator.OperatorType type, var ignored) when type == Operator.OperatorType.NOT ->
-                new UnaryOperationTree(parseFactor(), Operator.OperatorType.NOT);
-            case Operator(Operator.OperatorType type, var ignored) when type == Operator.OperatorType.ARITH_NOT ->
-                new UnaryOperationTree(parseFactor(), Operator.OperatorType.ARITH_NOT);
+            case Operator(Operator.OperatorType type, var ignored) when type == Operator.OperatorType.MINUS -> {
+                this.tokenSource.consume();
+                yield new UnaryOperationTree(parseFactor(), Operator.OperatorType.MINUS);
+            }
+            case Operator(Operator.OperatorType type, var ignored) when type == Operator.OperatorType.NOT -> {
+                this.tokenSource.consume();
+                yield new UnaryOperationTree(parseFactor(), Operator.OperatorType.NOT);
+            }
+            case Operator(Operator.OperatorType type, var ignored) when type == Operator.OperatorType.ARITH_NOT -> {
+                this.tokenSource.consume();
+                yield new UnaryOperationTree(parseFactor(), Operator.OperatorType.ARITH_NOT);
+            }
             case Operator(Operator.OperatorType type, var ignored) when type == Operator.OperatorType.FORALL -> {
                 this.tokenSource.consume();
                 this.tokenSource.expectSeparator(Separator.SeparatorType.PAREN_OPEN);
@@ -144,7 +151,11 @@ public abstract class Parser {
                         this.tokenSource.expectSeparator(Separator.SeparatorType.DOT);
                         Identifier secondVar = this.tokenSource.expectIdentifier();
 
-                        yield new IdentTree(var.identifier() + "." + secondVar.identifier());
+                        if (secondVar.identifier().equals("length")) {
+                            yield new LengthTree(var.identifier());
+                        } else {
+                            yield new IdentTree(var.identifier() + "." + secondVar.identifier());
+                        }
                     }
                 }
                 this.tokenSource.consume();

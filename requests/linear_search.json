@@ -1,0 +1,116 @@
+{
+  "name": "LinearSearch",
+  "statement": {
+    "name": "Comp",
+    "type": "COMPOSITION",
+    "preCondition": {
+      "condition": "appears(A, x, 0, A.length)"
+    },
+    "postCondition": {
+      "condition": "A[i]==x"
+    },
+    "isProven": false,
+    "id": "738947684138.0793",
+    "intermediateCondition": {
+      "condition": "!appears(A,x,i+1,A.length) & (A[i] != x)"
+    },
+    "firstStatement": {
+      "name": "Statement",
+      "type": "STATEMENT",
+      "preCondition": {
+        "condition": "appears(A, x, 0, A.length)"
+      },
+      "postCondition": {
+        "condition": "appears(A,x,0,length(A)) & (i==(length(A) - 1))"
+      },
+      "isProven": false,
+      "id": "691894258870.7626",
+      "programStatement": "i = A.length-1;"
+    },
+    "secondStatement": {
+      "name": "Repetition",
+      "type": "REPETITION",
+      "preCondition": {
+        "condition": "!appears(A,x,i+1,A.length) & (A[i] != x)"
+      },
+      "postCondition": {
+        "condition": "A[i]==x"
+      },
+      "position": {
+        "xinPx": 200,
+        "yinPx": 850
+      },
+      "isProven": false,
+      "id": "1309107854893.6372",
+      "loopStatement": {
+        "name": "Statement2",
+        "type": "STATEMENT",
+        "preCondition": {
+          "condition": "!appears(A,x,i+1,A.length) & (A[i] != x)"
+        },
+        "postCondition": {
+          "condition": "!appears(A,x,i+1,A.length)"
+        },
+        "isProven": false,
+        "id": "1013167151840.6046",
+        "programStatement": "i=i-1;"
+      },
+      "variant": {
+        "condition": "i"
+      },
+      "invariant": {
+        "condition": "!appears(A, x, i+1, A.length)"
+      },
+      "guard": {
+        "condition": "(A[i] != x)"
+      },
+      "isVariantProven": false,
+      "isPreProven": false,
+      "isPostProven": false
+    }
+  },
+  "preCondition": {
+    "condition": "appears(A, x, 0, A.length)"
+  },
+  "postCondition": {
+    "condition": "A[i]==x"
+  },
+  "javaVariables": [
+    {
+      "name": "int x",
+      "kind": "LOCAL"
+    },
+    {
+      "name": "int[] A",
+      "kind": "LOCAL"
+    },
+    {
+      "name": "int i",
+      "kind": "LOCAL"
+    }
+  ],
+  "globalConditions": [
+	  {
+		  "condition": "A != null"
+	  },
+	  {
+		  "condition": "i >= 0 & i < A.length"
+	  },
+	  {
+		  "condition": "A.length > 0"
+	  },
+	  {
+		  "condition": "A.length < 10"
+	  },
+	  {
+		  "condition": "appears(A,x,0,A.length)"
+	  }
+
+  ],
+  "renamings": [],
+  "isProven": false,
+  "position": {
+    "xinPx": 0,
+    "yinPx": 0
+  }
+}

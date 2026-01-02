@@ -6,6 +6,7 @@ import edu.kit.cbc.common.corc.parsing.parser.ast.BinaryOperationTree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.CallTree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.IdentTree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.IntLiteralTree;
+import edu.kit.cbc.common.corc.parsing.parser.ast.LengthTree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.Tree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.UnaryOperationTree;
 import edu.kit.cbc.common.corc.parsing.program.ast.AssignTree;
@@ -92,6 +93,11 @@ public final class ProgramPrinter {
                 print("[");
                 printTree(expr);
                 print("]");
+            }
+            case LengthTree(String variable) -> {
+                print(variable);
+                print(".");
+                print("length");
             }
             default -> throw new IllegalStateException("Unexpected value: " + tree);
         }

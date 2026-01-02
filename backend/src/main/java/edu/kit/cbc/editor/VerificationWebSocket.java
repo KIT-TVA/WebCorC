@@ -24,6 +24,7 @@ public class VerificationWebSocket {
             if (!session.isOpen()) {
                 return true;
             }
+            System.out.println("[WEBSOCKET] " + msg);
             session.sendSync(msg);
             return false;
         });
