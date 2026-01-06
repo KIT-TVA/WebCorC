@@ -37,7 +37,6 @@ import {SettingsComponent} from "../settings/settings.component";
         ConsoleComponent,
         PredicateManagerComponent,
         OperationsComponent,
-        SettingsComponent,
     ],
     templateUrl: "./editor-sidemenu.component.html",
     standalone: true,

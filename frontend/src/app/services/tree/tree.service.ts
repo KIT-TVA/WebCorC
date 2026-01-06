@@ -152,8 +152,16 @@ export class TreeService {
   public removeVariables(names: string[]): void {
     const variablesToBeRemoved: string[] = [];
 
-    names.forEach((name) => variablesToBeRemoved.push(name));
-
+      //Old code extracted only variable name from the string
+      //Example: "int i" -> "i"
+      //Thus didn't work for variables with kind "LOCAL" from the example
+      // names.forEach((name) => variablesToBeRemoved.push(name.split(" ")[1]));
+      names.forEach((name) => {
+          // If the string contains a space, extract everything after the first space (for "KIND name" format)
+          // Otherwise, use the whole string (for user-added variables without kind prefix)
+          const variableName = name.includes(" ") ? name.split(" ").slice(1).join(" ") : name;
+          variablesToBeRemoved.push(variableName);
+      });
     this._variables = this._variables.filter(
       (val) => !variablesToBeRemoved.includes(val.name),
     );
