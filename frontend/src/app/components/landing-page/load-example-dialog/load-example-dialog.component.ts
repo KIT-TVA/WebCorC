@@ -91,7 +91,7 @@ export class LoadExampleDialogComponent {
                                     new Statement(
                                         "Statement",
                                         new Condition("appears(A, x, 0, A.length)"),
-                                        new Condition("appears(A, x, 0, A.length)"),
+                                        new Condition("i = A.length-1"),
                                         "i = A.length-1;",
                                         new Position(0, 800)
                                     ),
@@ -101,13 +101,13 @@ export class LoadExampleDialogComponent {
                                         new Condition("A[i] = x"),
                                         new Statement(
                                             "Statement2",
-                                            new Condition("!appears(A, x, 0, A.length)"),
-                                            new Condition("!appears(A, x, 0, A.length)"),
+                                            new Condition("(!appears(A, x, i+1, A.length)) & (A[i] != x)"),
+                                            new Condition("!appears(A, x, i+1, A.length)"),
                                             "i = i-1;",
                                             new Position(0, 1600)
                                         ),
-                                        new Condition("!appears(A, x, i+1, A.length)"),
                                         new Condition("i"),
+                                        new Condition("!appears(A, x, i+1, A.length)"),
                                         new Condition("A[i] != x"),
                                         false,
                                         false,

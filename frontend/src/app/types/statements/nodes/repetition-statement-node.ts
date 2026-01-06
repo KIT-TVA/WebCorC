@@ -36,12 +36,25 @@ export class RepetitionStatementNode extends AbstractStatementNode {
     this.invariant = signal(statement.invariant);
     this.variant = signal(statement.variant);
     if (statement.loopStatement) {
-      this.loopStatementNode = statementNodeUtils(
+      // Store the repetition's postcondition before the setter potentially overrides it
+      const repetitionPostcondition = this.postcondition();
+      const loopNode = statementNodeUtils(
         statement.loopStatement,
         this,
       );
+      // Only override the repetition's postcondition if the loop statement's postcondition is empty
+      // Otherwise, preserve the repetition's postcondition from the statement data
+      if (loopNode.postcondition().condition.length < 1) {
+        loopNode.postcondition.set(repetitionPostcondition);
+      }
+      this.loopStatementNode = loopNode;
       this.children.push(this.loopStatementNode);
       this.loopStatementNode.overridePrecondition(this, this.precondition); //TODO: Compute guard && precondition
+      // After the setter, if the repetition's postcondition was overridden incorrectly, restore it
+      if (this.postcondition().condition !== repetitionPostcondition.condition && 
+          repetitionPostcondition.condition.length > 0) {
+        this.postcondition.set(repetitionPostcondition);
+      }
       // How its done in Component:
       //       super.precondition.content = "((" + this._invariantCondition.content + ") & (" + this._guardCondition.content + "))"
     }

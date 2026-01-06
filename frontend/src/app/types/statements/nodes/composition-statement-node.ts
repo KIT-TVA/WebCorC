@@ -48,10 +48,20 @@ export class CompositionStatementNode extends AbstractStatementNode {
       this.firstStatementNode.overridePrecondition(this, this.precondition);
     }
     if (statement.secondStatement) {
-      this.secondStatementNode = statementNodeUtils(
+      const secondNode = statementNodeUtils(
         statement.secondStatement,
         this,
       );
+      // Store the composition's postcondition from statement data before the setter replaces the signal
+      const compositionPostcondition = this.postcondition();
+      // Ensure the second statement's postcondition matches the composition's postcondition
+      // This is necessary because in a composition, the composition's postcondition should equal the second statement's postcondition
+      // If the second statement's postcondition is empty or different, set it to match the composition's
+      if (secondNode.postcondition().condition.length < 1 || 
+          secondNode.postcondition().condition !== compositionPostcondition.condition) {
+        secondNode.postcondition.set(compositionPostcondition);
+      }
+      this.secondStatementNode = secondNode;
       this.children.push(this.secondStatementNode);
       this.secondStatementNode.overridePrecondition(
         this,
