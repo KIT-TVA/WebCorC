@@ -35,6 +35,7 @@ export class TreeService {
   private _renames: Renaming[] = [];
   private _statementNodes: WritableSignal<AbstractStatementNode[]> = signal([]);
   private rootStatementNode: RootStatementNode | undefined;
+  private statementIndex: number = 0;
 
   public constructor() {
     this._verificationResultNotifier = new Subject<AbstractStatement>();
@@ -215,6 +216,9 @@ export class TreeService {
 
   public addStatementNode(statementNode: AbstractStatementNode) {
     if (this._statementNodes()) {
+        this.statementIndex = this.statementIndex + 1;
+        console.log("CURRENT STATEMENT INDEX: " + this.statementIndex)
+        statementNode.index = this.statementIndex
       this._statementNodes.update((oldNodes) => [...oldNodes, statementNode]);
     } else {
       this._statementNodes.set([statementNode]);

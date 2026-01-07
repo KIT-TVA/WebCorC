@@ -15,7 +15,7 @@
       </ng-template>
       <!---<p>{{ refinement.getTitle() }} #{{ "insert id" ?? _node.statement.id }}</p> --->
       <ng-template #center>
-        <p>{{ refinement.getTitle() }} #{{ "insert id" }}</p>
+        <p>{{ refinement.getTitle() }} #{{_node.index}}</p>
       </ng-template>
       <ng-template #end>
         @if (_node.parent) {
