@@ -13,11 +13,17 @@
       <ng-template #start>
         <i [class]="icon"> </i>
       </ng-template>
-      <!---<p>{{ refinement.getTitle() }} #{{ "insert id" ?? _node.statement.id }}</p> --->
       <ng-template #center>
         <p>{{ refinement.getTitle() }} #{{ "insert id" }}</p>
       </ng-template>
       <ng-template #end>
+        @if (_node.statement.isProven) {
+          <p-chip
+            [dt]="{ root: { paddingX: '3px', paddingY: '1px', background: '{primary.500}' } }"
+            style="font-size: 10px;"
+            label="verified"
+          />
+        }
         @if (_node.parent) {
           <p-button
             text

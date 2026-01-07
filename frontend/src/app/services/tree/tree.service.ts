@@ -35,6 +35,7 @@ export class TreeService {
   private _renames: Renaming[] = [];
   private _statementNodes: WritableSignal<AbstractStatementNode[]> = signal([]);
   private rootStatementNode: RootStatementNode | undefined;
+  private _urn = "";
 
   public constructor() {
     this._verificationResultNotifier = new Subject<AbstractStatement>();
@@ -43,7 +44,8 @@ export class TreeService {
     this._resetVerifyNotifier = new Subject<void>();
   }
 
-  setFormula(newFormula: CBCFormula) {
+  setFormula(newFormula: CBCFormula, urn: string) {
+    this._urn = urn;
     this._rootFormula = newFormula;
     this.getStatementNodes();
     this._variables = [];
@@ -82,6 +84,10 @@ export class TreeService {
     return this._exportNotifier;
   }
 
+  public get urn() {
+    return this._urn;
+  }
+
   public get conditions(): Condition[] {
     const conditionsArray: Condition[] = [];
     this._globalConditions.forEach((condition) =>
@@ -111,7 +117,7 @@ export class TreeService {
   }
 
   public get rootStatement() {
-    return this.rootStatementNode
+    return this.rootStatementNode;
   }
 
   /**
@@ -152,16 +158,18 @@ export class TreeService {
   public removeVariables(names: string[]): void {
     const variablesToBeRemoved: string[] = [];
 
-      //Old code extracted only variable name from the string
-      //Example: "int i" -> "i"
-      //Thus didn't work for variables with kind "LOCAL" from the example
-      // names.forEach((name) => variablesToBeRemoved.push(name.split(" ")[1]));
-      names.forEach((name) => {
-          // If the string contains a space, extract everything after the first space (for "KIND name" format)
-          // Otherwise, use the whole string (for user-added variables without kind prefix)
-          const variableName = name.includes(" ") ? name.split(" ").slice(1).join(" ") : name;
-          variablesToBeRemoved.push(variableName);
-      });
+    //Old code extracted only variable name from the string
+    //Example: "int i" -> "i"
+    //Thus didn't work for variables with kind "LOCAL" from the example
+    // names.forEach((name) => variablesToBeRemoved.push(name.split(" ")[1]));
+    names.forEach((name) => {
+      // If the string contains a space, extract everything after the first space (for "KIND name" format)
+      // Otherwise, use the whole string (for user-added variables without kind prefix)
+      const variableName = name.includes(" ")
+        ? name.split(" ").slice(1).join(" ")
+        : name;
+      variablesToBeRemoved.push(variableName);
+    });
     this._variables = this._variables.filter(
       (val) => !variablesToBeRemoved.includes(val.name),
     );
@@ -208,9 +216,17 @@ export class TreeService {
     return statements;
   }
 
+  public getStatementsFromFormula(formula: CBCFormula): IAbstractStatement[] {
+    const statements: IAbstractStatement[] = [];
+    if (formula && formula.statement) {
+      this.collectStatements(formula.statement, statements);
+    }
+    return statements;
+  }
+
   public refreshNodes(): void {
     // Re-emit the array so Angular Signals detect a change
-    this._statementNodes.update(old => [...old]);
+    this._statementNodes.update((old) => [...old]);
   }
 
   public addStatementNode(statementNode: AbstractStatementNode) {

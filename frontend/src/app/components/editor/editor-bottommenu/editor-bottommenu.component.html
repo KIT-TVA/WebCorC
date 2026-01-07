@@ -53,8 +53,10 @@
   </p-tablist>
   @if (tabValue() > 0) {
     <p-tabpanels>
-      <p-tabpanel [value]="1">
-        <app-console />
+      <p-tabpanel [value]="1" style="max-height: 20rem">
+        <div style="max-height: 20rem; overflow-y: scroll">
+          <app-console style="max-height: 20rem" />
+        </div>
       </p-tabpanel>
       <p-tabpanel [value]="2">
         <app-ai-chat></app-ai-chat>

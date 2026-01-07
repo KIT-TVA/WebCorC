@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from "@angular/common/http";
-import { Injectable } from "@angular/core";
+import { Injectable, signal } from "@angular/core";
 import { ConsoleErrorLine, ConsoleInfoLine, ConsoleLogLine } from "./log";
 
 /**
@@ -11,6 +11,8 @@ import { ConsoleErrorLine, ConsoleInfoLine, ConsoleLogLine } from "./log";
 })
 export class ConsoleService {
   private _logs: ConsoleLogLine[] = [];
+  public loading = signal(false);
+  public loadingMessage = signal("");
 
   constructor() {}
 
@@ -30,11 +32,21 @@ export class ConsoleService {
     this._logs.push(new ConsoleErrorLine(action, error));
   }
 
-  public addStringInfo(info: string) {
-    this._logs.push(new ConsoleInfoLine(info));
+  public addStringInfo(info: string, icon?: string) {
+    this._logs.push(new ConsoleInfoLine(info, icon));
   }
 
   public clear() {
     this._logs = [];
+  }
+
+  public beginLoading(action: string) {
+    this.loading.set(true);
+    this.loadingMessage.set(action);
+  }
+
+  public finishLoading() {
+    this.loading.set(false);
+    this.loadingMessage.set("");
   }
 }

@@ -3,7 +3,6 @@ import { ISelectionStatement } from "../selection-statement";
 import { signal, Signal, WritableSignal } from "@angular/core";
 import { Condition, ICondition } from "../../condition/condition";
 import { statementNodeUtils } from "./statement-node-utils";
-import { index } from "d3";
 
 export class SelectionStatementNode extends AbstractStatementNode {
   public guards: WritableSignal<ICondition>[];
@@ -25,9 +24,14 @@ export class SelectionStatementNode extends AbstractStatementNode {
     condition: WritableSignal<ICondition>,
   ) {
     super.overridePrecondition(sourceNode, condition);
-    this.children.forEach((c) => {
-      if (c) {
-        c.overridePrecondition(this, condition); //TODO condition && guard
+    this.children.forEach((c, index) => {
+      if (c && this.guards[index]) {
+        const computedCondition = signal(
+          new Condition(
+            condition().condition + " & " + this.guards[index]().condition,
+          ),
+        );
+        c.overridePrecondition(this, computedCondition); //TODO condition && guard
       }
     });
   }

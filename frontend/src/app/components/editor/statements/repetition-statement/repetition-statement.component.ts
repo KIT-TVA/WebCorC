@@ -64,17 +64,8 @@ export class RepetitionStatementComponent extends Refinement {
     }
     const newNode = createEmptyStatementNode(type, this._node);
     this._node.loopStatementNode = newNode;
-    newNode.overridePrecondition(
-      this._node,
-      signal(
-        new Condition(
-          this._node.precondition().condition +
-            " & " +
-            this._node.invariant().condition,
-        ),
-      ),
-    );
     this.treeService.addStatementNode(newNode);
+    this._node.overridePrecondition(this._node, this._node.precondition);
   }
 
   public override resetPosition(position: Position, offset: Position): void {

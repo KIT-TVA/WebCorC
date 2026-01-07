@@ -55,17 +55,20 @@ export class CbcFormulaMapperService {
     } else {
       position = new Position(0, 0);
     }
+    const statement = this.importStatement(formula.statement);
+    const rootStatement = new RootStatement(
+      "rootNode",
+      formula.preCondition ?? statement?.preCondition,
+      formula.postCondition ?? statement?.postCondition,
+      statement,
+      position,
+    );
+
     return new CBCFormula(
       formula.name,
-      new RootStatement(
-        "rootNode",
-        formula.preCondition,
-        formula.postCondition,
-        this.importStatement(formula.statement),
-        position,
-      ),
-      formula.preCondition,
-      formula.postCondition,
+      rootStatement,
+      formula.preCondition ?? statement?.preCondition,
+      formula.postCondition ?? statement?.postCondition,
       formula.javaVariables,
       this.importGlobalConditions(formula.globalConditions),
       this.importRenaming(formula.renamings),
@@ -103,23 +106,27 @@ export class CbcFormulaMapperService {
   }
 
   private importSimpleStatement(statement: IStatement): Statement {
-    return new Statement(
+    const newStatement = new Statement(
       statement.name,
       this.importCondition(statement.preCondition),
       this.importCondition(statement.postCondition),
       statement.programStatement,
       statement.position,
     );
+    newStatement.isProven = statement.isProven;
+    return newStatement;
   }
 
   private importRootStatement(statement: IRootStatement): RootStatement {
-    return new RootStatement(
+    const newStatement = new RootStatement(
       statement.name,
       statement.preCondition,
       statement.postCondition,
       this.importStatement(statement.statement),
       statement.position,
     );
+    newStatement.isProven = statement.isProven;
+    return newStatement;
   }
 
   private importSelectionStatement(
@@ -135,7 +142,7 @@ export class CbcFormulaMapperService {
       guards.push(this.importCondition(guard));
     }
 
-    return new SelectionStatement(
+    const newSelectionStatement = new SelectionStatement(
       statement.name,
       this.importCondition(statement.preCondition),
       this.importCondition(statement.postCondition),
@@ -144,12 +151,14 @@ export class CbcFormulaMapperService {
       statement.isPreProven,
       statement.position,
     );
+    newSelectionStatement.isProven = statement.isProven;
+    return newSelectionStatement;
   }
 
   private importRepetitionStatement(
     statement: IRepetitionStatement,
   ): RepetitionStatement {
-    return new RepetitionStatement(
+    const newRepetitionStatement = new RepetitionStatement(
       statement.name,
       this.importCondition(statement.preCondition),
       this.importCondition(statement.postCondition),
@@ -162,12 +171,14 @@ export class CbcFormulaMapperService {
       statement.isPostProven,
       statement.position,
     );
+    newRepetitionStatement.isProven = statement.isProven;
+    return newRepetitionStatement;
   }
 
   private importCompositionStatement(
     statement: ICompositionStatement,
   ): CompositionStatement {
-    return new CompositionStatement(
+    const newCompositionStatement = new CompositionStatement(
       statement.name,
       this.importCondition(statement.preCondition),
       this.importCondition(statement.postCondition),
@@ -176,15 +187,19 @@ export class CbcFormulaMapperService {
       this.importStatement(statement.secondStatement),
       statement.position,
     );
+    newCompositionStatement.isProven = statement.isProven;
+    return newCompositionStatement;
   }
 
   private importSkipStatement(statement: ISkipStatement): SkipStatement {
-    return new SkipStatement(
+    const newSkipStatement = new SkipStatement(
       statement.name,
       this.importCondition(statement.preCondition),
       this.importCondition(statement.postCondition),
       statement.position,
     );
+    newSkipStatement.isProven = statement.isProven;
+    return newSkipStatement;
   }
 
   private importGlobalConditions(
