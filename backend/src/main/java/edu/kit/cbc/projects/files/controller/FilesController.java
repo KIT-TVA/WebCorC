@@ -87,10 +87,14 @@ public class FilesController {
         }
 
         for (String file : relevantFiles) {
-            Optional<HttpResponse<StreamedFile>> response = getFile(projectId, URI.create(file));
+            Optional<HttpResponse<StreamedFile>> response = getFile(projectId, subFolder + "/" + file);
             if (response.isPresent()) {
                 InputStream fileInput = response.get().body().getInputStream();
-                Files.copy(fileInput, targetFolder.resolve(file));
+                Path targetPath = targetFolder.resolve(file);
+                Files.createDirectories(targetPath.getParent());
+                Files.copy(fileInput, targetPath);
+            } else {
+                throw new IOException("Response not present");
             }
         }
 
@@ -116,7 +120,7 @@ public class FilesController {
     }
 
     @Get(uri = "/{urn:.*}")
-    public Optional<HttpResponse<StreamedFile>> getFile(@PathVariable String id, @PathVariable URI urn) {
+    public Optional<HttpResponse<StreamedFile>> getFile(@PathVariable String id, @PathVariable String urn) {
         String path = String.format(PATH_FORMAT, id, urn);
         return objectStorage.retrieve(path)
             .map(FilesController::buildStreamedFile);
@@ -187,4 +191,6 @@ public class FilesController {
 
         return HttpResponse.ok("file deleted");
     }
+
+
 }

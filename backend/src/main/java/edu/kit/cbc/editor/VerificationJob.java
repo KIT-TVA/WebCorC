@@ -17,6 +17,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 import lombok.Getter;
 
 public class VerificationJob extends Thread {
@@ -147,5 +148,27 @@ public class VerificationJob extends Thread {
     private String getCurrentTimestamp() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("'['HH:mm:ss']'");
         return LocalTime.now().format(formatter);
+    }
+
+    private void listDirectory(Path dir) {
+        System.out.println("LISTING DIRECTORY: " + dir);
+        if (!Files.exists(dir) || !Files.isDirectory(dir)) {
+            System.out.println("Error: Path is not a valid directory: " + dir);
+            return;
+        }
+
+        try (Stream<Path> stream = Files.list(dir)) {
+
+            stream.forEach(path -> {
+                String fileName = path.getFileName().toString();
+                if (Files.isDirectory(path)) {
+                    fileName += "/";
+                }
+                System.out.println(fileName);
+            });
+
+        } catch (IOException e) {
+            System.err.println("Failed to read directory: " + e.getMessage());
+        }
     }
 }
