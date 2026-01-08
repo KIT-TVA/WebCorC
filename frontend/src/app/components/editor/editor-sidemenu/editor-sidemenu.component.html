@@ -33,12 +33,6 @@
                                     <app-variables #variables></app-variables>
                                 </p-accordion-content>
                             </p-accordion-panel>
-                            <p-accordion-panel value="4">
-                                <p-accordion-header>Settings</p-accordion-header>
-                                <p-accordion-content>
-                                    <app-settings #settings></app-settings>
-                                </p-accordion-content>
-                            </p-accordion-panel>
                         </p-accordion>
                     </p-tabpanel>
                     <p-tabpanel [value]="2">
@@ -49,9 +43,6 @@
                     </p-tabpanel>
                     <p-tabpanel [value]="4" style="display: contents">
                         <app-predicate-manager style="display: inline-block; width: 20rem"/>
-                    </p-tabpanel>
-                    <p-tabpanel [value]="5" style="display: contents">
-                        <app-operations></app-operations>
                     </p-tabpanel>
                 </p-tabpanels>
             </div>
@@ -117,19 +108,6 @@
                 >
                     <i class="pi pi-tags"></i>
                     Predicates
-                </p-button>
-                <p-button
-                        [dt]="compactButton"
-                        [style.writing-mode]="'sideways-lr'"
-                        [style.text-orientation]="'mixed'"
-                        size="small"
-                        text
-                        [severity]="tabValue() == 5 ? 'primary' : 'secondary'"
-                        [style.border-radius]="0"
-                        (click)="setTab(5)"
-                >
-                    <i class="pi pi-wrench"></i>
-                    Operations
                 </p-button>
             </div>
         </div>

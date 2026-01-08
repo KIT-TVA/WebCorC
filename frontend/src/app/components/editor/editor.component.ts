@@ -46,9 +46,6 @@ import {Popover} from "primeng/popover";
 import {ConditionSelectorComponent} from "./condition/condition-selector/condition-selector.component";
 import {ICondition} from "../../types/condition/condition";
 import {disconnectNodes} from "../../types/statements/nodes/statement-node-utils";
-import {NgIf} from "@angular/common";
-import {SettingsComponent} from "./settings/settings.component";
-
 export const RED_COLOURED_CONDITIONS = new InjectionToken<ICondition[]>(
     "RedColouredConditions",
 );
@@ -477,7 +474,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     }
 
     protected resetNodePosition() {
-        switch (this.sidemenu.settings.resetVariant){
+        switch (this.globalSettingsService.resetVariant()){
             case ResetVariant.ReingoldTilford:
                 this.resetNodePositionsRT();
                 break;
