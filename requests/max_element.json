@@ -107,15 +107,14 @@
             },
             {
               "name": "Statement4",
-              "type": "STATEMENT",
+              "type": "SKIP",
               "preCondition": {
                 "condition": "maxe(A,0,j,i) & (j!=A.length) & A[j] <= A[i]"
               },
               "postCondition": {
                 "condition": "maxe(A, 0, j+1, i)"
               },
-              "isProven": false,
-              "programStatement": "i=i;"
+              "isProven": false
             }
           ],
           "isPreProven": false
