@@ -26,6 +26,7 @@ public record Operator(OperatorType type, int pos) implements Token {
         EQUIVALENT("<=>", 10),
         FORALL("\\forall", 0),
         EXISTS("\\exists", 0),
+        OLD("\\old", 0),
 
         ASSIGN("=", 11),
 

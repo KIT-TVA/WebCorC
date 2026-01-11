@@ -9,6 +9,7 @@ import de.uka.ilkd.key.strategy.StrategyProperties;
 import de.uka.ilkd.key.util.MiscTools;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +30,7 @@ public class KeYInteraction {
      */
     public static Proof startKeyProof(File location, boolean inlining) {
         try {
-
+            printFile(location.getPath());
             if (!ProofSettings.isChoiceSettingInitialised()) {
                 KeYEnvironment<?> env = KeYEnvironment.load(location);
                 env.dispose();
@@ -81,6 +82,16 @@ public class KeYInteraction {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private static void printFile(String filePath) {
+        try {
+            // Reads the whole file into a single String
+            String content = Files.readString(Path.of(filePath));
+            System.out.println(content);
+        } catch (IOException e) {
+            System.err.println("An error occurred reading the file: " + e.getMessage());
+        }
     }
 
 }

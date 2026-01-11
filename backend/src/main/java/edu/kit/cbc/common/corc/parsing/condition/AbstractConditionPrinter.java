@@ -2,6 +2,7 @@ package edu.kit.cbc.common.corc.parsing.condition;
 
 import edu.kit.cbc.common.corc.parsing.condition.ast.ExistsTree;
 import edu.kit.cbc.common.corc.parsing.condition.ast.ForAllTree;
+import edu.kit.cbc.common.corc.parsing.condition.ast.OldTree;
 import edu.kit.cbc.common.corc.parsing.lexer.Operator;
 import edu.kit.cbc.common.corc.parsing.parser.ast.ArrayAcessTree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.BinaryOperationTree;
@@ -60,6 +61,10 @@ public abstract class AbstractConditionPrinter {
                 print("(");
                 printTree(cond);
                 print(")");
+            }
+            case OldTree(IdentTree name) -> {
+                printTree(name);
+                print("_oldVal");
             }
             case IdentTree(String identifier) -> {
                 print(identifier);

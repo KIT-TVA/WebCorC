@@ -4,6 +4,7 @@ import edu.kit.cbc.common.corc.parsing.ParseException;
 import edu.kit.cbc.common.corc.parsing.TokenSource;
 import edu.kit.cbc.common.corc.parsing.condition.ast.ExistsTree;
 import edu.kit.cbc.common.corc.parsing.condition.ast.ForAllTree;
+import edu.kit.cbc.common.corc.parsing.condition.ast.OldTree;
 import edu.kit.cbc.common.corc.parsing.lexer.Identifier;
 import edu.kit.cbc.common.corc.parsing.lexer.Keyword;
 import edu.kit.cbc.common.corc.parsing.lexer.NumberLiteral;
@@ -108,6 +109,14 @@ public abstract class Parser {
             case Operator(Operator.OperatorType type, var ignored) when type == Operator.OperatorType.ARITH_NOT -> {
                 this.tokenSource.consume();
                 yield new UnaryOperationTree(parseFactor(), Operator.OperatorType.ARITH_NOT);
+            }
+            case Operator(Operator.OperatorType type, var ignored) when type == Operator.OperatorType.OLD -> {
+                this.tokenSource.consume();
+                this.tokenSource.expectSeparator(Separator.SeparatorType.PAREN_OPEN);
+                Identifier var = this.tokenSource.expectIdentifier();
+                this.tokenSource.expectSeparator(Separator.SeparatorType.PAREN_CLOSE);
+
+                yield new OldTree(new IdentTree(var.identifier()));
             }
             case Operator(Operator.OperatorType type, var ignored) when type == Operator.OperatorType.FORALL -> {
                 this.tokenSource.consume();

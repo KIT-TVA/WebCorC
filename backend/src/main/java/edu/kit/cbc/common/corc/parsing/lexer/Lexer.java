@@ -57,11 +57,13 @@ public abstract class Lexer {
                 yield new Operator(Operator.OperatorType.ARITH_OR, pos);
             }
             case '\\' -> {
-                advanceSteps = "\\forall".length();
+                String identName = readIdentifierName();
+                advanceSteps = identName.length();
                 yield
                     switch (readIdentifierName()) {
                         case "\\forall" -> new Operator(Operator.OperatorType.FORALL, pos);
                         case "\\exists" -> new Operator(Operator.OperatorType.EXISTS, pos);
+                        case "\\old" -> new Operator(Operator.OperatorType.OLD, pos);
                         default -> throw new ParseException(
                             "The token '" + peek() + "' at position " + this.pos + " is not a valid token!");
                     };
