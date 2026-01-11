@@ -5,12 +5,24 @@ import edu.kit.cbc.common.corc.KeYInteraction;
 import edu.kit.cbc.common.corc.cbcmodel.Assignment;
 import edu.kit.cbc.common.corc.cbcmodel.Condition;
 import edu.kit.cbc.common.corc.cbcmodel.JavaVariable;
+import edu.kit.cbc.common.corc.cbcmodel.JavaVariableKind;
+import edu.kit.cbc.common.corc.parsing.condition.ast.ExistsTree;
+import edu.kit.cbc.common.corc.parsing.condition.ast.ForAllTree;
+import edu.kit.cbc.common.corc.parsing.condition.ast.OldTree;
+import edu.kit.cbc.common.corc.parsing.parser.ast.ArrayAcessTree;
+import edu.kit.cbc.common.corc.parsing.parser.ast.BinaryOperationTree;
+import edu.kit.cbc.common.corc.parsing.parser.ast.CallTree;
+import edu.kit.cbc.common.corc.parsing.parser.ast.IdentTree;
+import edu.kit.cbc.common.corc.parsing.parser.ast.Tree;
+import edu.kit.cbc.common.corc.parsing.parser.ast.UnaryOperationTree;
 import io.micronaut.serde.annotation.Serdeable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.Builder;
 
@@ -35,7 +47,7 @@ public class KeYProof {
         }
         """;
 
-    private static final String PROGRAM_VARIABLE_SEPARATOR = "\n";
+    private static final String PROGRAM_VARIABLE_SEPARATOR = "\n\t";
     private static final String INCLUDED_FILES_SEPARATOR = ", ";
     private static final String GLOBAL_CONDITIONS_SEPARATOR = " & ";
 
@@ -82,7 +94,6 @@ public class KeYProof {
 
         Path keyFile = Files.createFile(keyFilePath);
         Files.write(keyFile, this.toString().getBytes());
-        System.out.println(this.toString());
         return keyFile.toFile();
     }
 
@@ -99,6 +110,12 @@ public class KeYProof {
     private String printKeYHeader() {
         String header  = "";
 
+        this.extractOldVariables(
+            this.postCondition.getParsedCondition(),
+            this.additionalAssignments,
+            this.programVariables
+        );
+
         if (!this.includedFiles.isEmpty()) {
             header += String.format(INCLUDE_FILES, this.printIncludedFiles());
         }
@@ -113,17 +130,18 @@ public class KeYProof {
 
     private String printKeYBody() {
         StringBuilder assignments = new StringBuilder();
+
         for (Assignment ass : this.additionalAssignments) {
             assignments.append(String.format("|| %s := %s", ass.variableName(), ass.assign()));
         }
 
         return String.format(
             KEY_BODY,
-            preCondition.asJML(),
-            printGlobalConditions(),
+            this.preCondition.asJML(),
+            this.printGlobalConditions().isEmpty() ? "true" : this.printGlobalConditions(),
             assignments,
-            programStatement,
-            postCondition.asJML()
+            this.programStatement,
+            this.postCondition.asJML()
         );
     }
 
@@ -140,5 +158,32 @@ public class KeYProof {
     private String printIncludedFiles() {
         return this.includedFiles.stream().map(Path::toString)
             .collect(Collectors.joining(INCLUDED_FILES_SEPARATOR));
+    }
+
+    private void extractOldVariables(Tree tree, List<Assignment> assignments, List<JavaVariable> variables) {
+        if (tree instanceof OldTree(IdentTree variable)) {
+            String varName = variable.name();
+            String oldVarName = varName + "_oldVal";
+            String javaVar = "int " + oldVarName;
+            if (variables.stream().noneMatch(var -> var.getName().equals(javaVar))) {
+                assignments.add(new Assignment(oldVarName, varName));
+                variables.add(new JavaVariable(javaVar, JavaVariableKind.LOCAL));
+            }
+        } else if (tree instanceof BinaryOperationTree binOp) {
+            this.extractOldVariables(binOp.lhs(), assignments, variables);
+            this.extractOldVariables(binOp.rhs(), assignments, variables);
+        } else if (tree instanceof UnaryOperationTree unOp) {
+            this.extractOldVariables(unOp.expr(), assignments, variables);
+        } else if (tree instanceof ForAllTree forAll) {
+            this.extractOldVariables(forAll.condition(), assignments, variables);
+        } else if (tree instanceof ExistsTree exists) {
+            this.extractOldVariables(exists.condition(), assignments, variables);
+        } else if (tree instanceof CallTree call) {
+            for (Tree param : call.params()) {
+                this.extractOldVariables(param, assignments, variables);
+            }
+        } else if (tree instanceof ArrayAcessTree arrayAccess) {
+            this.extractOldVariables(arrayAccess.expr(), assignments, variables);
+        }
     }
 }

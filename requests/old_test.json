@@ -1,0 +1,24 @@
+{
+    "name": "TestFormula",
+    "statement": {
+        "name": "Statement1",
+        "programStatement": "i = i + 1;",
+        "type": "STATEMENT",
+        "preCondition": {
+            "condition": "true"
+        },
+        "postCondition": {
+            "condition": "i == \\old(i) + 1"
+        },
+        "isProven": false
+    },
+    "javaVariables": [
+        {
+            "name": "int i",
+            "kind": "LOCAL"
+        }
+    ],
+    "globalConditions": [],
+    "renamings": [],
+    "isProven": false
+}

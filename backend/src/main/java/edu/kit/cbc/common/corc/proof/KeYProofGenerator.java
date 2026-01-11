@@ -28,9 +28,10 @@ public final class KeYProofGenerator {
 
         List<JavaVariable> javaVariables = new ArrayList<>(this.proofContext.getCbCFormula().getJavaVariables());
         javaVariables.add(new JavaVariable("int variant", JavaVariableKind.LOCAL));
-        proofBuilder.programVariables(filterProgramVariables(javaVariables));
+        proofBuilder.programVariables(new ArrayList<>(filterProgramVariables(javaVariables)));
 
         proofBuilder.preCondition(Condition.fromListToConditionAnd(List.of(invariant, guard)));
+        proofBuilder.additionalAssignments(new ArrayList<>(List.of(new Assignment("variant", variant.getCondition()))));
         proofBuilder.additionalAssignments(List.of(new Assignment("variant", variant.getCondition())));
         proofBuilder.postCondition(
             Condition.fromListToConditionAnd(List.of(
@@ -84,13 +85,13 @@ public final class KeYProofGenerator {
 
 
         KeYProofBuilder proofBuilder = KeYProof.builder();
-        proofBuilder.programVariables(filterProgramVariables(javaVariables));
+        proofBuilder.programVariables(new ArrayList<>(filterProgramVariables(javaVariables)));
 
         proofBuilder.javaSrcFiles(this.proofContext.getJavaSrcFiles());
         proofBuilder.includedFiles(this.proofContext.getIncludeFiles());
         proofBuilder.existingProofFiles(this.proofContext.getExistingProofFiles());
         proofBuilder.proofFolder(this.proofContext.getProofFolder());
-        proofBuilder.additionalAssignments(List.of());
+        proofBuilder.additionalAssignments(new ArrayList<>());
 
         proofBuilder.statementName(statement.getName());
 
