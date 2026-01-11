@@ -1,0 +1,102 @@
+{
+  "name": "CompositeA",
+  "statement": {
+    "name": "Comp1",
+    "type": "COMPOSITION",
+    "preCondition": {
+      "condition": "true"
+    },
+    "postCondition": {
+      "condition": "(\\old(balance) + x >= OVERDRAFT_LIMIT ==> balance == \\old(balance) + x) & (\\old(balance) + x < OVERDRAFT_LIMIT ==> balance == \\old(balance))"
+    },
+    "isProven": false,
+    "intermediateCondition": {
+      "condition": "newBalance == balance+x"
+    },
+    "firstStatement": {
+        "name": "Statement1",
+        "type": "STATEMENT",
+        "preCondition": {
+          "condition": "true"
+        },
+        "postCondition": {
+          "condition": "newBalance == balance + x"
+        },
+        "isProven": false,
+        "programStatement": "newBalance = balance + x;"
+    },
+    "secondStatement": {
+        "name": "Selection",
+        "type": "SELECTION",
+        "preCondition": {
+            "condition": "newBalance == balance + x"
+          },
+          "postCondition": {
+            "condition": "(\\old(balance) + x >= OVERDRAFT_LIMIT ==> balance == \\old(balance) + x) & (\\old(balance) + x < OVERDRAFT_LIMIT ==> balance == \\old(balance))"
+          },
+          "isProven": false,
+          "guards": [
+            {
+              "condition": "newBalance >= OVERDRAFT_LIMIT"
+            },
+            {
+              "condition": "newBalance < OVERDRAFT_LIMIT"
+            }
+          ],
+          "commands": [
+            {
+              "name": "Statement3",
+              "type": "STATEMENT",
+              "preCondition": {
+                "condition": "newBalance == balance + x & newBalance >= OVERDRAFT_LIMIT"
+              },
+              "postCondition": {
+                "condition": "(\\old(balance) + x >= OVERDRAFT_LIMIT ==> balance == \\old(balance) + x) & (\\old(balance) + x < OVERDRAFT_LIMIT ==> balance == \\old(balance))"
+              },
+              "isProven": false,
+              "programStatement": "balance = newBalance;"
+            },
+            {
+              "name": "Statement4",
+              "type": "SKIP",
+              "preCondition": {
+                "condition": "newBalance == balance + x & newBalance < OVERDRAFT_LIMIT"
+              },
+              "postCondition": {
+                "condition": "(\\old(balance) + x >= OVERDRAFT_LIMIT ==> balance == \\old(balance) + x) & (\\old(balance) + x < OVERDRAFT_LIMIT ==> balance == \\old(balance))"
+              },
+              "isProven": false
+            }
+          ],
+          "isPreProven": false
+
+    }
+  },
+  "preCondition": {
+    "condition": "true"
+  },
+  "postCondition": {
+    "condition": "(\\old(balance) + x >= OVERDRAFT_LIMIT ==> balance == \\old(balance) + x) & (\\old(balance) + x < OVERDRAFT_LIMIT ==> balance == \\old(balance))"
+  },
+  "javaVariables": [
+    {
+      "name": "int OVERDRAFT_LIMIT",
+      "kind": "LOCAL"
+    },
+    {
+      "name": "int newBalance",
+      "kind": "LOCAL"
+    },
+    {
+      "name": "int x",
+      "kind": "LOCAL"
+    },
+    {      
+      "name": "int balance",
+      "kind": "LOCAL"
+    }
+  ],
+  "globalConditions": [],
+  "renamings": [],
+  "isProven": false
+}
