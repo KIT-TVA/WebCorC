@@ -13,13 +13,6 @@ export class RepetitionStatementNode extends AbstractStatementNode {
     this.statement.loopStatement = loopStatementNode?.statement;
     this._loopStatementNode = loopStatementNode;
     this.children = [loopStatementNode];
-    if (loopStatementNode) {
-      this.overridePostcondition(
-        loopStatementNode,
-        loopStatementNode.postcondition,
-        true,
-      );
-    }
   }
 
   override checkConditionSync(child: AbstractStatementNode) {
@@ -70,6 +63,8 @@ export class RepetitionStatementNode extends AbstractStatementNode {
       // How its done in Component:
       //       super.precondition.content = "((" + this._invariantCondition.content + ") & (" + this._guardCondition.content + "))"
     }
+    console.log("repetition constructor");
+    this.parent?.overridePostcondition(this, this.invariant, false); //TODO Compute postcondition && ¬guard
   }
 
   public override overridePrecondition(
@@ -95,7 +90,6 @@ export class RepetitionStatementNode extends AbstractStatementNode {
       condition,
       preserveIfNewConditionEmpty,
     );
-    this.parent?.overridePostcondition(this, this.postcondition); //TODO Compute postcondition && ¬guard
   }
 
   override deleteChild(node: AbstractStatementNode) {

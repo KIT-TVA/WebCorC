@@ -3,7 +3,7 @@ import { WritableSignal } from "@angular/core";
 import { AbstractStatementNode } from "./abstract-statement-node";
 import { statementNodeUtils } from "./statement-node-utils";
 import { IRootStatement } from "../root-statement";
-import { index } from "d3";
+import { RepetitionStatementNode } from "./repetition-statement-node";
 
 export class RootStatementNode extends AbstractStatementNode {
   override statement!: IRootStatement;
@@ -18,10 +18,27 @@ export class RootStatementNode extends AbstractStatementNode {
     this._childStatementNode = _childStatementNode;
     this.statement.statement = _childStatementNode?.statement;
     this.children = [_childStatementNode];
-    if (_childStatementNode) {
+    if (
+      _childStatementNode &&
+      _childStatementNode.statement.type !== "REPETITION"
+    ) {
+      console.log("root set");
       this.overridePostcondition(
         _childStatementNode,
         _childStatementNode.postcondition,
+        true,
+      );
+    } else if (
+      _childStatementNode &&
+      _childStatementNode.statement.type === "REPETITION"
+    ) {
+      // For repetition, the root's postcondition should be linked to the repetition's invariant
+      const repetitionInvariant = (
+        _childStatementNode as RepetitionStatementNode
+      ).invariant as WritableSignal<ICondition>;
+      this.overridePostcondition(
+        _childStatementNode,
+        repetitionInvariant,
         true,
       );
     }
@@ -50,6 +67,7 @@ export class RootStatementNode extends AbstractStatementNode {
     condition: WritableSignal<ICondition>,
     preserveIfNewConditionEmpty = false,
   ) {
+    console.log("root postcondition overridden by,", sourceNode, condition());
     switch (sourceNode) {
       case this._childStatementNode: {
         const oldCondition = this.postcondition();
