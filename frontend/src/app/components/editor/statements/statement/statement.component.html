@@ -14,14 +14,34 @@
         <i [class]="icon"> </i>
       </ng-template>
       <ng-template #center>
-        <p>{{ refinement.getTitle() }} #{{ "insert id" }}</p>
+        <p>
+          {{ refinement.getTitle() }} <span style="color: var(--p-surface-400)">{{ _node.statement.name }}</span>
+        </p>
       </ng-template>
       <ng-template #end>
         @if (_node.statement.isProven) {
           <p-chip
-            [dt]="{ root: { paddingX: '3px', paddingY: '1px', background: '{primary.500}' } }"
-            style="font-size: 10px;"
+            [dt]="{
+              root: {
+                paddingX: '3px',
+                paddingY: '1px',
+                background: '{primary.500}',
+              },
+            }"
+            style="font-size: 10px"
             label="verified"
+          />
+        } @else {
+          <p-chip
+            [dt]="{
+              root: {
+                paddingX: '3px',
+                paddingY: '1px',
+                background: '{surface.300}',
+              },
+            }"
+            style="font-size: 10px"
+            label="unverified"
           />
         }
         @if (_node.parent) {
