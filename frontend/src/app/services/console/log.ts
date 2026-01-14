@@ -21,10 +21,12 @@ export class ConsoleErrorLine extends ConsoleLogLine {
 export class ConsoleInfoLine extends ConsoleLogLine {
   override type: LogType = "INFO";
   public message: string;
+  public icon?: string;
 
-  constructor(message: string) {
+  constructor(message: string, icon?: string) {
     super();
     this.message = message;
+    this.icon = icon;
   }
 }
 

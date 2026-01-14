@@ -42,8 +42,13 @@ export class NetworkTreeService {
    * Verify the given arguments via the backend with key
    * @param root The root refinement to verify
    * @param projectId The id of the project, is used to give backend more context in form of the helper.key in the project
+   * @param urn urn of the file being verified, used to update the file in the project with the verification result
    */
-  public verify(root: CBCFormula | undefined, projectId?: string | undefined) {
+  public verify(
+    root: CBCFormula | undefined,
+    projectId: string | undefined,
+    urn: string,
+  ) {
     let params = new HttpParams();
 
     if (projectId) {
@@ -81,13 +86,14 @@ export class NetworkTreeService {
               )
               .pipe(map((formula) => this.mapper.importFormula(formula)))
               .subscribe((formula: CBCFormula) => {
-                this.verificationService.next(formula);
+                this.verificationService.next(formula, urn);
                 this.networkStatusService.stopNetworkRequest();
                 this.projectService.downloadWorkspace();
               });
           }
+          this.verificationService.verifyInfo(msg);
+
           //TODO: consoleService needs an endpoint for non-errors
-          this.consoleService.addStringInfo(msg);
         });
       });
   }

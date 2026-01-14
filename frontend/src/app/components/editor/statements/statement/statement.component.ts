@@ -27,6 +27,7 @@ import { Card } from "primeng/card";
 import { Button } from "primeng/button";
 import { Toolbar } from "primeng/toolbar";
 import { GlobalSettingsService } from "../../../../services/global-settings.service";
+import { Chip } from "primeng/chip";
 
 /**
  * Component to present the statements.
@@ -52,6 +53,7 @@ import { GlobalSettingsService } from "../../../../services/global-settings.serv
     Card,
     Button,
     Toolbar,
+    Chip,
   ],
   templateUrl: "./statement.component.html",
   styleUrl: "./statement.component.scss",

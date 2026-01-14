@@ -20,6 +20,7 @@ export class AbstractStatementNode {
     this.parent = parent;
     this.precondition = signal(statement.preCondition);
     this.postcondition = signal(statement.postCondition);
+    console.log("abstract constructor");
     parent?.overridePostcondition(this, this.postcondition, true);
   }
 
@@ -94,13 +95,15 @@ export class AbstractStatementNode {
   public checkConditionSync(child: AbstractStatementNode) {
     let inSync =
       this.precondition() == child.precondition() &&
-      this.postcondition() == child.postcondition();
+      (this.postcondition() == child.postcondition() ||
+        child.statement.type == "REPETITION");
     if (!inSync) {
       this.getConditionConflicts(child);
     }
     inSync =
       this.precondition() == child.precondition() &&
-      this.postcondition() == child.postcondition();
+      (this.postcondition() == child.postcondition() ||
+        child.statement.type == "REPETITION");
     return inSync;
   }
 
@@ -125,7 +128,10 @@ export class AbstractStatementNode {
         });
       }
     }
-    if (this.postcondition() != child.postcondition()) {
+    if (
+      this.postcondition() != child.postcondition() &&
+      child.statement.type != "REPETITION"
+    ) {
       if (this.postcondition().condition === child.postcondition().condition) {
         this.overridePostcondition(child, child.postcondition);
       } else {

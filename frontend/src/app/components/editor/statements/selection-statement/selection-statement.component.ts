@@ -97,18 +97,9 @@ export class SelectionStatementComponent extends Refinement {
       return;
     }
     const newNode = createEmptyStatementNode(type, this._node);
-    newNode.overridePrecondition(
-      this._node,
-      signal(
-        new Condition(
-          this._node.precondition().condition +
-            " & " +
-            this._node.guards[index]().condition,
-        ),
-      ),
-    );
     this._node.setSelection(index, newNode);
     this.treeService.addStatementNode(newNode);
+    this._node.overridePrecondition(this._node, this._node.precondition);
 
     setTimeout(() => this.refreshLinkState(), 5);
   }

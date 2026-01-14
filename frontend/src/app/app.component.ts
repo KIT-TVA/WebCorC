@@ -110,6 +110,7 @@ export class AppComponent {
           this.networkTreeService.verify(
             this.treeService.rootFormula,
             this.projectService.projectId,
+            this.treeService.urn,
           );
         });
 
@@ -120,6 +121,7 @@ export class AppComponent {
       this.networkTreeService.verify(
         this.treeService.rootFormula,
         this.projectService.projectId,
+        this.treeService.urn,
       );
     }
   }

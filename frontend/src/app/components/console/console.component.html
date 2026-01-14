@@ -1,22 +1,52 @@
 <div class="consoleContainer">
   <div class="actions">
     <h3>Console</h3>
-    <button mat-icon-button (click)="clear()">
-      <mat-icon> delete </mat-icon>
-    </button>
+    @if (service.loading()) {
+      <p-progressSpinner
+        [dt]="{
+          root: {
+            colorOne: '{primary.900}',
+            colorTwo: '{primary.900}',
+            colorThree: '{primary.900}',
+            colorFour: '{primary.900}',
+          },
+        }"
+        class="spinner"
+        style="width: 1rem; height: 1rem"
+      >
+      </p-progressSpinner>
+      <span
+        style="align-self: center; padding-right: 0.5rem; padding-left: 0.5rem"
+      >
+        {{ service.loadingMessage() }}
+      </span>
+    } @else {
+      <span class="spinner"></span>
+    }
+    <p-button
+      class="button"
+      plain
+      severity="secondary"
+      icon="pi pi-trash"
+      (click)="clear()"
+    >
+    </p-button>
   </div>
-  <mat-list #logList>
-    @for (line of loglines; track line) {
+  <div #logList>
+    @for (line of loglines; track i; let i = $index) {
       @if (isError(line)) {
         <mat-list-item>
           <span matListItemTitle> {{ line.action }} </span>
           <span matListItemLine> {{ deconstructLogError(line) }} </span>
         </mat-list-item>
       } @else if (isInfo(line)) {
-        <mat-list-item>
-          <span matListItemTitle> {{ line.message }} </span>
-        </mat-list-item>
+        <div style="padding: 0.3rem">
+          <span matListItemTitle style="text-wrap: wrap">
+            <i [class]="line.icon ?? 'pi pi-angle-double-right'"></i>
+            {{ line.message }}
+          </span>
+        </div>
       }
     }
-  </mat-list>
+  </div>
 </div>

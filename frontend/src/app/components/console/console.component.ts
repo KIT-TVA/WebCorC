@@ -6,6 +6,8 @@ import { ConsoleService } from "../../services/console/console.service";
 import { MatListModule } from "@angular/material/list";
 import { ConsoleErrorLine, isError, isInfo } from "../../services/console/log";
 import { HttpErrorResponse } from "@angular/common/http";
+import { Button } from "primeng/button";
+import { ProgressSpinner } from "primeng/progressspinner";
 
 /**
  * Visual representation of the errors in the application
@@ -13,13 +15,19 @@ import { HttpErrorResponse } from "@angular/common/http";
  */
 @Component({
   selector: "app-console",
-  imports: [MatButtonModule, MatIconModule, MatListModule],
+  imports: [
+    MatButtonModule,
+    MatIconModule,
+    MatListModule,
+    Button,
+    ProgressSpinner,
+  ],
   templateUrl: "./console.component.html",
   standalone: true,
   styleUrl: "./console.component.scss",
 })
 export class ConsoleComponent {
-  public constructor(private service: ConsoleService) {}
+  public constructor(protected service: ConsoleService) {}
 
   /**
    * Remove the errors from the console

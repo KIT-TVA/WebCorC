@@ -45,13 +45,14 @@ export class ApiFile implements Inode {
 /**
  * See openapi/schema/file/diagramm.yml
  */
-export class ApiDiagrammFile implements Inode {
+export class ApiDiagrammFile extends ApiFile {
   public content: CBCFormula;
   public constructor(
-    public urn: string,
+    urn: string,
     content: CBCFormula,
-    public inodeType: InodeType = "file",
+    inodeType: InodeType = "file",
   ) {
+    super(urn, "file", "diagram");
     const formattedContent = new CBCFormula();
     formattedContent.name = content.name;
     if (!content.statement) {
