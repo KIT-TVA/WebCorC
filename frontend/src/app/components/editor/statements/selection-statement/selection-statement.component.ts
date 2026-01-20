@@ -99,7 +99,6 @@ export class SelectionStatementComponent extends Refinement {
     const newNode = createEmptyStatementNode(type, this._node);
     this._node.setSelection(index, newNode);
     this.treeService.addStatementNode(newNode);
-    this._node.overridePrecondition(this._node, this._node.precondition);
 
     setTimeout(() => this.refreshLinkState(), 5);
   }

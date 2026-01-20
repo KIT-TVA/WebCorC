@@ -1,9 +1,12 @@
 import { ICondition } from "../../condition/condition";
 import { WritableSignal } from "@angular/core";
 import { AbstractStatementNode } from "./abstract-statement-node";
-import { statementNodeUtils } from "./statement-node-utils";
+import {
+  createEmptyStatementNode,
+  statementNodeUtils,
+} from "./statement-node-utils";
 import { IRootStatement } from "../root-statement";
-import { RepetitionStatementNode } from "./repetition-statement-node";
+import { StatementType } from "../abstract-statement";
 
 export class RootStatementNode extends AbstractStatementNode {
   override statement!: IRootStatement;
@@ -18,30 +21,15 @@ export class RootStatementNode extends AbstractStatementNode {
     this._childStatementNode = _childStatementNode;
     this.statement.statement = _childStatementNode?.statement;
     this.children = [_childStatementNode];
-    if (
-      _childStatementNode &&
-      _childStatementNode.statement.type !== "REPETITION"
-    ) {
-      console.log("root set");
-      this.overridePostcondition(
-        _childStatementNode,
-        _childStatementNode.postcondition,
-        true,
-      );
-    } else if (
-      _childStatementNode &&
-      _childStatementNode.statement.type === "REPETITION"
-    ) {
-      // For repetition, the root's postcondition should be linked to the repetition's invariant
-      const repetitionInvariant = (
-        _childStatementNode as RepetitionStatementNode
-      ).invariant as WritableSignal<ICondition>;
-      this.overridePostcondition(
-        _childStatementNode,
-        repetitionInvariant,
-        true,
-      );
-    }
+  }
+
+  override createChild(
+    statementType: StatementType,
+    index?: number,
+  ): AbstractStatementNode {
+    const statementNode = createEmptyStatementNode(statementType, this);
+    this.addChild(statementNode, 0);
+    return statementNode;
   }
 
   constructor(
@@ -54,32 +42,14 @@ export class RootStatementNode extends AbstractStatementNode {
     }
   }
 
-  override overridePrecondition(
-    sourceNode: AbstractStatementNode,
-    condition: WritableSignal<ICondition>,
-  ) {
-    super.overridePrecondition(sourceNode, condition);
-    this._childStatementNode?.overridePrecondition(this, condition);
+  override overridePrecondition(condition: WritableSignal<ICondition>) {
+    super.overridePrecondition(condition);
+    this._childStatementNode?.overridePrecondition(condition);
   }
 
-  override overridePostcondition(
-    sourceNode: AbstractStatementNode,
-    condition: WritableSignal<ICondition>,
-    preserveIfNewConditionEmpty = false,
-  ) {
-    console.log("root postcondition overridden by,", sourceNode, condition());
-    switch (sourceNode) {
-      case this._childStatementNode: {
-        const oldCondition = this.postcondition();
-        this.postcondition = condition;
-        if (preserveIfNewConditionEmpty && condition().condition.length < 1) {
-          this.postcondition.set(oldCondition);
-        }
-        break;
-      }
-      default:
-      // Should never happen
-    }
+  override overridePostcondition(condition: WritableSignal<ICondition>) {
+    super.overridePostcondition(condition);
+    this._childStatementNode?.overridePostcondition(condition);
   }
 
   override finalize() {
@@ -93,6 +63,7 @@ export class RootStatementNode extends AbstractStatementNode {
     this.statement.statement = undefined;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   override addChild(statement: AbstractStatementNode, index: number) {
     this._childStatementNode = statement;
     this.statement.statement = statement.statement;

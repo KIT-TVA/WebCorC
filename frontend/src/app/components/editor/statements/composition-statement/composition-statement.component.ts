@@ -64,18 +64,11 @@ export class CompositionStatementComponent extends Refinement {
    * @param type type of statement to add
    */
   public chooseRefinement(side: "left" | "right", type: StatementType): void {
-    const newNode = createEmptyStatementNode(type, this._node);
-    if (side === "left") {
-      this._node.firstStatementNode = newNode;
-      newNode.overridePrecondition(this._node, this._node.precondition);
-    } else {
-      this._node.secondStatementNode = newNode;
-      newNode.overridePrecondition(
-        this._node,
-        this._node.intermediateCondition,
-      );
-    }
-    this.treeService.addStatementNode(newNode);
+    this.treeService.createNodeForStatement(
+      this._node,
+      type,
+      side === "left" ? 0 : 1,
+    );
   }
 
   public override resetPosition(position: Position, offset: Position): void {

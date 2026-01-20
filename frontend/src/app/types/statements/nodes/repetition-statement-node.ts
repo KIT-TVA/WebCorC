@@ -5,25 +5,6 @@ import { Condition, ICondition } from "../../condition/condition";
 import { statementNodeUtils } from "./statement-node-utils";
 
 export class RepetitionStatementNode extends AbstractStatementNode {
-  private _loopStatementNode: AbstractStatementNode | undefined;
-  public get loopStatementNode() {
-    return this._loopStatementNode;
-  }
-  public set loopStatementNode(loopStatementNode) {
-    this.statement.loopStatement = loopStatementNode?.statement;
-    this._loopStatementNode = loopStatementNode;
-    this.children = [loopStatementNode];
-  }
-
-  override checkConditionSync(child: AbstractStatementNode) {
-    let inSync = this.postcondition() == child.postcondition();
-    if (!inSync) {
-      this.getConditionConflicts(child);
-    }
-    inSync = this.postcondition() == child.postcondition();
-    return inSync;
-  }
-
   override statement!: IRepetitionStatement;
   public guard: WritableSignal<ICondition>;
   public invariant: WritableSignal<ICondition>;
@@ -52,7 +33,7 @@ export class RepetitionStatementNode extends AbstractStatementNode {
           this.invariant().condition + " & " + this.guard().condition,
         ),
       );
-      this.loopStatementNode.overridePrecondition(this, computedCondition); //TODO: Compute guard && precondition
+      this.loopStatementNode.overridePrecondition(computedCondition); //TODO: Compute guard && precondition
       // After the setter, if the repetition's postcondition was overridden incorrectly, restore it
       if (
         this.postcondition().condition !== repetitionPostcondition.condition &&
@@ -63,33 +44,48 @@ export class RepetitionStatementNode extends AbstractStatementNode {
       // How its done in Component:
       //       super.precondition.content = "((" + this._invariantCondition.content + ") & (" + this._guardCondition.content + "))"
     }
-    console.log("repetition constructor");
-    this.parent?.overridePostcondition(this, this.invariant, false); //TODO Compute postcondition && ¬guard
   }
 
-  public override overridePrecondition(
-    sourceNode: AbstractStatementNode,
-    condition: WritableSignal<ICondition>,
-  ) {
-    super.overridePrecondition(sourceNode, condition);
-    const computedCondition = signal(
-      new Condition(
-        this.invariant().condition + " & " + this.guard().condition,
-      ),
-    );
-    this.loopStatementNode?.overridePrecondition(this, computedCondition); //TODO: Compute guard && precondition
+  private _loopStatementNode: AbstractStatementNode | undefined;
+
+  public get loopStatementNode() {
+    return this._loopStatementNode;
   }
 
-  public override overridePostcondition(
-    sourceNode: AbstractStatementNode,
-    condition: WritableSignal<ICondition>,
-    preserveIfNewConditionEmpty = false,
-  ) {
-    super.overridePostcondition(
-      sourceNode,
-      condition,
-      preserveIfNewConditionEmpty,
+  public set loopStatementNode(loopStatementNode) {
+    this.statement.loopStatement = loopStatementNode?.statement;
+    this._loopStatementNode = loopStatementNode;
+    this.children = [loopStatementNode];
+  }
+
+  override checkConditionSync(child: AbstractStatementNode) {
+    let inSync = this.postcondition() == child.postcondition();
+    if (!inSync) {
+      this.getConditionConflicts(child);
+    }
+    inSync = this.postcondition() == child.postcondition();
+    return inSync;
+  }
+
+  /*
+  Suppressed warning because the precondition of a repetition statement,
+  is solely determined by its invariant "anded" with its guard
+ */
+  //eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public override overridePrecondition(condition: WritableSignal<ICondition>) {
+    this.precondition.set(
+      new Condition(this.invariant.toString() + " & " + this.guard.toString()),
     );
+    this.loopStatementNode?.overridePrecondition(this.precondition);
+  }
+  /*
+  Suppressed warning because the postcondition of a repetition statement,
+  is solely determined by its invariant
+   */
+  //eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public override overridePostcondition(condition: WritableSignal<ICondition>) {
+    this.postcondition = this.invariant;
+    this.loopStatementNode?.overridePrecondition(this.postcondition);
   }
 
   override deleteChild(node: AbstractStatementNode) {
@@ -109,6 +105,10 @@ export class RepetitionStatementNode extends AbstractStatementNode {
     this.statement.variant = this.variant();
   }
 
+  /*
+  Suppressed because there is only one child in a repetition statement
+  */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   override addChild(statement: AbstractStatementNode, index: number) {
     this.statement.loopStatement = statement.statement;
     this._loopStatementNode = statement;

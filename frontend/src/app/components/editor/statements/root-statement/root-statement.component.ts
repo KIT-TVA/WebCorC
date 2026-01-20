@@ -59,7 +59,6 @@ export class RootStatementComponent extends Refinement {
   public chooseRefinement($event: StatementType): void {
     const newNode = createEmptyStatementNode($event, this._node);
     (this._node as RootStatementNode).childStatementNode = newNode;
-    newNode.overridePrecondition(this._node, this._node.precondition);
     this.treeService.addStatementNode(newNode);
   }
 

@@ -1,6 +1,6 @@
 import { AbstractStatementNode } from "./abstract-statement-node";
 import { ISelectionStatement } from "../selection-statement";
-import { signal, Signal, WritableSignal } from "@angular/core";
+import { signal, WritableSignal } from "@angular/core";
 import { Condition, ICondition } from "../../condition/condition";
 import { statementNodeUtils } from "./statement-node-utils";
 
@@ -19,11 +19,8 @@ export class SelectionStatementNode extends AbstractStatementNode {
     );
   }
 
-  override overridePrecondition(
-    sourceNode: AbstractStatementNode,
-    condition: WritableSignal<ICondition>,
-  ) {
-    super.overridePrecondition(sourceNode, condition);
+  override overridePrecondition(condition: WritableSignal<ICondition>) {
+    super.overridePrecondition(condition);
     this.children.forEach((c, index) => {
       if (c && this.guards[index]) {
         const computedCondition = signal(
@@ -31,7 +28,7 @@ export class SelectionStatementNode extends AbstractStatementNode {
             condition().condition + " & " + this.guards[index]().condition,
           ),
         );
-        c.overridePrecondition(this, computedCondition); //TODO condition && guard
+        c.overridePrecondition(computedCondition);
       }
     });
   }
@@ -43,11 +40,10 @@ export class SelectionStatementNode extends AbstractStatementNode {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  override overridePostcondition(
-    sourceNode: AbstractStatementNode,
-    condition: Signal<ICondition>,
-  ) {
-    //TODO or all postconditions ??
+  override overridePostcondition(condition: WritableSignal<ICondition>) {
+    super.overridePostcondition(condition);
+    //TODO check if we are deleting the postcondition of a statement with a different postcondition than this statement
+    this.children.forEach((child) => child?.overridePostcondition(condition));
   }
 
   override finalize() {
@@ -73,9 +69,6 @@ export class SelectionStatementNode extends AbstractStatementNode {
     if (index < this.children.length) {
       this.children[index] = node;
       this.statement.commands[index] = node.statement;
-      if (node) {
-        this.overridePostcondition(node, node.postcondition);
-      }
     }
   }
 
