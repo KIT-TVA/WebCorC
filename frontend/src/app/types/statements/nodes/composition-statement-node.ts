@@ -22,18 +22,12 @@ export class CompositionStatementNode extends AbstractStatementNode {
     this.statement.firstStatement = newNode?.statement;
     this._firstStatementNode = newNode;
     this.children = [this._firstStatementNode, this._secondStatementNode];
-    if (newNode) {
-      this.overridePostcondition(newNode, newNode.postcondition, true);
-    }
   }
 
   public set secondStatementNode(newNode) {
     this.statement.secondStatement = newNode?.statement;
     this._secondStatementNode = newNode;
     this.children = [this._firstStatementNode, this._secondStatementNode];
-    if (newNode) {
-      this.overridePostcondition(newNode, newNode.postcondition, true);
-    }
   }
 
   constructor(
@@ -47,61 +41,23 @@ export class CompositionStatementNode extends AbstractStatementNode {
         statement.firstStatement,
         this,
       );
-      this.firstStatementNode.overridePrecondition(this, this.precondition);
     }
     if (statement.secondStatement) {
-      const secondNode = statementNodeUtils(statement.secondStatement, this);
-      // Store the composition's postcondition from statement data before the setter replaces the signal
-      const compositionPostcondition = this.postcondition();
-      // Ensure the second statement's postcondition matches the composition's postcondition
-      // This is necessary because in a composition, the composition's postcondition should equal the second statement's postcondition
-      // If the second statement's postcondition is empty or different, set it to match the composition's
-      if (
-        secondNode.postcondition().condition.length < 1 ||
-        secondNode.postcondition().condition !==
-          compositionPostcondition.condition
-      ) {
-        secondNode.postcondition.set(compositionPostcondition);
-      }
-      this.secondStatementNode = secondNode;
-      this.secondStatementNode.overridePrecondition(
+      this.secondStatementNode = statementNodeUtils(
+        statement.secondStatement,
         this,
-        this.intermediateCondition,
       );
     }
   }
 
-  override overridePrecondition(
-    sourceNode: AbstractStatementNode,
-    condition: WritableSignal<ICondition>,
-  ) {
-    super.overridePrecondition(sourceNode, condition);
-    this.firstStatementNode?.overridePrecondition(this, condition);
+  override overridePrecondition(condition: WritableSignal<ICondition>) {
+    super.overridePrecondition(condition);
+    this.firstStatementNode?.overridePrecondition(condition);
   }
 
-  override overridePostcondition(
-    sourceNode: AbstractStatementNode,
-    condition: WritableSignal<ICondition>,
-    preserveIfNewConditionEmpty = false,
-  ) {
-    let oldCondition: ICondition;
-    switch (sourceNode) {
-      case this.firstStatementNode:
-        oldCondition = this.intermediateCondition();
-        this.intermediateCondition = condition;
-        break;
-      case this.secondStatementNode:
-        oldCondition = this.postcondition();
-        this.postcondition = condition;
-        this.parent?.overridePostcondition(this, condition);
-        break;
-      default:
-        // Should never happen
-        return;
-    }
-    if (preserveIfNewConditionEmpty && condition().condition.length < 1) {
-      condition.set(oldCondition);
-    }
+  override overridePostcondition(condition: WritableSignal<ICondition>) {
+    this.postcondition = condition;
+    this.secondStatementNode?.overridePostcondition(this.postcondition);
   }
 
   override finalize() {
@@ -163,7 +119,7 @@ export class CompositionStatementNode extends AbstractStatementNode {
     if (child == this._firstStatementNode) {
       if (this.precondition() != child.precondition()) {
         if (this.precondition().condition === child.precondition().condition) {
-          this.overridePrecondition(child, child.precondition);
+          this.overridePrecondition(child.precondition);
         } else {
           conflicts.push({
             version1: this.precondition,
@@ -212,7 +168,7 @@ export class CompositionStatementNode extends AbstractStatementNode {
       child.statement.type != "REPETITION"
     ) {
       if (this.postcondition().condition === child.postcondition().condition) {
-        this.overridePostcondition(child, child.postcondition);
+        this.overridePostcondition(child.postcondition);
       } else {
         conflicts.push({
           version1: this.postcondition,
@@ -230,14 +186,10 @@ export class CompositionStatementNode extends AbstractStatementNode {
     // Here we don't use the default setter because we don't want to override conditions
     switch (index) {
       case 0:
-        this.statement.firstStatement = statement.statement;
-        this._firstStatementNode = statement;
-        this.children = [this._firstStatementNode, this._secondStatementNode];
+        this.firstStatementNode = statement;
         break;
       case 1:
-        this.statement.secondStatement = statement.statement;
-        this._secondStatementNode = statement;
-        this.children = [this._firstStatementNode, this._secondStatementNode];
+        this.secondStatementNode = statement;
     }
   }
 }

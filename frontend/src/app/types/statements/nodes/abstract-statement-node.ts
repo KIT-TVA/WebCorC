@@ -1,6 +1,6 @@
 import { signal, WritableSignal } from "@angular/core";
 import { ICondition } from "../../condition/condition";
-import { IAbstractStatement } from "../abstract-statement";
+import { IAbstractStatement, StatementType } from "../abstract-statement";
 import { IPosition } from "../../position";
 
 export class AbstractStatementNode {
@@ -21,37 +21,23 @@ export class AbstractStatementNode {
     this.precondition = signal(statement.preCondition);
     this.postcondition = signal(statement.postCondition);
     console.log("abstract constructor");
-    parent?.overridePostcondition(this, this.postcondition, true);
+    parent?.overridePostcondition(this.postcondition);
   }
 
   /**
    * Used when the precondition is controlled by the parent, eg. the pre- or intermediate condition of the parent statement.
-   * @param sourceNode
    * @param condition
    */
-  public overridePrecondition(
-    sourceNode: AbstractStatementNode,
-    condition: WritableSignal<ICondition>,
-  ): void {
+  public overridePrecondition(condition: WritableSignal<ICondition>): void {
     this.precondition = condition;
   }
 
   /**
    * Used when the postcondition is controlled by the child, probably always the postcondition of the child statement.
-   * @param sourceNode must be passed so the correct condition to override can be determined, eg. if the parent has multiple children
    * @param condition
-   * @param preserveIfNewConditionEmpty
    */
-  public overridePostcondition(
-    sourceNode: AbstractStatementNode,
-    condition: WritableSignal<ICondition>,
-    preserveIfNewConditionEmpty = false,
-  ): void {
-    const oldCondition = this.postcondition();
+  public overridePostcondition(condition: WritableSignal<ICondition>): void {
     this.postcondition = condition;
-    if (preserveIfNewConditionEmpty && condition().condition.length < 1) {
-      condition.set(oldCondition);
-    }
   }
 
   public deleteChild(node: AbstractStatementNode) {
@@ -61,8 +47,9 @@ export class AbstractStatementNode {
         (filteredNode) => filteredNode != node,
       );
     }
-    this.overridePrecondition(this, signal(this.precondition()));
-    this.overridePostcondition(this, signal(this.postcondition()));
+    //TODO: Check this is still necessary after refactor
+    this.overridePrecondition(signal(this.precondition()));
+    this.overridePostcondition(signal(this.postcondition()));
   }
 
   public setPosition(position: { x: number; y: number }) {
@@ -107,8 +94,12 @@ export class AbstractStatementNode {
     return inSync;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public addChild(statement: AbstractStatementNode, index: number) {
     //EXTEND THIS!
+    throw Error(
+      "AbstractStatementNode does not support child statement nodes.",
+    );
   }
 
   getConditionConflicts(child: AbstractStatementNode): {
@@ -119,7 +110,7 @@ export class AbstractStatementNode {
     const conflicts = [];
     if (this.precondition() != child.precondition()) {
       if (this.precondition().condition === child.precondition().condition) {
-        this.overridePrecondition(child, child.precondition);
+        this.overridePrecondition(child.precondition);
       } else {
         conflicts.push({
           version1: this.precondition,
@@ -133,7 +124,7 @@ export class AbstractStatementNode {
       child.statement.type != "REPETITION"
     ) {
       if (this.postcondition().condition === child.postcondition().condition) {
-        this.overridePostcondition(child, child.postcondition);
+        this.overridePostcondition(child.postcondition);
       } else {
         conflicts.push({
           version1: this.postcondition,
@@ -145,5 +136,15 @@ export class AbstractStatementNode {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     return conflicts;
+  }
+
+  createChild(
+    statementType: StatementType,
+    index?: number,
+  ): AbstractStatementNode {
+    //EXTEND THIS!
+    throw Error(
+      "AbstractStatementNode does not support child statement nodes.",
+    );
   }
 }

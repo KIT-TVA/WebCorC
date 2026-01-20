@@ -3,6 +3,7 @@ import { Subject } from "rxjs";
 import {
   AbstractStatement,
   IAbstractStatement,
+  StatementType,
 } from "../../types/statements/abstract-statement";
 import { JavaVariable, JavaVariableKind } from "../../types/JavaVariable";
 import { Renaming } from "../../types/Renaming";
@@ -235,6 +236,16 @@ export class TreeService {
     } else {
       this._statementNodes.set([statementNode]);
     }
+  }
+
+  public createNodeForStatement(
+    parent: AbstractStatementNode,
+    statementType: StatementType,
+    index?: number,
+  ): AbstractStatementNode {
+    const child = parent.createChild(statementType, index);
+    this.addStatementNode(child);
+    return child;
   }
 
   public deleteStatementNode(statementNode: AbstractStatementNode) {
