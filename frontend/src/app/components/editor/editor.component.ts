@@ -206,6 +206,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     // if the file is not empty load content
     if (newFormula) {
       this.treeService.setFormula(newFormula, this._urn);
+      console.log("loaded file content statements in editor")
       this.statements = this.treeService.getStatementNodes();
 
       //TODO: This should be done with Inputs instead.

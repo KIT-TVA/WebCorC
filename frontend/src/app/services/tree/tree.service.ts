@@ -48,7 +48,8 @@ export class TreeService {
   setFormula(newFormula: CBCFormula, urn: string) {
     this._urn = urn;
     this._rootFormula = newFormula;
-    this.getStatementNodes();
+    //commented out for optimization, uncomment if the editor breaks
+    //this.getStatementNodes();
     this._variables = [];
     this._renames = [];
     this._globalConditions = [];
