@@ -68,16 +68,17 @@ export class ConditionSelectorComponent implements AfterViewInit {
       if (conflict.type == "PRECONDITION") {
         this.child.overridePrecondition(conflict.version1);
       } else {
-        this.child.postcondition.set(conflict.version1());
-        this.parent.overridePostcondition(this.child.postcondition);
+        this.child.overridePostcondition(conflict.version1);
       }
     } else {
       if (conflict.type == "PRECONDITION") {
-        const overriddenCondition = conflict.version2();
+        const childCond = conflict.version2();
+        conflict.version1.set(childCond);
         this.child.overridePrecondition(conflict.version1);
-        this.child.precondition.set(overriddenCondition);
       } else {
-        this.parent.overridePostcondition(conflict.version2);
+        const childCond = conflict.version2();
+        conflict.version1.set(childCond);
+        this.child.overridePostcondition(conflict.version1);
       }
     }
     this.selectCondition.emit();

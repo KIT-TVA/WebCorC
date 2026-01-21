@@ -62,15 +62,6 @@ export class RepetitionStatementNode extends AbstractStatementNode {
     this.children = [loopStatementNode];
   }
 
-  override checkConditionSync(child: AbstractStatementNode) {
-    let inSync = this.postcondition() == child.postcondition();
-    if (!inSync) {
-      this.getConditionConflicts(child);
-    }
-    inSync = this.postcondition() == child.postcondition();
-    return inSync;
-  }
-
   /*
   Suppressed warning because the precondition of a repetition statement,
   is solely determined by its invariant "anded" with its guard

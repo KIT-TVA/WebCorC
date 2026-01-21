@@ -88,29 +88,29 @@ export class CompositionStatementNode extends AbstractStatementNode {
     let inSync;
     if (child == this._firstStatementNode) {
       inSync =
-        this.precondition() == child.precondition() &&
-        (this.intermediateCondition() == child.postcondition() ||
-          child.statement.type == "REPETITION");
+        (this.precondition() == child.precondition() &&
+          this.intermediateCondition() == child.postcondition()) ||
+        child.statement.type == "REPETITION";
       if (!inSync) {
         this.getConditionConflicts(child);
       }
       inSync =
-        this.precondition() == child.precondition() &&
-        (this.intermediateCondition() == child.postcondition() ||
-          child.statement.type == "REPETITION");
+        (this.precondition() == child.precondition() &&
+          this.intermediateCondition() == child.postcondition()) ||
+        child.statement.type == "REPETITION";
       return inSync;
     }
     inSync =
-      this.intermediateCondition() == child.precondition() &&
-      (this.postcondition() == child.postcondition() ||
-        child.statement.type == "REPETITION");
+      (this.intermediateCondition() == child.precondition() &&
+        this.postcondition() == child.postcondition()) ||
+      child.statement.type == "REPETITION";
     if (!inSync) {
       this.getConditionConflicts(child);
     }
     inSync =
-      this.intermediateCondition() == child.precondition() &&
-      (this.postcondition() == child.postcondition() ||
-        child.statement.type == "REPETITION");
+      (this.intermediateCondition() == child.precondition() &&
+        this.postcondition() == child.postcondition()) ||
+      child.statement.type == "REPETITION";
     return inSync;
   }
 
@@ -119,7 +119,20 @@ export class CompositionStatementNode extends AbstractStatementNode {
     version2: WritableSignal<ICondition>;
     type: "PRECONDITION" | "POSTCONDITION";
   }[] {
-    const conflicts = [];
+    const conflicts: {
+      version1: WritableSignal<ICondition>;
+      version2: WritableSignal<ICondition>;
+      type: string;
+    }[] = [];
+
+    // If the child is a repetition, do not report conflicts — keep behavior consistent with
+    // the abstract node which ignores repetition nodes for conflict reporting.
+    if (child.statement.type == "REPETITION") {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      return conflicts;
+    }
+
     if (child == this._firstStatementNode) {
       if (this.precondition() != child.precondition()) {
         if (this.precondition().condition === child.precondition().condition) {
@@ -132,10 +145,7 @@ export class CompositionStatementNode extends AbstractStatementNode {
           });
         }
       }
-      if (
-        this.intermediateCondition() != child.postcondition() &&
-        child.statement.type != "REPETITION"
-      ) {
+      if (this.intermediateCondition() != child.postcondition()) {
         if (
           this.intermediateCondition().condition ===
           child.postcondition().condition
@@ -167,10 +177,7 @@ export class CompositionStatementNode extends AbstractStatementNode {
         });
       }
     }
-    if (
-      this.postcondition() != child.postcondition() &&
-      child.statement.type != "REPETITION"
-    ) {
+    if (this.postcondition() != child.postcondition()) {
       if (this.postcondition().condition === child.postcondition().condition) {
         this.overridePostcondition(child.postcondition);
       } else {

@@ -50,6 +50,46 @@ export class SelectionStatementNode extends AbstractStatementNode {
     this.children.forEach((child) => child?.overridePostcondition(condition));
   }
 
+  override checkConditionSync(child: AbstractStatementNode): boolean {
+    if (child.statement.type == "REPETITION") {
+      return true;
+    }
+    this.getConditionConflicts(child);
+    return child.postcondition().condition == this.postcondition().condition;
+  }
+
+  override getConditionConflicts(child: AbstractStatementNode): {
+    version1: WritableSignal<ICondition>;
+    version2: WritableSignal<ICondition>;
+    type: "PRECONDITION" | "POSTCONDITION";
+  }[] {
+    const conflicts: {
+      version1: WritableSignal<ICondition>;
+      version2: WritableSignal<ICondition>;
+      type: "PRECONDITION" | "POSTCONDITION";
+    }[] = [];
+
+    // If the child is a repetition, ignore differences in conditions — repetition statements
+    // can have different internal conditions (invariant/guard/variant) and shouldn't
+    // be treated as conflicts with their parent here.
+    if (child.statement.type == "REPETITION") {
+      return conflicts;
+    }
+
+    if (this.postcondition() != child.postcondition()) {
+      if (this.postcondition().condition === child.postcondition().condition) {
+        this.overridePostcondition(child.postcondition);
+      } else {
+        conflicts.push({
+          version1: this.postcondition,
+          version2: child.postcondition,
+          type: "POSTCONDITION",
+        });
+      }
+    }
+    return conflicts;
+  }
+
   override finalize() {
     super.finalize();
     this.children.forEach((c) => {
@@ -97,12 +137,6 @@ export class SelectionStatementNode extends AbstractStatementNode {
     statementNode.overridePostcondition(this.postcondition);
     this.addChild(statementNode, idx ?? 0);
     return statementNode;
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  override checkConditionSync(_child: AbstractStatementNode): boolean {
-    void _child;
-    return true;
   }
 
   removeSelection() {
