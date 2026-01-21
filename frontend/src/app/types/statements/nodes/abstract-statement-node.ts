@@ -21,7 +21,6 @@ export class AbstractStatementNode {
     this.precondition = signal(statement.preCondition);
     this.postcondition = signal(statement.postCondition);
     console.log("abstract constructor");
-    parent?.overridePostcondition(this.postcondition);
   }
 
   /**
@@ -47,9 +46,6 @@ export class AbstractStatementNode {
         (filteredNode) => filteredNode != node,
       );
     }
-    //TODO: Check this is still necessary after refactor
-    this.overridePrecondition(signal(this.precondition()));
-    this.overridePostcondition(signal(this.postcondition()));
   }
 
   public setPosition(position: { x: number; y: number }) {
@@ -122,7 +118,7 @@ export class AbstractStatementNode {
 
     if (this.precondition() != child.precondition()) {
       if (this.precondition().condition === child.precondition().condition) {
-        this.overridePrecondition(child.precondition);
+        child.overridePrecondition(this.precondition);
       } else {
         conflicts.push({
           version1: this.precondition,
@@ -133,7 +129,7 @@ export class AbstractStatementNode {
     }
     if (this.postcondition() != child.postcondition()) {
       if (this.postcondition().condition === child.postcondition().condition) {
-        this.overridePostcondition(child.postcondition);
+        child.overridePostcondition(this.postcondition);
       } else {
         conflicts.push({
           version1: this.postcondition,
