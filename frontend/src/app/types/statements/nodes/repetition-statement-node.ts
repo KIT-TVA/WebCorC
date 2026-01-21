@@ -2,7 +2,11 @@ import { AbstractStatementNode } from "./abstract-statement-node";
 import { IRepetitionStatement } from "../repetition-statement";
 import { signal, WritableSignal } from "@angular/core";
 import { Condition, ICondition } from "../../condition/condition";
-import { statementNodeUtils } from "./statement-node-utils";
+import {
+  createEmptyStatementNode,
+  statementNodeUtils,
+} from "./statement-node-utils";
+import { StatementType } from "../abstract-statement";
 
 export class RepetitionStatementNode extends AbstractStatementNode {
   override statement!: IRepetitionStatement;
@@ -86,6 +90,15 @@ export class RepetitionStatementNode extends AbstractStatementNode {
   public override overridePostcondition(condition: WritableSignal<ICondition>) {
     this.postcondition = this.invariant;
     this.loopStatementNode?.overridePrecondition(this.postcondition);
+  }
+
+  override createChild(
+    statementType: StatementType,
+    index?: number,
+  ): AbstractStatementNode {
+    const statementNode = createEmptyStatementNode(statementType, this);
+    this.addChild(statementNode, 0);
+    return statementNode;
   }
 
   override deleteChild(node: AbstractStatementNode) {

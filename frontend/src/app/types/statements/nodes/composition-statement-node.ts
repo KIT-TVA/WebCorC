@@ -2,7 +2,11 @@ import { ICompositionStatement } from "../composition-statement";
 import { ICondition } from "../../condition/condition";
 import { signal, WritableSignal } from "@angular/core";
 import { AbstractStatementNode } from "./abstract-statement-node";
-import { statementNodeUtils } from "./statement-node-utils";
+import {
+  createEmptyStatementNode,
+  statementNodeUtils,
+} from "./statement-node-utils";
+import { StatementType } from "../abstract-statement";
 
 export class CompositionStatementNode extends AbstractStatementNode {
   public intermediateCondition: WritableSignal<ICondition>;
@@ -180,6 +184,15 @@ export class CompositionStatementNode extends AbstractStatementNode {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     return conflicts;
+  }
+
+  override createChild(
+    statementType: StatementType,
+    index?: number,
+  ): AbstractStatementNode {
+    const statementNode = createEmptyStatementNode(statementType, this);
+    this.addChild(statementNode, index ?? 0);
+    return statementNode;
   }
 
   override addChild(statement: AbstractStatementNode, index: number) {

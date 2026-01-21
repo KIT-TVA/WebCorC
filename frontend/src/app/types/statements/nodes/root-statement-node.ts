@@ -28,6 +28,8 @@ export class RootStatementNode extends AbstractStatementNode {
     index?: number,
   ): AbstractStatementNode {
     const statementNode = createEmptyStatementNode(statementType, this);
+    statementNode.overridePrecondition(this.precondition);
+    statementNode.overridePostcondition(this.postcondition);
     this.addChild(statementNode, 0);
     return statementNode;
   }
