@@ -261,6 +261,7 @@ export class TreeService {
   }
 
   public getStatementNodes(): Signal<AbstractStatementNode[]> {
+    console.log("getStatementNodes in treeservice called", this.rootFormula );
     const rootStatementNode = this.rootFormula?.statement
       ? new RootStatementNode(
           this.rootFormula.statement as RootStatement,

@@ -136,7 +136,7 @@ export class CompositionStatementNode extends AbstractStatementNode {
     if (child == this._firstStatementNode) {
       if (this.precondition() != child.precondition()) {
         if (this.precondition().condition === child.precondition().condition) {
-          this.overridePrecondition(child.precondition);
+          child.overridePrecondition(this.precondition);
         } else {
           conflicts.push({
             version1: this.precondition,
@@ -179,7 +179,7 @@ export class CompositionStatementNode extends AbstractStatementNode {
     }
     if (this.postcondition() != child.postcondition()) {
       if (this.postcondition().condition === child.postcondition().condition) {
-        this.overridePostcondition(child.postcondition);
+        child.overridePostcondition(this.postcondition);
       } else {
         conflicts.push({
           version1: this.postcondition,

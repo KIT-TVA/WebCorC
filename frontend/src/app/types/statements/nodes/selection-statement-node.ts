@@ -78,7 +78,7 @@ export class SelectionStatementNode extends AbstractStatementNode {
 
     if (this.postcondition() != child.postcondition()) {
       if (this.postcondition().condition === child.postcondition().condition) {
-        this.overridePostcondition(child.postcondition);
+        child.overridePostcondition(this.postcondition);
       } else {
         conflicts.push({
           version1: this.postcondition,

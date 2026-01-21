@@ -42,6 +42,7 @@ export class RootStatementNode extends AbstractStatementNode {
     if (statement.statement) {
       this.childStatementNode = statementNodeUtils(statement.statement, this);
     }
+    console.log("Rootstatementnode", this.postcondition(), statement);
   }
 
   override overridePrecondition(condition: WritableSignal<ICondition>) {
