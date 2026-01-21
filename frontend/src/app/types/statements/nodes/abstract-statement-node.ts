@@ -81,16 +81,16 @@ export class AbstractStatementNode {
 
   public checkConditionSync(child: AbstractStatementNode) {
     let inSync =
-      this.precondition() == child.precondition() &&
-      (this.postcondition() == child.postcondition() ||
-        child.statement.type == "REPETITION");
+      (this.precondition() == child.precondition() &&
+        this.postcondition() == child.postcondition()) ||
+      child.statement.type == "REPETITION";
     if (!inSync) {
       this.getConditionConflicts(child);
     }
     inSync =
-      this.precondition() == child.precondition() &&
-      (this.postcondition() == child.postcondition() ||
-        child.statement.type == "REPETITION");
+      (this.precondition() == child.precondition() &&
+        this.postcondition() == child.postcondition()) ||
+      child.statement.type == "REPETITION";
     return inSync;
   }
 
@@ -107,7 +107,19 @@ export class AbstractStatementNode {
     version2: WritableSignal<ICondition>;
     type: "PRECONDITION" | "POSTCONDITION";
   }[] {
-    const conflicts = [];
+    const conflicts: {
+      version1: WritableSignal<ICondition>;
+      version2: WritableSignal<ICondition>;
+      type: "PRECONDITION" | "POSTCONDITION";
+    }[] = [];
+
+    // If the child is a repetition, ignore differences in conditions — repetition statements
+    // can have different internal conditions (invariant/guard/variant) and shouldn't
+    // be treated as conflicts with their parent here.
+    if (child.statement.type == "REPETITION") {
+      return conflicts;
+    }
+
     if (this.precondition() != child.precondition()) {
       if (this.precondition().condition === child.precondition().condition) {
         this.overridePrecondition(child.precondition);
@@ -119,10 +131,7 @@ export class AbstractStatementNode {
         });
       }
     }
-    if (
-      this.postcondition() != child.postcondition() &&
-      child.statement.type != "REPETITION"
-    ) {
+    if (this.postcondition() != child.postcondition()) {
       if (this.postcondition().condition === child.postcondition().condition) {
         this.overridePostcondition(child.postcondition);
       } else {
@@ -133,15 +142,16 @@ export class AbstractStatementNode {
         });
       }
     }
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
     return conflicts;
   }
 
   createChild(
-    statementType: StatementType,
-    index?: number,
+    _statementType: StatementType,
+    _index?: number,
   ): AbstractStatementNode {
+    // Mark unused params as used to satisfy lint rules
+    void _statementType;
+    void _index;
     //EXTEND THIS!
     throw Error(
       "AbstractStatementNode does not support child statement nodes.",
