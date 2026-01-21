@@ -1,40 +1,13 @@
-import {
-  Component,
-  effect,
-  EventEmitter,
-  Inject,
-  Input,
-  model,
-  ModelSignal,
-  OnInit,
-  Output,
-  ViewChild,
-} from "@angular/core";
-
-import {
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-} from "@angular/forms";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatInput, MatInputModule } from "@angular/material/input";
+import { Component, EventEmitter, Inject, Input, model, ModelSignal, Output } from "@angular/core";
 import { Condition, ICondition } from "../../../../types/condition/condition";
-import { MatGridListModule } from "@angular/material/grid-list";
-import { MatAutocompleteModule } from "@angular/material/autocomplete";
-import { MatMenuModule } from "@angular/material/menu";
-import { MatButtonModule } from "@angular/material/button";
-import { MatIconModule } from "@angular/material/icon";
 import { AiChatService } from "../../../../services/ai-chat/ai-chat.service";
 import { Textarea } from "primeng/textarea";
 import { IconField } from "primeng/iconfield";
 import { InputIcon } from "primeng/inputicon";
 import { FloatLabelModule } from "primeng/floatlabel";
-import {
-  GREEN_COLOURED_CONDITIONS,
-  RED_COLOURED_CONDITIONS,
-} from "../../editor.component";
+import { GREEN_COLOURED_CONDITIONS, RED_COLOURED_CONDITIONS } from "../../editor.component";
 import { $dt } from "@primeuix/themes";
+import { FormsModule } from "@angular/forms";
 
 /**
  * Editor in the statements for the {@link Condition}
@@ -43,26 +16,12 @@ import { $dt } from "@primeuix/themes";
  */
 @Component({
   selector: "app-condition-editor",
-  imports: [
-    FormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatGridListModule,
-    ReactiveFormsModule,
-    MatAutocompleteModule,
-    MatMenuModule,
-    MatButtonModule,
-    MatIconModule,
-    Textarea,
-    IconField,
-    InputIcon,
-    FloatLabelModule,
-  ],
+  imports: [Textarea, IconField, InputIcon, FloatLabelModule, FormsModule],
   templateUrl: "./condition-editor.component.html",
   standalone: true,
   styleUrl: "./condition-editor.component.scss",
 })
-export class ConditionEditorComponent implements OnInit {
+export class ConditionEditorComponent {
   /**
    * Condition to edit
    */
@@ -81,44 +40,11 @@ export class ConditionEditorComponent implements OnInit {
   @Output() public conditionEditingFinished: EventEmitter<void> =
     new EventEmitter<void>();
 
-  /**
-   * The input to edit the condition content
-   */
-  @ViewChild("input", { read: MatInput }) public input!: MatInput;
-
-  private _conditionGroup: FormGroup | undefined;
-
   public constructor(
-    private fb: FormBuilder,
     private _aiChatService: AiChatService,
     @Inject(GREEN_COLOURED_CONDITIONS) protected greenConditions: ICondition[],
     @Inject(RED_COLOURED_CONDITIONS) protected redConditions: ICondition[],
-  ) {
-    effect(() => {
-      const newValue = this.condition().condition;
-      if (!(newValue == this._conditionGroup?.get("condition")?.value)) {
-        this._conditionGroup?.get("condition")?.setValue(newValue);
-      }
-    });
-  }
-
-  /**
-   * Initialize the input on angular initalization
-   */
-  public ngOnInit() {
-    // Set up form group on init, since here the @Inputs available
-    this._conditionGroup = this.fb.group({
-      condition: "",
-    });
-    this._conditionGroup
-      .get("condition")
-      ?.valueChanges.subscribe((newString) => {
-        this.condition.set(new Condition(newString));
-      });
-    if (!this.editable) {
-      this._conditionGroup.get("condition")!.disable();
-    }
-  }
+  ) {}
 
   /**
    * Function for sending the condition content to the ai chat
@@ -127,13 +53,6 @@ export class ConditionEditorComponent implements OnInit {
   public askAi(): void {
     if (!this.condition()?.condition) return;
     this._aiChatService.addCondition(this.condition()!);
-  }
-
-  /**
-   * Getter for the FormGroup for management of the
-   */
-  public get conditionGroup(): FormGroup | undefined {
-    return this._conditionGroup;
   }
 
   protected readonly $dt = $dt;
