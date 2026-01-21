@@ -56,12 +56,7 @@ export class RepetitionStatementComponent extends Refinement {
    * Add the child statement to the dom
    */
   public chooseRefinement(type: StatementType) {
-    if (!type) {
-      return;
-    }
-    const newNode = createEmptyStatementNode(type, this._node);
-    this._node.loopStatementNode = newNode;
-    this.treeService.addStatementNode(newNode);
+    this.treeService.createNodeForStatement(this._node, type);
   }
 
   public override resetPosition(position: Position, offset: Position): void {

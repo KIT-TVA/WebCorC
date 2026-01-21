@@ -2,7 +2,11 @@ import { AbstractStatementNode } from "./abstract-statement-node";
 import { ISelectionStatement } from "../selection-statement";
 import { signal, WritableSignal } from "@angular/core";
 import { Condition, ICondition } from "../../condition/condition";
-import { statementNodeUtils } from "./statement-node-utils";
+import {
+  createEmptyStatementNode,
+  statementNodeUtils,
+} from "./statement-node-utils";
+import { StatementType } from "../abstract-statement";
 
 export class SelectionStatementNode extends AbstractStatementNode {
   public guards: WritableSignal<ICondition>[];
@@ -70,6 +74,15 @@ export class SelectionStatementNode extends AbstractStatementNode {
       this.children[index] = node;
       this.statement.commands[index] = node.statement;
     }
+  }
+
+  override createChild(
+    statementType: StatementType,
+    index?: number,
+  ): AbstractStatementNode {
+    const statementNode = createEmptyStatementNode(statementType, this);
+    this.addChild(statementNode, index ?? 0);
+    return statementNode;
   }
 
   override checkConditionSync(_child: AbstractStatementNode): boolean {

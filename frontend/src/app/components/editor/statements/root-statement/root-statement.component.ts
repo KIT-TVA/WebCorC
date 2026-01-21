@@ -57,9 +57,7 @@ export class RootStatementComponent extends Refinement {
    * The new child statement then get created in component
    */
   public chooseRefinement($event: StatementType): void {
-    const newNode = createEmptyStatementNode($event, this._node);
-    (this._node as RootStatementNode).childStatementNode = newNode;
-    this.treeService.addStatementNode(newNode);
+    this.treeService.createNodeForStatement(this._node, $event);
   }
 
   public override resetPosition(position: Position, offset: Position): void {
