@@ -80,12 +80,28 @@ export class SelectionStatementNode extends AbstractStatementNode {
     statementType: StatementType,
     index?: number,
   ): AbstractStatementNode {
+    const idx = index ?? 0;
     const statementNode = createEmptyStatementNode(statementType, this);
-    this.addChild(statementNode, index ?? 0);
+    // If a guard exists for this branch, compute precondition as parentPrecondition & guard
+    if (this.guards[idx]) {
+      const computedCondition = signal(
+        new Condition(
+          this.precondition().condition + " & " + this.guards[idx]().condition,
+        ),
+      );
+      statementNode.overridePrecondition(computedCondition);
+    } else {
+      statementNode.overridePrecondition(this.precondition);
+    }
+    // All branches should share the same postcondition as the selection
+    statementNode.overridePostcondition(this.postcondition);
+    this.addChild(statementNode, idx ?? 0);
     return statementNode;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   override checkConditionSync(_child: AbstractStatementNode): boolean {
+    void _child;
     return true;
   }
 

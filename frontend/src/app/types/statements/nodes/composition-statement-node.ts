@@ -190,8 +190,18 @@ export class CompositionStatementNode extends AbstractStatementNode {
     statementType: StatementType,
     index?: number,
   ): AbstractStatementNode {
+    const idx = index ?? 0;
     const statementNode = createEmptyStatementNode(statementType, this);
-    this.addChild(statementNode, index ?? 0);
+    // Override pre/postconditions for the child depending on which side it will be
+    // so that conditions are in sync immediately upon creation.
+    if (idx === 0) {
+      statementNode.overridePrecondition(this.precondition);
+      statementNode.overridePostcondition(this.intermediateCondition);
+    } else {
+      statementNode.overridePrecondition(this.intermediateCondition);
+      statementNode.overridePostcondition(this.postcondition);
+    }
+    this.addChild(statementNode, idx);
     return statementNode;
   }
 

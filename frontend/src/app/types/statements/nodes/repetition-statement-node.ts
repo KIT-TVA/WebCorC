@@ -78,7 +78,9 @@ export class RepetitionStatementNode extends AbstractStatementNode {
   //eslint-disable-next-line @typescript-eslint/no-unused-vars
   public override overridePrecondition(condition: WritableSignal<ICondition>) {
     this.precondition.set(
-      new Condition(this.invariant.toString() + " & " + this.guard.toString()),
+      new Condition(
+        this.invariant().condition + " & " + this.guard().condition,
+      ),
     );
     this.loopStatementNode?.overridePrecondition(this.precondition);
   }
@@ -92,11 +94,21 @@ export class RepetitionStatementNode extends AbstractStatementNode {
     this.loopStatementNode?.overridePrecondition(this.postcondition);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   override createChild(
     statementType: StatementType,
-    index?: number,
+    _index?: number,
   ): AbstractStatementNode {
+    void _index;
     const statementNode = createEmptyStatementNode(statementType, this);
+    // For repetition, the loop's precondition is (invariant & guard) and its postcondition is the invariant
+    const loopPre = signal(
+      new Condition(
+        this.invariant().condition + " & " + this.guard().condition,
+      ),
+    );
+    statementNode.overridePrecondition(loopPre);
+    statementNode.overridePostcondition(this.invariant);
     this.addChild(statementNode, 0);
     return statementNode;
   }
