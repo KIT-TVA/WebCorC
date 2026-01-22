@@ -2,6 +2,7 @@ import { Component } from "@angular/core";
 import {
   ApiDiagrammFile,
   ApiDirectory,
+  ApiTextFile,
 } from "../../../services/project/types/api-elements";
 import { Listbox } from "primeng/listbox";
 import { Button } from "primeng/button";
@@ -82,33 +83,35 @@ export class LoadExampleDialogComponent {
             new RootStatement(
               "Root",
               new Condition("appears(A, x, 0, A.length)"),
-              new Condition("A[i] = x"),
+              new Condition("A[i] == x"),
               new CompositionStatement(
                 "Comp",
-                new Condition(""),
-                new Condition(""),
-                new Condition("appears(A, x, 0, A.length) & i = A.length-1"),
+                new Condition("appears(A, x, 0, A.length)"),
+                new Condition("A[i] == x"),
+                new Condition("!appears(A,x,i+1,A.length) & (A[i] != x)"),
                 new Statement(
                   "Statement",
-                  new Condition(""),
-                  new Condition(""),
+                  new Condition("appears(A, x, 0, A.length)"),
+                  new Condition(
+                    "appears(A,x,0,length(A)) & (i==(length(A) - 1))",
+                  ),
                   "i = A.length-1;",
                   new Position(0, 800),
                 ),
                 new RepetitionStatement(
                   "Repetition",
-                  new Condition(""),
-                  new Condition(""),
+                  new Condition("!appears(A,x,i+1,A.length) & (A[i] != x)"),
+                  new Condition("A[i]==x"),
                   new Statement(
                     "Statement2",
-                    new Condition(""),
-                    new Condition(""),
+                    new Condition("!appears(A,x,i+1,A.length) & (A[i] != x)"),
+                    new Condition("!appears(A,x,i+1,A.length)"),
                     "i = i-1;",
                     new Position(0, 1600),
                   ),
                   new Condition("i"),
                   new Condition("!appears(A, x, i+1, A.length)"),
-                  new Condition("A[i] != x"),
+                  new Condition("(A[i] != x)"),
                   false,
                   false,
                   false,
@@ -119,15 +122,56 @@ export class LoadExampleDialogComponent {
               new Position(0, 0),
             ),
             new Condition("appears(A, x, 0, A.length)"),
-            new Condition("A[i] = x"),
+            new Condition("A[i] == x"),
             [
               new JavaVariable("int i", "LOCAL"),
               new JavaVariable("int x", "LOCAL"),
               new JavaVariable("int[] A", "LOCAL"),
             ],
+            [
+              new Condition("A != null"),
+              new Condition("i >= 0 & i < A.length"),
+              new Condition("A.length > 0"),
+              new Condition("A.length < 10"),
+              new Condition("appears(A,x,0,A.length)"),
+            ],
           ),
           "file",
         ),
+        new ApiDirectory("include/", [
+          new ApiTextFile(
+            "include/predicates.key",
+            "\\predicates {\n" +
+              "    appears(int[], int, int, int);\n" +
+              "    maxe(int[], int, int, int);\n" +
+              "}\n" +
+              "\n" +
+              "\\rules {\n" +
+              "    appears {\n" +
+              "        \\schemaVar \\term int[] A;\n" +
+              "        \\schemaVar \\term int x;\n" +
+              "        \\schemaVar \\term int start;\n" +
+              "        \\schemaVar \\term int end;\n" +
+              "        \\schemaVar \\variable int q;\n" +
+              "        \\find (appears(A, x, start, end))\n" +
+              "        \\varcond (\\notFreeIn(q,A), \\notFreeIn(q,x), \\notFreeIn(q,start), \\notFreeIn(q,end))\n" +
+              "        \\replacewith (\\exists int q; (q >= start & q < end & A[q]=x))\n" +
+              "        \\heuristics(simplify)\n" +
+              "    };\n" +
+              "    maxe {\n" +
+              "        \\schemaVar \\term int[] A;\n" +
+              "        \\schemaVar \\term int begin;\n" +
+              "        \\schemaVar \\term int end;\n" +
+              "        \\schemaVar \\term int m;\n" +
+              "        \\schemaVar \\variable int q;\n" +
+              "        \\find (maxe(A, begin, end, m))\n" +
+              "        \\varcond (\\notFreeIn(q,A), \\notFreeIn(q,begin), \\notFreeIn(q,end), \\notFreeIn(q,m))\n" +
+              "        \\replacewith (\\forall int q; ((q >= begin & q < end) -> A[m]>=A[q]))\n" +
+              "        \\heuristics(simplify)\n" +
+              "    };\n" +
+              "}\n",
+          ),
+        ]),
       ]),
     },
     {

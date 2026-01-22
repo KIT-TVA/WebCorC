@@ -32,21 +32,7 @@ export class RepetitionStatementNode extends AbstractStatementNode {
         loopNode.postcondition.set(repetitionPostcondition);
       }
       this.loopStatementNode = loopNode;
-      const computedCondition = signal(
-        new Condition(
-          this.invariant().condition + " & " + this.guard().condition,
-        ),
-      );
-      this.loopStatementNode.overridePrecondition(computedCondition); //TODO: Compute guard && precondition
-      // After the setter, if the repetition's postcondition was overridden incorrectly, restore it
-      if (
-        this.postcondition().condition !== repetitionPostcondition.condition &&
-        repetitionPostcondition.condition.length > 0
-      ) {
-        this.postcondition.set(repetitionPostcondition);
-      }
-      // How its done in Component:
-      //       super.precondition.content = "((" + this._invariantCondition.content + ") & (" + this._guardCondition.content + "))"
+
     }
   }
 
@@ -68,12 +54,12 @@ export class RepetitionStatementNode extends AbstractStatementNode {
  */
   //eslint-disable-next-line @typescript-eslint/no-unused-vars
   public override overridePrecondition(condition: WritableSignal<ICondition>) {
-    this.precondition.set(
+    /*this.precondition.set(
       new Condition(
         this.invariant().condition + " & " + this.guard().condition,
       ),
-    );
-    this.loopStatementNode?.overridePrecondition(this.precondition);
+    );*/
+    //this.loopStatementNode?.overridePrecondition(this.precondition);
   }
   /*
   Suppressed warning because the postcondition of a repetition statement,
@@ -81,8 +67,8 @@ export class RepetitionStatementNode extends AbstractStatementNode {
    */
   //eslint-disable-next-line @typescript-eslint/no-unused-vars
   public override overridePostcondition(condition: WritableSignal<ICondition>) {
-    this.postcondition = this.invariant;
-    this.loopStatementNode?.overridePrecondition(this.postcondition);
+    //this.postcondition = this.invariant;
+    //this.loopStatementNode?.overridePrecondition(this.postcondition);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

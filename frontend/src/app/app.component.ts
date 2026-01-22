@@ -22,6 +22,7 @@ import { DialogService } from "primeng/dynamicdialog";
 import { SettingsButtonComponent } from "./components/settings/settings-button/settings-button.component";
 import { Toast } from "primeng/toast";
 import { MessageService } from "primeng/api";
+import { InputText } from "primeng/inputtext";
 
 /**
  * Top Component of this application,
@@ -42,6 +43,7 @@ import { MessageService } from "primeng/api";
     IconField,
     SettingsButtonComponent,
     Toast,
+    InputText
   ],
   templateUrl: "./app.component.html",
   providers: [DialogService, MessageService],
