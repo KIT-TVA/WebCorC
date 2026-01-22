@@ -7,7 +7,7 @@ import { ProjectService } from "../project/project.service";
 })
 export class PredicateService {
   constructor(private projectService: ProjectService) {}
-  private idCounter = 0;
+  private idCounter = 2;
   private predicates: ProjectPredicate[] = [];
   public getPredicates() {
     return this.predicates;
@@ -15,7 +15,7 @@ export class PredicateService {
   public addPredicate() {
     const newPredicate: ProjectPredicate = {
       id: String(this.idCounter++),
-      name: "untitled predicate",
+      name: "untitled predicate " + this.idCounter / 2,
       definition: "",
       signature: "",
     };
