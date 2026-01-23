@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, Subject, first } from "rxjs";
-import { CBCFormula } from "../../types/CBCFormula";
+import { BehaviorSubject, first, Subject } from "rxjs";
+import { LocalCBCFormula } from "../../types/CBCFormula";
 import { NetworkProjectService } from "./network/network-project.service";
 import {
   CodeFile,
@@ -12,7 +12,7 @@ import {
 } from "./types/project-elements";
 import { ProjectElementsMapperService } from "./types/project-elements-mapper.service";
 import { ProjectStorageService } from "./storage/project-storage.service";
-import { ApiDirectory } from "./types/api-elements";
+import { ApiDirectory, LocalDirectory } from "./types/api-elements";
 
 /**
  * Service for project managment.
@@ -253,7 +253,7 @@ export class ProjectService {
    * @param urn The Path of the file to save the content in
    * @param content The content to save in the file identified by the urn
    */
-  public syncFileContent(urn: string, content: string | CBCFormula) {
+  public syncFileContent(urn: string, content: string | LocalCBCFormula) {
     let urnMoved = false;
     let file = this.findByPath(urn);
     if (!file) {
@@ -277,7 +277,7 @@ export class ProjectService {
 
     const oldcontent = file.content;
 
-    if (content instanceof CBCFormula) {
+    if (content instanceof LocalCBCFormula) {
       content.name = file.name.substring(0, file.name.lastIndexOf("."));
     }
 
@@ -294,7 +294,7 @@ export class ProjectService {
    * @param urn The path of the file to read the content from
    * @returns The content of the file
    */
-  public async getFileContent(urn: string): Promise<string | CBCFormula> {
+  public async getFileContent(urn: string): Promise<string | LocalCBCFormula> {
     let file = this.findByPath(urn);
     if (!file) {
       const rootDir = this.storage.getProjectTree();
@@ -311,13 +311,14 @@ export class ProjectService {
 
     let needstoBeFetched = false;
 
-    if (file.content instanceof CBCFormula) {
-      needstoBeFetched = (file.content as CBCFormula).statement === undefined;
+    if (file.content instanceof LocalCBCFormula) {
+      needstoBeFetched =
+        (file.content as LocalCBCFormula).statement === undefined;
     } else {
       needstoBeFetched = file.content === "";
     }
 
-    let content: string | CBCFormula | null = (file as CodeFile).content;
+    let content: string | LocalCBCFormula | null = (file as CodeFile).content;
 
     // if file content is default value and projectId is set
     if (this.projectId && needstoBeFetched) {
@@ -350,10 +351,7 @@ export class ProjectService {
     this._rootDir = this.mapper.importProject(rootDir);
     this._projectname = projectname;
     this._dataChange.next(this._rootDir.content);
-    this.storage.import(
-      this.mapper.exportDirectory(this._rootDir),
-      projectname,
-    );
+    this.storage.import(LocalDirectory.fromApi(rootDir), projectname);
   }
 
   public uploadWorkspace(wait: boolean = false) {

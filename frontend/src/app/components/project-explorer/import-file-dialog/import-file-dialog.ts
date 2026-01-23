@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { CbcFormulaMapperService } from "../../../services/project/mapper/cbc-formula-mapper.service";
-import { CBCFormula, ICBCFormula } from "../../../types/CBCFormula";
+import { ICBCFormula, LocalCBCFormula } from "../../../types/CBCFormula";
 import { ProjectService } from "../../../services/project/project.service";
 import { ApiFileType } from "../../../services/project/types/api-elements";
 import { FormsModule } from "@angular/forms";
@@ -21,7 +21,7 @@ import { FileUpload } from "primeng/fileupload";
   styleUrl: "./import-file-dialog.component.scss",
 })
 export class ImportFileDialogComponent {
-  private _fileContent: CBCFormula | string;
+  private _fileContent: LocalCBCFormula | string;
   private _fileName: string;
   private _fileType: ApiFileType;
 

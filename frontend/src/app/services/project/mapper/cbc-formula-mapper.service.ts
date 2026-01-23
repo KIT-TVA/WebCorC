@@ -24,7 +24,11 @@ import {
   IStatement,
   Statement,
 } from "../../../types/statements/simple-statement";
-import { CBCFormula, ICBCFormula } from "../../../types/CBCFormula";
+import {
+  CBCFormula,
+  ICBCFormula,
+  LocalCBCFormula,
+} from "../../../types/CBCFormula";
 import { IRenaming, Renaming } from "../../../types/Renaming";
 import { Condition, ICondition } from "../../../types/condition/condition";
 import {
@@ -48,7 +52,7 @@ export class CbcFormulaMapperService {
    * @param formula The formula to import.
    * @returns The class with the same content of the passed interface.
    */
-  public importFormula(formula: ICBCFormula): CBCFormula {
+  public importFormula(formula: ICBCFormula): LocalCBCFormula {
     let position: IPosition;
     if ("position" in formula) {
       position = formula.position as IPosition;
@@ -64,16 +68,27 @@ export class CbcFormulaMapperService {
       position,
     );
 
-    return new CBCFormula(
+    return new LocalCBCFormula(
       formula.name,
       rootStatement,
-      formula.preCondition ?? statement?.preCondition,
-      formula.postCondition ?? statement?.postCondition,
       formula.javaVariables,
       this.importGlobalConditions(formula.globalConditions),
       this.importRenaming(formula.renamings),
       formula.isProven,
       /*TODO maybe implement a some position logic here or get it from the backend*/
+    );
+  }
+
+  public exportFormula(formula: LocalCBCFormula): CBCFormula {
+    return new CBCFormula(
+      formula.name,
+      formula.statement?.statement,
+      formula.statement?.preCondition,
+      formula.statement?.postCondition,
+      formula.javaVariables,
+      formula.globalConditions,
+      formula.renamings,
+      formula.isProven,
     );
   }
 

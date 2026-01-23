@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import {
-  ApiDiagrammFile,
+  ApiDiagramFile,
   ApiDirectory,
   ApiTextFile,
 } from "../../../services/project/types/api-elements";
@@ -18,7 +18,7 @@ import { RootStatement } from "../../../types/statements/root-statement";
 import { CompositionStatement } from "../../../types/statements/composition-statement";
 import { SelectionStatement } from "../../../types/statements/selection-statement";
 import { JavaVariable } from "../../../types/JavaVariable";
-import {SkipStatement} from "../../../types/statements/strong-weak-statement";
+import { SkipStatement } from "../../../types/statements/strong-weak-statement";
 
 @Component({
   selector: "app-load-example-dialog",
@@ -49,7 +49,7 @@ export class LoadExampleDialogComponent {
       name: "SimpleAddition",
       icon: "exposure_plus_1",
       project: new ApiDirectory("/", [
-        new ApiDiagrammFile(
+        new ApiDiagramFile(
           "simpleAddition.diagram",
           new CBCFormula(
             "SimpleAddition",
@@ -77,7 +77,7 @@ export class LoadExampleDialogComponent {
       name: "LinearSearch",
       icon: "manage_search",
       project: new ApiDirectory("/", [
-        new ApiDiagrammFile(
+        new ApiDiagramFile(
           "linearSearch.diagram",
           new CBCFormula(
             "LinearSearch",
@@ -93,10 +93,8 @@ export class LoadExampleDialogComponent {
                 new Statement(
                   "Statement",
                   new Condition("appears(A, x, 0, A.length)"),
-                  new Condition(
-                    "appears(A, x, 0, A.length) & i == A.length-1",
-                  ),
-                  "i == A.length-1;",
+                  new Condition("appears(A, x, 0, A.length) & i == A.length-1"),
+                  "i = A.length-1;",
                   new Position(0, 800),
                 ),
                 new RepetitionStatement(
@@ -107,7 +105,7 @@ export class LoadExampleDialogComponent {
                     "Statement2",
                     new Condition("!appears(A,x,i+1,A.length) & (A[i] != x)"),
                     new Condition("!appears(A,x,i+1,A.length)"),
-                    "i == i-1;",
+                    "i = i-1;",
                     new Position(0, 1600),
                   ),
                   new Condition("i"),
@@ -179,7 +177,7 @@ export class LoadExampleDialogComponent {
       name: "DutchFlag",
       icon: "flag",
       project: new ApiDirectory("/", [
-        new ApiDiagrammFile(
+        new ApiDiagramFile(
           "dutchFlag.diagram",
           new CBCFormula(
             "DutchFlag",
@@ -215,7 +213,9 @@ export class LoadExampleDialogComponent {
                     [
                       new Statement(
                         "Statement3",
-                        new Condition("((s(A, wb, wt, bb)) & (wt != bb)) & (A[wt] = 0)"),
+                        new Condition(
+                          "((s(A, wb, wt, bb)) & (wt != bb)) & (A[wt] = 0)",
+                        ),
                         new Condition("s(A, wb, wt, bb)"),
                         "t = A[wt]; A[wt] = A[wb]; A[wb] = t; wt = wt+1; wb = wb+1;",
                         new Position(0, 1800),
@@ -263,191 +263,199 @@ export class LoadExampleDialogComponent {
         ),
       ]),
     },
-      {
-          name: "MaxElement",
-          icon: "trending_up",
-          project: new ApiDirectory("/", [
-              new ApiDiagrammFile(
-                  "maxElement.diagram",
-                  new CBCFormula(
-                      "MaxElement",
-                      new RootStatement(
-                          "Root",
-                          new Condition("A.length > 0"),
-                          new Condition("maxe(A, 0, A.length, i)"),
-                          new CompositionStatement(
-                              "Comp1",
-                              new Condition("A.length > 0"),
-                              new Condition("maxe(A, 0, A.length, i)"),
-                              new Condition("A.length > 0 & i == 0 & j == 1"),
-                              new CompositionStatement(
-                                  "Comp2",
-                                  new Condition("A.length > 0"),
-                                  new Condition("A.length > 0 & i == 0 & j == 1"),
-                                  new Condition("A.length > 0 & i == 0 & j == 1"),
-                                  new Statement(
-                                      "Statement1",
-                                      new Condition("A.length > 0"),
-                                      new Condition("A.length > 0 & i == 0"),
-                                      "i = 0;",
-                                      new Position(0, 1200),
-                                  ),
-                                  new Statement(
-                                      "Statement2",
-                                      new Condition("A.length > 0 & i == 0"),
-                                      new Condition("A.length > 0 & i == 0 & j == 1"),
-                                      "j = 1;",
-                                      new Position(825, 1200),
-                                  ),
-                                  new Position(0, 800),
-                              ),
-                              new RepetitionStatement(
-                                  "Repetition",
-                                  new Condition("maxe(A,0,j,i) & (j!=A.length)"),
-                                  new Condition("maxe(A,0,j,i)"),
-                                  new CompositionStatement(
-                                      "CompLoop",
-                                      new Condition("maxe(A,0,j,i) & (j!=A.length)"),
-                                      new Condition("maxe(A,0,j,i)"),
-                                      new Condition("maxe(A,0,j,i)"),
-                                      new SelectionStatement(
-                                          "Selection",
-                                          new Condition("maxe(A,0,j,i) & (j!=A.length)"),
-                                          new Condition("maxe(A,0,j+1,i)"),
-                                          [
-                                              new Condition("A[j] > A[i]"),
-                                              new Condition("A[j] <= A[i]")
-                                          ],
-                                          [
-                                              new Statement(
-                                                  "Statement3",
-                                                  new Condition("maxe(A,0,j,i) & (j!=A.length) & A[j] > A[i]"),
-                                                  new Condition("maxe(A,0,j+1,i)"),
-                                                  "i = j;",
-                                                  new Position(600, 2000),
-                                              ),
-                                              new SkipStatement(
-                                                  "Statement4",
-                                                  new Condition("maxe(A,0,j,i) & (j!=A.length) & A[j] <= A[i]"),
-                                                  new Condition("maxe(A,0,j+1,i)"),
-                                                  new Position(0, 2000),
-                                              ),
-                                          ],
-                                          false,
-                                          new Position(0, 1575),
-                                      ),
-                                      new Statement(
-                                          "Statement5",
-                                          new Condition("maxe(A,0,j+1,i)"),
-                                          new Condition("maxe(A,0,j,i)"),
-                                          "j = j + 1;",
-                                          new Position(1650, 1600),
-                                      ),
-                                      new Position(1650, 1200),
-                                  ),
-                                  new Condition("A.length - j"),
-                                  new Condition("maxe(A,0,j,i)"),
-                                  new Condition("j != A.length"),
-                                  false,
-                                  false,
-                                  false,
-                                  new Position(825, 800),
-                              ),
-                              new Position(0, 400),
-                          ),
-                          new Position(0, 0),
-                      ),
-                      undefined,
-                      undefined,
-                      [
-                          new JavaVariable("int j", "LOCAL"),
-                          new JavaVariable("int i", "LOCAL"),
-                          new JavaVariable("int[] A", "LOCAL"),
-                      ],
+    {
+      name: "MaxElement",
+      icon: "trending_up",
+      project: new ApiDirectory("/", [
+        new ApiDiagramFile(
+          "maxElement.diagram",
+          new CBCFormula(
+            "MaxElement",
+            new RootStatement(
+              "Root",
+              new Condition("A.length > 0"),
+              new Condition("maxe(A, 0, A.length, i)"),
+              new CompositionStatement(
+                "Comp1",
+                new Condition("A.length > 0"),
+                new Condition("maxe(A, 0, A.length, i)"),
+                new Condition("A.length > 0 & i == 0 & j == 1"),
+                new CompositionStatement(
+                  "Comp2",
+                  new Condition("A.length > 0"),
+                  new Condition("A.length > 0 & i == 0 & j == 1"),
+                  new Condition("A.length > 0 & i == 0 & j == 1"),
+                  new Statement(
+                    "Statement1",
+                    new Condition("A.length > 0"),
+                    new Condition("A.length > 0 & i == 0"),
+                    "i = 0;",
+                    new Position(0, 1200),
                   ),
-              ),
-          ]),
-      },
-      {
-          name: "Transaction",
-          icon: "account_balance",
-          project: new ApiDirectory("/", [
-              new ApiDiagrammFile(
-                  "transaction.diagram",
-                  new CBCFormula(
-                      "Transaction",
-                      new RootStatement(
-                          "Root",
-                          new Condition("true"),
+                  new Statement(
+                    "Statement2",
+                    new Condition("A.length > 0 & i == 0"),
+                    new Condition("A.length > 0 & i == 0 & j == 1"),
+                    "j = 1;",
+                    new Position(825, 1200),
+                  ),
+                  new Position(0, 800),
+                ),
+                new RepetitionStatement(
+                  "Repetition",
+                  new Condition("maxe(A,0,j,i) & (j!=A.length)"),
+                  new Condition("maxe(A,0,j,i)"),
+                  new CompositionStatement(
+                    "CompLoop",
+                    new Condition("maxe(A,0,j,i) & (j!=A.length)"),
+                    new Condition("maxe(A,0,j,i)"),
+                    new Condition("maxe(A,0,j,i)"),
+                    new SelectionStatement(
+                      "Selection",
+                      new Condition("maxe(A,0,j,i) & (j!=A.length)"),
+                      new Condition("maxe(A,0,j+1,i)"),
+                      [
+                        new Condition("A[j] > A[i]"),
+                        new Condition("A[j] <= A[i]"),
+                      ],
+                      [
+                        new Statement(
+                          "Statement3",
                           new Condition(
-                              "(\\old(balance) + x >= OVERDRAFT_LIMIT ==> balance == \\old(balance) + x) & " +
-                              "(\\old(balance) + x < OVERDRAFT_LIMIT ==> balance == \\old(balance))"
+                            "maxe(A,0,j,i) & (j!=A.length) & A[j] > A[i]",
                           ),
-                          new CompositionStatement(
-                              "Comp1",
-                              new Condition("true"),
-                              new Condition(
-                                  "(\\old(balance) + x >= OVERDRAFT_LIMIT ==> balance == \\old(balance) + x) & " +
-                                  "(\\old(balance) + x < OVERDRAFT_LIMIT ==> balance == \\old(balance))"
-                              ),
-                              new Condition("newBalance == balance + x"),
-                              new Statement(
-                                  "Statement1",
-                                  new Condition("true"),
-                                  new Condition("newBalance == balance + x"),
-                                  "newBalance = balance + x;",
-                                  new Position(0, 975),
-                              ),
-                              new SelectionStatement(
-                                  "Selection",
-                                  new Condition("newBalance == balance + x"),
-                                  new Condition(
-                                      "(\\old(balance) + x >= OVERDRAFT_LIMIT ==> balance == \\old(balance) + x) & " +
-                                      "(\\old(balance) + x < OVERDRAFT_LIMIT ==> balance == \\old(balance))"
-                                  ),
-                                  [
-                                      new Condition("newBalance >= OVERDRAFT_LIMIT"),
-                                      new Condition("newBalance < OVERDRAFT_LIMIT"),
-                                  ],
-                                  [
-                                      new Statement(
-                                          "Statement3",
-                                          new Condition("newBalance == balance + x & newBalance >= OVERDRAFT_LIMIT"),
-                                          new Condition(
-                                              "(\\old(balance) + x >= OVERDRAFT_LIMIT ==> balance == \\old(balance) + x) & " +
-                                              "(\\old(balance) + x < OVERDRAFT_LIMIT ==> balance == \\old(balance))"
-                                          ),
-                                          "balance = newBalance;",
-                                          new Position(350, 1400),
-                                      ),
-                                      new SkipStatement(
-                                          "Statement4",
-                                          new Condition("newBalance == balance + x & newBalance < OVERDRAFT_LIMIT"),
-                                          new Condition(
-                                              "(\\old(balance) + x >= OVERDRAFT_LIMIT ==> balance == \\old(balance) + x) & " +
-                                              "(\\old(balance) + x < OVERDRAFT_LIMIT ==> balance == \\old(balance))"
-                                          ),
-                                          new Position(1225, 1400),
-                                      ),
-                                  ],
-                                  false,
-                                  new Position(825, 975),
-                              ),
-                              new Position(0, 400),
+                          new Condition("maxe(A,0,j+1,i)"),
+                          "i = j;",
+                          new Position(600, 2000),
+                        ),
+                        new SkipStatement(
+                          "Statement4",
+                          new Condition(
+                            "maxe(A,0,j,i) & (j!=A.length) & A[j] <= A[i]",
                           ),
-                          new Position(0, 0),
-                      ),
-                      undefined,
-                      undefined,
-                      [
-                          new JavaVariable("int OVERDRAFT_LIMIT", "LOCAL"),
-                          new JavaVariable("int newBalance", "LOCAL"),
-                          new JavaVariable("int x", "LOCAL"),
-                          new JavaVariable("int balance", "LOCAL"),
+                          new Condition("maxe(A,0,j+1,i)"),
+                          new Position(0, 2000),
+                        ),
                       ],
+                      false,
+                      new Position(0, 1575),
+                    ),
+                    new Statement(
+                      "Statement5",
+                      new Condition("maxe(A,0,j+1,i)"),
+                      new Condition("maxe(A,0,j,i)"),
+                      "j = j + 1;",
+                      new Position(1650, 1600),
+                    ),
+                    new Position(1650, 1200),
                   ),
+                  new Condition("A.length - j"),
+                  new Condition("maxe(A,0,j,i)"),
+                  new Condition("j != A.length"),
+                  false,
+                  false,
+                  false,
+                  new Position(825, 800),
+                ),
+                new Position(0, 400),
               ),
-          ]),
-      }
+              new Position(0, 0),
+            ),
+            undefined,
+            undefined,
+            [
+              new JavaVariable("int j", "LOCAL"),
+              new JavaVariable("int i", "LOCAL"),
+              new JavaVariable("int[] A", "LOCAL"),
+            ],
+          ),
+        ),
+      ]),
+    },
+    {
+      name: "Transaction",
+      icon: "account_balance",
+      project: new ApiDirectory("/", [
+        new ApiDiagramFile(
+          "transaction.diagram",
+          new CBCFormula(
+            "Transaction",
+            new RootStatement(
+              "Root",
+              new Condition("true"),
+              new Condition(
+                "(\\old(balance) + x >= OVERDRAFT_LIMIT ==> balance == \\old(balance) + x) & " +
+                  "(\\old(balance) + x < OVERDRAFT_LIMIT ==> balance == \\old(balance))",
+              ),
+              new CompositionStatement(
+                "Comp1",
+                new Condition("true"),
+                new Condition(
+                  "(\\old(balance) + x >= OVERDRAFT_LIMIT ==> balance == \\old(balance) + x) & " +
+                    "(\\old(balance) + x < OVERDRAFT_LIMIT ==> balance == \\old(balance))",
+                ),
+                new Condition("newBalance == balance + x"),
+                new Statement(
+                  "Statement1",
+                  new Condition("true"),
+                  new Condition("newBalance == balance + x"),
+                  "newBalance = balance + x;",
+                  new Position(0, 975),
+                ),
+                new SelectionStatement(
+                  "Selection",
+                  new Condition("newBalance == balance + x"),
+                  new Condition(
+                    "(\\old(balance) + x >= OVERDRAFT_LIMIT ==> balance == \\old(balance) + x) & " +
+                      "(\\old(balance) + x < OVERDRAFT_LIMIT ==> balance == \\old(balance))",
+                  ),
+                  [
+                    new Condition("newBalance >= OVERDRAFT_LIMIT"),
+                    new Condition("newBalance < OVERDRAFT_LIMIT"),
+                  ],
+                  [
+                    new Statement(
+                      "Statement3",
+                      new Condition(
+                        "newBalance == balance + x & newBalance >= OVERDRAFT_LIMIT",
+                      ),
+                      new Condition(
+                        "(\\old(balance) + x >= OVERDRAFT_LIMIT ==> balance == \\old(balance) + x) & " +
+                          "(\\old(balance) + x < OVERDRAFT_LIMIT ==> balance == \\old(balance))",
+                      ),
+                      "balance = newBalance;",
+                      new Position(350, 1400),
+                    ),
+                    new SkipStatement(
+                      "Statement4",
+                      new Condition(
+                        "newBalance == balance + x & newBalance < OVERDRAFT_LIMIT",
+                      ),
+                      new Condition(
+                        "(\\old(balance) + x >= OVERDRAFT_LIMIT ==> balance == \\old(balance) + x) & " +
+                          "(\\old(balance) + x < OVERDRAFT_LIMIT ==> balance == \\old(balance))",
+                      ),
+                      new Position(1225, 1400),
+                    ),
+                  ],
+                  false,
+                  new Position(825, 975),
+                ),
+                new Position(0, 400),
+              ),
+              new Position(0, 0),
+            ),
+            undefined,
+            undefined,
+            [
+              new JavaVariable("int OVERDRAFT_LIMIT", "LOCAL"),
+              new JavaVariable("int newBalance", "LOCAL"),
+              new JavaVariable("int x", "LOCAL"),
+              new JavaVariable("int balance", "LOCAL"),
+            ],
+          ),
+        ),
+      ]),
+    },
   ];
 }

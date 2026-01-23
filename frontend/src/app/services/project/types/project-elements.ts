@@ -1,289 +1,315 @@
-import { CBCFormula } from "../../../types/CBCFormula";
+import { LocalCBCFormula } from "../../../types/CBCFormula";
 
 /**
  * Interface to implement for a Element in the Filetree of a project
  */
 export interface IProjectElement {
-    delete() : void
-    move(target : ProjectDirectory, name : string, history : Map<string, string>) : Map<string, string>
-    setPath(name : string, parentPath : string) : void
-    toggleRename() : void
-    get name() : string
-    get path() : string
-    get content() : (IProjectElement[] | CBCFormula | string)
-    set content(content : CBCFormula | string)
-    get getsRenamed() : boolean
-    
+  delete(): void;
+  move(
+    target: ProjectDirectory,
+    name: string,
+    history: Map<string, string>,
+  ): Map<string, string>;
+  setPath(name: string, parentPath: string): void;
+  toggleRename(): void;
+  get name(): string;
+  get path(): string;
+  get content(): IProjectElement[] | LocalCBCFormula | string;
+  set content(content: LocalCBCFormula | string);
+  get getsRenamed(): boolean;
 }
 
 /**
  * Default implementation of @see IProjectElement
  */
 export abstract class ProjectElement implements IProjectElement {
-    private _rename : boolean = false
+  private _rename: boolean = false;
 
-    public constructor(private _path : string, private _name : string) {}
+  public constructor(
+    private _path: string,
+    private _name: string,
+  ) {}
 
-    /**
-     * Set the path of the element
-     * @param name The name of the element
-     * @param parentPath The path of the parent element
-     */
-    public setPath(name: string, parentPath: string = this.parentPath): void {
-        this._path = parentPath + name
-        this.name = name
+  /**
+   * Set the path of the element
+   * @param name The name of the element
+   * @param parentPath The path of the parent element
+   */
+  public setPath(name: string, parentPath: string = this.parentPath): void {
+    this._path = parentPath + name;
+    this.name = name;
+  }
+
+  /**
+   * Only used in child classes to implement custom deletion rules
+   */
+  public delete(): void {}
+
+  /**
+   * Move the element to the new target
+   * @param target The target to move the element to
+   * @param name The new name of the element, default doesnt change the name of the element
+   * @returns A map to represent the moving history in which the key is the new path and the value is the oldpath
+   */
+  public move(
+    target: ProjectDirectory,
+    name: string = this._name,
+  ): Map<string, string> {
+    const oldPath = this.path;
+
+    if (target.path == "/") {
+      this.setPath(name, "");
+    } else {
+      this.setPath(name, target.path);
     }
 
-    /**
-     * Only used in child classes to implement custom deletion rules
-     */
-    public delete(): void {  }
+    target.addElement(this);
 
-    /**
-     * Move the element to the new target
-     * @param target The target to move the element to 
-     * @param name The new name of the element, default doesnt change the name of the element
-     * @returns A map to represent the moving history in which the key is the new path and the value is the oldpath
-     */
-    public move(target : ProjectDirectory, name : string = this._name) : Map<string, string> {
-        const oldPath = this.path
+    return new Map().set(this.path, oldPath);
+  }
 
-        if (target.path == '/') {
-            this.setPath(name, "")
-        } else {
-            this.setPath(name, target.path)
-        }
+  public toggleRename(): void {
+    this._rename = !this._rename;
+  }
 
-        target.addElement(this)
+  public get path(): string {
+    return this._path;
+  }
 
-        return new Map().set(this.path, oldPath)
-    }
+  public get parentPath(): string {
+    return this._path.substring(0, this._path.length - this._name.length);
+  }
 
-    public toggleRename(): void {
-        this._rename = !this._rename
-    }
+  protected set path(path: string) {
+    this._path = path;
+  }
 
-    public get path(): string {
-        return this._path
-    }
+  public get content(): string | LocalCBCFormula | IProjectElement[] {
+    return "";
+  }
 
-    public get parentPath() : string {
-        return this._path.substring(0, this._path.length - this._name.length)
-    }
+  public set content(content: LocalCBCFormula | string) {}
 
-    protected set path(path : string) {
-        this._path = path
-    }
+  public get name() {
+    return this._name;
+  }
 
-    public get content(): string | CBCFormula | IProjectElement[] {
-        return ""
-    }
+  protected set name(name: string) {
+    this._name = name;
+  }
 
-    public set content(content : CBCFormula | string) {
-        
-    }
-
-    public get name() {
-        return this._name;
-    }
-
-    protected set name(name : string) {
-        this._name = name
-    }
-
-    public get getsRenamed(): boolean {
-        return this._rename    
-    }
-
+  public get getsRenamed(): boolean {
+    return this._rename;
+  }
 }
 
-
 /**
- * Represents a directory in the project, which includes more Projectelements as childs 
+ * Represents a directory in the project, which includes more Projectelements as childs
  */
 export class ProjectDirectory extends ProjectElement {
+  public constructor(
+    _parentpath: string,
+    name: string,
+    private _elements: ProjectElement[] = [],
+  ) {
+    super(_parentpath + name + "/", name);
+  }
 
-    public constructor(_parentpath : string, name : string, private _elements : ProjectElement[] = []) {
-        super(_parentpath + name + "/", name)
+  public override setPath(
+    name: string,
+    parentPath: string = this.parentPath,
+  ): void {
+    super.path = parentPath + name + "/";
+    this.name = name;
+  }
+
+  public override delete(): void {
+    this._elements.forEach((element) => {
+      element.delete();
+    });
+
+    this._elements = [];
+  }
+
+  public addElement(element: ProjectElement): boolean {
+    for (const existingElement of this._elements) {
+      if (existingElement.name == element.name) {
+        return false;
+      }
     }
 
-    public override setPath(name: string, parentPath: string = this.parentPath): void {
-        super.path = parentPath + name + "/"
-        this.name = name
+    if (element instanceof ProjectDirectory) {
+      this._elements.unshift(element);
+    } else {
+      this._elements.push(element);
     }
 
-    public override delete(): void {
-        this._elements.forEach(element => {
-            element.delete()
-        })
-        
-        this._elements = []
-    }
+    return true;
+  }
 
-    public addElement(element : ProjectElement) : boolean  {
-        for (const existingElement of this._elements) {
-            if (existingElement.name == element.name) {return false;}
-        }
+  public removeElement(elementName: string) {
+    this._elements = this._elements.filter((val) => val.name != elementName);
+  }
 
-        if (element instanceof ProjectDirectory) {
-            this._elements.unshift(element)
-        } else {
-            this._elements.push(element)
-        }
+  public override get content(): ProjectElement[] {
+    return this._elements;
+  }
 
-        return true;
-    }
+  /**
+   * Move all children of the directory
+   * @param target The parent path of this element
+   * @param name The name of this directory
+   * @param history The history of moving actions
+   * @returns full history of all moving operations
+   */
+  public override move(
+    target: ProjectDirectory,
+    name: string = super.name,
+    history = new Map<string, string>(),
+  ): Map<string, string> {
+    super.move(target, name);
 
-    public removeElement(elementName : string) {
-        this._elements = this._elements.filter(val => val.name != elementName)
-    }
+    this._elements.forEach((child: ProjectElement) => {
+      child
+        .move(this, child.name)
+        .forEach((newPath, oldPath) => history.set(newPath, oldPath));
+    });
 
-    public override get content() : (ProjectElement[]) {
-        return this._elements
-    }
+    return history;
+  }
 
-    /**
-     * Move all children of the directory
-     * @param target The parent path of this element
-     * @param name The name of this directory
-     * @param history The history of moving actions
-     * @returns full history of all moving operations
-     */
-    public override move(target: ProjectDirectory, name : string = super.name, history = new Map<string, string>()): Map<string, string> {
-        super.move(target, name)
-
-        this._elements.forEach((child : ProjectElement) => {
-           child.move(this, child.name)
-           .forEach((newPath, oldPath) => history.set(newPath, oldPath))
-        })
-
-        return history
-    }
-
-    public override get parentPath(): string {
-        return super.path.substring(0, super.path.length - super.name.length - 1)
-    }
+  public override get parentPath(): string {
+    return super.path.substring(0, super.path.length - super.name.length - 1);
+  }
 }
 
-
-export const fakeProjectElementName = "...new"
-export const renameProjectElementName = "...rename"
+export const fakeProjectElementName = "...new";
+export const renameProjectElementName = "...rename";
 
 /**
- * This Child of the Projectelement is used to display new file input in the tree at the desired 
+ * This Child of the Projectelement is used to display new file input in the tree at the desired
  * location of the user
  */
 export class FakeProjectElement extends ProjectElement {
-
-    public constructor(_parentpath : string) {
-        super(_parentpath, fakeProjectElementName)
-    }
-
+  public constructor(_parentpath: string) {
+    super(_parentpath, fakeProjectElementName);
+  }
 }
 
 /**
  * Element used to rename an exisiting element, which includes the element to rename and has a hardcoded name to show in the rename name.
  */
 export class RenameProjectElement extends ProjectElement {
+  private _element: ProjectElement;
 
-    private _element : ProjectElement
+  public constructor(_parentpath: string, element: ProjectElement) {
+    super(_parentpath, renameProjectElementName);
+    this._element = element;
+  }
 
-    public constructor(_parentpath : string, element : ProjectElement) {
-        super(_parentpath, renameProjectElementName)
-        this._element = element
+  public override get getsRenamed(): boolean {
+    return true;
+  }
+
+  public get elementName() {
+    if (this._element instanceof ProjectFile) {
+      return this._element.name.substring(
+        0,
+        this._element.name.length -
+          (this._element as ProjectFile).type.length -
+          1,
+      );
     }
 
-    public override get getsRenamed(): boolean {
-        return true
-    }
+    return this._element.name;
+  }
 
-    public get elementName() {
-        if (this._element instanceof ProjectFile) {
-            return this._element.name.substring(0, this._element.name.length -  (this._element as ProjectFile).type.length - 1)
-        }
+  public get element() {
+    return this._element;
+  }
 
-        return this._element.name
-    }
+  public override get content(): IProjectElement[] {
+    if (this.element instanceof ProjectDirectory) return this.element.content;
 
-    public get element() {
-        return this._element
-    }
-
-    public override get content(): IProjectElement[] {
-        if (this.element instanceof ProjectDirectory) return this.element.content
-
-        return []
-    }
+    return [];
+  }
 }
 
 export abstract class ProjectFile extends ProjectElement {
+  private _type: string;
 
-    private _type : string
+  protected constructor(_parentpath: string, name: string, type: string) {
+    super(_parentpath + name + "." + type, name + "." + type);
+    this._type = type;
+  }
 
-    protected constructor(_parentpath : string, name : string, type : string) {
-        super(_parentpath + name + "." + type, name + "." + type)
-        this._type = type
+  public override setPath(
+    name: string,
+    parentPath: string = this.parentPath,
+  ): void {
+    if (name.endsWith("." + this._type)) {
+      this.path = parentPath + name;
+      this.name = name;
+    } else {
+      this.path = parentPath + name + "." + this._type;
+      this.name = name + "." + this._type;
     }
+  }
 
-    public override setPath(name: string, parentPath: string = this.parentPath): void {
-        if (name.endsWith("." + this._type)) {
-            this.path = parentPath + name
-            this.name = name
-        } else {
-            this.path = parentPath + name + "." + this._type
-            this.name = name + "." + this._type
-        }
-        
-    }
+  public get type(): string {
+    return this._type;
+  }
 
-    public get type() : string {
-        return this._type
-    }
+  public override get parentPath(): string {
+    return super.path.substring(0, super.path.lastIndexOf("/") + 1);
+  }
 
-    public override get parentPath(): string {
-        return super.path.substring(0, super.path.lastIndexOf('/') + 1)
-    }
-
-    public override get content(): string | CBCFormula {
-        return ""
-    }
+  public override get content(): string | LocalCBCFormula {
+    return "";
+  }
 }
 
 /**
  * Represents the files edited in the @see FileEditorComponent, which is text based
- * 
+ *
  */
 export class CodeFile extends ProjectFile {
+  public constructor(
+    _parentpath: string,
+    name: string,
+    type: string = "java",
+    private _content: string = "",
+  ) {
+    super(_parentpath, name, type);
+  }
 
-    public constructor(_parentpath : string, name : string, type : string = "java" , private _content : string = "") {
-        super(_parentpath, name, type)
-    }
+  public override get content(): string {
+    return this._content;
+  }
 
-    public override get content() : string {
-        return this._content
-    }
-
-    public override set content(content : string) {
-        this._content = content
-    }
-
-
+  public override set content(content: string) {
+    this._content = content;
+  }
 }
 
 /**
  * Represents the files edited in the @see EditorComponent, which is graph based
  */
 export class DiagramFile extends ProjectFile {
+  public constructor(
+    _parentpath: string,
+    name: string,
+    type: string = "diagram",
+    private _content: LocalCBCFormula = new LocalCBCFormula(),
+  ) {
+    super(_parentpath, name, type);
+  }
 
-    public constructor(_parentpath : string, name : string, type : string = "diagram", private _content : CBCFormula = new CBCFormula() ) {
-        super(_parentpath, name, type)
-    }
+  public override get content(): LocalCBCFormula {
+    return this._content;
+  }
 
-    public override get content() : CBCFormula {
-        return this._content
-    }
-
-    public override set content(content : CBCFormula) {
-        this._content = content
-    }
+  public override set content(content: LocalCBCFormula) {
+    this._content = content;
+  }
 }

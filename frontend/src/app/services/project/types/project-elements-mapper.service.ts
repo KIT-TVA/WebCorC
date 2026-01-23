@@ -11,7 +11,7 @@ import {
   renameProjectElementName,
 } from "./project-elements";
 import {
-  ApiDiagrammFile,
+  ApiDiagramFile,
   ApiDirectory,
   ApiFile,
   ApiTextFile,
@@ -124,7 +124,10 @@ export class ProjectElementsMapperService {
   public exportFile(file: ProjectElement): Inode {
     let inode: Inode;
     if (file instanceof DiagramFile) {
-      inode = new ApiDiagrammFile(file.path, file.content);
+      inode = new ApiDiagramFile(
+        file.path,
+        this.cbcformulaMapper.exportFormula(file.content),
+      );
     } else {
       inode = new ApiTextFile(file.path, (file as CodeFile).content);
     }
@@ -242,9 +245,7 @@ export class ProjectElementsMapperService {
           parentPath,
           name,
           fileType,
-          this.cbcformulaMapper.importFormula(
-            (file as ApiDiagrammFile).content,
-          ),
+          this.cbcformulaMapper.importFormula((file as ApiDiagramFile).content),
         );
       case "java":
       case "key":

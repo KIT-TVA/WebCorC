@@ -1,10 +1,11 @@
 import { Injectable } from "@angular/core";
 import {
-  ApiDiagrammFile,
   ApiDirectory,
-  ApiTextFile,
+  LocalDiagramFile,
+  LocalDirectory,
+  LocalTextFile,
 } from "../types/api-elements";
-import { CBCFormula } from "../../../types/CBCFormula";
+import { LocalCBCFormula } from "../../../types/CBCFormula";
 import { ProjectElement } from "../types/project-elements";
 import { CbcFormulaMapperService } from "../mapper/cbc-formula-mapper.service";
 import { ProjectPredicate } from "../../../types/ProjectPredicate";
@@ -79,11 +80,12 @@ export class ProjectStorageService {
     );
   }
 
-  public import(root: ApiDirectory, projectname: string) {
+  public import(root: LocalDirectory, projectname: string) {
     this.setProjectName(projectname);
     this.setProjectTree(root);
     this.importFileContent(root);
   }
+
   /**
    * Get the slim version of the project tree to get the folder structure after a refresh
    * @returns The project tree without the file contents
@@ -117,8 +119,8 @@ export class ProjectStorageService {
    * @param urn The file urn
    * @param content The content of the file
    */
-  public setFileContent(urn: string, content: string | CBCFormula) {
-    if (content instanceof CBCFormula) {
+  public setFileContent(urn: string, content: string | LocalCBCFormula) {
+    if (content instanceof LocalCBCFormula) {
       sessionStorage.setItem(
         ProjectStorageService.projectFileUrnPrefix + urn,
         JSON.stringify(content),
@@ -154,7 +156,7 @@ export class ProjectStorageService {
    * @param urn The urn of the file to get the content from session storage
    * @returns The content of the file, if no file with the urn is in session storage null.
    */
-  public getFileContent(urn: string): string | CBCFormula | null {
+  public getFileContent(urn: string): string | LocalCBCFormula | null {
     const storageContent = sessionStorage.getItem(
       ProjectStorageService.projectFileUrnPrefix + urn,
     );
@@ -187,15 +189,15 @@ export class ProjectStorageService {
     return countOfFilesInSessionStorage <= 0;
   }
 
-  private importFileContent(directory: ApiDirectory) {
+  private importFileContent(directory: LocalDirectory) {
     for (const child of directory.content) {
-      if (child instanceof ApiDirectory) {
-        this.importFileContent(child as ApiDirectory);
+      if (child instanceof LocalDirectory) {
+        this.importFileContent(child as LocalDirectory);
       } else {
-        if (child instanceof ApiDiagrammFile) {
-          this.setFileContent(child.urn, (child as ApiDiagrammFile).content);
-        } else if (child instanceof ApiTextFile) {
-          this.setFileContent(child.urn, (child as ApiTextFile).content);
+        if (child instanceof LocalDiagramFile) {
+          this.setFileContent(child.urn, (child as LocalDiagramFile).content);
+        } else if (child instanceof LocalTextFile) {
+          this.setFileContent(child.urn, (child as LocalTextFile).content);
         }
       }
     }

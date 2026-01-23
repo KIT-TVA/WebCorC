@@ -18,7 +18,7 @@ import { MatExpansionModule } from "@angular/material/expansion";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatMenuModule } from "@angular/material/menu";
 import { ProjectService } from "../../services/project/project.service";
-import { CBCFormula } from "../../types/CBCFormula";
+import { CBCFormula, LocalCBCFormula } from "../../types/CBCFormula";
 import { Router } from "@angular/router";
 import { EditorService } from "../../services/editor/editor.service";
 import { StatementDelegatorComponent } from "./statements/statement-delegator/statement-delegator.component";
@@ -181,11 +181,11 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     this.sidemenu.conditions.removeAllConditions();
     this.sidemenu.renaming.removeAllRenaming();
 
-    let newFormula: CBCFormula | undefined = undefined;
+    let newFormula: LocalCBCFormula | undefined = undefined;
     try {
       newFormula = (await this.projectService.getFileContent(
         this._urn,
-      )) as CBCFormula;
+      )) as LocalCBCFormula;
     } catch {
       const projectId = this.router
         .parseUrl(this.router.url)
@@ -195,7 +195,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
         this.projectService.dataChange.subscribe(async () => {
           newFormula = (await this.projectService.getFileContent(
             this._urn,
-          )) as CBCFormula;
+          )) as LocalCBCFormula;
           await this.loadFileContent();
         });
 
@@ -206,7 +206,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     // if the file is not empty load content
     if (newFormula) {
       this.treeService.setFormula(newFormula, this._urn);
-      console.log("loaded file content statements in editor")
+      console.log("loaded file content statements in editor");
       this.statements = this.treeService.getStatementNodes();
 
       //TODO: This should be done with Inputs instead.
@@ -233,7 +233,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
    */
   private saveContentToFile(): void {
     // create a new Formula to save
-    let formula = new CBCFormula();
+    let formula = new LocalCBCFormula();
     if (this.treeService.rootFormula) {
       formula = this.treeService.rootFormula;
     }

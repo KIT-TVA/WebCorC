@@ -8,7 +8,7 @@ import {
 import { JavaVariable, JavaVariableKind } from "../../types/JavaVariable";
 import { Renaming } from "../../types/Renaming";
 import { Condition } from "../../types/condition/condition";
-import { CBCFormula } from "../../types/CBCFormula";
+import { LocalCBCFormula } from "../../types/CBCFormula";
 import { ICompositionStatement } from "../../types/statements/composition-statement";
 import { IRepetitionStatement } from "../../types/statements/repetition-statement";
 import { ISelectionStatement } from "../../types/statements/selection-statement";
@@ -45,7 +45,7 @@ export class TreeService {
     this._resetVerifyNotifier = new Subject<void>();
   }
 
-  setFormula(newFormula: CBCFormula, urn: string) {
+  setFormula(newFormula: LocalCBCFormula, urn: string) {
     this._urn = urn;
     this._rootFormula = newFormula;
     //commented out for optimization, uncomment if the editor breaks
@@ -66,7 +66,7 @@ export class TreeService {
     });
   }
 
-  private _rootFormula: CBCFormula | undefined;
+  private _rootFormula: LocalCBCFormula | undefined;
 
   public get rootFormula() {
     return this._rootFormula;
@@ -218,7 +218,9 @@ export class TreeService {
     return statements;
   }
 
-  public getStatementsFromFormula(formula: CBCFormula): IAbstractStatement[] {
+  public getStatementsFromFormula(
+    formula: LocalCBCFormula,
+  ): IAbstractStatement[] {
     const statements: IAbstractStatement[] = [];
     if (formula && formula.statement) {
       this.collectStatements(formula.statement, statements);
@@ -262,7 +264,7 @@ export class TreeService {
   }
 
   public getStatementNodes(): Signal<AbstractStatementNode[]> {
-    console.log("getStatementNodes in treeservice called", this.rootFormula );
+    console.log("getStatementNodes in treeservice called", this.rootFormula);
     const rootStatementNode = this.rootFormula?.statement
       ? new RootStatementNode(
           this.rootFormula.statement as RootStatement,
@@ -277,7 +279,8 @@ export class TreeService {
           ),
         );
     if (this._rootFormula) {
-      this._rootFormula.statement = rootStatementNode.statement;
+      this._rootFormula.statement =
+        rootStatementNode.statement as IRootStatement;
     }
     this._statementNodes.set(
       [rootStatementNode].concat(

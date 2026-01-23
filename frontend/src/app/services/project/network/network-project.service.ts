@@ -2,11 +2,15 @@ import { Injectable } from "@angular/core";
 import { environment } from "../../../../environments/environment";
 import { BehaviorSubject, Observable, Subject, catchError, of } from "rxjs";
 import { ConsoleService } from "../../console/console.service";
-import { CBCFormula, ICBCFormula } from "../../../types/CBCFormula";
+import {
+  CBCFormula,
+  ICBCFormula,
+  LocalCBCFormula,
+} from "../../../types/CBCFormula";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { NetProject } from "./NetProject";
 import {
-  ApiDiagrammFile,
+  ApiDiagramFile,
   ApiDirectory,
   ApiTextFile,
   Inode,
@@ -111,7 +115,7 @@ export class NetworkProjectService {
 
     let realFile;
 
-    if (file instanceof ApiDiagrammFile) {
+    if (file instanceof ApiDiagramFile) {
       realFile = new File([JSON.stringify(file.content)], urn, {
         type: "application/json",
       });
@@ -163,7 +167,7 @@ export class NetworkProjectService {
    * Caution: Not fully implemented
    * @param urn
    */
-  public async getFileContent(urn: string): Promise<string | CBCFormula> {
+  public async getFileContent(urn: string): Promise<string | LocalCBCFormula> {
     this.networkStatusService.startNetworkRequest();
     const request = new Request(this.buildFileURL(urn), {
       method: "GET",

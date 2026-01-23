@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { CBCFormula } from "../../../types/CBCFormula";
+import { LocalCBCFormula } from "../../../types/CBCFormula";
 import { ProjectService } from "../../project/project.service";
 import { TreeService } from "../tree.service";
 import { IRootStatement } from "../../../types/statements/root-statement";
@@ -35,12 +35,12 @@ export class VerificationService {
     }
   }
 
-  public async next(formula: CBCFormula, urn: string) {
+  public async next(formula: LocalCBCFormula, urn: string) {
     this.consoleService.finishLoading();
     if (formula.statement) {
       const currentFormula = await this.projectService.getFileContent(urn);
       const currentStatements = this.treeService.getStatementsFromFormula(
-        currentFormula as CBCFormula,
+        currentFormula as LocalCBCFormula,
       );
       const newStatements = this.treeService.getStatementsFromFormula(formula);
       // The statements should be in the same order, since the structure should be unchanged.
@@ -48,11 +48,11 @@ export class VerificationService {
         stmt.isProven = newStatements[index]?.isProven;
       });
       if (
-        (currentFormula as CBCFormula).statement &&
+        (currentFormula as LocalCBCFormula).statement &&
         formula.statement.type == "ROOT" &&
         (formula.statement as IRootStatement).statement?.isProven
       ) {
-        (currentFormula as CBCFormula).statement!.isProven = true;
+        (currentFormula as LocalCBCFormula).statement!.isProven = true;
       }
       this.projectService.syncFileContent(urn, currentFormula);
     }
