@@ -150,7 +150,7 @@ export class CompositionStatementNode extends AbstractStatementNode {
           this.intermediateCondition().condition ===
           child.postcondition().condition
         ) {
-          this.intermediateCondition = child.postcondition;
+          child.overridePostcondition(this.intermediateCondition);
         } else {
           conflicts.push({
             version1: this.intermediateCondition,
@@ -168,7 +168,7 @@ export class CompositionStatementNode extends AbstractStatementNode {
         this.intermediateCondition().condition ===
         child.precondition().condition
       ) {
-        this.intermediateCondition = child.postcondition;
+        child.overridePrecondition(this.intermediateCondition);
       } else {
         conflicts.push({
           version1: this.intermediateCondition,
