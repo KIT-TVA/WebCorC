@@ -60,13 +60,27 @@ export class CbcFormulaMapperService {
       position = new Position(0, 0);
     }
     const statement = this.importStatement(formula.statement);
-    const rootStatement = new RootStatement(
-      "rootNode",
-      formula.preCondition ?? statement?.preCondition,
-      formula.postCondition ?? statement?.postCondition,
-      statement,
-      position,
-    );
+    // If the imported statement is already a RootStatement, don't wrap it again.
+    let rootStatement: RootStatement | undefined;
+    if (statement && (statement as any).type === RootStatement.TYPE) {
+      rootStatement = statement as RootStatement;
+      // Ensure pre/post/position are filled from formula if missing on the root
+      rootStatement.preCondition =
+        rootStatement.preCondition || formula.preCondition;
+      rootStatement.postCondition =
+        rootStatement.postCondition || formula.postCondition;
+      if ((rootStatement as any).position === undefined && position) {
+        (rootStatement as any).position = position;
+      }
+    } else {
+      rootStatement = new RootStatement(
+        "rootNode",
+        formula.preCondition ?? statement?.preCondition,
+        formula.postCondition ?? statement?.postCondition,
+        statement,
+        position,
+      );
+    }
 
     return new LocalCBCFormula(
       formula.name,

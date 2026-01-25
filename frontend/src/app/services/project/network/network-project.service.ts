@@ -14,10 +14,12 @@ import {
   ApiDirectory,
   ApiTextFile,
   Inode,
+  LocalDirectory,
 } from "../types/api-elements";
 import { CbcFormulaMapperService } from "../mapper/cbc-formula-mapper.service";
 import { NetworkStatusService } from "../../networkStatus/network-status.service";
 import { ProjectStorageService } from "../storage/project-storage.service";
+import { ProjectElementsMapperService } from "../types/project-elements-mapper.service";
 
 /**
  * Service to interact with the backend for managing the project via hhtp rest calls.
@@ -38,6 +40,7 @@ export class NetworkProjectService {
   constructor(
     private http: HttpClient,
     private mapper: CbcFormulaMapperService,
+    private projectMapper: ProjectElementsMapperService,
     private consoleService: ConsoleService,
     private networkStatusService: NetworkStatusService,
     private storage: ProjectStorageService,
@@ -93,12 +96,17 @@ export class NetworkProjectService {
       )
       .subscribe((project) => {
         this._projectname = project.name;
-        this._dataChange.next(
-          new ApiDirectory(project.files.urn, project.files.content),
+        const apiDirectory = new ApiDirectory(
+          project.files.urn,
+          project.files.content,
         );
+        this._dataChange.next(apiDirectory);
         this.networkStatusService.stopNetworkRequest();
-        this.storage.setProjectTree(
-          new ApiDirectory(project.files.urn, project.files.content),
+        this.storage.saveProject(
+          this.projectMapper.importProject(
+            LocalDirectory.fromApi(apiDirectory),
+          ),
+          project.name,
         );
       });
   }

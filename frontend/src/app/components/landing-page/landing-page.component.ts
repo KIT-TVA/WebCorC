@@ -15,6 +15,8 @@ import { Divider } from "primeng/divider";
 import { ButtonDirective, ButtonIcon, ButtonLabel } from "primeng/button";
 import { Menubar } from "primeng/menubar";
 import { DialogService, DynamicDialogRef } from "primeng/dynamicdialog";
+import { LocalCBCFormula } from "../../types/CBCFormula";
+import { LocalDirectory } from "../../services/project/types/api-elements";
 
 @Component({
   selector: "app-landing-page",
@@ -114,8 +116,8 @@ export class LandingPageComponent implements OnInit {
         console.log(selectedExample);
         console.log("Import Successfully");
         console.log(selectedExample.project);
-        this.projectService.import(
-          selectedExample.project,
+        this.projectService.importProject(
+          LocalDirectory.fromApi(selectedExample.project),
           selectedExample.name,
         );
       }

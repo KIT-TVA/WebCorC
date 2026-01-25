@@ -233,17 +233,27 @@ export class LocalDiagramFile extends LocalFile {
   }
 
   public static override fromApi(api: ApiDiagramFile): LocalDiagramFile {
+    // If the api already provides a RootStatement as content.statement, reuse it
+    // to avoid nested ROOT -> ROOT structures. Otherwise, wrap the provided
+    // statement in a new RootStatement.
+    let rootStmt: RootStatement | undefined;
+    if (api.content && (api.content.statement as any)?.type === "ROOT") {
+      rootStmt = api.content.statement as RootStatement;
+    } else {
+      rootStmt = new RootStatement(
+        "ROOT",
+        api.content.preCondition,
+        api.content.postCondition,
+        api.content.statement,
+        api.content.position,
+      );
+    }
+
     return new LocalDiagramFile(
       api.urn,
       new LocalCBCFormula(
         api.content.name,
-        new RootStatement(
-          "ROOT",
-          api.content.preCondition,
-          api.content.postCondition,
-          api.content.statement,
-          api.content.position,
-        ),
+        rootStmt,
         api.content.javaVariables,
         api.content.globalConditions,
         api.content.renamings,
@@ -254,15 +264,23 @@ export class LocalDiagramFile extends LocalFile {
   }
 }
 
-export class LocalTextFile implements LocalInode {
-  public readonly local = true;
+export class LocalTextFile extends LocalFile {
   public constructor(
-    public urn: string,
+    urn: string,
     public content: string,
-    public inodeType: InodeType = "file",
-  ) {}
+    inodeType: InodeType = "file",
+  ) {
+    super(urn, inodeType, "other");
+  }
 
-  public static fromApi(api: ApiTextFile): LocalTextFile {
-    return new LocalTextFile(api.urn, api.content, api.inodeType);
+  public static override fromApi(api: ApiFile | ApiTextFile): LocalTextFile {
+    if (api instanceof ApiTextFile) {
+      return new LocalTextFile(
+        api.urn,
+        (api as ApiTextFile).content,
+        api.inodeType,
+      );
+    }
+    return new LocalTextFile(api.urn, "", api.inodeType);
   }
 }

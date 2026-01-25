@@ -9,9 +9,7 @@ import { ProjectExplorerComponent } from "./components/project-explorer/project-
 import { NuMonacoEditorModule } from "@ng-util/monaco-editor";
 import { ProjectService } from "./services/project/project.service";
 import { NetworkTreeService } from "./services/tree/network/network-tree.service";
-import {
-  CreateProjectDialogComponent
-} from "./components/project-explorer/create-project-dialog/create-project-dialog.component";
+import { CreateProjectDialogComponent } from "./components/project-explorer/create-project-dialog/create-project-dialog.component";
 import { first } from "rxjs";
 import { NetworkStatusService } from "./services/networkStatus/network-status.service";
 import { Toolbar } from "primeng/toolbar";
@@ -43,7 +41,7 @@ import { InputText } from "primeng/inputtext";
     IconField,
     SettingsButtonComponent,
     Toast,
-    InputText
+    InputText,
   ],
   templateUrl: "./app.component.html",
   providers: [DialogService, MessageService],
@@ -76,7 +74,7 @@ export class AppComponent {
   public verify(): void {
     this.treeService.finalizeStatements();
     if (
-      this.projectService.findByPath("helper.key") &&
+      this.projectService.findByUrn("helper.key") &&
       this.projectService.shouldCreateProject
     ) {
       this.projectService.requestFinished.pipe(first()).subscribe(() => {
@@ -114,7 +112,7 @@ export class AppComponent {
    */
   public generateCode(): void {
     if (
-      this.projectService.findByPath("helper.key") &&
+      this.projectService.findByUrn("helper.key") &&
       this.projectService.shouldCreateProject
     ) {
       this.projectService.requestFinished.pipe(first()).subscribe(() => {
@@ -173,7 +171,9 @@ export class AppComponent {
   /**
    * Prevent closing the tab with not saved changes
    * @returns the permission to close the tab
+   * commented out because slows debugging
    */
+  /*
   @HostListener("window:beforeunload", ["$event"])
   public onClose(): boolean {
     this.projectService.editorNotify.next();
@@ -182,7 +182,5 @@ export class AppComponent {
     }
 
     return confirm("Are you sure to want to leave this editor");
-
-
-  }
+  }*/
 }

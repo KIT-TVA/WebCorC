@@ -18,7 +18,7 @@ import { MatExpansionModule } from "@angular/material/expansion";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatMenuModule } from "@angular/material/menu";
 import { ProjectService } from "../../services/project/project.service";
-import { CBCFormula, LocalCBCFormula } from "../../types/CBCFormula";
+import { LocalCBCFormula } from "../../types/CBCFormula";
 import { Router } from "@angular/router";
 import { EditorService } from "../../services/editor/editor.service";
 import { StatementDelegatorComponent } from "./statements/statement-delegator/statement-delegator.component";
@@ -205,9 +205,61 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
 
     // if the file is not empty load content
     if (newFormula) {
+      // If the formula appears not to contain a populated root statement, retry fetching it
+      // a few times to avoid races where storage/network content is still being applied.
+      const ensurePopulated = async (formula: LocalCBCFormula) => {
+        let tries = 6;
+        while (tries-- > 0) {
+          if (
+            formula &&
+            formula.statement &&
+            (formula.statement as any).statement !== undefined
+          ) {
+            return formula;
+          }
+          // wait a bit then try to re-read from storage/network
+          await new Promise((res) => setTimeout(res, 40));
+          try {
+            const refreshed = (await this.projectService.getFileContent(
+              this._urn,
+            )) as LocalCBCFormula;
+            if (
+              refreshed &&
+              refreshed.statement &&
+              (refreshed.statement as any).statement !== undefined
+            ) {
+              return refreshed;
+            }
+            formula = refreshed ?? formula;
+          } catch {
+            // ignore and retry
+          }
+        }
+        return formula;
+      };
+
+      newFormula = await ensurePopulated(newFormula);
+
+      console.log(
+        "EditorComponent.loadFileContent received formula:",
+        newFormula,
+      );
       this.treeService.setFormula(newFormula, this._urn);
-      console.log("loaded file content statements in editor");
+      console.log("EditorComponent called treeService.setFormula");
+      console.log(
+        "TreeService internal rootFormula after set:",
+        this.treeService.rootFormula,
+      );
+      console.log(
+        "TreeService.getStatementsFromFormula:",
+        this.treeService.getStatementsFromFormula(newFormula),
+      );
+      console.log("EditorComponent: statementNodes about to be fetched");
       this.statements = this.treeService.getStatementNodes();
+      console.log(
+        "EditorComponent: statement nodes after getStatementNodes:",
+        this.statements(),
+      );
 
       //TODO: This should be done with Inputs instead.
       this.sidemenu.variables.importDiagramVariables();

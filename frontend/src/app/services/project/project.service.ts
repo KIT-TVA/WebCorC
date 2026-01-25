@@ -7,15 +7,13 @@ import {
   DiagramFile,
   ProjectDirectory,
   ProjectElement,
-  ProjectFile,
-  RenameProjectElement,
 } from "./types/project-elements";
 import { ProjectElementsMapperService } from "./types/project-elements-mapper.service";
 import { ProjectStorageService } from "./storage/project-storage.service";
-import { ApiDirectory, LocalDirectory } from "./types/api-elements";
+import { Inode, LocalDirectory } from "./types/api-elements";
 
 /**
- * Service for project managment.
+ * Service for project management.
  * This service is the single point of truth for the file tree and file content in the project
  * Used by all components, which interact with the file tree or the content of the files
  */
@@ -23,13 +21,13 @@ import { ApiDirectory, LocalDirectory } from "./types/api-elements";
   providedIn: "root",
 })
 export class ProjectService {
-  private _rootDir = new ProjectDirectory("", "");
+  // Use empty string as the project root urn - this aligns with ApiDirectory roots like '/'
+  private _rootDir = new ProjectDirectory("/");
   private _dataChange = new BehaviorSubject<ProjectElement[]>(
-    this._rootDir.content,
+    this._rootDir.contents,
   );
   private _saveNotify = new Subject<void>();
   private _savedFinished = new Subject<void>();
-  private _movedHistory = new Map<string, string>();
   private _projectname: string = "";
 
   constructor(
@@ -48,47 +46,49 @@ export class ProjectService {
     const projectFileTree = storage.getProjectTree();
 
     if (projectFileTree) {
-      this._rootDir = mapper.importDirectory(projectFileTree);
+      this._rootDir = projectFileTree;
     }
-
-    this.network.dataChange.subscribe((rootDir) => {
-      this._rootDir = mapper.importDirectory(rootDir);
-      this._projectname = network.projectName ? network.projectName : "";
-      this._dataChange.next(this._rootDir.content);
-    });
   }
 
   /**
    * Search for a element of the project by its path recursiv
-   * @param path The path of the element to retrieve
+   * @param urn The path of the element to retrieve
    * @param directory The directory to search for, default: root
    * @returns The file identified by the given path, if no matching file is found null
    * @see ProjectElement
    */
-  public findByPath(
-    path: string,
+  public findByUrn(
+    urn: string,
     directory: ProjectDirectory = this._rootDir,
   ): ProjectElement | null {
-    if (path == "") {
+    if (urn === this._rootDir.urn) {
       return this._rootDir;
     }
-
-    if (directory.path === path) {
+    const parts = urn.split("/").filter((e) => e.length > 0);
+    if (parts.length < 1 || directory.urn === urn) {
       return directory;
     }
 
-    for (const child of directory.content) {
-      if (child.path === path) {
-        return child;
-      }
-
-      if (child instanceof ProjectDirectory) {
-        const relativePath = path.replace(child.path, "");
-
-        if (relativePath.length < path.length && relativePath.length > 0) {
-          return this.findByPath(path, child);
+    const bestMatch = parts.reduce(
+      (dir: ProjectElement | undefined, part: string) => {
+        if (!dir) return undefined;
+        if (dir.type === "DIRECTORY") {
+          console.log(dir.urn, part);
+          console.log(
+            (dir as ProjectDirectory).contents.map(
+              (e) => e.urn.split("/").pop() + ", " + part,
+            ),
+          );
+          return (dir as ProjectDirectory).contents.find(
+            (element) => element.urn.split("/").pop() === part,
+          ) as ProjectElement | undefined;
         }
-      }
+        return dir as ProjectElement | undefined;
+      },
+      directory as ProjectElement | undefined,
+    );
+    if (bestMatch && bestMatch.urn === urn) {
+      return bestMatch;
     }
 
     return null;
@@ -104,28 +104,31 @@ export class ProjectService {
    * @returns The parent directory of the newly created directory
    */
   public addDirectory(parentPath: string, name: string): ProjectDirectory {
-    const parentDir = this.findByPath(parentPath);
-    if (!parentDir) {
+    console.log(parentPath, name);
+    const parentDir = this.findByUrn(parentPath);
+    if (name.includes("/")) {
+      throw new Error("Directory name contains forbidden character '/'");
+    }
+    if (parentPath.endsWith("/")) {
+      parentPath = parentPath.slice(0, -1);
+    }
+    if (!parentDir || parentDir.type != "DIRECTORY") {
       throw new Error("Parent dir of new dir not found");
     }
 
     const dir = parentDir as ProjectDirectory;
 
-    let relativePath = parentPath;
-    if (parentPath.startsWith("/")) {
-      relativePath = parentPath.substring(1);
-    }
+    const newDir = new ProjectDirectory(parentPath + "/" + name);
 
-    dir.removeElement(this.mapper.fakeElementName);
-
-    const newDir = new ProjectDirectory(relativePath, name);
-    if (!dir.addElement(newDir)) {
+    if (dir.contents.find((element) => element.urn === newDir.urn)) {
       throw new Error(
         "Could not add directory, maybe you tried to create a duplicate?",
       );
     }
 
-    this._dataChange.next(this._rootDir.content);
+    dir.contents.push(newDir);
+    this._dataChange.next(this._rootDir.contents);
+    this.storage.saveProject(this._rootDir, this.projectname);
     return dir;
   }
 
@@ -143,109 +146,100 @@ export class ProjectService {
     name: string,
     type: string,
   ): ProjectDirectory {
-    const parentDir = this.findByPath(parentPath);
-    if (!parentDir) {
-      throw new Error("Parent dir of new file not found");
+    console.log(parentPath, name, type);
+    const parent = this.findByUrn(parentPath);
+    if (parentPath.endsWith("/")) {
+      parentPath = parentPath.slice(0, -1);
+    }
+    const newUrn = parentPath + "/" + name + "." + type;
+
+    if (name.includes("/")) {
+      throw new Error("File name contains forbidden character '/'");
+    }
+    if (!parent || parent.type != "DIRECTORY") {
+      throw new Error("Parent directory of new file not found");
+    }
+    const parentDir = parent as ProjectDirectory;
+
+    if (parentDir.contents.find((element) => element.urn === newUrn)) {
+      throw new Error(
+        "File with this name already exists in the target directory",
+      );
     }
 
-    const dir = parentDir as ProjectDirectory;
-    let relativePath = parentPath;
-    if (parentPath.startsWith("/")) {
-      relativePath = parentPath.substring(1);
-    }
-
-    dir.removeElement(this.mapper.fakeElementName);
-
-    let newFile = null;
-
+    let newFile: ProjectElement | null = null;
     switch (type) {
       case "java":
-        newFile = this.mapper.constructCodeFile(relativePath, name, type);
+        newFile = this.mapper.constructCodeFile(newUrn);
         break;
       case "diagram":
-        newFile = this.mapper.constructDiagramFile(relativePath, name, type);
+        newFile = this.mapper.constructDiagramFile(newUrn);
         break;
       case "key":
-        newFile = this.mapper.constructCodeFile(relativePath, name, type);
+        newFile = this.mapper.constructCodeFile(newUrn);
         break;
       default:
         throw new Error("Could not add file, unknown type");
     }
 
-    if (!dir.addElement(newFile)) {
-      throw new Error(
-        "Could not add file, maybe you tried to create a duplicate?",
-      );
-    }
-
-    this._dataChange.next(this._rootDir.content);
-    this._movedHistory.forEach((newPath, oldPath) =>
-      oldPath == newFile.path ? this._movedHistory.delete(newPath) : false,
-    );
-    this.storage.setProjectTree(this.mapper.exportDirectory(this._rootDir));
-    return dir;
+    parentDir.contents.push(newFile);
+    this._dataChange.next(this._rootDir.contents);
+    this.storage.saveProject(this._rootDir, this.projectname);
+    return parentDir;
   }
 
-  /**
-   * Add the fake project element to the file tree, to allow the user to edit the name of the element to be created
-   * The fake project element gets removed in the calls @see ProjectService.addDirectory @see ProjectService.addFile
-   * @param path The path under which the element should be created
-   */
-  public addFakeElement(path: string) {
-    const parentDir = this.findByPath(path);
-    if (!parentDir) {
-      throw new Error("Parent dir of new element not found");
+  public getParentDirectory(
+    element: ProjectElement | string,
+  ): ProjectDirectory | undefined {
+    let parts: string[] = [];
+    if (typeof element === "string") {
+      parts = element.split("/");
+    } else {
+      parts = element.urn.split("/");
     }
-
-    const dir = parentDir as ProjectDirectory;
-    const newElement = this.mapper.constructFakeElement(path);
-    if (!dir.addElement(newElement)) {
-      throw new Error("Could not add fake element");
+    console.log(parts);
+    if (parts.length < 2) {
+      return this._rootDir;
     }
-
-    this._dataChange.next(this._rootDir.content);
+    const parentUrn = parts.slice(0, parts.length - 1).join("/");
+    console.log(parts[parts.length - 2]);
+    console.log(parentUrn);
+    const parentDir = this.findByUrn(parentUrn);
+    if (!parentDir || parentDir.type != "DIRECTORY") {
+      return this._rootDir;
+    }
+    return parentDir as ProjectDirectory;
   }
 
   /**
    * Delete a project element from the tree
-   * @param path The path of the parent
-   * @param name The name of the element
+   * @param element
    */
-  public deleteElement(path: string, name: string) {
-    let parentDirPath = path.replace(name, "");
-    if (parentDirPath === "") {
-      parentDirPath = "/";
+  public deleteElement(element: ProjectElement) {
+    let inode: Inode;
+    switch (element.type) {
+      case "CODE_FILE":
+      case "DIAGRAM_FILE":
+        inode = this.mapper.exportFile(element);
+        break;
+      case "DIRECTORY":
+        inode = this.mapper.exportDirectory(element as ProjectDirectory);
+        break;
+      default:
+        throw new Error("Unknown element type");
     }
-
-    if (parentDirPath.endsWith("//")) {
-      parentDirPath = parentDirPath.slice(0, parentDirPath.length - 1);
-    }
-
-    const parentDir = this.findByPath(parentDirPath);
-    const elementToDelete = this.findByPath(path);
-
-    if (!parentDir) {
-      throw new Error("Parent dir of element to delete not found");
-    }
-
-    if (!elementToDelete) {
-      throw new Error("Element not found");
-    }
-
-    let inode = this.mapper.exportFile(elementToDelete);
-    if (elementToDelete instanceof ProjectDirectory) {
-      inode = this.mapper.exportDirectory(elementToDelete);
-    }
-
-    if (this._projectname && name !== this.fakeElementName) {
+    if (element.serverSideUrn) {
       this.network.deleteFile(inode);
     }
+    const parent = this.getParentDirectory(element);
 
-    const dir = parentDir as ProjectDirectory;
-    dir.removeElement(name);
-    this.storage.setProjectTree(this.mapper.exportDirectory(this._rootDir));
-    this.storage.deleteFileContent(elementToDelete);
-    this._dataChange.next(this._rootDir.content);
+    if (parent) {
+      parent.contents = parent.contents.filter(
+        (child) => child.urn !== element.urn,
+      );
+    }
+    this.storage.saveProject(this._rootDir, this._projectname);
+    this._dataChange.next(this._rootDir.contents);
   }
 
   /**
@@ -254,38 +248,29 @@ export class ProjectService {
    * @param content The content to save in the file identified by the urn
    */
   public syncFileContent(urn: string, content: string | LocalCBCFormula) {
-    let urnMoved = false;
-    let file = this.findByPath(urn);
+    const file = this.findByUrn(urn);
     if (!file) {
-      const historyEntry = this._movedHistory.get(urn);
-      this.storage.deleteFileContent(file);
-
-      if (!historyEntry) {
-        throw new Error("File not found");
+      const parentDir = this.getParentDirectory(urn);
+      if (!parentDir) {
+        throw new Error("Parent directory not found");
       }
-
-      file = this.findByPath(historyEntry);
-
-      this._movedHistory.delete(urn);
-      this.storage.deleteFileContentByPath(urn);
-      urnMoved = true;
-
-      if (!file) {
-        throw new Error("File not found");
+      this.addFile(
+        parentDir?.urn,
+        urn.split("/").pop() || "untitled.diagram",
+        "diagram",
+      );
+    } else {
+      switch (file.type) {
+        case "DIAGRAM_FILE":
+          (file as DiagramFile).formula = content as LocalCBCFormula;
+          break;
+        case "CODE_FILE":
+          (file as CodeFile).content = content as string;
+          break;
+        default:
+          throw new Error("Unknown file type");
       }
     }
-
-    const oldcontent = file.content;
-
-    if (content instanceof LocalCBCFormula) {
-      content.name = file.name.substring(0, file.name.lastIndexOf("."));
-    }
-
-    file.content = content;
-    if (oldcontent != file.content && !urnMoved) {
-      this.storage.setFileContent(urn, content);
-    }
-
     this._savedFinished.next();
   }
 
@@ -295,48 +280,55 @@ export class ProjectService {
    * @returns The content of the file
    */
   public async getFileContent(urn: string): Promise<string | LocalCBCFormula> {
-    let file = this.findByPath(urn);
+    let file = this.findByUrn(urn);
     if (!file) {
       const rootDir = this.storage.getProjectTree();
       if (!rootDir) {
         throw new Error("Empty session storage: File not found");
       }
-      this._rootDir = this.mapper.importProject(rootDir);
-      this.dataChange.next(this._rootDir.content);
-      file = this.findByPath(urn);
+      this._rootDir = rootDir;
+      this._dataChange.next(this._rootDir.contents);
+      file = this.findByUrn(urn);
       if (!file) {
         throw new Error("File not found");
       }
     }
 
-    let needstoBeFetched = false;
+    let needsToBeFetched = false;
 
-    if (file.content instanceof LocalCBCFormula) {
-      needstoBeFetched =
-        (file.content as LocalCBCFormula).statement === undefined;
+    if (file.type === "DIAGRAM_FILE") {
+      needsToBeFetched =
+        (file as DiagramFile).formula === undefined ||
+        (file as DiagramFile).formula.statement === undefined;
     } else {
-      needstoBeFetched = file.content === "";
+      needsToBeFetched = (file as CodeFile).content === "";
     }
 
-    let content: string | LocalCBCFormula | null = (file as CodeFile).content;
+    let content: string | LocalCBCFormula =
+      file.type === "CODE_FILE"
+        ? ((file as CodeFile).content as string)
+        : ((file as DiagramFile).formula as LocalCBCFormula);
 
     // if file content is default value and projectId is set
-    if (this.projectId && needstoBeFetched) {
-      content = this.storage.getFileContent(urn);
-      if (!content) {
-        content = await this.network.getFileContent(urn);
-      }
+    if (this.projectId && needsToBeFetched) {
+      content = await this.network.getFileContent(urn);
     }
 
-    // if no projectId is set try to
-    if (!this.projectId && needstoBeFetched) {
-      const contentFromStorage = this.storage.getFileContent(urn);
-      if (contentFromStorage) {
-        content = contentFromStorage;
-      }
+    if (!this.projectId && needsToBeFetched) {
+      throw new Error("Cannot fetch file content without a project ID set");
+    }
+    // Persist loaded content into the in-memory model so other code (save flows)
+    // won't accidentally overwrite it with empty defaults.
+    if (file.type === "DIAGRAM_FILE" && content) {
+      (file as DiagramFile).formula = content as LocalCBCFormula;
+    } else if (file.type === "CODE_FILE" && typeof content === "string") {
+      (file as CodeFile).content = content as string;
+    } else {
+      throw new Error("Unknown file type");
     }
 
-    return content;
+    this._dataChange.next(this._rootDir.contents);
+    return content as string | LocalCBCFormula;
   }
 
   /**
@@ -347,15 +339,19 @@ export class ProjectService {
     return this.mapper.exportDirectory(this._rootDir);
   }
 
-  public import(rootDir: ApiDirectory, projectname: string) {
-    this._rootDir = this.mapper.importProject(rootDir);
+  public importProject(rootDir: LocalDirectory, projectname: string) {
+    const imported = this.mapper.importProject(rootDir as LocalDirectory);
+    this._rootDir = imported;
     this._projectname = projectname;
-    this._dataChange.next(this._rootDir.content);
-    this.storage.import(LocalDirectory.fromApi(rootDir), projectname);
+    this.storage.saveProject(imported, projectname);
+    this._dataChange.next(this._rootDir.contents);
   }
 
+  /**
+   * Upload the current workspace (optionally waiting for network requests)
+   */
   public uploadWorkspace(wait: boolean = false) {
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<void>((resolve) => {
       if (!wait) {
         this._savedFinished
           .pipe(first())
@@ -379,55 +375,21 @@ export class ProjectService {
     });
   }
 
-  private uploadFolder(folder: ProjectDirectory) {
-    for (const item of folder.content) {
-      if (item instanceof ProjectDirectory) {
-        this.uploadFolder(item);
-        continue;
-      }
-
-      if (item instanceof DiagramFile && item.content.statement !== undefined) {
-        this.network.uploadFile(this.mapper.exportFile(item));
-        continue;
-      }
-
-      if (item instanceof CodeFile && item.content !== "") {
-        this.network.uploadFile(this.mapper.exportFile(item));
-      }
-    }
-  }
-
   /**
-   * Flag to decide to create a new project in the backend
-   */
-  public get shouldCreateProject(): boolean {
-    return this.network.projectId === undefined;
-  }
-
-  /**
-   * Create a new project in the backend
-   */
-  public createProject() {
-    return this.network
-      .createProject(this._projectname)
-      .then(() => this.storage.setProjectId(this.network.projectId!));
-  }
-
-  /**
-   * Get the project state from the backend
+   * Download project state from storage or network as needed
    */
   public downloadWorkspace() {
     const projectTree = this.storage.getProjectTree();
     const projectName = this.storage.getProjectName();
     const projectId = this.storage.getProjectId();
-
+    console.log("downloaded workspace", this._rootDir);
     if (projectId === this.projectId) {
       if (!projectTree) {
         this.network.readProject();
         return;
       }
-      this._rootDir = this.mapper.importProject(projectTree);
-      this.dataChange.next(this._rootDir.content);
+      this._rootDir = projectTree;
+      this._dataChange.next(this._rootDir.contents);
       if (!projectName) {
         this.network.readProject();
         return;
@@ -435,17 +397,14 @@ export class ProjectService {
       this._projectname = projectName;
       this.network.readProject();
       return;
-    } else {
-      //Todo: Create dialog asking for allowance to evict local staging differences
     }
 
     if (!projectId && !this.projectId && !!projectTree) {
-      this._rootDir = this.mapper.importProject(projectTree);
-      this.dataChange.next(this._rootDir.content);
+      this._rootDir = projectTree;
+      this._dataChange.next(this._rootDir.contents);
       return;
     }
 
-    // if the project id is defined in storage and not by the query parameter
     if (!this.projectId && projectId) {
       this.projectId = projectId;
       this.network.readProject();
@@ -458,86 +417,123 @@ export class ProjectService {
   }
 
   /**
+   * Create a project in the backend
+   */
+  public async createProject() {
+    if (!this._projectname || this._projectname.trim() === "") {
+      throw new Error("Project name cannot be empty");
+    }
+    await this.network.createProject(this._projectname);
+    this.projectId = this.network.projectId!;
+    return this.storage.setProjectId(this.projectId!);
+  }
+
+  private uploadFolder(folder: ProjectDirectory) {
+    for (const item of folder.contents) {
+      switch (item.type) {
+        case "DIRECTORY":
+          this.uploadFolder(item as ProjectDirectory);
+          continue;
+        case "CODE_FILE":
+        case "DIAGRAM_FILE":
+          this.network.uploadFile(this.mapper.exportFile(item));
+          break;
+        default:
+          throw new Error("Unknown element type");
+      }
+    }
+  }
+
+  /**
    * Move a element in the project
-   * @param file the file to move
-   * @param target the new parent of the file
-   * @param name the new name
-   * @param shouldDelete toggle deletion of the file in the origin
-   * @returns success
    */
   public moveElement(
     file: ProjectElement,
     target: ProjectElement,
     name?: string,
-    shouldDelete: boolean = true,
   ) {
-    const oldPath = file.path;
-    const oldParentPath = file.parentPath;
     const newParentPath = target.path;
+    const oldUrn = file.urn + "";
 
-    if (oldParentPath != newParentPath && shouldDelete) {
-      this.deleteElement(oldPath, file.name);
-      this.storage.deleteFileContent(file);
-    }
-
-    let history: Map<string, string> = new Map();
-
-    if (target instanceof ProjectDirectory) {
-      history = file.move(target, name);
-    } else {
-      const parentTarget = this.findByPath(target.parentPath);
-      history = file.move(parentTarget as ProjectDirectory, name);
-    }
-
-    this.storage.setFileContent(file.path, (file as ProjectFile).content);
-
-    history.forEach((newPath, oldPath) =>
-      this._movedHistory.set(newPath, oldPath),
-    );
-    this._dataChange.next(this._rootDir.content);
-    return history.size > 0;
-  }
-
-  /**
-   * Toggle the renaming of a element
-   * @param element the element to rename
-   */
-  public toggleRename(element: ProjectElement) {
-    const parentPath = element.parentPath;
-    const parentdir = this.findByPath(parentPath) as ProjectDirectory;
     if (
-      !parentdir.addElement(
-        this.mapper.constructRenameElement(parentPath, element),
-      )
+      target instanceof ProjectDirectory &&
+      target &&
+      target.addElement(file)
     ) {
-      throw new Error("Could not add rename element");
+      const newUrn = newParentPath + "/" + (name ? name : file.name);
+      file.urn = newUrn;
+
+      // If we're moving a directory, recursively update all children URNs
+      if (file.type === "DIRECTORY") {
+        const dir = file as ProjectDirectory;
+        const oldPrefix = oldUrn.endsWith("/") ? oldUrn : oldUrn + "/";
+        const newPrefix = newUrn.endsWith("/") ? newUrn : newUrn + "/";
+
+        const updateChild = (child: ProjectElement) => {
+          if (child.urn.startsWith(oldPrefix)) {
+            child.urn = newPrefix + child.urn.substring(oldPrefix.length);
+          }
+          if (child.type === "DIRECTORY") {
+            (child as ProjectDirectory).contents.forEach(updateChild);
+          }
+        };
+
+        dir.contents.forEach(updateChild);
+      }
+    } else {
+      return false;
     }
-
-    element.toggleRename();
-
-    parentdir.removeElement(element.name);
-
-    this._dataChange.next(this._rootDir.content);
+    console.log(oldUrn);
+    const oldParent = this.getParentDirectory(oldUrn);
+    console.log(oldParent);
+    if (oldParent) {
+      console.log(
+        "removing from old parent",
+        oldParent.urn,
+        file.name,
+        file.urn,
+      );
+      oldParent.removeElement(file.name);
+    }
+    this._dataChange.next(this._rootDir.contents);
+    return true;
   }
 
   /**
    * Rename the element
-   * @param element The element to rename
-   * @param name The new name
    */
   public renameElement(element: ProjectElement, name: string) {
-    if (!(element instanceof RenameProjectElement)) return;
+    if (name.includes("/")) {
+      throw new Error("Element name contains forbidden character '/'");
+    }
+    if (name.trim() === "") {
+      throw new Error("Element name cannot be empty");
+    }
+    const parentPath = element.parentPath;
+    const oldUrn = element.urn;
+    const newUrn = parentPath + "/" + name;
+    element.urn = newUrn;
 
-    const toBeMoved = (element as RenameProjectElement).element;
-    const parent = this.findByPath(toBeMoved.parentPath);
+    // If we're renaming a directory, recursively update all children URNs
+    if (element.type === "DIRECTORY") {
+      const dir = element as ProjectDirectory;
+      const oldPrefix = oldUrn.endsWith("/") ? oldUrn : oldUrn + "/";
+      const newPrefix = newUrn.endsWith("/") ? newUrn : newUrn + "/";
 
-    if (!parent || !(parent instanceof ProjectDirectory)) return;
+      const updateChild = (child: ProjectElement) => {
+        if (child.urn.startsWith(oldPrefix)) {
+          child.urn = newPrefix + child.urn.substring(oldPrefix.length);
+        }
+        if (child.type === "DIRECTORY") {
+          (child as ProjectDirectory).contents.forEach(updateChild);
+        }
+      };
 
-    const parentdir = parent as ProjectDirectory;
+      dir.contents.forEach(updateChild);
+    }
 
-    toBeMoved.toggleRename();
-    parentdir.removeElement(element.name);
-    this.moveElement(toBeMoved, parentdir, name, false);
+    this.storage.saveProject(this._rootDir, this._projectname);
+    this._dataChange.next(this._rootDir.contents);
   }
 
   public notifyEditortoSave() {
@@ -560,10 +556,6 @@ export class ProjectService {
     return this._dataChange;
   }
 
-  public get isEmpty(): boolean {
-    return this._rootDir.content.length == 0 || this.storage.isEmpty();
-  }
-
   public get projectname(): string {
     return this._projectname;
   }
@@ -580,12 +572,12 @@ export class ProjectService {
     return this.network.projectId;
   }
 
-  public get fakeElementName() {
-    return this.mapper.fakeElementName;
-  }
-
   public get requestFinished() {
     return this.network.requestFinished;
+  }
+
+  public get shouldCreateProject(): boolean {
+    return this.network.projectId === undefined;
   }
 
   public dump() {
@@ -593,7 +585,6 @@ export class ProjectService {
       projectId: this.projectId,
       projectName: this.projectname,
       rootDir: this._rootDir,
-      movedHistory: this._movedHistory,
     };
   }
 }

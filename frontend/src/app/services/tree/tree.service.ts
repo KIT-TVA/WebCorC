@@ -46,6 +46,13 @@ export class TreeService {
   }
 
   setFormula(newFormula: LocalCBCFormula, urn: string) {
+    console.log(
+      "TreeService.setFormula called for urn:",
+      urn,
+      "incoming formula:",
+      newFormula,
+    );
+
     this._urn = urn;
     this._rootFormula = newFormula;
     //commented out for optimization, uncomment if the editor breaks
@@ -64,6 +71,22 @@ export class TreeService {
     newFormula.globalConditions.forEach((condition) => {
       this.addGlobalCondition(condition.condition);
     });
+    console.log(
+      "TreeService.setFormula completed, internal rootFormula:",
+      this._rootFormula,
+    );
+
+    // Immediately build the statement nodes from the supplied formula so the
+    // internal rootStatementNode and statement node list mirror the formula.
+    // This avoids later callers producing an empty default RootStatement.
+    try {
+      this.getStatementNodes();
+    } catch (e) {
+      console.error(
+        "TreeService.setFormula: failed to initialize statement nodes",
+        e,
+      );
+    }
   }
 
   private _rootFormula: LocalCBCFormula | undefined;

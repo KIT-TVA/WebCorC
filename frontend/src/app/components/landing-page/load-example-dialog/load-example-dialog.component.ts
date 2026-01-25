@@ -137,7 +137,7 @@ export class LoadExampleDialogComponent {
           ),
           "file",
         ),
-        new ApiDirectory("include/", [
+        new ApiDirectory("include", [
           new ApiTextFile(
             "include/predicates.key",
             "\\predicates {\n" +

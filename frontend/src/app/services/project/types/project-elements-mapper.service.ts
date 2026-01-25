@@ -2,20 +2,19 @@ import { Injectable } from "@angular/core";
 import {
   CodeFile,
   DiagramFile,
-  FakeProjectElement,
+  IProjectElement,
   ProjectDirectory,
   ProjectElement,
-  ProjectFile,
-  RenameProjectElement,
-  fakeProjectElementName,
-  renameProjectElementName,
 } from "./project-elements";
 import {
   ApiDiagramFile,
   ApiDirectory,
-  ApiFile,
   ApiTextFile,
   Inode,
+  LocalDiagramFile,
+  LocalDirectory,
+  LocalFile,
+  LocalTextFile,
   SlimFile,
 } from "./api-elements";
 import { CbcFormulaMapperService } from "../mapper/cbc-formula-mapper.service";
@@ -32,46 +31,39 @@ export class ProjectElementsMapperService {
   /**
    * Import the directory
    * @param directory The directory to import
-   * @param parentPath The path of the directory to import from
    * @returns Instance of ProjectDirectory to represent the same directory structure
    */
-  public importDirectory(
-    directory: ApiDirectory,
-    parentPath: string = "",
-  ): ProjectDirectory {
-    const childs: ProjectElement[] = [];
-
-    let path = parentPath + directory.urn + "/";
-    if (parentPath == "" && directory.urn == "") {
-      path = "";
-    }
-
-    for (const child of directory.content) {
-      if (child.inodeType == "directory") {
-        childs.push(this.importDirectory(child as ApiDirectory, path));
-      } else if (child.inodeType == "file") {
-        childs.push(this.importFile(child as ApiFile, path));
-      }
-    }
-
-    return new ProjectDirectory(parentPath, directory.urn, childs);
+  public importDirectory(directory: LocalDirectory): ProjectDirectory {
+    return new ProjectDirectory(
+      directory.urn,
+      directory.content.map((element) => {
+        switch (element.inodeType) {
+          case "directory":
+            return this.importDirectory(element as LocalDirectory);
+          case "file":
+            return this.importFile(element as LocalFile);
+          default:
+            throw new Error(`Unknown inode type: ${element.inodeType}`);
+        }
+      }),
+    );
   }
 
-  private importFile(file: ApiFile, parentPath: string = ""): ProjectElement {
+  private importFile(file: LocalFile): ProjectElement {
     const lastIndexofPoint = file.urn.lastIndexOf(".");
-    const name = file.urn.substring(0, lastIndexofPoint);
-    const fileType = file.urn.substring(lastIndexofPoint + 1);
+    const fileType =
+      lastIndexofPoint >= 0
+        ? file.urn.substring(lastIndexofPoint + 1)
+        : file.type;
 
     switch (fileType) {
       case "diagram":
-        return new DiagramFile(parentPath, name, file.type);
+        return new DiagramFile(file.urn, (file as LocalDiagramFile).content);
       case "java":
       case "key":
-      case "prove":
-      case "other":
-      default:
-        return new CodeFile(parentPath, name, fileType);
+        return new CodeFile(file.urn, (file as LocalTextFile).content);
     }
+    throw new Error(`Unknown file type: ${fileType}`);
   }
 
   /**
@@ -82,17 +74,18 @@ export class ProjectElementsMapperService {
   public exportDirectory(directory: ProjectDirectory): ApiDirectory {
     const elements: Inode[] = [];
 
-    for (const element of directory.content) {
-      if (element instanceof ProjectDirectory) {
-        elements.push(this.exportDirectory(element));
+    for (const element of directory.contents) {
+      if (element.type === "DIRECTORY") {
+        elements.push(this.exportDirectory(element as ProjectDirectory));
+        continue;
       }
 
-      if (element instanceof ProjectFile) {
+      if (element.type === "CODE_FILE" || element.type === "DIAGRAM_FILE") {
         elements.push(this.exportFile(element));
       }
     }
 
-    return new ApiDirectory(directory.path, elements);
+    return new ApiDirectory(directory.urn, elements);
   }
 
   /**
@@ -103,17 +96,17 @@ export class ProjectElementsMapperService {
   public exportTree(directory: ProjectDirectory): ApiDirectory {
     const elements: Inode[] = [];
 
-    for (const element of directory.content) {
+    for (const element of directory.contents) {
       if (element instanceof ProjectDirectory) {
         elements.push(this.exportTree(element));
+        continue;
       }
 
-      if (element instanceof ProjectFile) {
-        elements.push(this.exportFileinSlimTree(element));
-      }
+      // slim file
+      elements.push(this.exportFileinSlimTree(element));
     }
 
-    return new ApiDirectory(directory.path, elements);
+    return new ApiDirectory(directory.urn, elements);
   }
 
   /**
@@ -123,13 +116,16 @@ export class ProjectElementsMapperService {
    */
   public exportFile(file: ProjectElement): Inode {
     let inode: Inode;
-    if (file instanceof DiagramFile) {
+    if (
+      file.constructor.name === "DiagramFile" ||
+      (file as DiagramFile).formula !== undefined
+    ) {
       inode = new ApiDiagramFile(
-        file.path,
-        this.cbcformulaMapper.exportFormula(file.content),
+        file.urn,
+        this.cbcformulaMapper.exportFormula((file as DiagramFile).formula),
       );
     } else {
-      inode = new ApiTextFile(file.path, (file as CodeFile).content);
+      inode = new ApiTextFile(file.urn, (file as CodeFile).content as string);
     }
 
     return inode;
@@ -138,130 +134,64 @@ export class ProjectElementsMapperService {
   /**
    * Import project from the api directory content
    * @param directory The directory to import
-   * @param parentPath The parentpath of the imported directory
    * @returns directory in compatible form for internal use
    */
-  public importProject(
-    directory: ApiDirectory,
-    parentPath: string = "",
-  ): ProjectDirectory {
-    const childs: ProjectElement[] = [];
-
-    let path = parentPath + directory.urn;
-    path = path.substring(0, path.length - 1);
-
-    for (const child of directory.content) {
-      if (child.inodeType == "directory") {
-        childs.push(this.importProject(child as ApiDirectory, path));
-      } else if (child.inodeType == "file") {
-        childs.push(this.importFileInProject(child, parentPath));
-      }
-    }
-
-    return new ProjectDirectory(parentPath, path, childs);
-  }
-
-  /**
-   * Construct a new fake element.
-   * Needs to be placed in this service because of circular dependencies.
-   * @param path The path of the parent element to place the element under
-   * @returns the new element
-   */
-  public constructFakeElement(path: string): FakeProjectElement {
-    return new FakeProjectElement(path);
-  }
-
-  /**
-   * Construct a new Rename Element.
-   * Needs to be placed in this service because of circular dependencies.
-   * @param path The path of the parent element to place the element under
-   * @param element the element to be renamed
-   * @returns The new Element for renaming.
-   */
-  public constructRenameElement(
-    path: string,
-    element: ProjectElement,
-  ): RenameProjectElement {
-    return new RenameProjectElement(path, element);
+  public importProject(directory: LocalDirectory): ProjectDirectory {
+    // importDirectory already handles ApiDirectory => ProjectDirectory conversion
+    return this.importDirectory(directory);
   }
 
   /**
    * Construct new Code file.
    * Needs to be placed in this service because of circular dependencies.
    * @param relativePath The path of the parent element of the new code file
-   * @param name The name of the file
-   * @param type The type of the file
    * @returns The new CodeFile
    */
-  public constructCodeFile(
-    relativePath: string,
-    name: string,
-    type: string,
-  ): CodeFile {
-    return new CodeFile(relativePath, name, type);
+  public constructCodeFile(relativePath: string): CodeFile {
+    return new CodeFile(relativePath);
   }
 
   /**
    * Construct new Diagram file.
    * Needs to be placed in this service because of circular dependencies.
    * @param relativePath The path of the parent element of the new code file
-   * @param name The name of the file
-   * @param type The type of the file
    * @returns The new Diagram File
    */
-  public constructDiagramFile(
-    relativePath: string,
-    name: string,
-    type: string,
-  ): DiagramFile {
-    return new DiagramFile(relativePath, name, type);
-  }
-
-  /**
-   * Needs to be implemented in this service to reduce circular dependencies.
-   */
-  public get fakeElementName() {
-    return fakeProjectElementName;
-  }
-
-  /**
-   * Needs to be implemented in this service to reduce circular dependencies.
-   */
-  public get renameElementName() {
-    return renameProjectElementName;
-  }
-
-  private importFileInProject(
-    file: Inode,
-    parentPath: string = "",
-  ): DiagramFile | CodeFile {
-    const lastIndexofPoint = file.urn.lastIndexOf(".");
-    const name = file.urn.substring(0, lastIndexofPoint);
-    const fileType = file.urn.substring(lastIndexofPoint + 1);
-
-    switch (fileType) {
-      case "diagram":
-        return new DiagramFile(
-          parentPath,
-          name,
-          fileType,
-          this.cbcformulaMapper.importFormula((file as ApiDiagramFile).content),
-        );
-      case "java":
-      case "key":
-      case "prove":
-      case "other":
-      default:
-        return new CodeFile(
-          parentPath,
-          name,
-          fileType,
-          (file as ApiTextFile).content,
-        );
-    }
+  public constructDiagramFile(relativePath: string): DiagramFile {
+    return new DiagramFile(relativePath);
   }
 
   private exportFileinSlimTree(file: ProjectElement): Inode {
-    return new SlimFile(file.name);
+    return new SlimFile(file.urn);
+  }
+
+  public parseProjectTree(tree: IProjectElement): ProjectDirectory {
+    if (tree.type === "DIRECTORY") {
+      const dir = tree as ProjectDirectory;
+      return new ProjectDirectory(
+        dir.urn,
+        dir.contents.map((el) => this.parseProjectElement(el)),
+      );
+    }
+    throw new Error(`Root element must be a directory, got: ${tree.type}`);
+  }
+
+  private parseProjectElement(element: IProjectElement): ProjectElement {
+    if (element.type === "DIRECTORY") {
+      const dir = element as ProjectDirectory;
+      return new ProjectDirectory(
+        dir.urn,
+        dir.contents.map((el) => this.parseProjectElement(el)),
+      );
+    }
+    if (element.type === "CODE_FILE") {
+      const file = element as CodeFile;
+      return new CodeFile(file.urn, file.content);
+    }
+    if (element.type === "DIAGRAM_FILE") {
+      const file = element as DiagramFile;
+      return new DiagramFile(file.urn, file.formula);
+    }
+    throw new Error(`Unknown project element type: ${element.type}`);
   }
 }
