@@ -52,7 +52,7 @@ export class PredicateService {
     if (!this.projectService.findByUrn("predicates.key")) {
       this.projectService.addFile("/", "predicates", "key");
     }
-    this.projectService.syncFileContent("predicates.key", result);
+    this.projectService.syncFileContent("/predicates.key", result);
     return result;
   }
 

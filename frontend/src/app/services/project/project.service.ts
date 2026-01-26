@@ -254,11 +254,12 @@ export class ProjectService {
       if (!parentDir) {
         throw new Error("Parent directory not found");
       }
-      this.addFile(
-        parentDir?.urn,
-        urn.split("/").pop() || "untitled.diagram",
-        "diagram",
-      );
+      const type = urn.endsWith(".diagram")
+        ? "diagram"
+        : urn.endsWith(".java")
+          ? "java"
+          : "key";
+      this.addFile(parentDir?.urn, urn.split("/").pop() || "untitled", type);
     } else {
       switch (file.type) {
         case "DIAGRAM_FILE":
