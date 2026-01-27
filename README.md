@@ -1,98 +1,140 @@
-# WebCorC
+# <div align="center">WebCorC</div>
 
-Webbased Editor for CbC to replace the Eclipse based [CorC](https://github.com/KIT-TVA/CorC).
+<div align="center">
 
-A public demo instance is available at https://corc.informatik.kit.edu/
+**The Web-based Correctness-by-Construction (CbC) IDE**
 
-Cbc is an approach to create correct programs incrementally.
-Guided by pre-/postcondition specifications, a program is developed using refinement rules, guaranteeing the implementation is correct.
-With [CorC](https://github.com/KIT-TVA/CorC/wiki) we implemented a graphical and textual IDE to create programs following the CbC approach. Starting with an abstract specification, CorC supports CbC developers in refining a program by a sequence of refinement steps and in verifying the correctness of these refinement steps using a deductive verifier.
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Frontend](https://img.shields.io/badge/Frontend-Angular_19-dd0031.svg)](https://angular.io/)
+[![Backend](https://img.shields.io/badge/Backend-Micronaut-black.svg)](https://micronaut.io/)
+[![Build](https://img.shields.io/badge/Build-Docker-2496ed.svg)](https://www.docker.com/)
 
-Learn more information around CorC and the underlying concepts in the [wiki](https://github.com/KIT-TVA/CorC/wiki).
+</div>
 
 ---
-## Backend development
 
-The backend is a REST API developed in Micronaut.
-To run the project from cli ensure you have a JDK 21 installed and run:
+## 📖 Project Overview
 
-```bash
-./mvnw mn:run
+**WebCorC** is a modern, web-based evolution of the Eclipse-based [CorC](https://github.com/KIT-TVA/CorC) tool. It provides a graphical and textual Integrated Development Environment (IDE) designed to support the **Correctness-by-Construction (CbC)** approach to software development.
+
+### What is CbC?
+Correctness-by-Construction is a methodology where programs are developed incrementally, guided by rigorous pre- and post-condition specifications. Instead of writing code and then testing it, developers use **refinement rules** that guarantee the correctness of the implementation at every step. WebCorC supports this workflow by:
+- Allowing you to start with an abstract specification.
+- Guiding you through a sequence of refinement steps.
+- Verifying the correctness of each step using a deductive verifier.
+
+> **Live Demo**: Try out the public instance at [corc.informatik.kit.edu](https://corc.informatik.kit.edu/)
+
+For more in-depth information on the concepts, visit the [CorC Wiki](https://github.com/KIT-TVA/CorC/wiki).
+
+---
+
+## ✨ Key Features
+
+- **Web-Based IDE**: Accessible from any modern browser without complex local installation requirements for users.
+- **Graphical & Textual Editing**: Flexible views to suit different development preferences.
+- **Incremental Refinement**: Step-by-step guidance to build correct software.
+- **Integrated Verification**: Built-in support for verifying refinement steps against formal specifications.
+- **Modern Stack**: Built with performance and developer experience in mind using Angular and Micronaut.
+
+---
+
+## 🛠️ Technology Stack
+
+### Frontend
+- **Framework**: [Angular 19](https://angular.dev/)
+- **Component Library**: [Angular Material](https://material.angular.io/) + [PrimeNG](https://primeng.org/)
+- **Styling**: [TailwindCSS](https://tailwindcss.com/)
+- **Editor**: [Monaco Editor](https://microsoft.github.io/monaco-editor/) (VS Code engine)
+
+### Backend
+- **Framework**: [Micronaut](https://micronaut.io/)
+- **Language**: Java 21
+- **Database**: MongoDB
+- **Build Tool**: Maven
+
+### Infrastructure
+- **Containerization**: Docker & Docker Compose
+- **Reverse Proxy**: Caddy
+
+---
+
+## 🚀 Getting Started
+
+You can run WebCorC entirely using Docker, or set up the development environment manually.
+
+### Prerequisites
+- **Git**
+- **Docker** & **Docker Compose** (for containerized run)
+- **Java 21 JDK** (for manual backend run)
+- **Node.js** (for manual frontend run)
+
+### Option 1: Quick Start (Docker)
+The easiest way to get up and running is with Docker Compose. This will spin up the Frontend, Backend, Database, and Caddy server.
+
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/KIT-TVA/WebCorC.git
+    cd WebCorC
+    ```
+
+2.  **Start the development environment:**
+    ```bash
+    docker compose -f docker-compose.dev.yml up --build
+    ```
+    > **Tip**: Press `w` in the terminal after starting to enable **Hot Reloading** via Docker Compose Watch.
+
+3.  **Access the application:**
+    Open your browser and navigate to `http://localhost`.
+
+### Option 2: Manual Development Setup
+
+If you prefer to run services individually for debugging or native performance:
+
+#### Backend Setup
+The backend exposes a REST API and verifies your CbC programs.
+
+1.  Navigate to the backend directory:
+    ```bash
+    cd backend
+    ```
+2.  Run the application using the Maven wrapper:
+    ```bash
+    ./mvnw mn:run
+    ```
+    *The backend Swagger UI will be available at: `http://localhost:8080/swagger-ui`*
+
+#### Frontend Setup
+The frontend provides the user interface.
+
+1.  Navigate to the frontend directory:
+    ```bash
+    cd frontend
+    ```
+2.  Install dependencies:
+    ```bash
+    npm install
+    ```
+3.  Start the development server:
+    ```bash
+    ng serve
+    ```
+    *Access the frontend at: `http://localhost:4200`*
+
+---
+
+## 📂 Project Structure
+
+```
+WebCorC/
+├── backend/            # Micronaut Java API
+├── frontend/           # Angular Single Page Application
+├── config/             # Project-wide configurations (e.g., checkstyle)
+├── data/               # Persistent data storage (MongoDB, logs)
+├── docker-compose.yml  # Production composition
+└── docker-compose.dev.yml # Development composition
 ```
 
-The backend exposes an autogenerated swagger-ui accessible from `http://backend-server:port/swagger-ui`
+## 📄 License
 
-----
-## Frontend development
-
-The frontend is a SPA developed in Angular 19 with Angular Material as the component framework.
-For the development dependencies use the devcontainers.json or install the project dependencies with
-
-from root of the project run
-```bash
-cd ./frontend/
-```
-```bash
-npm install
-```
-
-For running the development server and linting use the angular cli.
-Install the angular cli via npm:
-```bash
-npm install -g @angular/cli@19
-```
-
-And use the serve command in the angular cli to run the development server:
-```bash
-ng serve
-```
-
-- https://angular.dev/
-- https://angular.dev/tools/cli
-- https://material.angular.io/
-
-
-## Note (Windows only)
-To use `ng serve`, add the following to the list of environtment variables in `Path`.
-Make sure to adjust `USER_NAME`
-
-```bash
-C:\Users\USER_NAME\AppData\Roaming\npm\node_modules\@angular\cli\bin
-```
-```bash
-C:\Users\USER_NAME\AppData\Roaming\npm\
-```
-
-## Docker
-
-This repository contains Dockerfiles for the backend and frontend. The Dockerfiles prefixed with `dev.` are for development purposes.
-
-Hot reloading is supported both in the frontend and backend via the [Compose Watch](https://docs.docker.com/compose/how-tos/file-watch/) feature. Press `w` after starting to enable it.
-
-To run the stack in development:
-
-```bash
-docker compose -f docker-compose.dev.yml up --build
-```
-
-## Production:
-
-Clone this repository for example into /opt/WebCorC:
-
-```bash
-git clone https://github.com/KIT-TVA/WebCorC.git /opt/WebCorC
-```
-
-Change the default values in the `docker-compose.env` file. The backend will refuse to start with default passwords!
-
-The production docker compose file uses a caddy webserver for easy deployment with automatic https. Edit `data/caddy/caddyfile/Caddyfile` and make sure the domain name in the first line matches that of your server.
-
-```bash
-docker compose up -d --build
-```
-
-All data (project metadata, project files, access logs) will be written to the `data/` folder.
-
-## 🛠️ Setup Issues
-
-Having trouble setting up the project? [Open an issue](https://github.com/KIT-TVA/WebCorC/issues) and we'll help you out.
+This project is licensed under the [MIT License](LICENSE).
