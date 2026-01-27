@@ -26,7 +26,12 @@ public class SkipStatement extends AbstractStatement {
     }
 
     @Override
-    public String generate() {
+    public String generateCode() {
+        return "";
+    }
+
+    @Override
+    public String generateCodeForProof() {
         return "";
     }
 }

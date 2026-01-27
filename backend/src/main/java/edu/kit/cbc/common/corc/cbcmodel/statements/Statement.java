@@ -40,7 +40,12 @@ public class Statement extends AbstractStatement {
     }
 
     @Override
-    public String generate() {
+    public String generateCode() {
         return ProgramPrinter.print(programTree);
+    }
+
+    @Override
+    public String generateCodeForProof() {
+        return this.generateCode();
     }
 }

@@ -12,8 +12,13 @@ public class ReturnStatement extends AbstractStatement {
     }
 
     @Override
-    public String generate() {
+    public String generateCode() {
         //TODO
         return "return TODO";
+    }
+
+    @Override
+    public String generateCodeForProof() {
+        return this.generateCode();
     }
 }

@@ -24,7 +24,7 @@ public final class CodeGenerator {
         return fixTabs(String.format(
             CLASS_PATTERN,
             generateLocalVariables(formula.getJavaVariables()),
-            formula.getStatement().generate()
+            formula.getStatement().generateCode()
         ));
     }
 
@@ -54,7 +54,7 @@ public final class CodeGenerator {
         StringBuilder localVariables = new StringBuilder();
         for (JavaVariable variable : variables) {
             if (variable.getKind() == JavaVariableKind.LOCAL) {
-                localVariables.append(variable.generate());
+                localVariables.append(variable.generateCode());
             }
         }
 

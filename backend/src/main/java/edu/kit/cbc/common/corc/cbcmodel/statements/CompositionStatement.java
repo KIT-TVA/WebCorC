@@ -38,7 +38,12 @@ public class CompositionStatement extends AbstractStatement {
     }
 
     @Override
-    public String generate() {
-        return firstStatement.generate() + "\n" +  secondStatement.generate();
+    public String generateCode() {
+        return firstStatement.generateCode() + "\n" +  secondStatement.generateCode();
+    }
+
+    @Override
+    public String generateCodeForProof() {
+        return this.generateCode();
     }
 }

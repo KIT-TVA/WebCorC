@@ -74,17 +74,22 @@ public class SelectionStatement extends AbstractStatement {
     }
 
     @Override
-    public String generate() {
+    public String generateCode() {
         StringBuilder ifBuilder = new StringBuilder();
 
         for (int i = 0; i < this.getGuards().size(); i++) {
             ifBuilder.append("if (");
             ifBuilder.append(ConditionPrinter.print(this.guards.get(i).getParsedCondition()));
             ifBuilder.append(") {\n");
-            ifBuilder.append(this.commands.get(i).generate());
+            ifBuilder.append(this.commands.get(i).generateCode());
             ifBuilder.append("}\n");
         }
 
         return ifBuilder.toString();
+    }
+
+    @Override
+    public String generateCodeForProof() {
+        return this.generateCode();
     }
 }
