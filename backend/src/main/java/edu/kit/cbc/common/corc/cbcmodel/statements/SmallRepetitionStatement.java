@@ -74,7 +74,7 @@ public class SmallRepetitionStatement extends AbstractStatement {
     }
 
     @Override
-    public String generate() {
+    public String generateCode() {
         final String whilePattern = """
             while (%s) {
                 %s
@@ -82,6 +82,12 @@ public class SmallRepetitionStatement extends AbstractStatement {
             
             """;
 
-        return String.format(whilePattern, ConditionPrinter.print(guard.getParsedCondition()), loopStatement.generate());
+        return String.format(whilePattern, ConditionPrinter.print(guard.getParsedCondition()), loopStatement.generateCode());
+    }
+
+    @Override
+    public String generateCodeForProof() {
+        //Do not generate Code for proof because no inner loops should be generated
+        return "";
     }
 }

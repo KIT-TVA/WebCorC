@@ -22,7 +22,12 @@ public class JavaVariable implements Generatable {
     }
 
     @Override
-    public String generate() {
+    public String generateCode() {
         return this.name + ";";
+    }
+
+    @Override
+    public String generateCodeForProof() {
+        return "";
     }
 }
