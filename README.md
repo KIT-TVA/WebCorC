@@ -4,7 +4,6 @@
 
 **The Web-based Correctness-by-Construction (CbC) IDE**
 
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Frontend](https://img.shields.io/badge/Frontend-Angular_19-dd0031.svg)](https://angular.io/)
 [![Backend](https://img.shields.io/badge/Backend-Micronaut-black.svg)](https://micronaut.io/)
 [![Build](https://img.shields.io/badge/Build-Docker-2496ed.svg)](https://www.docker.com/)
@@ -25,7 +24,7 @@ Correctness-by-Construction is a methodology where programs are developed increm
 
 > **Live Demo**: Try out the public instance at [corc.informatik.kit.edu](https://corc.informatik.kit.edu/)
 
-For more in-depth information on the concepts, visit the [CorC Wiki](https://github.com/KIT-TVA/CorC/wiki).
+For more in-depth information on the concepts, visit the [CorC Wiki](https://kit-tva.github.io/WebCorC/).
 
 ---
 
@@ -137,4 +136,4 @@ WebCorC/
 
 ## 📄 License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the [Apache 2.0](LICENSE).
