@@ -284,7 +284,7 @@ export class LoadExampleDialogComponent {
                   "Comp2",
                   new Condition("A.length > 0"),
                   new Condition("A.length > 0 & i == 0 & j == 1"),
-                  new Condition("A.length > 0 & i == 0 & j == 1"),
+                  new Condition("A.length > 0 & i == 0"),
                   new Statement(
                     "Statement1",
                     new Condition("A.length > 0"),

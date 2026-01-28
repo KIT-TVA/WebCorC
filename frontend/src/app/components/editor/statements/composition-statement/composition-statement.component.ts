@@ -54,7 +54,7 @@ export class CompositionStatementComponent extends Refinement {
   }
 
   public override getTitle(): string {
-    return "Composition";
+    return "Sequence";
   }
 
   /**

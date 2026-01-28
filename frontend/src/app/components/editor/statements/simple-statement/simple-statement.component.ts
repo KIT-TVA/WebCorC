@@ -70,7 +70,7 @@ export class SimpleStatementComponent extends Refinement implements OnInit {
   }
 
   public override getTitle(): string {
-    return "Statement";
+    return "Assignment";
   }
 
   public override refreshLinkState(): void {

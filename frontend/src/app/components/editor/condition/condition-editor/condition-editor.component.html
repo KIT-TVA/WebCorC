@@ -1,35 +1,37 @@
 <div style="width: fit-content" (mousedown)="$event.stopImmediatePropagation()">
   <div (focusout)="conditionEditingFinished.emit()">
-    <p-icon-field>
-      <p-float-label variant="on">
-        <textarea
-          id="rule"
-          pTextarea
-          class="textarea"
-          spellcheck="false"
-          [rows]="inline ? 1 : 5"
-          [(ngModel)]="condition().condition"
-          #input
-          variant="filled"
-          [disabled]="!editable"
-          [dt]="{
-            root: {
-              borderColor: redConditions.includes(condition())
-                ? '#ff7e7e'
-                : greenConditions.includes(condition())
-                  ? '#6ab77a'
-                  : $dt('textarea.border.color').value,
-            },
-          }"
-        >
-        </textarea>
-        <label for="rule">{{ placeholder }}</label>
-      </p-float-label>
-      <p-inputicon
-        (click)="askAi()"
-        style="cursor: pointer"
-        class="pi pi-microchip-ai"
-      ></p-inputicon>
-    </p-icon-field>
+    <form>
+      <p-icon-field>
+        <p-float-label variant="on">
+          <textarea
+            [ngModelOptions]="{ standalone: true }"
+            id="field"
+            pTextarea
+            class="textarea"
+            spellcheck="false"
+            [rows]="inline ? 1 : 5"
+            [(ngModel)]="condition().condition"
+            variant="filled"
+            [disabled]="!editable"
+            [dt]="{
+              root: {
+                borderColor: redConditions.includes(condition())
+                  ? '#ff7e7e'
+                  : greenConditions.includes(condition())
+                    ? '#6ab77a'
+                    : $dt('textarea.border.color').value,
+              },
+            }"
+          >
+          </textarea>
+          <label for="field">{{ placeholder }}</label>
+        </p-float-label>
+        <p-inputicon
+          (click)="askAi()"
+          style="cursor: pointer"
+          class="pi pi-microchip-ai"
+        ></p-inputicon>
+      </p-icon-field>
+    </form>
   </div>
 </div>
