@@ -1,4 +1,4 @@
-import { Component, Input, signal } from "@angular/core";
+import { Component, Input } from "@angular/core";
 
 import { StatementComponent } from "../statement/statement.component";
 import { Refinement } from "../../../../types/refinement";
@@ -18,10 +18,8 @@ import {
 } from "../../../../types/statements/abstract-statement";
 import { Position } from "../../../../types/position";
 import { SelectionStatementNode } from "../../../../types/statements/nodes/selection-statement-node";
-import { createEmptyStatementNode } from "../../../../types/statements/nodes/statement-node-utils";
 import { HandleComponent } from "ngx-vflow";
 import { index } from "d3";
-import { Condition } from "../../../../types/condition/condition";
 
 /**
  * Component in the graphical editor to represent the {@link SelectionStatement}
@@ -93,15 +91,7 @@ export class SelectionStatementComponent extends Refinement {
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public chooseRefinement(index: number, type: StatementType): void {
-    if (!type) {
-      return;
-    }
-    const newNode = createEmptyStatementNode(type, this._node);
-    this._node.setSelection(index, newNode);
-    this.treeService.addStatementNode(newNode);
-    this._node.overridePrecondition(this._node, this._node.precondition);
-
-    setTimeout(() => this.refreshLinkState(), 5);
+    this.treeService.createNodeForStatement(this._node, type, index);
   }
 
   protected readonly index = index;

@@ -78,6 +78,8 @@ export class FileEditorComponent implements AfterViewInit, OnDestroy {
   }
 
   public ngOnDestroy(): void {
+    console.log("Destroying File Editor Component");
+    console.log(this._urn);
     this.projectService.syncFileContent(this._urn, this.code);
     this._viewInit = false;
   }

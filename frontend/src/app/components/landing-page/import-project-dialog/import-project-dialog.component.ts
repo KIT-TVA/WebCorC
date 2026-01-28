@@ -1,11 +1,14 @@
-import {Component} from '@angular/core';
-import {FormsModule} from '@angular/forms';
-import {ProjectService} from '../../../services/project/project.service';
-import {ApiDirectory} from '../../../services/project/types/api-elements';
-import {ConsoleService} from '../../../services/console/console.service';
-import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
-import {FileUpload} from "primeng/fileupload";
-import {Button} from "primeng/button";
+import { Component } from "@angular/core";
+import { FormsModule } from "@angular/forms";
+import { ProjectService } from "../../../services/project/project.service";
+import {
+  ApiDirectory,
+  LocalDirectory,
+} from "../../../services/project/types/api-elements";
+import { ConsoleService } from "../../../services/console/console.service";
+import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { FileUpload } from "primeng/fileupload";
+import { Button } from "primeng/button";
 
 /**
  * Dialog for importing a project created with this editor
@@ -56,7 +59,10 @@ export class ImportProjectDialogComponent {
 
   public confirm() {
     if (!this._accepted) return;
-    this.projectService.import(this._rootDir, this._projectname);
+    this.projectService.importProject(
+      LocalDirectory.fromApi(this._rootDir),
+      this._projectname,
+    );
   }
 
   public get accepted(): boolean {

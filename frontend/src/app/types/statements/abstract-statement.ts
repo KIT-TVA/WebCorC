@@ -1,6 +1,4 @@
-import { ComponentRef, ViewContainerRef } from "@angular/core";
 import { IPosition, Position } from "../position";
-import { Refinement } from "../refinement";
 import { ICondition } from "../condition/condition";
 import { IStatement } from "./simple-statement";
 import { ICompositionStatement } from "./composition-statement";
@@ -65,18 +63,5 @@ export class AbstractStatement implements IAbstractStatement {
     public position: IPosition = new Position(0, 0),
   ) {
     this.id = String(Date.now() * Math.random());
-  }
-
-  /**
-   * Convert the data only statement to the corresponding component
-   * @deprecated
-   * @param spawn The element to spawn the component in
-   * @returns The raw statment and the component reference of the statement, used to connect the statements in the graphical editor
-   */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public toComponent(
-    spawn: ViewContainerRef,
-  ): [refinement: Refinement, ref: ComponentRef<Refinement>] | undefined {
-    return;
   }
 }

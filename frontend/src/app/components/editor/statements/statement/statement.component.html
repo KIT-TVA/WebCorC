@@ -64,7 +64,7 @@
         <mat-drawer-container class="example-container" autosize>
           <mat-drawer #preconditionDrawer class="example-sidenav" mode="side">
             <div class="conditionParent">
-              <app-condition-editor
+              <app-condition-editor placeholder="Pre Condition"
                 [(condition)]="_node.precondition"
                 [editable]="_node.preconditionEditable()"
               ></app-condition-editor>
@@ -91,7 +91,7 @@
       </div>
     } @else {
       <div style="width: fit-content" class="conditionParent">
-        <app-condition-editor
+        <app-condition-editor placeholder="Pre Condition"
           [(condition)]="_node.precondition"
           [editable]="_node.preconditionEditable()"
         ></app-condition-editor>
@@ -136,7 +136,7 @@
       </div>
     } @else {
       <div style="width: fit-content" class="conditionParent">
-        <app-condition-editor
+        <app-condition-editor placeholder="Post Condition"
           [(condition)]="_node.postcondition"
           [editable]="_node.postconditionEditable()"
         ></app-condition-editor>

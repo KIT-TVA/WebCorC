@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import {Component, OnInit} from "@angular/core";
 import { Fluid } from "primeng/fluid";
 import { Select } from "primeng/select";
 import { Button } from "primeng/button";
@@ -25,11 +25,14 @@ import { ProjectPredicate } from "../../../types/ProjectPredicate";
   templateUrl: "./predicate-manager.component.html",
   styleUrl: "./predicate-manager.component.css",
 })
-export class PredicateManagerComponent {
-  protected predicates;
+export class PredicateManagerComponent implements OnInit {
+  protected predicates: ProjectPredicate[] = [];
 
   constructor(private predicateService: PredicateService) {
-    this.predicates = predicateService.getPredicates();
+  }
+
+  ngOnInit() {
+    this.predicates = this.predicateService.getPredicates();
   }
 
   protected selectedPredicate: ProjectPredicate | undefined;
@@ -38,6 +41,7 @@ export class PredicateManagerComponent {
     this.predicateName = this.selectedPredicate!.name;
     this.predicateDefinition = this.selectedPredicate!.definition;
     this.predicateSignature = this.selectedPredicate!.signature;
+
   }
 
   protected savePredicate() {
@@ -52,6 +56,10 @@ export class PredicateManagerComponent {
   protected predicateDefinition: string = "";
 
   protected addPredicate() {
+    //There appears to be a bug in PrimeNG, which means we have to do delete something in the array before the selection component will change its label.
+    //Hours spent: too many, just leave it like this
+    this.selectedPredicate = this.predicateService.addPredicate();
+    this.deletePredicate();
     this.selectedPredicate = this.predicateService.addPredicate();
   }
   protected deletePredicate() {

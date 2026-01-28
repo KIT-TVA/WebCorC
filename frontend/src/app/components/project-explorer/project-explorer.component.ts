@@ -8,7 +8,6 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { Router } from "@angular/router";
 import { first } from "rxjs";
-import { MatDialog } from "@angular/material/dialog";
 import { CreateProjectDialogComponent } from "./create-project-dialog/create-project-dialog.component";
 import {
   CodeFile,
@@ -16,7 +15,6 @@ import {
   ProjectDirectory,
   ProjectElement,
   ProjectFile,
-  RenameProjectElement,
 } from "../../services/project/types/project-elements";
 import { ImportFileDialogComponent } from "./import-file-dialog/import-file-dialog";
 import { MatMenuModule } from "@angular/material/menu";
@@ -131,10 +129,13 @@ export class ProjectExplorerComponent {
 
   protected treeNodes: TreeNode[] = [];
 
+  // Track the element currently being renamed (ephemeral, UI-only)
+  private renamingElement: ProjectElement | null = null;
+  private directoryForNewFile: ProjectElement | null = null;
+
   public constructor(
     public projectService: ProjectService,
     private router: Router,
-    private dialog: MatDialog,
     private dialogService: DialogService,
     private treeService: TreeService,
     private predicateService: PredicateService,
@@ -142,28 +143,47 @@ export class ProjectExplorerComponent {
   ) {
     this.projectService.dataChange.subscribe((data) => {
       this.treeNodes = this.getTreeNodes(data);
+      console.log(data);
+      console.log(this.treeNodes);
     });
   }
 
   private getTreeNodes(content: ProjectElement[]): TreeNode<ProjectElement>[] {
-    return content.map((element) => {
+    // Build nodes and inject a synthetic RenameProjectElement next to the element being renamed
+    const nodes: TreeNode<ProjectElement>[] = [];
+
+    for (const element of content) {
       let icon = "pi pi-file";
       let children: TreeNode<ProjectElement>[] = [];
-      let pseudoElement = element;
+      const pseudoElement: ProjectElement = element;
       let type = "file";
       const expanded = this.expandedNodes.includes(element.path);
-      if (element instanceof RenameProjectElement) {
-        pseudoElement = element.element;
+      if (element === this.renamingElement) {
         type = "rename";
-      } else if (element.name == "...new") {
-        type = "fake";
       }
       if (pseudoElement instanceof ProjectDirectory) {
         icon = expanded ? "pi pi-folder-open" : "pi pi-folder";
         if (type != "rename") {
           type = "directory";
         }
+        // build children from directory content, passing the child's parent path
         children = this.getTreeNodes(pseudoElement.content);
+        if (this.directoryForNewFile?.path === element.path) {
+          this.directoryForNewFile = null;
+          // Inject a synthetic "new file" node
+          children.push({
+            key: element.urn + "/new-file",
+            label: "new-file",
+            data: element,
+            droppable: false,
+            draggable: false,
+            expanded: false,
+            icon: "pi pi-file-edit",
+            type: "fake",
+            children: [],
+            leaf: true,
+          } as TreeNode<ProjectElement>);
+        }
       }
       if (pseudoElement instanceof ProjectFile) {
         switch (pseudoElement.type) {
@@ -176,8 +196,9 @@ export class ProjectExplorerComponent {
             icon = "pi pi-code";
         }
       }
-      return {
-        key: element.path,
+
+      nodes.push({
+        key: element.urn,
         label: element.name,
         data: element,
         droppable: type == "directory",
@@ -187,8 +208,14 @@ export class ProjectExplorerComponent {
         type: type,
         children: children,
         leaf: type != "directory",
-      };
-    });
+      });
+    }
+
+    // If parentPath has no children with the element we want to rename but the renamingParentPath
+    // exactly matches parentPath and the renamingElement is null in the content (edge case),
+    // don't inject anything. We only inject next to the matched element.
+
+    return nodes;
   }
 
   /**
@@ -209,7 +236,7 @@ export class ProjectExplorerComponent {
       return;
     }
 
-    this.projectService.addDirectory(this.projectService.root.path, name);
+    this.projectService.addDirectory(this.projectService.root.urn, name);
   }
 
   /**
@@ -237,7 +264,7 @@ export class ProjectExplorerComponent {
     if (
       !this.projectService.root.content.some((pe) => pe.name === baseFileName)
     ) {
-      this.projectService.addFile(this.projectService.root.path, name, type);
+      this.projectService.addFile(this.projectService.root.urn, name, type);
       return;
     }
 
@@ -251,7 +278,7 @@ export class ProjectExplorerComponent {
     }
     // Create the file with the next free suffix
     this.projectService.addFile(
-      this.projectService.root.path,
+      this.projectService.root.urn,
       `${name}-${i}`,
       type,
     );
@@ -262,15 +289,7 @@ export class ProjectExplorerComponent {
    * @param node the node
    */
   public deleteElement(node: ProjectElement) {
-    this.projectService.deleteElement(node.path, node.name);
-  }
-
-  /**
-   * Add fake element to project tree
-   * @param node the parent node of the new node
-   */
-  public addElement(node: ProjectElement) {
-    this.projectService.addFakeElement(node.path);
+    this.projectService.deleteElement(node);
   }
 
   /**
@@ -408,7 +427,16 @@ export class ProjectExplorerComponent {
   public toggleRename(node: ProjectElement) {
     const element = node;
     if (!element) return;
-    this.projectService.toggleRename(element);
+
+    if (this.renamingElement && this.renamingElement.urn === element.urn) {
+      this.renamingElement = null;
+      this.treeNodes = this.getTreeNodes(this.projectService.root.content);
+      return;
+    }
+
+    // Start renaming this element (UI-only synthetic node)
+    this.renamingElement = element;
+    this.treeNodes = this.getTreeNodes(this.projectService.root.content);
   }
 
   /**
@@ -420,8 +448,11 @@ export class ProjectExplorerComponent {
     if (!newName) return;
     const element = node;
     if (!element) return;
-
+    // Regular element rename
     this.projectService.renameElement(element, newName);
+    // Clear renaming state
+    this.renamingElement = null;
+    this.treeNodes = this.getTreeNodes(this.projectService.root.content);
   }
 
   public importProject() {
@@ -442,5 +473,10 @@ export class ProjectExplorerComponent {
       (node) => node != event.node.data.path,
     );
     event.node.icon = "pi pi-folder";
+  }
+
+  protected addElementToDirectory(directory: ProjectElement) {
+    this.directoryForNewFile = directory;
+    this.treeNodes = this.getTreeNodes(this.projectService.root.content);
   }
 }

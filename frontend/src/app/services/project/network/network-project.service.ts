@@ -2,18 +2,24 @@ import { Injectable } from "@angular/core";
 import { environment } from "../../../../environments/environment";
 import { BehaviorSubject, Observable, Subject, catchError, of } from "rxjs";
 import { ConsoleService } from "../../console/console.service";
-import { CBCFormula, ICBCFormula } from "../../../types/CBCFormula";
+import {
+  CBCFormula,
+  ICBCFormula,
+  LocalCBCFormula,
+} from "../../../types/CBCFormula";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { NetProject } from "./NetProject";
 import {
-  ApiDiagrammFile,
+  ApiDiagramFile,
   ApiDirectory,
   ApiTextFile,
   Inode,
+  LocalDirectory,
 } from "../types/api-elements";
 import { CbcFormulaMapperService } from "../mapper/cbc-formula-mapper.service";
 import { NetworkStatusService } from "../../networkStatus/network-status.service";
 import { ProjectStorageService } from "../storage/project-storage.service";
+import { ProjectElementsMapperService } from "../types/project-elements-mapper.service";
 
 /**
  * Service to interact with the backend for managing the project via hhtp rest calls.
@@ -34,6 +40,7 @@ export class NetworkProjectService {
   constructor(
     private http: HttpClient,
     private mapper: CbcFormulaMapperService,
+    private projectMapper: ProjectElementsMapperService,
     private consoleService: ConsoleService,
     private networkStatusService: NetworkStatusService,
     private storage: ProjectStorageService,
@@ -89,12 +96,17 @@ export class NetworkProjectService {
       )
       .subscribe((project) => {
         this._projectname = project.name;
-        this._dataChange.next(
-          new ApiDirectory(project.files.urn, project.files.content),
+        const apiDirectory = new ApiDirectory(
+          project.files.urn,
+          project.files.content,
         );
+        this._dataChange.next(apiDirectory);
         this.networkStatusService.stopNetworkRequest();
-        this.storage.setProjectTree(
-          new ApiDirectory(project.files.urn, project.files.content),
+        this.storage.saveProject(
+          this.projectMapper.importProject(
+            LocalDirectory.fromApi(apiDirectory),
+          ),
+          project.name,
         );
       });
   }
@@ -111,7 +123,7 @@ export class NetworkProjectService {
 
     let realFile;
 
-    if (file instanceof ApiDiagrammFile) {
+    if (file instanceof ApiDiagramFile) {
       realFile = new File([JSON.stringify(file.content)], urn, {
         type: "application/json",
       });
@@ -163,7 +175,7 @@ export class NetworkProjectService {
    * Caution: Not fully implemented
    * @param urn
    */
-  public async getFileContent(urn: string): Promise<string | CBCFormula> {
+  public async getFileContent(urn: string): Promise<string | LocalCBCFormula> {
     this.networkStatusService.startNetworkRequest();
     const request = new Request(this.buildFileURL(urn), {
       method: "GET",

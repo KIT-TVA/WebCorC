@@ -3,11 +3,12 @@ import { Subject } from "rxjs";
 import {
   AbstractStatement,
   IAbstractStatement,
+  StatementType,
 } from "../../types/statements/abstract-statement";
 import { JavaVariable, JavaVariableKind } from "../../types/JavaVariable";
 import { Renaming } from "../../types/Renaming";
 import { Condition } from "../../types/condition/condition";
-import { CBCFormula } from "../../types/CBCFormula";
+import { LocalCBCFormula } from "../../types/CBCFormula";
 import { ICompositionStatement } from "../../types/statements/composition-statement";
 import { IRepetitionStatement } from "../../types/statements/repetition-statement";
 import { ISelectionStatement } from "../../types/statements/selection-statement";
@@ -44,10 +45,18 @@ export class TreeService {
     this._resetVerifyNotifier = new Subject<void>();
   }
 
-  setFormula(newFormula: CBCFormula, urn: string) {
+  setFormula(newFormula: LocalCBCFormula, urn: string) {
+    console.log(
+      "TreeService.setFormula called for urn:",
+      urn,
+      "incoming formula:",
+      newFormula,
+    );
+
     this._urn = urn;
     this._rootFormula = newFormula;
-    this.getStatementNodes();
+    //commented out for optimization, uncomment if the editor breaks
+    //this.getStatementNodes();
     this._variables = [];
     this._renames = [];
     this._globalConditions = [];
@@ -62,9 +71,25 @@ export class TreeService {
     newFormula.globalConditions.forEach((condition) => {
       this.addGlobalCondition(condition.condition);
     });
+    console.log(
+      "TreeService.setFormula completed, internal rootFormula:",
+      this._rootFormula,
+    );
+
+    // Immediately build the statement nodes from the supplied formula so the
+    // internal rootStatementNode and statement node list mirror the formula.
+    // This avoids later callers producing an empty default RootStatement.
+    try {
+      this.getStatementNodes();
+    } catch (e) {
+      console.error(
+        "TreeService.setFormula: failed to initialize statement nodes",
+        e,
+      );
+    }
   }
 
-  private _rootFormula: CBCFormula | undefined;
+  private _rootFormula: LocalCBCFormula | undefined;
 
   public get rootFormula() {
     return this._rootFormula;
@@ -216,7 +241,9 @@ export class TreeService {
     return statements;
   }
 
-  public getStatementsFromFormula(formula: CBCFormula): IAbstractStatement[] {
+  public getStatementsFromFormula(
+    formula: LocalCBCFormula,
+  ): IAbstractStatement[] {
     const statements: IAbstractStatement[] = [];
     if (formula && formula.statement) {
       this.collectStatements(formula.statement, statements);
@@ -237,6 +264,16 @@ export class TreeService {
     }
   }
 
+  public createNodeForStatement(
+    parent: AbstractStatementNode,
+    statementType: StatementType,
+    index?: number,
+  ): AbstractStatementNode {
+    const child = parent.createChild(statementType, index);
+    this.addStatementNode(child);
+    return child;
+  }
+
   public deleteStatementNode(statementNode: AbstractStatementNode) {
     if (statementNode.statement.type === "ROOT") {
       return;
@@ -250,6 +287,7 @@ export class TreeService {
   }
 
   public getStatementNodes(): Signal<AbstractStatementNode[]> {
+    console.log("getStatementNodes in treeservice called", this.rootFormula);
     const rootStatementNode = this.rootFormula?.statement
       ? new RootStatementNode(
           this.rootFormula.statement as RootStatement,
@@ -264,7 +302,8 @@ export class TreeService {
           ),
         );
     if (this._rootFormula) {
-      this._rootFormula.statement = rootStatementNode.statement;
+      this._rootFormula.statement =
+        rootStatementNode.statement as IRootStatement;
     }
     this._statementNodes.set(
       [rootStatementNode].concat(

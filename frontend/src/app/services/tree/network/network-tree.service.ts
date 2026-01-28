@@ -4,7 +4,7 @@ import {
   HttpParams,
 } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { CBCFormula, ICBCFormula } from "../../../types/CBCFormula";
+import { ICBCFormula, LocalCBCFormula } from "../../../types/CBCFormula";
 import { environment } from "../../../../environments/environment";
 import { catchError, map, Observable, of } from "rxjs";
 import { VerificationService } from "../verification/verification.service";
@@ -13,7 +13,7 @@ import { ConsoleService } from "../../console/console.service";
 import { ProjectService } from "../../project/project.service";
 import { CbcFormulaMapperService } from "../../project/mapper/cbc-formula-mapper.service";
 import { WebSocketService } from "./websocket";
-import { ApiDiagrammFile } from "../../project/types/api-elements";
+import { ApiDiagramFile } from "../../project/types/api-elements";
 
 /**
  * The Service to send the editor contents over the network to the backend for verification or code generation.
@@ -45,7 +45,7 @@ export class NetworkTreeService {
    * @param urn urn of the file being verified, used to update the file in the project with the verification result
    */
   public verify(
-    root: CBCFormula | undefined,
+    root: LocalCBCFormula | undefined,
     projectId: string | undefined,
     urn: string,
   ) {
@@ -60,7 +60,10 @@ export class NetworkTreeService {
     this.http
       .post<string>(
         environment.apiUrl + NetworkTreeService.verifyPath,
-        root ? new ApiDiagrammFile("", root, "file").content : undefined,
+        root
+          ? new ApiDiagramFile("", this.mapper.exportFormula(root), "file")
+              .content
+          : undefined,
         {
           params: params,
         },
@@ -85,7 +88,7 @@ export class NetworkTreeService {
                 environment.apiUrl + NetworkTreeService.verifyResultPath + uuid,
               )
               .pipe(map((formula) => this.mapper.importFormula(formula)))
-              .subscribe((formula: CBCFormula) => {
+              .subscribe((formula: LocalCBCFormula) => {
                 this.verificationService.next(formula, urn);
                 this.networkStatusService.stopNetworkRequest();
                 this.projectService.downloadWorkspace();
@@ -104,7 +107,7 @@ export class NetworkTreeService {
    * @param projectId The id of the project, is used to give backend more context in form of the helper.key in the project
    */
   public generateCode(
-    root: CBCFormula | undefined,
+    root: LocalCBCFormula | undefined,
     projectId?: string | undefined,
   ) {
     let params = new HttpParams();
@@ -115,10 +118,14 @@ export class NetworkTreeService {
 
     this.networkStatusService.startNetworkRequest();
     this.http
-      .post(environment.apiUrl + NetworkTreeService.generatePath, root, {
-        params: params,
-        responseType: "text" as const,
-      })
+      .post(
+        environment.apiUrl + NetworkTreeService.generatePath,
+        root ? this.mapper.exportFormula(root) : undefined,
+        {
+          params: params,
+          responseType: "text" as const,
+        },
+      )
       .pipe(map((string) => string))
       .pipe(
         catchError((error: HttpErrorResponse): Observable<string> => {

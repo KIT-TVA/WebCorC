@@ -175,14 +175,12 @@ export function disconnectNodes(
   parent: AbstractStatementNode,
   child: AbstractStatementNode,
 ) {
-  parent.overridePostcondition(
-    child,
+  child.overridePostcondition(
     signal(new Condition(child.postcondition().condition)),
   );
-  parent.deleteChild(child);
   child.overridePrecondition(
-    parent,
     signal(new Condition(child.precondition().condition)),
   );
+  parent.deleteChild(child);
   child.parent = undefined;
 }

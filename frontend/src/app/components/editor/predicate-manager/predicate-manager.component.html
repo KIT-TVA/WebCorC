@@ -2,22 +2,23 @@
   style="display: flex; flex-direction: column; gap: 1rem; padding: 0.5rem"
 >
   <p-input-group>
-    <p-select (onChange)="selectPredicate()" [(ngModel)]="selectedPredicate" [options]="predicates" optionLabel="name" dataKey="id" placeholder="Select Predicate"> </p-select>
+    <p-select (onChange)="selectPredicate()" [(ngModel)]="selectedPredicate" [options]="predicates" optionLabel="name" inputId="id" dataKey="id" placeholder="Select Predicate"> </p-select>
     <p-button  icon="pi pi-plus" label="New" (click)="addPredicate()"></p-button>
   </p-input-group>
   <p-float-label variant="on">
-    <input [(ngModel)]="predicateName" id="predicateName" pInputText />
+    <input [(ngModel)]="predicateName" [disabled]="!selectedPredicate" id="predicateName" pInputText />
     <label for="predicateName">Name</label>
   </p-float-label>
   <p-float-label variant="on">
-    <input [(ngModel)]="predicateSignature" id="predicateSignature" pInputText />
+    <input [(ngModel)]="predicateSignature" [disabled]="!selectedPredicate" id="predicateSignature" pInputText />
     <label for="predicateSignature">Signature</label>
   </p-float-label>
   <p-float-label variant="on">
-    <textarea [(ngModel)]="predicateDefinition" id="predicateDefinition" pTextarea></textarea>
+    <textarea [(ngModel)]="predicateDefinition" [disabled]="!selectedPredicate" id="predicateDefinition" pTextarea></textarea>
     <label for="predicateDefinition">Definition</label>
   </p-float-label>
   <p-button
+          [disabled]="!selectedPredicate"
     icon="pi pi-save"
     label="Save Definition"
     severity="primary"
@@ -25,12 +26,14 @@
   ></p-button>
   <p-input-group>
     <p-button
+            [disabled]="!selectedPredicate"
       icon="pi pi-refresh"
       label="Restore Definition"
       severity="secondary"
       (click)="selectPredicate()"
     ></p-button>
     <p-button
+            [disabled]="!selectedPredicate"
       text
       icon="pi pi-trash"
       label="Delete Definition"

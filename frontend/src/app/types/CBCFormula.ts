@@ -6,8 +6,7 @@ import {
 } from "./statements/abstract-statement";
 import { IJavaVariable } from "./JavaVariable";
 import { IRenaming } from "./Renaming";
-import { RootStatementNode } from "./statements/nodes/root-statement-node";
-import { RootStatement } from "./statements/root-statement";
+import { IRootStatement, RootStatement } from "./statements/root-statement";
 
 /**
  * The representation of the data in the graphical editor in a json object.
@@ -22,6 +21,34 @@ export interface ICBCFormula {
   globalConditions: ICondition[];
   renamings: IRenaming[] | null;
   isProven: boolean;
+}
+
+export interface ILocalCBCFormula {
+  name: string;
+  statement: IRootStatement | undefined;
+  javaVariables: IJavaVariable[];
+  globalConditions: ICondition[];
+  renamings: IRenaming[] | null;
+  isProven: boolean;
+  readonly local: true;
+}
+
+export class LocalCBCFormula implements ILocalCBCFormula {
+  public readonly local = true;
+  constructor(
+    public name: string = "",
+    public statement: IRootStatement | undefined = new RootStatement(
+      "",
+      new Condition(""),
+      new Condition(""),
+      undefined,
+    ),
+    public javaVariables: IJavaVariable[] = [],
+    public globalConditions: ICondition[] = [],
+    public renamings: IRenaming[] | null = null,
+    public isProven: boolean = false,
+    public position: IPosition = new Position(0, 0),
+  ) {}
 }
 
 /**

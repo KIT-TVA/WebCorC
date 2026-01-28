@@ -44,9 +44,6 @@ import { Condition } from "../../../../types/condition/condition";
 export class RepetitionStatementComponent extends Refinement {
   @Input({ required: true }) _node!: RepetitionStatementNode;
 
-  @ViewChild("subComponentSpawn", { read: ViewContainerRef })
-  private componentSpawn!: ViewContainerRef;
-
   public constructor(treeService: TreeService) {
     super(treeService);
   }
@@ -59,13 +56,7 @@ export class RepetitionStatementComponent extends Refinement {
    * Add the child statement to the dom
    */
   public chooseRefinement(type: StatementType) {
-    if (!type) {
-      return;
-    }
-    const newNode = createEmptyStatementNode(type, this._node);
-    this._node.loopStatementNode = newNode;
-    this.treeService.addStatementNode(newNode);
-    this._node.overridePrecondition(this._node, this._node.precondition);
+    this.treeService.createNodeForStatement(this._node, type);
   }
 
   public override resetPosition(position: Position, offset: Position): void {

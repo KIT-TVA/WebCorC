@@ -1,8 +1,12 @@
 import { AbstractStatementNode } from "./abstract-statement-node";
 import { ISelectionStatement } from "../selection-statement";
-import { signal, Signal, WritableSignal } from "@angular/core";
+import { signal, WritableSignal } from "@angular/core";
 import { Condition, ICondition } from "../../condition/condition";
-import { statementNodeUtils } from "./statement-node-utils";
+import {
+  createEmptyStatementNode,
+  statementNodeUtils,
+} from "./statement-node-utils";
+import { StatementType } from "../abstract-statement";
 
 export class SelectionStatementNode extends AbstractStatementNode {
   public guards: WritableSignal<ICondition>[];
@@ -19,11 +23,8 @@ export class SelectionStatementNode extends AbstractStatementNode {
     );
   }
 
-  override overridePrecondition(
-    sourceNode: AbstractStatementNode,
-    condition: WritableSignal<ICondition>,
-  ) {
-    super.overridePrecondition(sourceNode, condition);
+  override overridePrecondition(condition: WritableSignal<ICondition>) {
+    super.overridePrecondition(condition);
     this.children.forEach((c, index) => {
       if (c && this.guards[index]) {
         const computedCondition = signal(
@@ -31,7 +32,7 @@ export class SelectionStatementNode extends AbstractStatementNode {
             condition().condition + " & " + this.guards[index]().condition,
           ),
         );
-        c.overridePrecondition(this, computedCondition); //TODO condition && guard
+        c.overridePrecondition(computedCondition);
       }
     });
   }
@@ -43,11 +44,50 @@ export class SelectionStatementNode extends AbstractStatementNode {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  override overridePostcondition(
-    sourceNode: AbstractStatementNode,
-    condition: Signal<ICondition>,
-  ) {
-    //TODO or all postconditions ??
+  override overridePostcondition(condition: WritableSignal<ICondition>) {
+    super.overridePostcondition(condition);
+    //TODO check if we are deleting the postcondition of a statement with a different postcondition than this statement
+    this.children.forEach((child) => child?.overridePostcondition(condition));
+  }
+
+  override checkConditionSync(child: AbstractStatementNode): boolean {
+    if (child.statement.type == "REPETITION") {
+      return true;
+    }
+    this.getConditionConflicts(child);
+    return child.postcondition().condition == this.postcondition().condition;
+  }
+
+  override getConditionConflicts(child: AbstractStatementNode): {
+    version1: WritableSignal<ICondition>;
+    version2: WritableSignal<ICondition>;
+    type: "PRECONDITION" | "POSTCONDITION";
+  }[] {
+    const conflicts: {
+      version1: WritableSignal<ICondition>;
+      version2: WritableSignal<ICondition>;
+      type: "PRECONDITION" | "POSTCONDITION";
+    }[] = [];
+
+    // If the child is a repetition, ignore differences in conditions — repetition statements
+    // can have different internal conditions (invariant/guard/variant) and shouldn't
+    // be treated as conflicts with their parent here.
+    if (child.statement.type == "REPETITION") {
+      return conflicts;
+    }
+
+    if (this.postcondition() != child.postcondition()) {
+      if (this.postcondition().condition === child.postcondition().condition) {
+        child.overridePostcondition(this.postcondition);
+      } else {
+        conflicts.push({
+          version1: this.postcondition,
+          version2: child.postcondition,
+          type: "POSTCONDITION",
+        });
+      }
+    }
+    return conflicts;
   }
 
   override finalize() {
@@ -73,14 +113,30 @@ export class SelectionStatementNode extends AbstractStatementNode {
     if (index < this.children.length) {
       this.children[index] = node;
       this.statement.commands[index] = node.statement;
-      if (node) {
-        this.overridePostcondition(node, node.postcondition);
-      }
     }
   }
 
-  override checkConditionSync(_child: AbstractStatementNode): boolean {
-    return true;
+  override createChild(
+    statementType: StatementType,
+    index?: number,
+  ): AbstractStatementNode {
+    const idx = index ?? 0;
+    const statementNode = createEmptyStatementNode(statementType, this);
+    // If a guard exists for this branch, compute precondition as parentPrecondition & guard
+    if (this.guards[idx]) {
+      const computedCondition = signal(
+        new Condition(
+          this.precondition().condition + " & " + this.guards[idx]().condition,
+        ),
+      );
+      statementNode.overridePrecondition(computedCondition);
+    } else {
+      statementNode.overridePrecondition(this.precondition);
+    }
+    // All branches should share the same postcondition as the selection
+    statementNode.overridePostcondition(this.postcondition);
+    this.addChild(statementNode, idx ?? 0);
+    return statementNode;
   }
 
   removeSelection() {
