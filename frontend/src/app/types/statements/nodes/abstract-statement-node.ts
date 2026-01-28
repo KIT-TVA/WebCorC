@@ -46,6 +46,9 @@ export class AbstractStatementNode {
         (filteredNode) => filteredNode != node,
       );
     }
+    //TODO: Check this is still necessary after refactor
+    this.overridePrecondition(signal(this.precondition()));
+    this.overridePostcondition(signal(this.postcondition()));
   }
 
   public setPosition(position: { x: number; y: number }) {
@@ -118,7 +121,7 @@ export class AbstractStatementNode {
 
     if (this.precondition() != child.precondition()) {
       if (this.precondition().condition === child.precondition().condition) {
-        child.overridePrecondition(this.precondition);
+        this.overridePrecondition(child.precondition);
       } else {
         conflicts.push({
           version1: this.precondition,
@@ -129,7 +132,7 @@ export class AbstractStatementNode {
     }
     if (this.postcondition() != child.postcondition()) {
       if (this.postcondition().condition === child.postcondition().condition) {
-        child.overridePostcondition(this.postcondition);
+        this.overridePostcondition(child.postcondition);
       } else {
         conflicts.push({
           version1: this.postcondition,

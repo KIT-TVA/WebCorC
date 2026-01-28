@@ -1,8 +1,7 @@
 import { Component } from "@angular/core";
 import {
-  ApiDiagrammFile,
-  ApiDirectory,
-  ApiTextFile,
+    ApiDiagrammFile,
+    ApiDirectory, ApiTextFile,
 } from "../../../services/project/types/api-elements";
 import { Listbox } from "primeng/listbox";
 import { Button } from "primeng/button";
@@ -18,6 +17,7 @@ import { RootStatement } from "../../../types/statements/root-statement";
 import { CompositionStatement } from "../../../types/statements/composition-statement";
 import { SelectionStatement } from "../../../types/statements/selection-statement";
 import { JavaVariable } from "../../../types/JavaVariable";
+import {SkipStatement} from "../../../types/statements/strong-weak-statement";
 
 @Component({
   selector: "app-load-example-dialog",
@@ -262,108 +262,117 @@ export class LoadExampleDialogComponent {
         ),
       ]),
     },
-    {
-      name: "MaxElement",
-      icon: "trending_up",
-      project: new ApiDirectory("/", [
-        new ApiDiagrammFile(
-          "maxElement.diagram",
-          new CBCFormula(
-            "MaxElement",
-            new RootStatement(
-              "Root",
-              new Condition("A.length > 0"),
-              new Condition("max(A, 0, A.length, i)"),
-              new CompositionStatement(
-                "Comp1",
-                new Condition("A.length > 0"),
-                new Condition("max(A, 0, A.length, i)"),
-                new Condition("A.length > 0 & i = 0 & j = 1"),
-                new CompositionStatement(
-                  "Comp2",
-                  new Condition(""),
-                  new Condition(""),
-                  new Condition("A.length > 0 & i = 0"),
-                  new Statement(
-                    "Statement1",
-                    new Condition(""),
-                    new Condition(""),
-                    "i = 0;",
-                    new Position(800, 1200),
-                  ),
-                  new Statement(
-                    "Statement2",
-                    new Condition(""),
-                    new Condition(""),
-                    "j = 1;",
-                    new Position(1600, 1200),
-                  ),
-                  new Position(1300, 800),
-                ),
-                new RepetitionStatement(
-                  "Repetition",
-                  new Condition(""),
-                  new Condition(""),
-                  new CompositionStatement(
-                    "Comp2",
-                    new Condition(""),
-                    new Condition(""),
-                    new Condition("max(A, 0, j+1, i)"),
-                    new SelectionStatement(
-                      "Selection",
-                      new Condition(""),
-                      new Condition(""),
-                      [new Condition(""), new Condition("A[j] <= A[i]")],
+      {
+          name: "MaxElement",
+          icon: "trending_up",
+          project: new ApiDirectory("/", [
+              new ApiDiagrammFile(
+                  "maxElement.diagram",
+                  new CBCFormula(
+                      "MaxElement",
+                      new RootStatement(
+                          "Root",
+                          new Condition("A.length > 0"),
+                          new Condition("maxe(A, 0, A.length, i)"),
+                          new CompositionStatement(
+                              "Comp1",
+                              new Condition("A.length > 0"),
+                              new Condition("maxe(A, 0, A.length, i)"),
+                              new Condition("A.length > 0 & i == 0 & j == 1"),
+                              new CompositionStatement(
+                                  "Comp2",
+                                  new Condition("A.length > 0"),
+                                  new Condition("A.length > 0 & i == 0 & j == 1"),
+                                  new Condition("A.length > 0 & i == 0"),
+                                  new Statement(
+                                      "Statement1",
+                                      new Condition("A.length > 0"),
+                                      new Condition("A.length > 0 & i == 0"),
+                                      "i = 0;",
+                                      new Position(0, 1000),
+                                  ),
+                                  new Statement(
+                                      "Statement2",
+                                      new Condition("A.length > 0 & i == 0"),
+                                      new Condition("A.length > 0 & i == 0 & j == 1"),
+                                      "j = 1;",
+                                      new Position(800, 1000),
+                                  ),
+                                  new Position(0, 650),
+                              ),
+                              new RepetitionStatement(
+                                  "Repetition",
+                                  new Condition("maxe(A,0,j,i) & (j!=A.length)"),
+                                  new Condition("maxe(A, 0, j, i)"),
+                                  new CompositionStatement(
+                                      "Comp2",
+                                      new Condition("maxe(A,0,j,i) & (j!=A.length)"),
+                                      new Condition("maxe(A,0,j,i)"),
+                                      new Condition("maxe(A, 0, j+1, i)"),
+                                      new SelectionStatement(
+                                          "Selection",
+                                          new Condition("maxe(A,0,j,i) & (j!=A.length)"),
+                                          new Condition("maxe(A,0,j+1,i)"),
+                                          [
+                                              new Condition("A[j] > A[i]"),
+                                              new Condition("A[j] <= A[i]")
+                                          ],
+                                          [
+                                              new Statement(
+                                                  "Statement3",
+                                                  new Condition("maxe(A,0,j,i) & (j!=A.length) & A[j] > A[i]"),
+                                                  new Condition("maxe(A, 0, j+1, i)"),
+                                                  "i = j;",
+                                                  new Position(1175, 2025),
+                                              ),
+                                              new SkipStatement(
+                                                  "Statement4",
+                                                  new Condition("maxe(A,0,j,i) & (j!=A.length) & A[j] <= A[i]"),
+                                                  new Condition("maxe(A, 0, j+1, i)"),
+                                                  new Position(600, 2025),
+                                              ),
+                                          ],
+                                          false,
+                                          new Position(625, 1525),
+                                      ),
+                                      new Statement(
+                                          "Statement5",
+                                          new Condition("maxe(A, 0, j+1, i)"),
+                                          new Condition("maxe(A, 0, j, i)"),
+                                          "j = j+1;",
+                                          new Position(1600, 1525),
+                                      ),
+                                      new Position(1600, 1000),
+                                  ),
+                                  new Condition("A.length - j"),
+                                  new Condition("maxe(A,0,j,i)"),
+                                  new Condition("j != A.length"),
+                                  false,
+                                  false,
+                                  false,
+                                  new Position(950, 625),
+                              ),
+                              new Position(0, 300),
+                          ),
+                          new Position(0, 0),
+                      ),
+                      undefined,
+                      undefined,
                       [
-                        new Statement(
-                          "Statement3",
-                          new Condition(""),
-                          new Condition(""),
-                          "i = j;",
-                          new Position(0, 2000),
-                        ),
-                        new Statement(
-                          "Statement4",
-                          new Condition(""),
-                          new Condition(""),
-                          ";",
-                          new Position(800, 2000),
-                        ),
+                          new JavaVariable("int j", "LOCAL"),
+                          new JavaVariable("int i", "LOCAL"),
+                          new JavaVariable("int[] A", "LOCAL"),
                       ],
-                      false,
-                      new Position(800, 1600),
-                    ),
-                    new Statement(
-                      "Statement5",
-                      new Condition(""),
-                      new Condition(""),
-                      "j = j+1;",
-                      new Position(0, 1600),
-                    ),
-                    new Position(0, 1200),
+                      [
+                          new Condition("A != null"),
+                          new Condition("A.length > 0"),
+                          new Condition("A.length < 10"),
+                          new Condition("i >= 0 & i < A.length"),
+                          new Condition("j >= 0 & j <= A.length"),
+                      ],
                   ),
-                  new Condition("A.length - j"),
-                  new Condition("max(A, 0, j, i)"),
-                  new Condition("j != A.length"),
-                  false,
-                  false,
-                  false,
-                  new Position(0, 800),
-                ),
-                new Position(0, 400),
               ),
-              new Position(0, 0),
-            ),
-            undefined,
-            undefined,
-            [
-              new JavaVariable("int j", "LOCAL"),
-              new JavaVariable("int i", "LOCAL"),
-              new JavaVariable("int[] A", "LOCAL"),
-            ],
-          ),
-        ),
-      ]),
-    },
+          ]),
+      }
   ];
 }

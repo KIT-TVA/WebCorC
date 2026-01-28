@@ -54,12 +54,12 @@ export class RepetitionStatementNode extends AbstractStatementNode {
  */
   //eslint-disable-next-line @typescript-eslint/no-unused-vars
   public override overridePrecondition(condition: WritableSignal<ICondition>) {
-    /*this.precondition.set(
+    this.precondition.set(
       new Condition(
         this.invariant().condition + " & " + this.guard().condition,
       ),
-    );*/
-    //this.loopStatementNode?.overridePrecondition(this.precondition);
+    );
+    this.loopStatementNode?.overridePrecondition(this.precondition);
   }
   /*
   Suppressed warning because the postcondition of a repetition statement,
@@ -67,8 +67,8 @@ export class RepetitionStatementNode extends AbstractStatementNode {
    */
   //eslint-disable-next-line @typescript-eslint/no-unused-vars
   public override overridePostcondition(condition: WritableSignal<ICondition>) {
-    //this.postcondition = this.invariant;
-    //this.loopStatementNode?.overridePrecondition(this.postcondition);
+    this.postcondition = this.invariant;
+    this.loopStatementNode?.overridePrecondition(this.postcondition);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
