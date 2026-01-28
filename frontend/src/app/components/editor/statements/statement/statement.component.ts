@@ -5,6 +5,7 @@ import {
   Input,
   Output,
   ViewChild,
+  signal,
 } from "@angular/core";
 
 import { MatGridListModule } from "@angular/material/grid-list";
@@ -28,6 +29,9 @@ import { Button } from "primeng/button";
 import { Toolbar } from "primeng/toolbar";
 import { GlobalSettingsService } from "../../../../services/global-settings.service";
 import { Chip } from "primeng/chip";
+import { NetworkTreeService } from "../../../../services/tree/network/network-tree.service";
+import { ProjectService } from "../../../../services/project/project.service";
+import { first } from "rxjs";
 
 /**
  * Component to present the statements.
@@ -76,9 +80,13 @@ export class StatementComponent {
   @ViewChild("preconditionDiv") private preconditionDivRef!: ElementRef;
   @ViewChild("postconditionDiv") private postconditionDivRef!: ElementRef;
 
+  public isVerifying = signal(false);
+
   constructor(
     private treeService: TreeService,
     public globalSettingsService: GlobalSettingsService,
+    private networkTreeService: NetworkTreeService,
+    private projectService: ProjectService,
   ) {}
 
   public deleteRefinement(): void {
@@ -116,5 +124,29 @@ export class StatementComponent {
         this.refinementBoxRef.nativeElement.style.borderColor = "rgb(163,34,35)";
       }
     }*/
+  }
+
+  public verifyStatement(): void {
+    if (this.isVerifying()) {
+      return;
+    }
+    this.isVerifying.set(true);
+
+    // Finalize statements first
+    this.treeService.finalizeStatements();
+
+    // Create temporary formula from this node
+    const tempFormula = this.treeService.createTempFormulaFromNode(this._node);
+
+    // Verify the statement
+    this.networkTreeService.verifyStatement(
+      tempFormula,
+      this._node,
+      this.projectService.projectId,
+      this.treeService.urn,
+      () => {
+        this.isVerifying.set(false);
+      },
+    );
   }
 }

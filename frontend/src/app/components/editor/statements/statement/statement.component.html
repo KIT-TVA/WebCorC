@@ -44,6 +44,16 @@
             label="unverified"
           />
         }
+        <p-button
+          text
+          [icon]="isVerifying() ? 'pi pi-spin pi-spinner' : 'pi pi-check-circle'"
+          severity="secondary"
+          [disabled]="isVerifying()"
+          [style.cursor]="isVerifying() ? 'wait' : 'pointer'"
+          (click)="verifyStatement()"
+          [title]="isVerifying() ? 'Verifying...' : 'Verify this statement'"
+        >
+        </p-button>
         @if (_node.parent) {
           <p-button
             text
