@@ -49,7 +49,7 @@ export class PredicateService {
       result += "\\heuristics(simplify)\n};\n";
     }
     result += "}\n";
-    if (!this.projectService.findByUrn("predicates.key")) {
+    if (!this.projectService.findByUrn("/predicates.key")) {
       this.projectService.addFile("/", "predicates", "key");
     }
     this.projectService.syncFileContent("/predicates.key", result);

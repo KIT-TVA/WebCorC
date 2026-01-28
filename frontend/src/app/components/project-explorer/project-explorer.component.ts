@@ -143,6 +143,7 @@ export class ProjectExplorerComponent {
   ) {
     this.projectService.dataChange.subscribe((data) => {
       this.treeNodes = this.getTreeNodes(data);
+      console.trace();
       console.log(data);
       console.log(this.treeNodes);
     });

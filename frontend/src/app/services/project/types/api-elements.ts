@@ -86,9 +86,11 @@ export class ApiDiagramFile extends ApiFile {
       throw Error("Exported diagram file has no statement.");
     }
     if (!(content.statement.type == "ROOT")) {
-      console.warn("Exported diagram file's root statement type is not ROOT.");
       formattedContent.statement = content.statement;
     } else {
+      console.warn(
+        "Improper use of ApiDiagramFile, must not have a root statement",
+      );
       formattedContent.statement = (
         content.statement as RootStatement
       ).statement;
@@ -102,7 +104,6 @@ export class ApiDiagramFile extends ApiFile {
     formattedContent.renamings = content.renamings;
     formattedContent.isProven = content.isProven;
     this.content = formattedContent;
-    console.log("formatted content", this.content);
   }
 
   /**
@@ -264,7 +265,6 @@ export class LocalDiagramFile extends LocalFile {
     formattedContent.renamings = content.renamings;
     formattedContent.isProven = content.isProven;
     this.content = formattedContent;
-    console.log("formatted content", this.content);
   }
 
   public static override fromApi(api: ApiDiagramFile): LocalDiagramFile {
@@ -319,4 +319,16 @@ export class LocalTextFile extends LocalFile {
     }
     return new LocalTextFile(api.urn, "", api.inodeType);
   }
+}
+
+export function fixUrns(inode: LocalInode, prefix: string = "") {
+  inode.urn = prefix.endsWith("/")
+    ? prefix + inode.urn
+    : prefix + "/" + inode.urn;
+  if (inode.inodeType === "directory") {
+    (inode as LocalDirectory).content.forEach((child) =>
+      fixUrns(child, inode.urn),
+    );
+  }
+  return inode;
 }

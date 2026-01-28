@@ -29,7 +29,7 @@
   <ng-template #end>
     <div style="display: flex; gap: 1rem">
       <app-settings-button />
-      <p-button (click)="share()">
+      <p-button [disabled]="projectService.shouldCreateProject" (click)="share()">
         <i class="pi pi-share-alt"></i>
         Share
       </p-button>

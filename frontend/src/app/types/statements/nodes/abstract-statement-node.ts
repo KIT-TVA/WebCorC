@@ -20,7 +20,6 @@ export class AbstractStatementNode {
     this.parent = parent;
     this.precondition = signal(statement.preCondition);
     this.postcondition = signal(statement.postCondition);
-    console.log("abstract constructor");
   }
 
   /**

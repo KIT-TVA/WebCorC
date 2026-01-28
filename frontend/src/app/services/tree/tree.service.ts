@@ -80,7 +80,7 @@ export class TreeService {
     // internal rootStatementNode and statement node list mirror the formula.
     // This avoids later callers producing an empty default RootStatement.
     try {
-      this.getStatementNodes();
+      this.generateStatementNodes();
     } catch (e) {
       console.error(
         "TreeService.setFormula: failed to initialize statement nodes",
@@ -286,8 +286,12 @@ export class TreeService {
     }
   }
 
-  public getStatementNodes(): Signal<AbstractStatementNode[]> {
-    console.log("getStatementNodes in treeservice called", this.rootFormula);
+  public generateStatementNodes(): Signal<AbstractStatementNode[]> {
+    console.log(
+      "generateStatementNodes in treeservice called",
+      this.rootFormula,
+    );
+    console.trace();
     const rootStatementNode = this.rootFormula?.statement
       ? new RootStatementNode(
           this.rootFormula.statement as RootStatement,

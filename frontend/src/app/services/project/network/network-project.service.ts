@@ -13,6 +13,7 @@ import {
   ApiDiagramFile,
   ApiDirectory,
   ApiTextFile,
+  fixUrns,
   Inode,
   LocalDirectory,
 } from "../types/api-elements";
@@ -98,6 +99,7 @@ export class NetworkProjectService {
         )
         .subscribe((project) => {
           this._projectname = project.name;
+          this._projectId = project.id;
           const apiDirectory = new ApiDirectory(
             project.files.urn,
             project.files.content,
@@ -106,10 +108,11 @@ export class NetworkProjectService {
           this.networkStatusService.stopNetworkRequest();
           this.storage.saveProject(
             this.projectMapper.importProject(
-              LocalDirectory.fromApi(apiDirectory),
+              fixUrns(LocalDirectory.fromApi(apiDirectory)) as LocalDirectory,
             ),
             project.name,
           );
+          this.storage.setProjectId(project.id);
           resolve();
         });
     });

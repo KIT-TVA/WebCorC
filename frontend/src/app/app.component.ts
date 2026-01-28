@@ -153,22 +153,9 @@ export class AppComponent {
    * Sideeffect: When no project id defined create project and upload current content to backend.
    */
   public share() {
-    let wait = false;
-    if (this.projectService.shouldCreateProject) {
-      this.projectService.requestFinished.pipe(first()).subscribe(() => {
-        this.writeURLintoClipboard();
-      });
-      this.openNewProjectDialog();
-      wait = true;
+    if (!this.projectService.shouldCreateProject) {
+      this.writeURLintoClipboard();
     }
-
-    if (!wait) {
-      this.projectService.editorNotify.pipe(first()).subscribe(() => {
-        this.writeURLintoClipboard();
-      });
-    }
-
-    this.projectService.uploadWorkspace(wait);
   }
 
   /**
