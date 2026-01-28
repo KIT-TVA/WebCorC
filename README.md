@@ -25,7 +25,7 @@ Correctness-by-Construction is a methodology where programs are developed increm
 
 > **Live Demo**: Try out the public instance at [corc.informatik.kit.edu](https://corc.informatik.kit.edu/)
 
-For more in-depth information on the concepts, visit the [CorC Wiki](https://github.com/KIT-TVA/CorC/wiki).
+For more in-depth information on the concepts, visit the [CorC Wiki](https://kit-tva.github.io/WebCorC/).
 
 ---
 
@@ -137,4 +137,4 @@ WebCorC/
 
 ## 📄 License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the [Apache 2.0](LICENSE).
