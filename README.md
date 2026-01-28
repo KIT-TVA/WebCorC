@@ -4,7 +4,6 @@
 
 **The Web-based Correctness-by-Construction (CbC) IDE**
 
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Frontend](https://img.shields.io/badge/Frontend-Angular_19-dd0031.svg)](https://angular.io/)
 [![Backend](https://img.shields.io/badge/Backend-Micronaut-black.svg)](https://micronaut.io/)
 [![Build](https://img.shields.io/badge/Build-Docker-2496ed.svg)](https://www.docker.com/)
