@@ -80,35 +80,39 @@ export class NetworkProjectService {
    * Read the project from the backend based on its id
    * @param projectId The project id of the project to read from the backend
    */
-  public readProject(projectId: string | undefined = this._projectId) {
-    this._projectId = projectId;
+  public async readProject(projectId: string | undefined = this._projectId) {
+    return new Promise<void>((resolve, reject) => {
+      this._projectId = projectId;
 
-    this.networkStatusService.startNetworkRequest();
+      this.networkStatusService.startNetworkRequest();
 
-    this.http
-      .get<NetProject>(this.buildProjectURL())
-      .pipe(
-        catchError((error: HttpErrorResponse): Observable<NetProject> => {
-          this.consoleService.addErrorResponse(error, "Reading Project");
+      this.http
+        .get<NetProject>(this.buildProjectURL())
+        .pipe(
+          catchError((error: HttpErrorResponse): Observable<NetProject> => {
+            this.consoleService.addErrorResponse(error, "Reading Project");
+            this.networkStatusService.stopNetworkRequest();
+            reject();
+            return of();
+          }),
+        )
+        .subscribe((project) => {
+          this._projectname = project.name;
+          const apiDirectory = new ApiDirectory(
+            project.files.urn,
+            project.files.content,
+          );
+          this._dataChange.next(apiDirectory);
           this.networkStatusService.stopNetworkRequest();
-          return of();
-        }),
-      )
-      .subscribe((project) => {
-        this._projectname = project.name;
-        const apiDirectory = new ApiDirectory(
-          project.files.urn,
-          project.files.content,
-        );
-        this._dataChange.next(apiDirectory);
-        this.networkStatusService.stopNetworkRequest();
-        this.storage.saveProject(
-          this.projectMapper.importProject(
-            LocalDirectory.fromApi(apiDirectory),
-          ),
-          project.name,
-        );
-      });
+          this.storage.saveProject(
+            this.projectMapper.importProject(
+              LocalDirectory.fromApi(apiDirectory),
+            ),
+            project.name,
+          );
+          resolve();
+        });
+    });
   }
 
   /**

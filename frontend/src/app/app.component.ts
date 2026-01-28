@@ -1,4 +1,4 @@
-import { Component, HostListener } from "@angular/core";
+import { Component } from "@angular/core";
 
 import { Router, RouterOutlet } from "@angular/router";
 import { MatSidenavModule } from "@angular/material/sidenav";
@@ -21,6 +21,7 @@ import { SettingsButtonComponent } from "./components/settings/settings-button/s
 import { Toast } from "primeng/toast";
 import { MessageService } from "primeng/api";
 import { InputText } from "primeng/inputtext";
+import { GlobalSettingsService } from "./services/global-settings.service";
 
 /**
  * Top Component of this application,
@@ -59,6 +60,7 @@ export class AppComponent {
     protected router: Router,
     public projectService: ProjectService,
     private snackBar: MatSnackBar,
+    protected globalSettingsService: GlobalSettingsService,
   ) {
     this.networkStatus.status.subscribe((status) => {
       if (status != this._loadingState) {
@@ -72,6 +74,7 @@ export class AppComponent {
    * This is needed for the backend to use the contents of helper.key
    */
   public verify(): void {
+    this.globalSettingsService.isVerifying = true;
     this.treeService.finalizeStatements();
     if (
       this.projectService.findByUrn("helper.key") &&

@@ -18,6 +18,7 @@ import {
   SlimFile,
 } from "./api-elements";
 import { CbcFormulaMapperService } from "../mapper/cbc-formula-mapper.service";
+import { LocalCBCFormula } from "../../../types/CBCFormula";
 
 /**
  * Service for mapping the json objects of the project elements interfaces to the corresponding classes for using functions of the classes.
@@ -46,6 +47,7 @@ export class ProjectElementsMapperService {
             throw new Error(`Unknown inode type: ${element.inodeType}`);
         }
       }),
+      directory.present,
     );
   }
 
@@ -58,10 +60,20 @@ export class ProjectElementsMapperService {
 
     switch (fileType) {
       case "diagram":
-        return new DiagramFile(file.urn, (file as LocalDiagramFile).content);
+        return new DiagramFile(
+          file.urn,
+          (file as LocalDiagramFile).content,
+          file.present,
+        );
       case "java":
       case "key":
-        return new CodeFile(file.urn, (file as LocalTextFile).content);
+      case "proof":
+      default:
+        return new CodeFile(
+          file.urn,
+          (file as LocalTextFile).content,
+          file.present,
+        );
     }
     throw new Error(`Unknown file type: ${fileType}`);
   }
@@ -125,7 +137,11 @@ export class ProjectElementsMapperService {
         this.cbcformulaMapper.exportFormula((file as DiagramFile).formula),
       );
     } else {
-      inode = new ApiTextFile(file.urn, (file as CodeFile).content as string);
+      inode = new ApiTextFile(
+        file.urn,
+        (file as CodeFile).content as string,
+        "file",
+      );
     }
 
     return inode;
@@ -148,7 +164,7 @@ export class ProjectElementsMapperService {
    * @returns The new CodeFile
    */
   public constructCodeFile(relativePath: string): CodeFile {
-    return new CodeFile(relativePath);
+    return new CodeFile(relativePath, "", true);
   }
 
   /**
@@ -158,7 +174,7 @@ export class ProjectElementsMapperService {
    * @returns The new Diagram File
    */
   public constructDiagramFile(relativePath: string): DiagramFile {
-    return new DiagramFile(relativePath);
+    return new DiagramFile(relativePath, new LocalCBCFormula(), true);
   }
 
   private exportFileinSlimTree(file: ProjectElement): Inode {
@@ -171,6 +187,7 @@ export class ProjectElementsMapperService {
       return new ProjectDirectory(
         dir.urn,
         dir.contents.map((el) => this.parseProjectElement(el)),
+        tree.present,
       );
     }
     throw new Error(`Root element must be a directory, got: ${tree.type}`);
@@ -182,15 +199,16 @@ export class ProjectElementsMapperService {
       return new ProjectDirectory(
         dir.urn,
         dir.contents.map((el) => this.parseProjectElement(el)),
+        dir.present,
       );
     }
     if (element.type === "CODE_FILE") {
       const file = element as CodeFile;
-      return new CodeFile(file.urn, file.content);
+      return new CodeFile(file.urn, file.content, file.present);
     }
     if (element.type === "DIAGRAM_FILE") {
       const file = element as DiagramFile;
-      return new DiagramFile(file.urn, file.formula);
+      return new DiagramFile(file.urn, file.formula, file.present);
     }
     throw new Error(`Unknown project element type: ${element.type}`);
   }

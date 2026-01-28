@@ -137,10 +137,16 @@ export class ApiTextFile implements Inode {
     public urn: string,
     public content: string,
     public inodeType: InodeType = "file",
+    public type: ApiFileType = (urn.split(".").pop() as ApiFileType) ?? "other",
   ) {}
 
   public static fromLocal(local: LocalTextFile): ApiTextFile {
-    return new ApiTextFile(local.urn, local.content, local.inodeType);
+    return new ApiTextFile(
+      local.urn,
+      local.content,
+      local.inodeType,
+      local.urn.split(".").pop() as ApiFileType,
+    );
   }
 }
 
@@ -163,6 +169,7 @@ export interface LocalInode {
   urn: string;
   inodeType: InodeType;
   readonly local: true;
+  present: boolean;
 }
 
 export class LocalDirectory implements LocalInode {
@@ -171,16 +178,18 @@ export class LocalDirectory implements LocalInode {
     public urn: string,
     public content: LocalInode[],
     public inodeType: InodeType = "directory",
+    public present: boolean = true,
   ) {}
 
   public static fromApi(api: ApiDirectory): LocalDirectory {
     const mapInode = (inode: Inode): LocalInode => {
-      if (inode instanceof ApiDirectory) return LocalDirectory.fromApi(inode);
+      if (inode.inodeType === "directory")
+        return LocalDirectory.fromApi(inode as ApiDirectory);
       if (inode instanceof ApiDiagramFile)
         return LocalDiagramFile.fromApi(inode);
       if (inode instanceof ApiTextFile) return LocalTextFile.fromApi(inode);
       if (inode instanceof ApiFile) return LocalFile.fromApi(inode);
-      throw Error("Unknown Api Inode type");
+      return LocalFile.fromApi(inode);
     };
     return new LocalDirectory(
       api.urn,
@@ -196,10 +205,35 @@ export class LocalFile implements LocalInode {
     public urn: string,
     public inodeType: InodeType = "file",
     public type: ApiFileType,
+    public present: boolean = true,
   ) {}
 
-  public static fromApi(api: ApiFile): LocalFile {
-    return new LocalFile(api.urn, api.inodeType, api.type);
+  public static fromApi(api: Inode): LocalFile {
+    if ("type" in api) {
+      switch ((api as ApiFile).type) {
+        case "diagram":
+          return LocalDiagramFile.fromApi(api as ApiDiagramFile);
+        case "java":
+        case "key":
+        case "prove":
+          return LocalTextFile.fromApi(api as ApiTextFile);
+      }
+    }
+    switch (api.urn.split(".").pop()) {
+      case "diagram":
+        return new LocalDiagramFile(
+          api.urn,
+          new LocalCBCFormula(),
+          api.inodeType,
+          false,
+        );
+      case "java":
+      case "key":
+      case "proof":
+        return new LocalTextFile(api.urn, "", api.inodeType, false);
+      default:
+    }
+    throw Error("Unknown Api File type");
   }
 }
 
@@ -209,8 +243,9 @@ export class LocalDiagramFile extends LocalFile {
     urn: string,
     content: LocalCBCFormula,
     inodeType: InodeType = "file",
+    present: boolean = true,
   ) {
-    super(urn, "file", "diagram");
+    super(urn, "file", "diagram", present);
     const formattedContent = new LocalCBCFormula();
     formattedContent.name = content.name;
     if (!content.statement) {
@@ -237,7 +272,7 @@ export class LocalDiagramFile extends LocalFile {
     // to avoid nested ROOT -> ROOT structures. Otherwise, wrap the provided
     // statement in a new RootStatement.
     let rootStmt: RootStatement | undefined;
-    if (api.content && (api.content.statement as any)?.type === "ROOT") {
+    if (api.content && api.content.statement?.type === "ROOT") {
       rootStmt = api.content.statement as RootStatement;
     } else {
       rootStmt = new RootStatement(
@@ -269,8 +304,9 @@ export class LocalTextFile extends LocalFile {
     urn: string,
     public content: string,
     inodeType: InodeType = "file",
+    present: boolean = true,
   ) {
-    super(urn, inodeType, "other");
+    super(urn, inodeType, "other", present);
   }
 
   public static override fromApi(api: ApiFile | ApiTextFile): LocalTextFile {

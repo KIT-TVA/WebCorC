@@ -11,6 +11,7 @@ export interface IProjectElement {
   renamed: boolean;
   serverSideUrn: string | undefined;
   type: ProjectElementType;
+  present: boolean;
 }
 
 export abstract class ProjectElement implements IProjectElement {
@@ -19,6 +20,7 @@ export abstract class ProjectElement implements IProjectElement {
   protected constructor(
     public urn: string,
     public type: ProjectElementType,
+    public present: boolean,
   ) {}
 
   public get name(): string {
@@ -39,8 +41,12 @@ export abstract class ProjectElement implements IProjectElement {
 export class ProjectDirectory extends ProjectElement {
   public contents: ProjectElement[] = [];
 
-  public constructor(urn: string, contents: ProjectElement[] = []) {
-    super(urn, "DIRECTORY");
+  public constructor(
+    urn: string,
+    contents: ProjectElement[] = [],
+    present: boolean,
+  ) {
+    super(urn, "DIRECTORY", present);
     this.contents = contents;
   }
 
@@ -70,20 +76,22 @@ export class ProjectFile extends ProjectElement {
   public constructor(
     urn: string,
     public fileType: string,
+    present: boolean,
   ) {
     super(
       urn,
       (fileType === "diagram"
         ? "DIAGRAM_FILE"
         : "CODE_FILE") as ProjectElementType,
+      present,
     );
   }
 }
 
 export class CodeFile extends ProjectFile {
   public content: string = "";
-  public constructor(urn: string, content: string = "") {
-    super(urn, "java");
+  public constructor(urn: string, content: string = "", present: boolean) {
+    super(urn, "java", present);
     this.content = content;
   }
 }
@@ -93,8 +101,9 @@ export class DiagramFile extends ProjectFile {
   public constructor(
     urn: string,
     formula: LocalCBCFormula = new LocalCBCFormula(),
+    present: boolean,
   ) {
-    super(urn, "diagram");
+    super(urn, "diagram", present);
     this.formula = formula;
   }
 }
