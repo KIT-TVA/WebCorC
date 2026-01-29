@@ -15,45 +15,35 @@
       </ng-template>
       <ng-template #center>
         <p>
-          {{ refinement.getTitle() }} <span style="color: var(--p-surface-400)">{{ _node.statement.name }}</span>
+          {{ refinement.getTitle() }}
+          <span style="color: var(--p-surface-400)">{{
+            _node.statement.name
+          }}</span>
         </p>
       </ng-template>
       <ng-template #end>
-        @if (_node.statement.isProven) {
-          <p-chip
-            [dt]="{
-              root: {
-                paddingX: '3px',
-                paddingY: '1px',
-                background: '{primary.500}',
-              },
-            }"
-            style="font-size: 10px"
-            label="verified"
-          />
-        } @else {
-          <p-chip
-            [dt]="{
-              root: {
-                paddingX: '3px',
-                paddingY: '1px',
-                background: '{surface.300}',
-              },
-            }"
-            style="font-size: 10px"
-            label="unverified"
-          />
-        }
-        <p-button
-          text
-          [icon]="isVerifying() ? 'pi pi-spin pi-spinner' : 'pi pi-check-circle'"
-          severity="secondary"
+        <button
+          pButton
+          outlined
+          [severity]="_node.statement.isProven ? 'success' : 'secondary'"
           [disabled]="isVerifying()"
           [style.cursor]="isVerifying() ? 'wait' : 'pointer'"
+          [style.height]="'1.5rem'"
           (click)="verifyStatement()"
+          size="small"
+          [dt]="compactButton"
           [title]="isVerifying() ? 'Verifying...' : 'Verify this statement'"
         >
-        </p-button>
+          <i
+            pButtonIcon
+            [class]="
+              isVerifying() ? 'pi pi-spin pi-spinner' : 'pi pi-check-circle'
+            "
+          ></i>
+          <span pButtonLabel style="font-weight: normal">
+            {{ _node.statement.isProven ? "verified" : "verify" }}
+          </span>
+        </button>
         @if (_node.parent) {
           <p-button
             text
@@ -74,7 +64,8 @@
         <mat-drawer-container class="example-container" autosize>
           <mat-drawer #preconditionDrawer class="example-sidenav" mode="side">
             <div class="conditionParent">
-              <app-condition-editor placeholder="Pre Condition"
+              <app-condition-editor
+                placeholder="Pre Condition"
                 [(condition)]="_node.precondition"
                 [editable]="_node.preconditionEditable()"
               ></app-condition-editor>
@@ -101,7 +92,8 @@
       </div>
     } @else {
       <div style="width: fit-content" class="conditionParent">
-        <app-condition-editor placeholder="Pre Condition"
+        <app-condition-editor
+          placeholder="Pre Condition"
           [(condition)]="_node.precondition"
           [editable]="_node.preconditionEditable()"
         ></app-condition-editor>
@@ -146,7 +138,8 @@
       </div>
     } @else {
       <div style="width: fit-content" class="conditionParent">
-        <app-condition-editor placeholder="Post Condition"
+        <app-condition-editor
+          placeholder="Post Condition"
           [(condition)]="_node.postcondition"
           [editable]="_node.postconditionEditable()"
         ></app-condition-editor>
