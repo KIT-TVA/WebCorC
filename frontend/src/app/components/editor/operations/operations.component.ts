@@ -15,7 +15,7 @@ export class OperationsComponent {
   //Reingold-Tilford Algorhithm
   resetNodePositionsRT(): void {
     console.log("resetNodePositionsRT");
-    const nodesSignal = this.treeservice.getStatementNodes();
+    const nodesSignal = this.treeservice.generateStatementNodes();
     const nodes = nodesSignal(); // get current array
     if (nodes.length === 0) return;
 
@@ -68,7 +68,7 @@ export class OperationsComponent {
   //Stacked Algorhithm
   resetNodePositionsStacked(): void {
     console.log("resetNodePositionsStacked");
-    const nodesSignal = this.treeservice.getStatementNodes();
+    const nodesSignal = this.treeservice.generateStatementNodes();
     const nodes = nodesSignal();
     if (nodes.length === 0) return;
 

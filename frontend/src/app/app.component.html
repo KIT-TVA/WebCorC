@@ -29,7 +29,7 @@
   <ng-template #end>
     <div style="display: flex; gap: 1rem">
       <app-settings-button />
-      <p-button (click)="share()">
+      <p-button [disabled]="projectService.shouldCreateProject" (click)="share()">
         <i class="pi pi-share-alt"></i>
         Share
       </p-button>
@@ -37,7 +37,7 @@
         <i class="pi pi-code"></i>
         Generate code
       </p-button>
-      <p-button (click)="verify()" [disabled]="!treeService.rootFormula">
+      <p-button (click)="verify()" [disabled]="!treeService.rootFormula" [loading]="globalSettingsService.isVerifying">
         <i class="pi pi-check-circle"></i>
         Verify
       </p-button>

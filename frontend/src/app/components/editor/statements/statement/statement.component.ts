@@ -4,8 +4,8 @@ import {
   EventEmitter,
   Input,
   Output,
-  ViewChild,
   signal,
+  ViewChild,
 } from "@angular/core";
 
 import { MatGridListModule } from "@angular/material/grid-list";
@@ -25,13 +25,16 @@ import { AbstractStatementNode } from "../../../../types/statements/nodes/abstra
 import { HandleComponent } from "ngx-vflow";
 import { GridTileBorderDirective } from "../../../../directives/grid-tile-border.directive";
 import { Card } from "primeng/card";
-import { Button } from "primeng/button";
+import {
+  Button,
+  ButtonDirective,
+  ButtonIcon,
+  ButtonLabel,
+} from "primeng/button";
 import { Toolbar } from "primeng/toolbar";
 import { GlobalSettingsService } from "../../../../services/global-settings.service";
-import { Chip } from "primeng/chip";
 import { NetworkTreeService } from "../../../../services/tree/network/network-tree.service";
 import { ProjectService } from "../../../../services/project/project.service";
-import { first } from "rxjs";
 
 /**
  * Component to present the statements.
@@ -57,7 +60,9 @@ import { first } from "rxjs";
     Card,
     Button,
     Toolbar,
-    Chip,
+    ButtonDirective,
+    ButtonIcon,
+    ButtonLabel,
   ],
   templateUrl: "./statement.component.html",
   styleUrl: "./statement.component.scss",
@@ -149,4 +154,21 @@ export class StatementComponent {
       },
     );
   }
+
+  compactButton = {
+    root: {
+      sm: {
+        paddingX: "0.2rem",
+      },
+      paddingX: "0px",
+    },
+    button: {
+      paddingX: "0px",
+      root: {
+        sm: {
+          paddingX: "0px",
+        },
+      },
+    },
+  };
 }

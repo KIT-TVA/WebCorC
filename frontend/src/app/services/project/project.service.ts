@@ -22,7 +22,7 @@ import { Inode, LocalDirectory } from "./types/api-elements";
 })
 export class ProjectService {
   // Use empty string as the project root urn - this aligns with ApiDirectory roots like '/'
-  private _rootDir = new ProjectDirectory("/");
+  private _rootDir = new ProjectDirectory("/", [], true);
   private _dataChange = new BehaviorSubject<ProjectElement[]>(
     this._rootDir.contents,
   );
@@ -118,7 +118,7 @@ export class ProjectService {
 
     const dir = parentDir as ProjectDirectory;
 
-    const newDir = new ProjectDirectory(parentPath + "/" + name);
+    const newDir = new ProjectDirectory(parentPath + "/" + name, [], true);
 
     if (dir.contents.find((element) => element.urn === newDir.urn)) {
       throw new Error(
@@ -248,8 +248,15 @@ export class ProjectService {
    * @param content The content to save in the file identified by the urn
    */
   public syncFileContent(urn: string, content: string | LocalCBCFormula) {
-    const file = this.findByUrn(urn);
+    let file = this.findByUrn(urn);
     if (!file) {
+      this._rootDir = this.storage.getProjectTree() ?? this._rootDir;
+      file = this.findByUrn(urn);
+      if (!file) {
+        console.log(this._rootDir);
+        throw new Error(`File ${urn} not found. Please create it first`);
+      }
+      /*
       const parentDir = this.getParentDirectory(urn);
       if (!parentDir) {
         throw new Error("Parent directory not found");
@@ -260,18 +267,19 @@ export class ProjectService {
           ? "java"
           : "key";
       this.addFile(parentDir?.urn, urn.split("/").pop() || "untitled", type);
-    } else {
-      switch (file.type) {
-        case "DIAGRAM_FILE":
-          (file as DiagramFile).formula = content as LocalCBCFormula;
-          break;
-        case "CODE_FILE":
-          (file as CodeFile).content = content as string;
-          break;
-        default:
-          throw new Error("Unknown file type");
-      }
+       */
     }
+    switch (file.type) {
+      case "DIAGRAM_FILE":
+        (file as DiagramFile).formula = content as LocalCBCFormula;
+        break;
+      case "CODE_FILE":
+        (file as CodeFile).content = content as string;
+        break;
+      default:
+        throw new Error("Unknown file type");
+    }
+
     this._savedFinished.next();
   }
 
@@ -295,22 +303,14 @@ export class ProjectService {
       }
     }
 
-    let needsToBeFetched = false;
-
-    if (file.type === "DIAGRAM_FILE") {
-      needsToBeFetched =
-        (file as DiagramFile).formula === undefined ||
-        (file as DiagramFile).formula.statement === undefined;
-    } else {
-      needsToBeFetched = (file as CodeFile).content === "";
-    }
+    const needsToBeFetched = !file.present;
 
     let content: string | LocalCBCFormula =
       file.type === "CODE_FILE"
         ? ((file as CodeFile).content as string)
         : ((file as DiagramFile).formula as LocalCBCFormula);
 
-    // if file content is default value and projectId is set
+    //If file doesn't actually exist yet
     if (this.projectId && needsToBeFetched) {
       content = await this.network.getFileContent(urn);
     }
@@ -327,8 +327,8 @@ export class ProjectService {
     } else {
       throw new Error("Unknown file type");
     }
-
-    this._dataChange.next(this._rootDir.contents);
+    file.present = true;
+    this.storage.saveProject(this._rootDir, this.projectname);
     return content as string | LocalCBCFormula;
   }
 
@@ -380,40 +380,39 @@ export class ProjectService {
    * Download project state from storage or network as needed
    */
   public downloadWorkspace() {
-    const projectTree = this.storage.getProjectTree();
-    const projectName = this.storage.getProjectName();
-    const projectId = this.storage.getProjectId();
-    console.log("downloaded workspace", this._rootDir);
-    if (projectId === this.projectId) {
-      if (!projectTree) {
-        this.network.readProject();
+    const storedProjectTree = this.storage.getProjectTree();
+    const storedProjectName = this.storage.getProjectName();
+    const storedProjectId = this.storage.getProjectId();
+    if (!this.projectId && storedProjectId) {
+      this.projectId = storedProjectId;
+    }
+    if (!storedProjectTree) {
+      this.network.readProject().then(() => {
+        this._rootDir = this.storage.getProjectTree() ?? this._rootDir;
+        this._projectname = this.storage.getProjectName() ?? this._projectname;
+        this._dataChange.next(this._rootDir.contents);
+      });
+      return;
+    }
+    if (storedProjectId === this.projectId) {
+      if (!storedProjectTree || !storedProjectName) {
+        this.network.readProject().then(() => {
+          this._rootDir = this.storage.getProjectTree() ?? this._rootDir;
+          this._projectname =
+            this.storage.getProjectName() ?? this._projectname;
+          this._dataChange.next(this._rootDir.contents);
+        });
         return;
       }
-      this._rootDir = projectTree;
+      this._rootDir = storedProjectTree;
       this._dataChange.next(this._rootDir.contents);
-      if (!projectName) {
-        this.network.readProject();
-        return;
-      }
-      this._projectname = projectName;
-      this.network.readProject();
       return;
     }
 
-    if (!projectId && !this.projectId && !!projectTree) {
-      this._rootDir = projectTree;
+    if (!storedProjectId && !this.projectId && !!storedProjectTree) {
+      this._rootDir = storedProjectTree;
       this._dataChange.next(this._rootDir.contents);
       return;
-    }
-
-    if (!this.projectId && projectId) {
-      this.projectId = projectId;
-      this.network.readProject();
-    }
-
-    if (this.projectId && !projectId) {
-      this.storage.setProjectId(this.projectId);
-      this.network.readProject();
     }
   }
 

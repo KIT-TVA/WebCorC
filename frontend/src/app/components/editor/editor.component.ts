@@ -90,7 +90,8 @@ export const GREEN_COLOURED_CONDITIONS = new InjectionToken<ICondition>(
 })
 export class EditorComponent implements AfterViewInit, OnDestroy {
   public showResetButton: boolean = true;
-  protected statements: Signal<AbstractStatementNode[]> = signal([]);
+  protected statements: Signal<AbstractStatementNode[]> =
+    this.treeService.generateStatementNodes();
   @ViewChild("sidemenu") private sidemenu!: EditorSidemenuComponent;
   private _viewInit: boolean = false;
 
@@ -114,7 +115,6 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     });
     this.setupVFlowSync();
     this.treeService.exportNotifier.subscribe(() => this.export());
-    this.statements = treeService.getStatementNodes();
   }
 
   private _urn: string = "";
@@ -126,6 +126,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
    */
   @Input()
   public set urn(uniformRessourceName: string) {
+    console.log("urn set");
     // prevent reloading the same context
     if (uniformRessourceName == this._urn) {
       return;
@@ -147,16 +148,18 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
    * Function to be triggered after the view got initalized.
    */
   public ngAfterViewInit(): void {
+    console.log("Editor view initialized");
     this._viewInit = true;
     this.projectService.explorerNotify.subscribe(() => this.loadFileContent());
     // workaround to ensure proper loading of file content on switch between files
-    setTimeout(() => {
+    // This shouldn't be needed any more...
+    /*setTimeout(() => {
       this.loadFileContent();
-    }, 10);
+    }, 10); */
+    this.loadFileContent();
     this.projectService.editorNotify.subscribe(() => {
       this.saveContentToFile();
     });
-
     this.editorService.reload.subscribe(() => {
       this.loadFileContent();
     });
@@ -175,102 +178,23 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   /**
    * Load {@link CBCFormula} in to editor to be edited
    */
-  private async loadFileContent(): Promise<void> {
+  private async loadFileContent() {
     // load the diagram of the file into the component
     this.sidemenu.variables.removeAllVariables();
     this.sidemenu.conditions.removeAllConditions();
     this.sidemenu.renaming.removeAllRenaming();
 
     let newFormula: LocalCBCFormula | undefined = undefined;
-    try {
-      newFormula = (await this.projectService.getFileContent(
-        this._urn,
-      )) as LocalCBCFormula;
-    } catch {
-      const projectId = this.router
-        .parseUrl(this.router.url)
-        .queryParamMap.get("projectId");
-      if (!this.projectService.projectId && projectId) {
-        this.projectService.projectId = projectId;
-        this.projectService.dataChange.subscribe(async () => {
-          newFormula = (await this.projectService.getFileContent(
-            this._urn,
-          )) as LocalCBCFormula;
-          await this.loadFileContent();
-        });
-
-        this.projectService.downloadWorkspace();
-      }
+    newFormula = (await this.projectService.getFileContent(
+      this._urn,
+    )) as LocalCBCFormula;
+    if (!newFormula) {
+      newFormula = new LocalCBCFormula();
     }
-
-    // if the file is not empty load content
-    if (newFormula) {
-      // If the formula appears not to contain a populated root statement, retry fetching it
-      // a few times to avoid races where storage/network content is still being applied.
-      const ensurePopulated = async (formula: LocalCBCFormula) => {
-        let tries = 6;
-        while (tries-- > 0) {
-          if (
-            formula &&
-            formula.statement &&
-            (formula.statement as any).statement !== undefined
-          ) {
-            return formula;
-          }
-          // wait a bit then try to re-read from storage/network
-          await new Promise((res) => setTimeout(res, 40));
-          try {
-            const refreshed = (await this.projectService.getFileContent(
-              this._urn,
-            )) as LocalCBCFormula;
-            if (
-              refreshed &&
-              refreshed.statement &&
-              (refreshed.statement as any).statement !== undefined
-            ) {
-              return refreshed;
-            }
-            formula = refreshed ?? formula;
-          } catch {
-            // ignore and retry
-          }
-        }
-        return formula;
-      };
-
-      newFormula = await ensurePopulated(newFormula);
-
-      console.log(
-        "EditorComponent.loadFileContent received formula:",
-        newFormula,
-      );
-      this.treeService.setFormula(newFormula, this._urn);
-      console.log("EditorComponent called treeService.setFormula");
-      console.log(
-        "TreeService internal rootFormula after set:",
-        this.treeService.rootFormula,
-      );
-      console.log(
-        "TreeService.getStatementsFromFormula:",
-        this.treeService.getStatementsFromFormula(newFormula),
-      );
-      console.log("EditorComponent: statementNodes about to be fetched");
-      this.statements = this.treeService.getStatementNodes();
-      console.log(
-        "EditorComponent: statement nodes after getStatementNodes:",
-        this.statements(),
-      );
-
-      //TODO: This should be done with Inputs instead.
-      this.sidemenu.variables.importDiagramVariables();
-      this.sidemenu.conditions.importConditions(newFormula.globalConditions);
-      this.sidemenu.renaming.importRenaming(newFormula.renamings);
-
-      return;
-    }
-
-    // file is empty, reset rootNode to default values
-    //TODO: reimplement
+    this.treeService.setFormula(newFormula, this._urn);
+    this.sidemenu.variables.importDiagramVariables();
+    this.sidemenu.conditions.importConditions(newFormula.globalConditions);
+    this.sidemenu.renaming.importRenaming(newFormula.renamings);
   }
 
   private setupVFlowSync() {
@@ -448,7 +372,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   }
 
   protected resetNodePositionsRT(): void {
-    const nodesSignal = this.treeService.getStatementNodes();
+    const nodesSignal = this.treeService.generateStatementNodes();
     const nodes = nodesSignal(); // get current array
     if (nodes.length === 0) return;
 
@@ -500,7 +424,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
 
   //Stacked Algorhithm
   protected resetNodePositionsStacked(): void {
-    const nodesSignal = this.treeService.getStatementNodes();
+    const nodesSignal = this.treeService.generateStatementNodes();
     const nodes = nodesSignal();
     if (nodes.length === 0) return;
 

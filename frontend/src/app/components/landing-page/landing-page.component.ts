@@ -15,7 +15,6 @@ import { Divider } from "primeng/divider";
 import { ButtonDirective, ButtonIcon, ButtonLabel } from "primeng/button";
 import { Menubar } from "primeng/menubar";
 import { DialogService, DynamicDialogRef } from "primeng/dynamicdialog";
-import { LocalCBCFormula } from "../../types/CBCFormula";
 import { LocalDirectory } from "../../services/project/types/api-elements";
 
 @Component({
@@ -35,7 +34,7 @@ import { LocalDirectory } from "../../services/project/types/api-elements";
   standalone: true,
   styleUrl: "./landing-page.component.scss",
 })
-export class LandingPageComponent implements OnInit {
+export class LandingPageComponent {
   /**
    * Landingpage infront of the editors to prevent file not found errors,
    * this component is mounted at the root / of the url path and so the default page for users
@@ -73,16 +72,6 @@ export class LandingPageComponent implements OnInit {
     },
   ];
 
-  public ngOnInit(): void {
-    // read the query Params and setting them to the projectService
-    this.route.queryParams.subscribe((params) => {
-      this.projectService.projectId = params["projectId"];
-    });
-
-    // if the projectId is not undefined load the project from the backend
-    this.projectService.downloadWorkspace();
-  }
-
   public openProjectDialog() {
     this.dialogService.open(OpenProjectDialogComponent, {
       header: "Open Project",
@@ -113,9 +102,6 @@ export class LandingPageComponent implements OnInit {
 
     dialogRef?.onClose.subscribe((selectedExample) => {
       if (selectedExample) {
-        console.log(selectedExample);
-        console.log("Import Successfully");
-        console.log(selectedExample.project);
         this.projectService.importProject(
           LocalDirectory.fromApi(selectedExample.project),
           selectedExample.name,

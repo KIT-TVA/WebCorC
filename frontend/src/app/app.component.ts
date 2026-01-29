@@ -1,6 +1,6 @@
-import { Component, HostListener } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 
-import { Router, RouterOutlet } from "@angular/router";
+import { ActivatedRoute, Router, RouterOutlet } from "@angular/router";
 import { MatSidenavModule } from "@angular/material/sidenav";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { FormsModule } from "@angular/forms";
@@ -21,6 +21,7 @@ import { SettingsButtonComponent } from "./components/settings/settings-button/s
 import { Toast } from "primeng/toast";
 import { MessageService } from "primeng/api";
 import { InputText } from "primeng/inputtext";
+import { GlobalSettingsService } from "./services/global-settings.service";
 
 /**
  * Top Component of this application,
@@ -48,7 +49,7 @@ import { InputText } from "primeng/inputtext";
   standalone: true,
   styleUrl: "./app.component.scss",
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   private _loadingState = false;
 
   constructor(
@@ -57,8 +58,10 @@ export class AppComponent {
     private networkStatus: NetworkStatusService,
     public dialogService: DialogService,
     protected router: Router,
+    private route: ActivatedRoute,
     public projectService: ProjectService,
     private snackBar: MatSnackBar,
+    protected globalSettingsService: GlobalSettingsService,
   ) {
     this.networkStatus.status.subscribe((status) => {
       if (status != this._loadingState) {
@@ -66,12 +69,22 @@ export class AppComponent {
       }
     });
   }
+
+  public ngOnInit(): void {
+    // read the query Params and setting them to the projectService
+    this.route.queryParams.subscribe((params) => {
+      this.projectService.projectId = params["projectId"];
+      this.projectService.downloadWorkspace();
+    });
+    this.projectService.downloadWorkspace();
+  }
   /**
    * Triggered on pressing the verify Button in the Top Bar.
    * Sideeffect: When the helper.key exists and no backend project connected prompt user to create project in the backend.
    * This is needed for the backend to use the contents of helper.key
    */
   public verify(): void {
+    this.globalSettingsService.isVerifying = true;
     this.treeService.finalizeStatements();
     if (
       this.projectService.findByUrn("helper.key") &&
@@ -150,22 +163,9 @@ export class AppComponent {
    * Sideeffect: When no project id defined create project and upload current content to backend.
    */
   public share() {
-    let wait = false;
-    if (this.projectService.shouldCreateProject) {
-      this.projectService.requestFinished.pipe(first()).subscribe(() => {
-        this.writeURLintoClipboard();
-      });
-      this.openNewProjectDialog();
-      wait = true;
+    if (!this.projectService.shouldCreateProject) {
+      this.writeURLintoClipboard();
     }
-
-    if (!wait) {
-      this.projectService.editorNotify.pipe(first()).subscribe(() => {
-        this.writeURLintoClipboard();
-      });
-    }
-
-    this.projectService.uploadWorkspace(wait);
   }
 
   /**

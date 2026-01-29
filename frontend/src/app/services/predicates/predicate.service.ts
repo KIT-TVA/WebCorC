@@ -7,18 +7,19 @@ import { ProjectService } from "../project/project.service";
 })
 export class PredicateService {
   constructor(private projectService: ProjectService) {}
-  private idCounter = 2;
+  private idCounter = 0;
   private predicates: ProjectPredicate[] = [];
   public getPredicates() {
     return this.predicates;
   }
   public addPredicate() {
     const newPredicate: ProjectPredicate = {
-      id: String(this.idCounter++),
-      name: "untitled predicate " + this.idCounter / 2,
+      id: String(this.idCounter),
+      name: "untitled predicate " + this.idCounter,
       definition: "",
       signature: "",
     };
+    this.idCounter++;
     this.predicates.push(newPredicate);
     return newPredicate;
   }
@@ -49,7 +50,7 @@ export class PredicateService {
       result += "\\heuristics(simplify)\n};\n";
     }
     result += "}\n";
-    if (!this.projectService.findByUrn("predicates.key")) {
+    if (!this.projectService.findByUrn("/predicates.key")) {
       this.projectService.addFile("/", "predicates", "key");
     }
     this.projectService.syncFileContent("/predicates.key", result);

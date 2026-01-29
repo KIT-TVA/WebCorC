@@ -80,7 +80,7 @@ export class TreeService {
     // internal rootStatementNode and statement node list mirror the formula.
     // This avoids later callers producing an empty default RootStatement.
     try {
-      this.getStatementNodes();
+      this.generateStatementNodes();
     } catch (e) {
       console.error(
         "TreeService.setFormula: failed to initialize statement nodes",
@@ -200,6 +200,10 @@ export class TreeService {
     );
   }
 
+  public removeAllVariables(): void {
+    this._variables = [];
+  }
+
   /**
    * Add a global condition to the context,
    * checks for duplicates.
@@ -286,8 +290,12 @@ export class TreeService {
     }
   }
 
-  public getStatementNodes(): Signal<AbstractStatementNode[]> {
-    console.log("getStatementNodes in treeservice called", this.rootFormula);
+  public generateStatementNodes(): Signal<AbstractStatementNode[]> {
+    console.log(
+      "generateStatementNodes in treeservice called",
+      this.rootFormula,
+    );
+    console.trace();
     const rootStatementNode = this.rootFormula?.statement
       ? new RootStatementNode(
           this.rootFormula.statement as RootStatement,
@@ -456,7 +464,9 @@ export class TreeService {
    * @param node The root node of the subtree
    * @returns Array of all nodes in the subtree
    */
-  public collectSubtreeNodes(node: AbstractStatementNode): AbstractStatementNode[] {
+  public collectSubtreeNodes(
+    node: AbstractStatementNode,
+  ): AbstractStatementNode[] {
     const nodes: AbstractStatementNode[] = [node];
     for (const child of node.children) {
       if (child) {
@@ -471,7 +481,9 @@ export class TreeService {
    * @param node The statement node to verify
    * @returns A temporary LocalCBCFormula with the statement as root
    */
-  public createTempFormulaFromNode(node: AbstractStatementNode): LocalCBCFormula {
+  public createTempFormulaFromNode(
+    node: AbstractStatementNode,
+  ): LocalCBCFormula {
     // Finalize the node to sync conditions
     node.finalize();
 

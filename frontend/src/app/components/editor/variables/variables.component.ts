@@ -52,6 +52,7 @@ import { InputText } from "primeng/inputtext";
   styleUrl: "./variables.component.scss",
 })
 export class VariablesComponent implements AfterViewInit {
+  private isEmpty = true;
   /**
    * Forms Template
    */
@@ -72,6 +73,7 @@ export class VariablesComponent implements AfterViewInit {
     if (!this._variables.controls["items"].value) {
       return;
     }
+    this.items.clear();
     this.treeService.variables.forEach((variable) => {
       const newVariable = this._fb.group({
         name: new FormControl(variable, [Validators.required]),
@@ -135,10 +137,7 @@ export class VariablesComponent implements AfterViewInit {
    * Clear the form
    */
   public removeAllVariables(): void {
-    for (let i = 0; i < this.items.length; i++) {
-      this.treeService.removeVariables([this.items.at(i).value.name]);
-    }
-
+    this.treeService.removeAllVariables();
     this.items.clear();
     this.variables.controls["newVariable"].reset();
   }

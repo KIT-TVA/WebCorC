@@ -17,6 +17,7 @@ import { FloatLabel } from "primeng/floatlabel";
   styleUrl: "./create-project-dialog.component.scss",
 })
 export class CreateProjectDialogComponent {
+  protected loading = false;
   public constructor(
     private projectService: ProjectService,
     public ref: DynamicDialogRef<boolean>,
@@ -24,7 +25,11 @@ export class CreateProjectDialogComponent {
   ) {}
 
   public confirm() {
-    this.projectService.createProject().then(() => this.ref.close(true));
+    this.loading = true;
+    this.projectService
+      .createProject()
+      .then(() => this.ref.close(true))
+      .finally(() => (this.loading = false));
   }
 
   get projectname() {

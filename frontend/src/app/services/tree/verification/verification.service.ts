@@ -4,8 +4,9 @@ import { ProjectService } from "../../project/project.service";
 import { TreeService } from "../tree.service";
 import { IRootStatement } from "../../../types/statements/root-statement";
 import { ConsoleService } from "../../console/console.service";
-import { AbstractStatementNode } from "../../../types/statements/nodes/abstract-statement-node";
 import { IAbstractStatement } from "../../../types/statements/abstract-statement";
+import { AbstractStatementNode } from "../../../types/statements/nodes/abstract-statement-node";
+import { GlobalSettingsService } from "../../global-settings.service";
 
 /**
  * Service to distribute the verification result from the http response to the tree service.
@@ -19,6 +20,7 @@ export class VerificationService {
     private projectService: ProjectService,
     private treeService: TreeService,
     private consoleService: ConsoleService,
+    private globalSettingsService: GlobalSettingsService,
   ) {}
 
   public verifyInfo(msg: string) {
@@ -58,6 +60,7 @@ export class VerificationService {
       }
       this.projectService.syncFileContent(urn, currentFormula);
     }
+    this.globalSettingsService.isVerifying = false;
     if (formula.isProven) {
       this.consoleService.addStringInfo(
         `Verification successful: The formula "${formula.name}" is verified.`,
