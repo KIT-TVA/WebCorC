@@ -384,15 +384,15 @@ export class LoadExampleDialogComponent {
               "Root",
               new Condition("true"),
               new Condition(
-                "(\\old(balance) + x >= OVERDRAFT_LIMIT ==> balance == \\old(balance) + x) & " +
-                  "(\\old(balance) + x < OVERDRAFT_LIMIT ==> balance == \\old(balance))",
+                "(\\old(balance) + x >= limit ==> balance == \\old(balance) + x) & " +
+                  "(\\old(balance) + x < limit ==> balance == \\old(balance))",
               ),
               new CompositionStatement(
                 "Comp1",
                 new Condition("true"),
                 new Condition(
-                  "(\\old(balance) + x >= OVERDRAFT_LIMIT ==> balance == \\old(balance) + x) & " +
-                    "(\\old(balance) + x < OVERDRAFT_LIMIT ==> balance == \\old(balance))",
+                  "(\\old(balance) + x >= limit ==> balance == \\old(balance) + x) & " +
+                    "(\\old(balance) + x < limit ==> balance == \\old(balance))",
                 ),
                 new Condition("newBalance == balance + x"),
                 new Statement(
@@ -406,22 +406,22 @@ export class LoadExampleDialogComponent {
                   "Selection",
                   new Condition("newBalance == balance + x"),
                   new Condition(
-                    "(\\old(balance) + x >= OVERDRAFT_LIMIT ==> balance == \\old(balance) + x) & " +
-                      "(\\old(balance) + x < OVERDRAFT_LIMIT ==> balance == \\old(balance))",
+                    "(\\old(balance) + x >= limit ==> balance == \\old(balance) + x) & " +
+                      "(\\old(balance) + x < limit ==> balance == \\old(balance))",
                   ),
                   [
-                    new Condition("newBalance >= OVERDRAFT_LIMIT"),
-                    new Condition("newBalance < OVERDRAFT_LIMIT"),
+                    new Condition("newBalance >= limit"),
+                    new Condition("newBalance < limit"),
                   ],
                   [
                     new Statement(
                       "Statement3",
                       new Condition(
-                        "newBalance == balance + x & newBalance >= OVERDRAFT_LIMIT",
+                        "newBalance == balance + x & newBalance >= limit",
                       ),
                       new Condition(
-                        "(\\old(balance) + x >= OVERDRAFT_LIMIT ==> balance == \\old(balance) + x) & " +
-                          "(\\old(balance) + x < OVERDRAFT_LIMIT ==> balance == \\old(balance))",
+                        "(\\old(balance) + x >= limit ==> balance == \\old(balance) + x) & " +
+                          "(\\old(balance) + x < limit ==> balance == \\old(balance))",
                       ),
                       "balance = newBalance;",
                       new Position(350, 1400),
@@ -429,11 +429,11 @@ export class LoadExampleDialogComponent {
                     new SkipStatement(
                       "Statement4",
                       new Condition(
-                        "newBalance == balance + x & newBalance < OVERDRAFT_LIMIT",
+                        "newBalance == balance + x & newBalance < limit",
                       ),
                       new Condition(
-                        "(\\old(balance) + x >= OVERDRAFT_LIMIT ==> balance == \\old(balance) + x) & " +
-                          "(\\old(balance) + x < OVERDRAFT_LIMIT ==> balance == \\old(balance))",
+                        "(\\old(balance) + x >= limit ==> balance == \\old(balance) + x) & " +
+                          "(\\old(balance) + x < limit ==> balance == \\old(balance))",
                       ),
                       new Position(1225, 1400),
                     ),
@@ -448,7 +448,7 @@ export class LoadExampleDialogComponent {
             undefined,
             undefined,
             [
-              new JavaVariable("int OVERDRAFT_LIMIT", "LOCAL"),
+              new JavaVariable("int limit", "LOCAL"),
               new JavaVariable("int newBalance", "LOCAL"),
               new JavaVariable("int x", "LOCAL"),
               new JavaVariable("int balance", "LOCAL"),
