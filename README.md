@@ -116,7 +116,7 @@ The frontend provides the user interface.
     ```
 3.  Start the development server:
     ```bash
-    ng serve
+    npm run ng serve
     ```
     *Access the frontend at: `http://localhost:4200`*
 
