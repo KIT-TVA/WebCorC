@@ -200,6 +200,10 @@ export class TreeService {
     );
   }
 
+  public removeAllVariables(): void {
+    this._variables = [];
+  }
+
   /**
    * Add a global condition to the context,
    * checks for duplicates.
@@ -460,7 +464,9 @@ export class TreeService {
    * @param node The root node of the subtree
    * @returns Array of all nodes in the subtree
    */
-  public collectSubtreeNodes(node: AbstractStatementNode): AbstractStatementNode[] {
+  public collectSubtreeNodes(
+    node: AbstractStatementNode,
+  ): AbstractStatementNode[] {
     const nodes: AbstractStatementNode[] = [node];
     for (const child of node.children) {
       if (child) {
@@ -475,7 +481,9 @@ export class TreeService {
    * @param node The statement node to verify
    * @returns A temporary LocalCBCFormula with the statement as root
    */
-  public createTempFormulaFromNode(node: AbstractStatementNode): LocalCBCFormula {
+  public createTempFormulaFromNode(
+    node: AbstractStatementNode,
+  ): LocalCBCFormula {
     // Finalize the node to sync conditions
     node.finalize();
 
