@@ -6,9 +6,11 @@ import { ProjectService } from "../project/project.service";
   providedIn: "root",
 })
 export class PredicateService {
-  constructor(private projectService: ProjectService) {}
-  private idCounter = 0;
   private predicates: ProjectPredicate[] = [];
+  constructor(private projectService: ProjectService) {
+    this.predicates = projectService.getPredicates();
+  }
+  private idCounter = 0;
   public getPredicates() {
     return this.predicates;
   }
@@ -21,11 +23,17 @@ export class PredicateService {
     };
     this.idCounter++;
     this.predicates.push(newPredicate);
+    this.projectService.savePredicates(this.predicates);
     return newPredicate;
   }
 
   public removePredicate(predicate: ProjectPredicate) {
     this.predicates = this.predicates.filter((p) => p.id != predicate.id);
+    this.projectService.savePredicates(this.predicates);
+  }
+
+  public save() {
+    this.projectService.savePredicates(this.predicates);
   }
 
   public exportPredicates(): string {

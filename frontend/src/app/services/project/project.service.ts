@@ -11,6 +11,7 @@ import {
 import { ProjectElementsMapperService } from "./types/project-elements-mapper.service";
 import { ProjectStorageService } from "./storage/project-storage.service";
 import { Inode, LocalDirectory } from "./types/api-elements";
+import { ProjectPredicate } from "../../types/ProjectPredicate";
 
 /**
  * Service for project management.
@@ -330,6 +331,14 @@ export class ProjectService {
     file.present = true;
     this.storage.saveProject(this._rootDir, this.projectname);
     return content as string | LocalCBCFormula;
+  }
+
+  public savePredicates(predicates: ProjectPredicate[]) {
+    this.storage.setPredicates(predicates);
+  }
+
+  public getPredicates(): ProjectPredicate[] {
+    return this.storage.getPredicates();
   }
 
   /**
