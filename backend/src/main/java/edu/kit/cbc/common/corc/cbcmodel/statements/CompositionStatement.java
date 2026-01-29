@@ -44,6 +44,6 @@ public class CompositionStatement extends AbstractStatement {
 
     @Override
     public String generateCodeForProof() {
-        return this.generateCode();
+        return firstStatement.generateCodeForProof() + "\n" +  secondStatement.generateCodeForProof();
     }
 }
