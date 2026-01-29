@@ -74,9 +74,8 @@ export class AppComponent implements OnInit {
     // read the query Params and setting them to the projectService
     this.route.queryParams.subscribe((params) => {
       this.projectService.projectId = params["projectId"];
+      this.projectService.downloadWorkspace();
     });
-
-    // if the projectId is not undefined load the project from the backend
     this.projectService.downloadWorkspace();
   }
   /**
