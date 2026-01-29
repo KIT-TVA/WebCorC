@@ -248,9 +248,14 @@ export class ProjectService {
    * @param content The content to save in the file identified by the urn
    */
   public syncFileContent(urn: string, content: string | LocalCBCFormula) {
-    const file = this.findByUrn(urn);
+    let file = this.findByUrn(urn);
     if (!file) {
-      throw new Error(`File ${urn} not found. Please create it first`);
+      this._rootDir = this.storage.getProjectTree() ?? this._rootDir;
+      file = this.findByUrn(urn);
+      if (!file) {
+        console.log(this._rootDir);
+        throw new Error(`File ${urn} not found. Please create it first`);
+      }
       /*
       const parentDir = this.getParentDirectory(urn);
       if (!parentDir) {
@@ -263,18 +268,18 @@ export class ProjectService {
           : "key";
       this.addFile(parentDir?.urn, urn.split("/").pop() || "untitled", type);
        */
-    } else {
-      switch (file.type) {
-        case "DIAGRAM_FILE":
-          (file as DiagramFile).formula = content as LocalCBCFormula;
-          break;
-        case "CODE_FILE":
-          (file as CodeFile).content = content as string;
-          break;
-        default:
-          throw new Error("Unknown file type");
-      }
     }
+    switch (file.type) {
+      case "DIAGRAM_FILE":
+        (file as DiagramFile).formula = content as LocalCBCFormula;
+        break;
+      case "CODE_FILE":
+        (file as CodeFile).content = content as string;
+        break;
+      default:
+        throw new Error("Unknown file type");
+    }
+
     this._savedFinished.next();
   }
 
