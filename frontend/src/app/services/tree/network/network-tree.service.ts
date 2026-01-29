@@ -14,6 +14,8 @@ import { ProjectService } from "../../project/project.service";
 import { CbcFormulaMapperService } from "../../project/mapper/cbc-formula-mapper.service";
 import { WebSocketService } from "./websocket";
 import { ApiDiagramFile } from "../../project/types/api-elements";
+import { AbstractStatementNode } from "../../../types/statements/nodes/abstract-statement-node";
+import { TreeService } from "../tree.service";
 
 /**
  * The Service to send the editor contents over the network to the backend for verification or code generation.
@@ -36,6 +38,7 @@ export class NetworkTreeService {
     private readonly networkStatusService: NetworkStatusService,
     private readonly consoleService: ConsoleService,
     private readonly projectService: ProjectService,
+    private readonly treeService: TreeService,
   ) {}
 
   /**
@@ -97,6 +100,96 @@ export class NetworkTreeService {
           this.verificationService.verifyInfo(msg);
 
           //TODO: consoleService needs an endpoint for non-errors
+        });
+      });
+  }
+
+  /**
+   * Verify a single statement and its subtree via the backend
+   * @param formula The temporary formula containing the statement to verify
+   * @param statementNode The statement node being verified
+   * @param projectId The id of the project
+   * @param urn urn of the file being verified
+   * @param onComplete Callback to execute when verification completes (success or error)
+   */
+  public verifyStatement(
+    formula: LocalCBCFormula,
+    statementNode: AbstractStatementNode,
+    projectId: string | undefined,
+    urn: string,
+    onComplete: () => void,
+  ) {
+    let params = new HttpParams();
+
+    if (projectId) {
+      params = params.set("projectId", projectId);
+    }
+
+    this.networkStatusService.startNetworkRequest();
+
+    this.http
+      .post<string>(
+        environment.apiUrl + NetworkTreeService.verifyPath,
+        formula
+          ? new ApiDiagramFile("", this.mapper.exportFormula(formula), "file")
+              .content
+          : undefined,
+        {
+          params: params,
+        },
+      )
+      .pipe(
+        catchError((error: HttpErrorResponse): Observable<string> => {
+          // Handle 500 and other errors
+          if (error.status === 500 || error.status >= 400) {
+            // Mark statement as unverified
+            statementNode.statement.isProven = false;
+            this.treeService.refreshNodes();
+            this.consoleService.addErrorResponse(
+              error,
+              `Verification failed for statement "${statementNode.statement.name}"`,
+            );
+            this.networkStatusService.stopNetworkRequest();
+            onComplete();
+            return of();
+          }
+          this.consoleService.addErrorResponse(
+            error,
+            `Verification failed for statement "${statementNode.statement.name}"`,
+          );
+          this.networkStatusService.stopNetworkRequest();
+          onComplete();
+          return of();
+        }),
+      )
+      .subscribe((uuid: string) => {
+        if (!uuid) {
+          // Empty UUID means error was handled in catchError
+          return;
+        }
+        const ws = new WebSocketService(
+          environment.apiUrl + NetworkTreeService.verifyWebSocketPath + uuid,
+        );
+        ws.messages$.subscribe((msg: string) => {
+          if (msg === "verification complete") {
+            ws.disconnect();
+            this.networkStatusService.startNetworkRequest();
+            this.http
+              .get<ICBCFormula>(
+                environment.apiUrl + NetworkTreeService.verifyResultPath + uuid,
+              )
+              .pipe(map((formula) => this.mapper.importFormula(formula)))
+              .subscribe((formula: LocalCBCFormula) => {
+                this.verificationService.nextStatement(
+                  formula,
+                  statementNode,
+                  urn,
+                );
+                this.networkStatusService.stopNetworkRequest();
+                onComplete();
+              });
+          }
+          this.verificationService.verifyInfo(msg);
         });
       });
   }
