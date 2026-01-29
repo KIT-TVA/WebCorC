@@ -69,8 +69,8 @@ export class PredicateService {
     const allTokens = definition.split(RegExp(/\\forall|\\exists/gm));
     const tokens: string[] = [];
     // eg "\forall @private @whatnot int k; if (k < 4 && [...]" will return "@private @whatnot int k"
-    allTokens.forEach((expression) => {
-      if (expression.length > 0) {
+    allTokens.forEach((expression, index) => {
+      if (expression.length > 0 && index > 0) {
         const split = expression.split(";", 1);
         tokens.push(split[0]);
       }
