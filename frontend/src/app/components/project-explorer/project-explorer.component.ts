@@ -394,6 +394,7 @@ export class ProjectExplorerComponent {
    * Todo: Rewrite Export with /export to allow the backend to handle the export
    */
   public export() {
+    this.treeService.finalizeStatements();
     this.projectService.explorerNotify.pipe(first()).subscribe(() => {
       const structure = JSON.stringify(this.projectService.export(), null, 2);
       const blob = new Blob([structure], { type: "application/json" });
