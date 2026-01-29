@@ -6,7 +6,6 @@ import { IRootStatement } from "../../../types/statements/root-statement";
 import { ConsoleService } from "../../console/console.service";
 import { IAbstractStatement } from "../../../types/statements/abstract-statement";
 import { AbstractStatementNode } from "../../../types/statements/nodes/abstract-statement-node";
-import { IAbstractStatement } from "../../../types/statements/abstract-statement";
 import { GlobalSettingsService } from "../../global-settings.service";
 
 /**
