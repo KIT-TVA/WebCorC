@@ -85,7 +85,7 @@ The easiest way to get up and running is with Docker Compose. This will spin up 
 
 3.  **Access the application:**
     Open your browser and navigate to `http://localhost`.
-
+> **Note**: For the AI-Features to work, you'll need to also add your OpenAPI key to the docker-compose.env
 ### Option 2: Manual Development Setup
 
 If you prefer to run services individually for debugging or native performance:
