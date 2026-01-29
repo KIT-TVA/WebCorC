@@ -1,14 +1,14 @@
-import {Component} from '@angular/core';
-import {FormsModule} from '@angular/forms';
-import {Router} from '@angular/router';
-import {ProjectService} from '../../../services/project/project.service';
-import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
-import {Button} from "primeng/button";
-import {FloatLabel} from "primeng/floatlabel";
-import {InputText} from "primeng/inputtext";
+import { Component } from "@angular/core";
+import { FormsModule } from "@angular/forms";
+import { Router } from "@angular/router";
+import { ProjectService } from "../../../services/project/project.service";
+import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Button } from "primeng/button";
+import { FloatLabel } from "primeng/floatlabel";
+import { InputText } from "primeng/inputtext";
 
 /**
- * Dialog for opening a project based on the project id 
+ * Dialog for opening a project based on the project id
  * {@link https://material.angular.io/components/dialog/overview}
  */
 @Component({
@@ -35,6 +35,7 @@ export class OpenProjectDialogComponent {
     this.router.navigate([], {
       queryParams: { projectId: this._projectId },
     });
+    this.ref.close();
   }
 
   public get projectId() {
