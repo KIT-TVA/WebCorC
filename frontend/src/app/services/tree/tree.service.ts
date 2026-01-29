@@ -32,6 +32,7 @@ export class TreeService {
   private readonly _exportNotifier: Subject<void>;
   private readonly _resetVerifyNotifier: Subject<void>;
   private readonly _verificationResultNotifier: Subject<AbstractStatement>;
+  private readonly _finalizeNotifier: Subject<void>;
   private _globalConditions: string[] = [];
   private _renames: Renaming[] = [];
   private _statementNodes: WritableSignal<AbstractStatementNode[]> = signal([]);
@@ -43,6 +44,7 @@ export class TreeService {
     this._verifyNotifier = new Subject<void>();
     this._exportNotifier = new Subject<void>();
     this._resetVerifyNotifier = new Subject<void>();
+    this._finalizeNotifier = new Subject<void>();
   }
 
   setFormula(newFormula: LocalCBCFormula, urn: string) {
@@ -139,6 +141,10 @@ export class TreeService {
 
   public get resetVerifyNotifier() {
     return this._resetVerifyNotifier;
+  }
+
+  public get finalizeNotifier() {
+    return this._finalizeNotifier;
   }
 
   public get rootStatement() {
@@ -419,6 +425,7 @@ export class TreeService {
         (condition) => new Condition(condition),
       );
     }
+    this.finalizeNotifier.next()
   }
 
   /**

@@ -213,6 +213,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     if (this.treeService.rootFormula) {
       formula = this.treeService.rootFormula;
     }
+    formula.javaVariables = this.sidemenu.variables.javaVariables
     if (this._urn !== "" && this.treeService.rootFormula?.statement) {
       // save the current state outside the component
       this.projectService.syncFileContent(this._urn, formula);
