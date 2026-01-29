@@ -1,6 +1,6 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 
-import { Router, RouterOutlet } from "@angular/router";
+import { ActivatedRoute, Router, RouterOutlet } from "@angular/router";
 import { MatSidenavModule } from "@angular/material/sidenav";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { FormsModule } from "@angular/forms";
@@ -49,7 +49,7 @@ import { GlobalSettingsService } from "./services/global-settings.service";
   standalone: true,
   styleUrl: "./app.component.scss",
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   private _loadingState = false;
 
   constructor(
@@ -58,6 +58,7 @@ export class AppComponent {
     private networkStatus: NetworkStatusService,
     public dialogService: DialogService,
     protected router: Router,
+    private route: ActivatedRoute,
     public projectService: ProjectService,
     private snackBar: MatSnackBar,
     protected globalSettingsService: GlobalSettingsService,
@@ -67,6 +68,16 @@ export class AppComponent {
         this._loadingState = status;
       }
     });
+  }
+
+  public ngOnInit(): void {
+    // read the query Params and setting them to the projectService
+    this.route.queryParams.subscribe((params) => {
+      this.projectService.projectId = params["projectId"];
+    });
+
+    // if the projectId is not undefined load the project from the backend
+    this.projectService.downloadWorkspace();
   }
   /**
    * Triggered on pressing the verify Button in the Top Bar.
