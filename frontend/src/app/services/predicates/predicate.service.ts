@@ -45,7 +45,7 @@ export class PredicateService {
       notFreeVariables.forEach((variable) => {
         result += `\\schemaVar \\variable ${variable};\n`;
       });
-      result += `find(${predicate.name}(${this.signatureWithOnlyNames(predicate.signature)}))\n`;
+      result += `\\find(${predicate.name}(${this.signatureWithOnlyNames(predicate.signature)}))\n`;
       result += `\\replacewith (${predicate.definition})\n`;
       result += "\\heuristics(simplify)\n};\n";
     }
@@ -71,7 +71,10 @@ export class PredicateService {
   }
 
   private parseSignatureTokens(signature: string) {
-    return signature.split(RegExp(/, |,/gm)).map((token) => token.trim());
+    const firstSplit = signature.indexOf("(");
+    const lastSplit = signature.indexOf(")");
+    const splitSignature = signature.substring(firstSplit + 1, lastSplit);
+    return splitSignature.split(RegExp(/, |,/gm)).map((token) => token.trim());
   }
 
   private extractNamesFromSignatureTokens(signatureTokens: string[]) {
@@ -83,6 +86,6 @@ export class PredicateService {
   private signatureWithOnlyNames(signature: string) {
     return this.extractNamesFromSignatureTokens(
       this.parseSignatureTokens(signature),
-    ).reduce((prev = "", current) => prev + " " + current);
+    ).reduce((prev = "", current) => prev + ", " + current);
   }
 }
