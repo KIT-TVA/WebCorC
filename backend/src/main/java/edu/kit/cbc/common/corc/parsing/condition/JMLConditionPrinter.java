@@ -23,9 +23,7 @@ public class JMLConditionPrinter extends AbstractConditionPrinter {
 
     @Override
     protected void printBinaryOperation(Tree lhs, Tree rhs, Operator.OperatorType type) {
-        print("(");
         printTree(lhs);
-        print(")");
         space();
         if (REPLACE.containsKey(type)) {
             this.builder.append(REPLACE.get(type));
@@ -33,9 +31,7 @@ public class JMLConditionPrinter extends AbstractConditionPrinter {
             this.builder.append(type);
         }
         space();
-        print("(");
         printTree(rhs);
-        print(")");
     }
 
     @Override

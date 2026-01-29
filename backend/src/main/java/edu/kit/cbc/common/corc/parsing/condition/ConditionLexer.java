@@ -29,11 +29,6 @@ public final class ConditionLexer extends Lexer {
 
         Token token = optionalToken.get();
 
-        if (token instanceof Separator(Separator.SeparatorType type, var ignored)
-            && type == Separator.SeparatorType.SEMICOLON) {
-            throw new ParseException(String.format(PARSING_ERROR, token, token.position()));
-        }
-
         if (token instanceof Operator(Operator.OperatorType type, var ignored)
             && type == Operator.OperatorType.ASSIGN) {
             throw new ParseException(String.format(PARSING_ERROR, token, token.position()));
