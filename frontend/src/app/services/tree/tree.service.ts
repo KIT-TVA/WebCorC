@@ -417,6 +417,96 @@ export class TreeService {
     }
   }
 
+  /**
+   * Find a statement node by its statement ID
+   * @param id The ID of the statement to find
+   * @returns The statement node if found, undefined otherwise
+   */
+  public findStatementNodeById(id: string): AbstractStatementNode | undefined {
+    const nodes = this._statementNodes();
+    for (const node of nodes) {
+      if (node.statement.id === id) {
+        return node;
+      }
+      // Recursively search children
+      const found = this.findNodeInSubtree(node, id);
+      if (found) {
+        return found;
+      }
+    }
+    return undefined;
+  }
+
+  private findNodeInSubtree(
+    node: AbstractStatementNode,
+    id: string,
+  ): AbstractStatementNode | undefined {
+    for (const child of node.children) {
+      if (child) {
+        if (child.statement.id === id) {
+          return child;
+        }
+        const found = this.findNodeInSubtree(child, id);
+        if (found) {
+          return found;
+        }
+      }
+    }
+    return undefined;
+  }
+
+  /**
+   * Collect all nodes in the subtree starting from the given node (including the node itself)
+   * @param node The root node of the subtree
+   * @returns Array of all nodes in the subtree
+   */
+  public collectSubtreeNodes(node: AbstractStatementNode): AbstractStatementNode[] {
+    const nodes: AbstractStatementNode[] = [node];
+    for (const child of node.children) {
+      if (child) {
+        nodes.push(...this.collectSubtreeNodes(child));
+      }
+    }
+    return nodes;
+  }
+
+  /**
+   * Create a temporary formula from a statement node for verification
+   * @param node The statement node to verify
+   * @returns A temporary LocalCBCFormula with the statement as root
+   */
+  public createTempFormulaFromNode(node: AbstractStatementNode): LocalCBCFormula {
+    // Finalize the node to sync conditions
+    node.finalize();
+
+    let rootStatement: IRootStatement;
+
+    // If the node is already a ROOT type, use it directly
+    if (node.statement.type === "ROOT") {
+      rootStatement = node.statement as IRootStatement;
+    } else {
+      // Otherwise, wrap the statement in a RootStatement
+      rootStatement = new RootStatement(
+        node.statement.name || "temp",
+        node.statement.preCondition,
+        node.statement.postCondition,
+        node.statement,
+      );
+    }
+
+    // Create temporary formula with global context from root formula
+    const tempFormula = new LocalCBCFormula(
+      node.statement.name || "temp",
+      rootStatement,
+      this.rootFormula?.javaVariables || [],
+      this.rootFormula?.globalConditions || [],
+      this.rootFormula?.renamings || null,
+      false,
+    );
+
+    return tempFormula;
+  }
+
   public dump() {
     return {
       rootStatementNode: JSON.stringify(
