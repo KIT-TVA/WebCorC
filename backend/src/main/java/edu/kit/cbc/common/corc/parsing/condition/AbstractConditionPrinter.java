@@ -43,9 +43,9 @@ public abstract class AbstractConditionPrinter {
             case ForAllTree(IdentTree name, Tree cond) -> {
                 print("\\forall");
                 space();
-                print("(");
+                print(" int ");
                 printTree(name);
-                print(")");
+                print(";");
                 space();
                 print("(");
                 printTree(cond);
@@ -54,9 +54,9 @@ public abstract class AbstractConditionPrinter {
             case ExistsTree(IdentTree name, Tree cond) -> {
                 print("\\exists");
                 space();
-                print("(");
+                print("int ");
                 printTree(name);
-                print(")");
+                print(";");
                 space();
                 print("(");
                 printTree(cond);

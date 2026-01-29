@@ -120,11 +120,9 @@ public abstract class Parser {
             }
             case Operator(Operator.OperatorType type, var ignored) when type == Operator.OperatorType.FORALL -> {
                 this.tokenSource.consume();
-                this.tokenSource.expectSeparator(Separator.SeparatorType.PAREN_OPEN);
                 this.tokenSource.expectKeyword(Keyword.KeywordType.INT);
                 final Identifier var = this.tokenSource.expectIdentifier();
                 this.tokenSource.expectSeparator(Separator.SeparatorType.SEMICOLON);
-                this.tokenSource.expectSeparator(Separator.SeparatorType.PAREN_CLOSE);
 
                 this.tokenSource.expectSeparator(Separator.SeparatorType.PAREN_OPEN);
                 Tree conditionTree = parseExpression();
@@ -134,11 +132,9 @@ public abstract class Parser {
             }
             case Operator(Operator.OperatorType type, var ignored) when type == Operator.OperatorType.EXISTS -> {
                 this.tokenSource.consume();
-                this.tokenSource.expectSeparator(Separator.SeparatorType.PAREN_OPEN);
                 this.tokenSource.expectKeyword(Keyword.KeywordType.INT);
                 final Identifier var = this.tokenSource.expectIdentifier();
                 this.tokenSource.expectSeparator(Separator.SeparatorType.SEMICOLON);
-                this.tokenSource.expectSeparator(Separator.SeparatorType.PAREN_CLOSE);
 
                 this.tokenSource.expectSeparator(Separator.SeparatorType.PAREN_OPEN);
                 Tree conditionTree = parseExpression();

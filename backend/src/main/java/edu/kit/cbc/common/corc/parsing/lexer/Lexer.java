@@ -60,12 +60,12 @@ public abstract class Lexer {
                 String identName = readIdentifierName();
                 advanceSteps = identName.length();
                 yield
-                    switch (readIdentifierName()) {
+                    switch (identName) {
                         case "\\forall" -> new Operator(Operator.OperatorType.FORALL, pos);
                         case "\\exists" -> new Operator(Operator.OperatorType.EXISTS, pos);
                         case "\\old" -> new Operator(Operator.OperatorType.OLD, pos);
                         default -> throw new ParseException(
-                            "The token '" + peek() + "' at position " + this.pos + " is not a valid token!");
+                            "The token '" + peek() + "' at position " + this.pos + " is not a valid token! Identifier" + identName);
                     };
             }
             case '<' -> {
