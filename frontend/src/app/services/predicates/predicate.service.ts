@@ -54,6 +54,17 @@ export class PredicateService {
         result += `\\schemaVar \\variable ${variable};\n`;
       });
       result += `\\find(${predicate.name}(${this.signatureWithOnlyNames(predicate.signature)}))\n`;
+      const signatureNames = this.extractNamesFromSignatureTokens(signatureTokens).filter(n => n.length > 0);
+      const boundVarNames = this.extractNamesFromSignatureTokens(notFreeVariables).filter(n => n.length > 0);
+      const conditions: string[] = [];
+      boundVarNames.forEach((boundVar) => {
+        signatureNames.forEach((sigVar) => {
+          conditions.push(`\\notFreeIn(${boundVar}, ${sigVar})`);
+        });
+      });
+      if (conditions.length > 0) {
+        result += `\\varcond (${conditions.join(", ")})\n`;
+      }
       //Replace .length with length() and
       result += `\\replacewith (${predicate.definition
         .replace(/(?:^|\s|;|\()(\w+)\.length(?=\s|;|\)|$)/g, "length($1)")
