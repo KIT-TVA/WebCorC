@@ -110,9 +110,6 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     private router: Router,
     protected globalSettingsService: GlobalSettingsService,
   ) {
-    this.projectService.editorNotify.subscribe(() => {
-      this.saveContentToFile();
-    });
     this.setupVFlowSync();
     this.treeService.exportNotifier.subscribe(() => this.export());
   }
@@ -150,12 +147,6 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   public ngAfterViewInit(): void {
     console.log("Editor view initialized");
     this._viewInit = true;
-    this.projectService.explorerNotify.subscribe(() => this.loadFileContent());
-    // workaround to ensure proper loading of file content on switch between files
-    // This shouldn't be needed any more...
-    /*setTimeout(() => {
-      this.loadFileContent();
-    }, 10); */
     this.loadFileContent();
     this.projectService.editorNotify.subscribe(() => {
       this.saveContentToFile();
@@ -213,6 +204,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     if (this.treeService.rootFormula) {
       formula = this.treeService.rootFormula;
     }
+    this.treeService.finalizeStatements();
     if (this._urn !== "" && this.treeService.rootFormula?.statement) {
       // save the current state outside the component
       this.projectService.syncFileContent(this._urn, formula);

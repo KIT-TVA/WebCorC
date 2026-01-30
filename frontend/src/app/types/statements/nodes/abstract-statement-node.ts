@@ -72,6 +72,7 @@ export class AbstractStatementNode {
   public finalize() {
     this.statement.preCondition = this.precondition();
     this.statement.postCondition = this.postcondition();
+    this.children.forEach((c) => c?.finalize());
   }
 
   public checkConditionSync(child: AbstractStatementNode) {

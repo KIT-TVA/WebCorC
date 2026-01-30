@@ -1,4 +1,4 @@
-import { AfterViewInit, Component } from "@angular/core";
+import { AfterViewInit, Component, OnDestroy } from "@angular/core";
 
 import { TreeService } from "../../../services/tree/tree.service";
 import { MatInputModule } from "@angular/material/input";
@@ -17,7 +17,7 @@ import { MatDividerModule } from "@angular/material/divider";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatListModule } from "@angular/material/list";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { IJavaVariable } from "../../../types/JavaVariable";
+import { IJavaVariable, JavaVariable } from "../../../types/JavaVariable";
 import { FloatLabel } from "primeng/floatlabel";
 import { IconField } from "primeng/iconfield";
 import { InputIcon } from "primeng/inputicon";
@@ -67,6 +67,11 @@ export class VariablesComponent implements AfterViewInit {
   ) {}
   ngAfterViewInit(): void {
     this.importDiagramVariables();
+    this.treeService.finalizeNotifier.subscribe(() => {
+      if (this.treeService.rootFormula) {
+        this.treeService.rootFormula.javaVariables = this.javaVariables;
+      }
+    });
   }
 
   public importDiagramVariables() {
@@ -137,6 +142,8 @@ export class VariablesComponent implements AfterViewInit {
    * Clear the form
    */
   public removeAllVariables(): void {
+    console.log("Remove all vars");
+    console.trace();
     this.treeService.removeAllVariables();
     this.items.clear();
     this.variables.controls["newVariable"].reset();
@@ -159,6 +166,12 @@ export class VariablesComponent implements AfterViewInit {
 
   public get items(): FormArray {
     return this.variables.controls["items"] as FormArray;
+  }
+
+  public get javaVariables() {
+    return this.items
+      .getRawValue()
+      .map((value) => new JavaVariable(value.name, "LOCAL"));
   }
 
   public get variables(): FormGroup {
