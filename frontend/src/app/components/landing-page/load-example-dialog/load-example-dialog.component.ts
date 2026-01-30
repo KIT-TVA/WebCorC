@@ -89,21 +89,21 @@ export class LoadExampleDialogComponent {
                 "Comp",
                 new Condition("appears(A, x, 0, A.length)"),
                 new Condition("A[i] == x"),
-                new Condition("appears(A, x, 0, A.length) & i == A.length-1"),
+                new Condition("appears(A, x, 0, A.length) && i == A.length-1"),
                 new Statement(
                   "Statement",
                   new Condition("appears(A, x, 0, A.length)"),
-                  new Condition("appears(A, x, 0, A.length) & i == A.length-1"),
+                  new Condition("appears(A, x, 0, A.length) && i == A.length-1"),
                   "i = A.length-1;",
                   new Position(0, 800),
                 ),
                 new RepetitionStatement(
                   "Repetition",
-                  new Condition("!appears(A,x,i+1,A.length) & (A[i] != x)"),
+                  new Condition("!appears(A,x,i+1,A.length) && (A[i] != x)"),
                   new Condition("A[i]==x"),
                   new Statement(
                     "Statement2",
-                    new Condition("!appears(A,x,i+1,A.length) & (A[i] != x)"),
+                    new Condition("!appears(A,x,i+1,A.length) && (A[i] != x)"),
                     new Condition("!appears(A,x,i+1,A.length)"),
                     "i = i-1;",
                     new Position(0, 1600),
@@ -129,7 +129,7 @@ export class LoadExampleDialogComponent {
             ],
             [
               new Condition("A != null"),
-              new Condition("i >= 0 & i < A.length"),
+              new Condition("i >= 0 && i < A.length"),
               new Condition("A.length > 0"),
               new Condition("A.length < 10"),
               new Condition("appears(A,x,0,A.length)"),
@@ -142,7 +142,6 @@ export class LoadExampleDialogComponent {
             "include/predicates.key",
             "\\predicates {\n" +
               "    appears(int[], int, int, int);\n" +
-              "    maxe(int[], int, int, int);\n" +
               "}\n" +
               "\n" +
               "\\rules {\n" +
@@ -155,17 +154,6 @@ export class LoadExampleDialogComponent {
               "        \\find (appears(A, x, start, end))\n" +
               "        \\varcond (\\notFreeIn(q,A), \\notFreeIn(q,x), \\notFreeIn(q,start), \\notFreeIn(q,end))\n" +
               "        \\replacewith (\\exists int q; (q >= start & q < end & A[q]=x))\n" +
-              "        \\heuristics(simplify)\n" +
-              "    };\n" +
-              "    maxe {\n" +
-              "        \\schemaVar \\term int[] A;\n" +
-              "        \\schemaVar \\term int begin;\n" +
-              "        \\schemaVar \\term int end;\n" +
-              "        \\schemaVar \\term int m;\n" +
-              "        \\schemaVar \\variable int q;\n" +
-              "        \\find (maxe(A, begin, end, m))\n" +
-              "        \\varcond (\\notFreeIn(q,A), \\notFreeIn(q,begin), \\notFreeIn(q,end), \\notFreeIn(q,m))\n" +
-              "        \\replacewith (\\forall int q; ((q >= begin & q < end) -> A[m]>=A[q]))\n" +
               "        \\heuristics(simplify)\n" +
               "    };\n" +
               "}\n",
@@ -214,7 +202,7 @@ export class LoadExampleDialogComponent {
                       new Statement(
                         "Statement3",
                         new Condition(
-                          "((s(A, wb, wt, bb)) & (wt != bb)) & (A[wt] = 0)",
+                          "((s(A, wb, wt, bb)) && (wt != bb)) && (A[wt] = 0)",
                         ),
                         new Condition("s(A, wb, wt, bb)"),
                         "t = A[wt]; A[wt] = A[wb]; A[wb] = t; wt = wt+1; wb = wb+1;",
@@ -279,23 +267,23 @@ export class LoadExampleDialogComponent {
                 "Comp1",
                 new Condition("A.length > 0"),
                 new Condition("maxe(A, 0, A.length, i)"),
-                new Condition("A.length > 0 & i == 0 & j == 1"),
+                new Condition("A.length > 0 && i == 0 && j == 1"),
                 new CompositionStatement(
                   "Comp2",
                   new Condition("A.length > 0"),
-                  new Condition("A.length > 0 & i == 0 & j == 1"),
-                  new Condition("A.length > 0 & i == 0"),
+                  new Condition("A.length > 0 && i == 0 && j == 1"),
+                  new Condition("A.length > 0 && i == 0"),
                   new Statement(
                     "Statement1",
                     new Condition("A.length > 0"),
-                    new Condition("A.length > 0 & i == 0"),
+                    new Condition("A.length > 0 && i == 0"),
                     "i = 0;",
                     new Position(0, 1200),
                   ),
                   new Statement(
                     "Statement2",
-                    new Condition("A.length > 0 & i == 0"),
-                    new Condition("A.length > 0 & i == 0 & j == 1"),
+                    new Condition("A.length > 0 && i == 0"),
+                    new Condition("A.length > 0 && i == 0 && j == 1"),
                     "j = 1;",
                     new Position(825, 1200),
                   ),
@@ -303,16 +291,16 @@ export class LoadExampleDialogComponent {
                 ),
                 new RepetitionStatement(
                   "Repetition",
-                  new Condition("maxe(A,0,j,i) & (j!=A.length)"),
+                  new Condition("maxe(A,0,j,i) && (j!=A.length)"),
                   new Condition("maxe(A,0,j,i)"),
                   new CompositionStatement(
                     "CompLoop",
-                    new Condition("maxe(A,0,j,i) & (j!=A.length)"),
+                    new Condition("maxe(A,0,j,i) && (j!=A.length)"),
                     new Condition("maxe(A,0,j,i)"),
-                    new Condition("maxe(A,0,j,i)"),
+                    new Condition("maxe(A,0,j+1,i)"),
                     new SelectionStatement(
                       "Selection",
-                      new Condition("maxe(A,0,j,i) & (j!=A.length)"),
+                      new Condition("maxe(A,0,j,i) && (j!=A.length)"),
                       new Condition("maxe(A,0,j+1,i)"),
                       [
                         new Condition("A[j] > A[i]"),
@@ -322,7 +310,7 @@ export class LoadExampleDialogComponent {
                         new Statement(
                           "Statement3",
                           new Condition(
-                            "maxe(A,0,j,i) & (j!=A.length) & A[j] > A[i]",
+                            "maxe(A,0,j,i) && (j!=A.length) && A[j] > A[i]",
                           ),
                           new Condition("maxe(A,0,j+1,i)"),
                           "i = j;",
@@ -331,7 +319,7 @@ export class LoadExampleDialogComponent {
                         new SkipStatement(
                           "Statement4",
                           new Condition(
-                            "maxe(A,0,j,i) & (j!=A.length) & A[j] <= A[i]",
+                            "maxe(A,0,j,i) && (j!=A.length) && A[j] <= A[i]",
                           ),
                           new Condition("maxe(A,0,j+1,i)"),
                           new Position(0, 2000),
@@ -370,6 +358,28 @@ export class LoadExampleDialogComponent {
             ],
           ),
         ),
+        new ApiDirectory("include", [
+          new ApiTextFile(
+            "include/predicates.key",
+            "\\predicates {\n" +
+              "    maxe(int[], int, int, int);\n" +
+              "}\n" +
+              "\n" +
+              "\\rules {\n" +
+              "    maxe {\n" +
+              "        \\schemaVar \\term int[] A;\n" +
+              "        \\schemaVar \\term int begin;\n" +
+              "        \\schemaVar \\term int end;\n" +
+              "        \\schemaVar \\term int m;\n" +
+              "        \\schemaVar \\variable int q;\n" +
+              "        \\find (maxe(A, begin, end, m))\n" +
+              "        \\varcond (\\notFreeIn(q,A), \\notFreeIn(q,begin), \\notFreeIn(q,end), \\notFreeIn(q,m))\n" +
+              "        \\replacewith (\\forall int q; ((q >= begin & q < end) -> A[m]>=A[q]))\n" +
+              "        \\heuristics(simplify)\n" +
+              "    };\n" +
+              "}\n",
+          ),
+        ]),
       ]),
     },
     {
@@ -384,14 +394,14 @@ export class LoadExampleDialogComponent {
               "Root",
               new Condition("true"),
               new Condition(
-                "(\\old(balance) + x >= limit ==> balance == \\old(balance) + x) & " +
+                "(\\old(balance) + x >= limit ==> balance == \\old(balance) + x) && " +
                   "(\\old(balance) + x < limit ==> balance == \\old(balance))",
               ),
               new CompositionStatement(
                 "Comp1",
                 new Condition("true"),
                 new Condition(
-                  "(\\old(balance) + x >= limit ==> balance == \\old(balance) + x) & " +
+                  "(\\old(balance) + x >= limit ==> balance == \\old(balance) + x) && " +
                     "(\\old(balance) + x < limit ==> balance == \\old(balance))",
                 ),
                 new Condition("newBalance == balance + x"),
@@ -406,7 +416,7 @@ export class LoadExampleDialogComponent {
                   "Selection",
                   new Condition("newBalance == balance + x"),
                   new Condition(
-                    "(\\old(balance) + x >= limit ==> balance == \\old(balance) + x) & " +
+                    "(\\old(balance) + x >= limit ==> balance == \\old(balance) + x) && " +
                       "(\\old(balance) + x < limit ==> balance == \\old(balance))",
                   ),
                   [
@@ -417,10 +427,10 @@ export class LoadExampleDialogComponent {
                     new Statement(
                       "Statement3",
                       new Condition(
-                        "newBalance == balance + x & newBalance >= limit",
+                        "newBalance == balance + x && newBalance >= limit",
                       ),
                       new Condition(
-                        "(\\old(balance) + x >= limit ==> balance == \\old(balance) + x) & " +
+                        "(\\old(balance) + x >= limit ==> balance == \\old(balance) + x) && " +
                           "(\\old(balance) + x < limit ==> balance == \\old(balance))",
                       ),
                       "balance = newBalance;",
@@ -429,10 +439,10 @@ export class LoadExampleDialogComponent {
                     new SkipStatement(
                       "Statement4",
                       new Condition(
-                        "newBalance == balance + x & newBalance < limit",
+                        "newBalance == balance + x && newBalance < limit",
                       ),
                       new Condition(
-                        "(\\old(balance) + x >= limit ==> balance == \\old(balance) + x) & " +
+                        "(\\old(balance) + x >= limit ==> balance == \\old(balance) + x) && " +
                           "(\\old(balance) + x < limit ==> balance == \\old(balance))",
                       ),
                       new Position(1225, 1400),

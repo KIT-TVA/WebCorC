@@ -12,7 +12,7 @@
     "isProven": false,
     "id": "738947684138.0793",
     "intermediateCondition": {
-      "condition": "!appears(A,x,i+1,A.length) & (A[i] != x)"
+      "condition": "!appears(A,x,i+1,A.length) && (A[i] != x)"
     },
     "firstStatement": {
       "name": "Statement",
@@ -21,7 +21,7 @@
         "condition": "appears(A, x, 0, A.length)"
       },
       "postCondition": {
-        "condition": "appears(A,x,0,length(A)) & (i==(length(A) - 1))"
+        "condition": "appears(A,x,0,length(A)) && (i==(length(A) - 1))"
       },
       "isProven": false,
       "id": "691894258870.7626",
@@ -31,7 +31,7 @@
       "name": "Repetition",
       "type": "REPETITION",
       "preCondition": {
-        "condition": "!appears(A,x,i+1,A.length) & (A[i] != x)"
+        "condition": "!appears(A,x,i+1,A.length) && (A[i] != x)"
       },
       "postCondition": {
         "condition": "A[i]==x"
@@ -46,7 +46,7 @@
         "name": "Statement2",
         "type": "STATEMENT",
         "preCondition": {
-          "condition": "!appears(A,x,i+1,A.length) & (A[i] != x)"
+          "condition": "!appears(A,x,i+1,A.length) && (A[i] != x)"
         },
         "postCondition": {
           "condition": "!appears(A,x,i+1,A.length)"
@@ -94,7 +94,7 @@
 		  "condition": "A != null"
 	  },
 	  {
-		  "condition": "i >= 0 & i < A.length"
+		  "condition": "i >= 0 && i < A.length"
 	  },
 	  {
 		  "condition": "A.length > 0"

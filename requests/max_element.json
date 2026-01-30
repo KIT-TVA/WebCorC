@@ -11,7 +11,7 @@
     },
     "isProven": false,
     "intermediateCondition": {
-      "condition": "A.length > 0 & i == 0 & j == 1"
+      "condition": "A.length > 0 && i == 0 && j == 1"
     },
     "firstStatement": {
       "name": "Comp2",
@@ -20,11 +20,11 @@
         "condition": "A.length > 0"
       },
       "postCondition": {
-        "condition": "A.length > 0 & i == 0 & j == 1"
+        "condition": "A.length > 0 && i == 0 && j == 1"
       },
       "isProven": false,
       "intermediateCondition": {
-        "condition": "A.length > 0 & i == 0"
+        "condition": "A.length > 0 && i == 0"
       },
       "firstStatement": {
         "name": "Statement1",
@@ -33,7 +33,7 @@
           "condition": "A.length > 0"
         },
         "postCondition": {
-          "condition": "A.length > 0 & i == 0"
+          "condition": "A.length > 0 && i == 0"
         },
         "isProven": false,
         "programStatement": "i = 0;"
@@ -42,10 +42,10 @@
         "name": "Statement2",
         "type": "STATEMENT",
         "preCondition": {
-          "condition": "A.length > 0 & i == 0"
+          "condition": "A.length > 0 && i == 0"
         },
         "postCondition": {
-          "condition": "A.length > 0 & i == 0 & j == 1"
+          "condition": "A.length > 0 && i == 0 && j == 1"
         },
         "isProven": false,
         "programStatement": "j = 1;"
@@ -55,7 +55,7 @@
       "name": "Repetition",
       "type": "REPETITION",
       "preCondition": {
-        "condition": "maxe(A,0,j,i) & (j!=A.length)"
+        "condition": "maxe(A,0,j,i) && (j!=A.length)"
       },
       "postCondition": {
         "condition": "maxe(A, 0, j, i)"
@@ -65,7 +65,7 @@
         "name": "Comp2",
         "type": "COMPOSITION",
         "preCondition": {
-          "condition": "maxe(A,0,j,i) & (j!=A.length)"
+          "condition": "maxe(A,0,j,i) && (j!=A.length)"
         },
         "postCondition": {
           "condition": "maxe(A,0,j,i)"
@@ -78,7 +78,7 @@
           "name": "Selection",
           "type": "SELECTION",
           "preCondition": {
-            "condition": "maxe(A,0,j,i) & (j!=A.length)"
+            "condition": "maxe(A,0,j,i) && (j!=A.length)"
           },
           "postCondition": {
             "condition": "maxe(A,0,j+1,i)"
@@ -97,7 +97,7 @@
               "name": "Statement3",
               "type": "STATEMENT",
               "preCondition": {
-                "condition": "maxe(A,0,j,i) & (j!=A.length) & A[j] > A[i]"
+                "condition": "maxe(A,0,j,i) && (j!=A.length) && A[j] > A[i]"
               },
               "postCondition": {
                 "condition": "maxe(A, 0, j+1, i)"
@@ -109,7 +109,7 @@
               "name": "Statement4",
               "type": "SKIP",
               "preCondition": {
-                "condition": "maxe(A,0,j,i) & (j!=A.length) & A[j] <= A[i]"
+                "condition": "maxe(A,0,j,i) && (j!=A.length) && A[j] <= A[i]"
               },
               "postCondition": {
                 "condition": "maxe(A, 0, j+1, i)"
@@ -177,10 +177,10 @@
 		  "condition": "A.length < 10"
 	  },
 	  {
-		  "condition": "i >= 0 & i < A.length"
+		  "condition": "i >= 0 && i < A.length"
 	  },
 	  {
-		  "condition": "j >= 0 & j <= A.length"
+		  "condition": "j >= 0 && j <= A.length"
 	  }
 
   ],
