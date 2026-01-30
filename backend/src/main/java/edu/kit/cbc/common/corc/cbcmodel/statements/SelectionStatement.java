@@ -78,7 +78,11 @@ public class SelectionStatement extends AbstractStatement {
         StringBuilder ifBuilder = new StringBuilder();
 
         for (int i = 0; i < this.getGuards().size(); i++) {
-            ifBuilder.append("if (");
+            if (i > 0) {
+                ifBuilder.append("else if (");
+            } else {
+                ifBuilder.append("if (");
+            }
             ifBuilder.append(ConditionPrinter.print(this.guards.get(i).getParsedCondition()));
             ifBuilder.append(") {\n");
             ifBuilder.append(this.commands.get(i).generateCode());
