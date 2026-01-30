@@ -55,6 +55,7 @@ public final class CodeGenerator {
         for (JavaVariable variable : variables) {
             if (variable.getKind() == JavaVariableKind.LOCAL) {
                 localVariables.append(variable.generateCode());
+                localVariables.append('\n');
             }
         }
 
