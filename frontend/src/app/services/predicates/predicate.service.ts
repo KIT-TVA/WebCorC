@@ -39,7 +39,7 @@ export class PredicateService {
   public exportPredicates(): string {
     let result = "\\predicates {\n";
     for (const predicate of this.predicates) {
-      result += `${predicate.signature};\n`;
+      result += `${predicate.name}(${this.signatureWithOnlyTypes(predicate.signature)});\n`;
     }
     result += "}\n";
     result += "\\rules {\n";
@@ -54,8 +54,12 @@ export class PredicateService {
         result += `\\schemaVar \\variable ${variable};\n`;
       });
       result += `\\find(${predicate.name}(${this.signatureWithOnlyNames(predicate.signature)}))\n`;
-      const signatureNames = this.extractNamesFromSignatureTokens(signatureTokens).filter(n => n.length > 0);
-      const boundVarNames = this.extractNamesFromSignatureTokens(notFreeVariables).filter(n => n.length > 0);
+      const signatureNames = this.extractNamesFromSignatureTokens(
+        signatureTokens,
+      ).filter((n) => n.length > 0);
+      const boundVarNames = this.extractNamesFromSignatureTokens(
+        notFreeVariables,
+      ).filter((n) => n.length > 0);
       const conditions: string[] = [];
       boundVarNames.forEach((boundVar) => {
         signatureNames.forEach((sigVar) => {
@@ -67,7 +71,7 @@ export class PredicateService {
       }
       //Replace .length with length() and
       result += `\\replacewith (${predicate.definition
-        .replace(/(?:^|\s|;|\()(\w+)\.length(?=\s|;|\)|$)/g, "length($1)")
+        .replace(/(?:^|\s|;|\()(\w+)\.length(?=\s|;|\+|-|\)|$)/g, "length($1)")
         .replace(/==>/g, "->")
         .replace(/&&/g, "&")
         .replace(/\|\|/g, "|")
@@ -108,8 +112,20 @@ export class PredicateService {
     });
   }
 
+  private extractTypesFromSignatureTokens(signatureTokens: string[]) {
+    return signatureTokens.map((expression) => {
+      return expression.split(" ").shift()?.trim() ?? expression.trim();
+    });
+  }
+
   private signatureWithOnlyNames(signature: string) {
     return this.extractNamesFromSignatureTokens(
+      this.parseSignatureTokens(signature),
+    ).reduce((prev = "", current) => prev + ", " + current);
+  }
+
+  private signatureWithOnlyTypes(signature: string) {
+    return this.extractTypesFromSignatureTokens(
       this.parseSignatureTokens(signature),
     ).reduce((prev = "", current) => prev + ", " + current);
   }
