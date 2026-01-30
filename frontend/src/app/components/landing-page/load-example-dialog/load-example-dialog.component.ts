@@ -356,6 +356,13 @@ export class LoadExampleDialogComponent {
               new JavaVariable("int i", "LOCAL"),
               new JavaVariable("int[] A", "LOCAL"),
             ],
+            [
+              new Condition("A != null"),
+              new Condition("A.length > 0"),
+              new Condition("A.length < 10"),
+              new Condition("i >= 0 && i < A.length"),
+              new Condition("j >= 0 && j <= A.length")
+            ],
           ),
         ),
         new ApiDirectory("include", [
