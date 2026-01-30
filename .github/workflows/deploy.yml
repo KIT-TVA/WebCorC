@@ -2,33 +2,60 @@ name: Deploy to Dev Server
 
 on:
   workflow_run:
-    workflows: ["compile-backend"] 
+    workflows: ["compile-backend"]
     branches: [dev]
-    types: 
-      - completed
+    types: [completed]
   push:
-    branches:
-      - dev 
+    branches: [dev]
+
+# Required permissions to push to GHCR
+permissions:
+  contents: read
+  packages: write
 
 jobs:
   be-compile:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: Build backend
-      working-directory: ./backend
-      run: docker build . --file Dockerfile --tag webcorc-backend:$(date +%s)
+      - uses: actions/checkout@v4
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push Backend
+        run: |
+          # Lowercase the repo name to avoid Docker tag errors
+          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/webcorc-backend
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          
+          docker build ./backend --tag $IMAGE_ID:latest --tag $IMAGE_ID:${{ github.sha }}
+          docker push $IMAGE_ID --all-tags
+
   fe-compile:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: Build frontend
-      working-directory: ./frontend
-      run: docker build . --file Dockerfile --tag webcorc-frontend:$(date +%s)
+      - uses: actions/checkout@v4
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push Frontend
+        run: |
+          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/webcorc-frontend
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          
+          docker build ./frontend --tag $IMAGE_ID:latest --tag $IMAGE_ID:${{ github.sha }}
+          docker push $IMAGE_ID --all-tags
+
   deploy:
     needs: ["be-compile", "fe-compile"]
     runs-on: ubuntu-latest
-
     steps:
       - name: Execute remote SSH commands
         uses: appleboy/ssh-action@v1.0.3
@@ -36,9 +63,14 @@ jobs:
           host: ${{ secrets.DEV_HOST }}
           username: ${{ secrets.DEV_USER }}
           key: ${{ secrets.DEV_PRIVATE_KEY }}
-          port: 22
           script: |
-            # 1. Go to the project folder
             cd /opt/WebCorC
-            chmod +x deploy.sh
-            sudo ./deploy.sh
+
+            echo "${{ secrets.GITHUB_TOKEN }}" | sudo docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+            sudo docker pull ghcr.io/${{ github.repository_owner }}/webcorc-backend:latest
+            sudo docker pull ghcr.io/${{ github.repository_owner }}/webcorc-frontend:latest
+
+            sudo docker compose up -d --force-recreate
+
+            sudo docker image prune -f
