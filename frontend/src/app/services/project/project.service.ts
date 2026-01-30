@@ -118,8 +118,10 @@ export class ProjectService {
     }
 
     const dir = parentDir as ProjectDirectory;
-
-    const newDir = new ProjectDirectory(parentPath + "/" + name, [], true);
+    let newDir = new ProjectDirectory(parentPath + "/" + name, [], true);
+    if (parentPath === "") {
+      newDir = new ProjectDirectory(name, [], true);
+    }
 
     if (dir.contents.find((element) => element.urn === newDir.urn)) {
       throw new Error(
