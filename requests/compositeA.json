@@ -7,7 +7,7 @@
       "condition": "true"
     },
     "postCondition": {
-      "condition": "(\\old(balance) + x >= OVERDRAFT_LIMIT ==> balance == \\old(balance) + x) & (\\old(balance) + x < OVERDRAFT_LIMIT ==> balance == \\old(balance))"
+      "condition": "(\\old(balance) + x >= OVERDRAFT_LIMIT ==> balance == \\old(balance) + x) && (\\old(balance) + x < OVERDRAFT_LIMIT ==> balance == \\old(balance))"
     },
     "isProven": false,
     "intermediateCondition": {
@@ -32,7 +32,7 @@
             "condition": "newBalance == balance + x"
           },
           "postCondition": {
-            "condition": "(\\old(balance) + x >= OVERDRAFT_LIMIT ==> balance == \\old(balance) + x) & (\\old(balance) + x < OVERDRAFT_LIMIT ==> balance == \\old(balance))"
+            "condition": "(\\old(balance) + x >= OVERDRAFT_LIMIT ==> balance == \\old(balance) + x) && (\\old(balance) + x < OVERDRAFT_LIMIT ==> balance == \\old(balance))"
           },
           "isProven": false,
           "guards": [
@@ -48,10 +48,10 @@
               "name": "Statement3",
               "type": "STATEMENT",
               "preCondition": {
-                "condition": "newBalance == balance + x & newBalance >= OVERDRAFT_LIMIT"
+                "condition": "newBalance == balance + x && newBalance >= OVERDRAFT_LIMIT"
               },
               "postCondition": {
-                "condition": "(\\old(balance) + x >= OVERDRAFT_LIMIT ==> balance == \\old(balance) + x) & (\\old(balance) + x < OVERDRAFT_LIMIT ==> balance == \\old(balance))"
+                "condition": "(\\old(balance) + x >= OVERDRAFT_LIMIT ==> balance == \\old(balance) + x) && (\\old(balance) + x < OVERDRAFT_LIMIT ==> balance == \\old(balance))"
               },
               "isProven": false,
               "programStatement": "balance = newBalance;"
@@ -60,10 +60,10 @@
               "name": "Statement4",
               "type": "SKIP",
               "preCondition": {
-                "condition": "newBalance == balance + x & newBalance < OVERDRAFT_LIMIT"
+                "condition": "newBalance == balance + x && newBalance < OVERDRAFT_LIMIT"
               },
               "postCondition": {
-                "condition": "(\\old(balance) + x >= OVERDRAFT_LIMIT ==> balance == \\old(balance) + x) & (\\old(balance) + x < OVERDRAFT_LIMIT ==> balance == \\old(balance))"
+                "condition": "(\\old(balance) + x >= OVERDRAFT_LIMIT ==> balance == \\old(balance) + x) && (\\old(balance) + x < OVERDRAFT_LIMIT ==> balance == \\old(balance))"
               },
               "isProven": false
             }
@@ -76,7 +76,7 @@
     "condition": "true"
   },
   "postCondition": {
-    "condition": "(\\old(balance) + x >= OVERDRAFT_LIMIT ==> balance == \\old(balance) + x) & (\\old(balance) + x < OVERDRAFT_LIMIT ==> balance == \\old(balance))"
+    "condition": "(\\old(balance) + x >= OVERDRAFT_LIMIT ==> balance == \\old(balance) + x) && (\\old(balance) + x < OVERDRAFT_LIMIT ==> balance == \\old(balance))"
   },
   "javaVariables": [
     {

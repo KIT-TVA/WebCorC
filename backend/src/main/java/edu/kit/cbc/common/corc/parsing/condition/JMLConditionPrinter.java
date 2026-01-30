@@ -8,7 +8,9 @@ public class JMLConditionPrinter extends AbstractConditionPrinter {
 
     private static final Map<Operator.OperatorType, String> REPLACE = Map.of(
         Operator.OperatorType.EQUAL, "=",
-        Operator.OperatorType.IMPLICATION, "->"
+        Operator.OperatorType.IMPLICATION, "->",
+        Operator.OperatorType.LOGICAL_AND, "&",
+        Operator.OperatorType.LOGICAL_OR, "|"
     );
 
     private JMLConditionPrinter(Tree tree) {
