@@ -54,7 +54,8 @@ export class PredicateService {
         result += `\\schemaVar \\variable ${variable};\n`;
       });
       result += `\\find(${predicate.name}(${this.signatureWithOnlyNames(predicate.signature)}))\n`;
-      result += `\\replacewith (${predicate.definition})\n`;
+      //Replace .length with length()
+      result += `\\replacewith (${predicate.definition.replace(/(?:^|\s|;|\()(\w+)\.length(?=\s|;|\)|$)/g, "length($1)")})\n`;
       result += "\\heuristics(simplify)\n};\n";
     }
     result += "}\n";
