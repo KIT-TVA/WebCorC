@@ -8,6 +8,8 @@ import { FloatLabelModule } from "primeng/floatlabel";
 import { GREEN_COLOURED_CONDITIONS, RED_COLOURED_CONDITIONS } from "../../editor.component";
 import { $dt } from "@primeuix/themes";
 import { FormsModule } from "@angular/forms";
+import { Popover } from "primeng/popover";
+import { Button } from "primeng/button";
 
 /**
  * Editor in the statements for the {@link Condition}
@@ -16,7 +18,15 @@ import { FormsModule } from "@angular/forms";
  */
 @Component({
   selector: "app-condition-editor",
-  imports: [Textarea, IconField, InputIcon, FloatLabelModule, FormsModule],
+  imports: [
+    Textarea,
+    IconField,
+    InputIcon,
+    FloatLabelModule,
+    FormsModule,
+    Popover,
+    Button,
+  ],
   templateUrl: "./condition-editor.component.html",
   standalone: true,
   styleUrl: "./condition-editor.component.scss",

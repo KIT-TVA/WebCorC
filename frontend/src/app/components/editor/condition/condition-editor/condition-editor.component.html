@@ -1,37 +1,75 @@
 <div style="width: fit-content" (mousedown)="$event.stopImmediatePropagation()">
   <div (focusout)="conditionEditingFinished.emit()">
+    <div
+      style="
+        position: sticky;
+        display: inline-flex;
+        flex-direction: column;
+        width: 14rem;
+        border-radius: 8px;
+        border: 1px dashed slategray;
+        padding: 3px;
+        text-align: left;
+        overflow: hidden;
+      "
+      [style.height]="inline ? '2.5rem' : '8rem'"
+      (click)="$event.detail > 1 ? conditionPopover.show($event) : undefined"
+    >
+      @if (!inline) {
+        <span style="font-size: 9pt; font-weight: bold; display: block">{{
+          placeholder
+        }}</span>
+      } @else {
+        <span style="font-size: 6pt"> {{ placeholder }}</span>
+      }
+      <p style="font-size: 10pt; font-weight: lighter" #target>
+        {{ condition().condition }}
+      </p>
+      <p-button
+        severity="secondary"
+        size="small"
+        [style.bottom]="inline ? '5px' : '1rem'"
+        [style.right]="inline ? '3px' : '1rem'"
+        [style.position]="'absolute'"
+        [style.height]="'2rem'"
+        (click)="conditionPopover.show($event)"
+        icon="pi pi-window-maximize"
+      ></p-button>
+    </div>
     <form>
-      <p-icon-field>
-        <p-float-label variant="on">
-          <textarea
-            [ngModelOptions]="{ standalone: true }"
-            id="field"
-            pTextarea
-            class="textarea"
-            spellcheck="false"
-            [rows]="inline ? 1 : 5"
-            [(ngModel)]="condition().condition"
-            variant="filled"
-            [disabled]="!editable"
-            [dt]="{
-              root: {
-                borderColor: redConditions.includes(condition())
-                  ? '#ff7e7e'
-                  : greenConditions.includes(condition())
-                    ? '#6ab77a'
-                    : $dt('textarea.border.color').value,
-              },
-            }"
-          >
-          </textarea>
-          <label for="field">{{ placeholder }}</label>
-        </p-float-label>
-        <p-inputicon
-          (click)="askAi()"
-          style="cursor: pointer"
-          class="pi pi-microchip-ai"
-        ></p-inputicon>
-      </p-icon-field>
+      <p-popover #conditionPopover>
+        <p-icon-field>
+          <p-float-label variant="on">
+            <textarea
+              style="width: 30rem; height: 20rem"
+              [ngModelOptions]="{ standalone: true }"
+              id="field"
+              pTextarea
+              class="textarea"
+              spellcheck="false"
+              [(ngModel)]="condition().condition"
+              variant="filled"
+              [disabled]="!editable"
+              [dt]="{
+                root: {
+                  borderColor: redConditions.includes(condition())
+                    ? '#ff7e7e'
+                    : greenConditions.includes(condition())
+                      ? '#6ab77a'
+                      : $dt('textarea.border.color').value,
+                },
+              }"
+            >
+            </textarea>
+            <label for="field">{{ placeholder }}</label>
+          </p-float-label>
+          <p-inputicon
+            (click)="askAi()"
+            style="cursor: pointer"
+            class="pi pi-microchip-ai"
+          ></p-inputicon>
+        </p-icon-field>
+      </p-popover>
     </form>
   </div>
 </div>
