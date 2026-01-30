@@ -51,7 +51,7 @@ import { InputText } from "primeng/inputtext";
   standalone: true,
   styleUrl: "./variables.component.scss",
 })
-export class VariablesComponent implements AfterViewInit, OnDestroy {
+export class VariablesComponent implements AfterViewInit {
   private isEmpty = true;
   /**
    * Forms Template
@@ -65,9 +65,6 @@ export class VariablesComponent implements AfterViewInit, OnDestroy {
     private _fb: FormBuilder,
     public treeService: TreeService,
   ) {}
-  ngOnDestroy(): void {
-    this.treeService.finalizeNotifier.unsubscribe();
-  }
   ngAfterViewInit(): void {
     this.importDiagramVariables();
     this.treeService.finalizeNotifier.subscribe(() => {
@@ -145,6 +142,8 @@ export class VariablesComponent implements AfterViewInit, OnDestroy {
    * Clear the form
    */
   public removeAllVariables(): void {
+    console.log("Remove all vars");
+    console.trace();
     this.treeService.removeAllVariables();
     this.items.clear();
     this.variables.controls["newVariable"].reset();
