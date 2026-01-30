@@ -5,6 +5,7 @@ import { FormsModule } from "@angular/forms";
 import { ProjectService } from "../../services/project/project.service";
 import { Router } from "@angular/router";
 import { EditorService } from "../../services/editor/editor.service";
+import { Subscription } from "rxjs";
 /**
  * Simple wrapper around the nu-monaco text editor, which saves and loads the file content from the {@link ProjectService}
  * This component is mapped under the url /editor/file/{urn}
@@ -19,6 +20,7 @@ import { EditorService } from "../../services/editor/editor.service";
 export class FileEditorComponent implements AfterViewInit, OnDestroy {
   private _urn: string = "";
   private _viewInit: boolean = false;
+  private subscription: Subscription | undefined;
 
   public code: string = "";
 
@@ -26,11 +28,7 @@ export class FileEditorComponent implements AfterViewInit, OnDestroy {
     private projectService: ProjectService,
     private editorService: EditorService,
     private router: Router,
-  ) {
-    this.projectService.editorNotify.subscribe(() => {
-      this.saveContentToFile();
-    });
-  }
+  ) {}
 
   //Todo: make language configurable
   public editorOptions = {
@@ -72,14 +70,13 @@ export class FileEditorComponent implements AfterViewInit, OnDestroy {
   public ngAfterViewInit(): void {
     this.loadContentFromFile();
     this._viewInit = true;
-    this.projectService.editorNotify.subscribe(() => {
+    this.subscription = this.projectService.editorNotify.subscribe(() => {
       this.saveContentToFile();
     });
   }
 
   public ngOnDestroy(): void {
-    console.log("Destroying File Editor Component");
-    console.log(this._urn);
+    this.subscription!.unsubscribe();
     this.projectService.syncFileContent(this._urn, this.code);
     this._viewInit = false;
   }

@@ -9,6 +9,12 @@ export class PredicateService {
   private predicates: ProjectPredicate[] = [];
   constructor(private projectService: ProjectService) {
     this.predicates = projectService.getPredicates();
+    this.idCounter =
+      this.predicates
+        .map((p) => parseInt(p.id))
+        .reduce((prev, current) => {
+          return Math.max(prev, current);
+        }, 0) + 1;
   }
   private idCounter = 0;
   public getPredicates() {
@@ -17,7 +23,7 @@ export class PredicateService {
   public addPredicate() {
     const newPredicate: ProjectPredicate = {
       id: String(this.idCounter),
-      name: "untitled predicate " + this.idCounter,
+      name: "predicate " + this.idCounter,
       definition: "",
       signature: "",
     };
