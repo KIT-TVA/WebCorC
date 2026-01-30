@@ -79,13 +79,8 @@ export class RepetitionStatementNode extends AbstractStatementNode {
     void _index;
     const statementNode = createEmptyStatementNode(statementType, this);
     // For repetition, the loop's precondition is (invariant & guard) and its postcondition is the invariant
-    const loopPre = signal(
-      new Condition(
-        this.invariant().condition + " & " + this.guard().condition,
-      ),
-    );
-    statementNode.overridePrecondition(loopPre);
-    statementNode.overridePostcondition(this.invariant);
+    statementNode.overridePrecondition(this.precondition);
+    statementNode.overridePostcondition(this.postcondition);
     this.addChild(statementNode, 0);
     return statementNode;
   }
