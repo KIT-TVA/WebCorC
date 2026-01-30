@@ -7,7 +7,7 @@ import {
 } from "../../../services/project/types/api-elements";
 import { ConsoleService } from "../../../services/console/console.service";
 import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
-import { FileUpload } from "primeng/fileupload";
+import { FileSelectEvent, FileUpload } from "primeng/fileupload";
 import { Button } from "primeng/button";
 
 /**
@@ -22,7 +22,7 @@ import { Button } from "primeng/button";
   styleUrl: "./import-project-dialog.component.scss",
 })
 export class ImportProjectDialogComponent {
-  private _accepted: boolean = false;
+  protected _accepted: boolean = false;
   private _projectname: string = "";
   private _rootDir: ApiDirectory = new ApiDirectory("", []);
 
@@ -33,11 +33,10 @@ export class ImportProjectDialogComponent {
     public config: DynamicDialogConfig,
   ) {}
 
-  /* eslint-disable  @typescript-eslint/no-explicit-any */
-  public async onFileSelected(event: any) {
+  public async onFileSelected(event: FileSelectEvent) {
     this._accepted = false;
 
-    const file: File = event.target?.files[0];
+    const file: File = event.files[0];
 
     if (!file) {
       return;
@@ -63,21 +62,6 @@ export class ImportProjectDialogComponent {
       LocalDirectory.fromApi(this._rootDir),
       this._projectname,
     );
-  }
-
-  public get accepted(): boolean {
-    return this._accepted;
-  }
-
-  public set accepted(accepted: boolean) {
-    this._accepted = accepted;
-  }
-
-  public get projectname() {
-    return this._projectname;
-  }
-
-  public set projectname(projectname: string) {
-    this._projectname = projectname;
+    this.ref.close();
   }
 }
