@@ -18,6 +18,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatMenuModule } from "@angular/material/menu";
 import { ProjectService } from "../../services/project/project.service";
 import { LocalCBCFormula } from "../../types/CBCFormula";
+import { Router } from "@angular/router";
 import { EditorService } from "../../services/editor/editor.service";
 import { StatementDelegatorComponent } from "./statements/statement-delegator/statement-delegator.component";
 import { AbstractStatementNode } from "../../types/statements/nodes/abstract-statement-node";
@@ -98,12 +99,14 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
    * @param treeService The service to interact with the refinements
    * @param projectService The service to persist and laod the file content
    * @param editorService
+   * @param router
    * @param globalSettingsService
    */
   public constructor(
     private treeService: TreeService,
     private projectService: ProjectService,
     private editorService: EditorService,
+    private router: Router,
     protected globalSettingsService: GlobalSettingsService,
   ) {
     this.setupVFlowSync();
