@@ -8,7 +8,7 @@ import { TreeService } from "./services/tree/tree.service";
 import { ProjectExplorerComponent } from "./components/project-explorer/project-explorer.component";
 import { NuMonacoEditorModule } from "@ng-util/monaco-editor";
 import { ProjectService } from "./services/project/project.service";
-import { NetworkTreeService } from "./services/tree/network/network-tree.service";
+import { NetworkJobService } from "./services/tree/network/network-job.service";
 import { CreateProjectDialogComponent } from "./components/project-explorer/create-project-dialog/create-project-dialog.component";
 import { first } from "rxjs";
 import { Toolbar } from "primeng/toolbar";
@@ -53,7 +53,7 @@ export class AppComponent implements OnInit {
 
   constructor(
     public treeService: TreeService,
-    private networkTreeService: NetworkTreeService,
+    private networkTreeService: NetworkJobService,
     public dialogService: DialogService,
     protected router: Router,
     private route: ActivatedRoute,

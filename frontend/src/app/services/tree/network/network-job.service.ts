@@ -24,7 +24,7 @@ import { TreeService } from "../tree.service";
 @Injectable({
   providedIn: "root",
 })
-export class NetworkTreeService {
+export class NetworkJobService {
   private static readonly verifyPath = "/editor/verify";
   private static readonly verifyWebSocketPath = "/ws/verify/";
   private static readonly verifyResultPath = "/editor/jobs/";
@@ -58,7 +58,7 @@ export class NetworkTreeService {
 
     this.http
       .post<string>(
-        environment.apiUrl + NetworkTreeService.verifyPath,
+        environment.apiUrl + NetworkJobService.verifyPath,
         root
           ? new ApiDiagramFile("", this.mapper.exportFormula(root), "file")
               .content
@@ -75,14 +75,14 @@ export class NetworkTreeService {
       )
       .subscribe((uuid: string) => {
         const ws = new WebSocketService(
-          environment.apiUrl + NetworkTreeService.verifyWebSocketPath + uuid,
+          environment.apiUrl + NetworkJobService.verifyWebSocketPath + uuid,
         );
         ws.messages$.subscribe((msg: string) => {
           if (msg === "verification complete") {
             ws.disconnect();
             this.http
               .get<ICBCFormula>(
-                environment.apiUrl + NetworkTreeService.verifyResultPath + uuid,
+                environment.apiUrl + NetworkJobService.verifyResultPath + uuid,
               )
               .pipe(map((formula) => this.mapper.importFormula(formula)))
               .subscribe((formula: LocalCBCFormula) => {
@@ -120,7 +120,7 @@ export class NetworkTreeService {
 
     this.http
       .post<string>(
-        environment.apiUrl + NetworkTreeService.verifyPath,
+        environment.apiUrl + NetworkJobService.verifyPath,
         formula
           ? new ApiDiagramFile("", this.mapper.exportFormula(formula), "file")
               .content
@@ -157,14 +157,14 @@ export class NetworkTreeService {
           return;
         }
         const ws = new WebSocketService(
-          environment.apiUrl + NetworkTreeService.verifyWebSocketPath + uuid,
+          environment.apiUrl + NetworkJobService.verifyWebSocketPath + uuid,
         );
         ws.messages$.subscribe((msg: string) => {
           if (msg === "verification complete") {
             ws.disconnect();
             this.http
               .get<ICBCFormula>(
-                environment.apiUrl + NetworkTreeService.verifyResultPath + uuid,
+                environment.apiUrl + NetworkJobService.verifyResultPath + uuid,
               )
               .pipe(map((formula) => this.mapper.importFormula(formula)))
               .subscribe((formula: LocalCBCFormula) => {
@@ -198,7 +198,7 @@ export class NetworkTreeService {
 
     this.http
       .post(
-        environment.apiUrl + NetworkTreeService.generatePath,
+        environment.apiUrl + NetworkJobService.generatePath,
         root ? this.mapper.exportFormula(root) : undefined,
         {
           params: params,
