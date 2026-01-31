@@ -163,7 +163,7 @@ public class FilesController {
         performUpload(objectStorageUpload, id, uploadPath);
     }
 
-    private UploadResponse<PutObjectResponse> performUpload(UploadRequest uploadRequest, String id, Path uploadPath) {
+    private synchronized UploadResponse<PutObjectResponse> performUpload(UploadRequest uploadRequest, String id, Path uploadPath) {
         UploadResponse<PutObjectResponse> response = objectStorage.upload(uploadRequest, builder -> {
             builder.acl(ObjectCannedACL.PUBLIC_READ);
         });
