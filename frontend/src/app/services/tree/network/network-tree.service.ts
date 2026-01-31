@@ -8,7 +8,6 @@ import { ICBCFormula, LocalCBCFormula } from "../../../types/CBCFormula";
 import { environment } from "../../../../environments/environment";
 import { catchError, map, Observable, of } from "rxjs";
 import { VerificationService } from "../verification/verification.service";
-import { NetworkStatusService } from "../../networkStatus/network-status.service";
 import { ConsoleService } from "../../console/console.service";
 import { ProjectService } from "../../project/project.service";
 import { CbcFormulaMapperService } from "../../project/mapper/cbc-formula-mapper.service";
@@ -35,7 +34,6 @@ export class NetworkTreeService {
     private readonly http: HttpClient,
     private readonly mapper: CbcFormulaMapperService,
     private readonly verificationService: VerificationService,
-    private readonly networkStatusService: NetworkStatusService,
     private readonly consoleService: ConsoleService,
     private readonly projectService: ProjectService,
     private readonly treeService: TreeService,
@@ -58,8 +56,6 @@ export class NetworkTreeService {
       params = params.set("projectId", projectId);
     }
 
-    this.networkStatusService.startNetworkRequest();
-
     this.http
       .post<string>(
         environment.apiUrl + NetworkTreeService.verifyPath,
@@ -74,7 +70,6 @@ export class NetworkTreeService {
       .pipe(
         catchError((error: HttpErrorResponse): Observable<string> => {
           this.consoleService.addErrorResponse(error, "Verification failed");
-          this.networkStatusService.stopNetworkRequest();
           return of();
         }),
       )
@@ -85,7 +80,6 @@ export class NetworkTreeService {
         ws.messages$.subscribe((msg: string) => {
           if (msg === "verification complete") {
             ws.disconnect();
-            this.networkStatusService.startNetworkRequest();
             this.http
               .get<ICBCFormula>(
                 environment.apiUrl + NetworkTreeService.verifyResultPath + uuid,
@@ -93,7 +87,6 @@ export class NetworkTreeService {
               .pipe(map((formula) => this.mapper.importFormula(formula)))
               .subscribe((formula: LocalCBCFormula) => {
                 this.verificationService.next(formula, urn);
-                this.networkStatusService.stopNetworkRequest();
                 this.projectService.downloadWorkspace();
               });
           }
@@ -125,8 +118,6 @@ export class NetworkTreeService {
       params = params.set("projectId", projectId);
     }
 
-    this.networkStatusService.startNetworkRequest();
-
     this.http
       .post<string>(
         environment.apiUrl + NetworkTreeService.verifyPath,
@@ -149,7 +140,6 @@ export class NetworkTreeService {
               error,
               `Verification failed for statement "${statementNode.statement.name}"`,
             );
-            this.networkStatusService.stopNetworkRequest();
             onComplete();
             return of();
           }
@@ -157,7 +147,6 @@ export class NetworkTreeService {
             error,
             `Verification failed for statement "${statementNode.statement.name}"`,
           );
-          this.networkStatusService.stopNetworkRequest();
           onComplete();
           return of();
         }),
@@ -173,7 +162,6 @@ export class NetworkTreeService {
         ws.messages$.subscribe((msg: string) => {
           if (msg === "verification complete") {
             ws.disconnect();
-            this.networkStatusService.startNetworkRequest();
             this.http
               .get<ICBCFormula>(
                 environment.apiUrl + NetworkTreeService.verifyResultPath + uuid,
@@ -185,7 +173,6 @@ export class NetworkTreeService {
                   statementNode,
                   urn,
                 );
-                this.networkStatusService.stopNetworkRequest();
                 onComplete();
               });
           }
@@ -209,7 +196,6 @@ export class NetworkTreeService {
       params = params.set("projectId", projectId);
     }
 
-    this.networkStatusService.startNetworkRequest();
     this.http
       .post(
         environment.apiUrl + NetworkTreeService.generatePath,
@@ -226,7 +212,6 @@ export class NetworkTreeService {
             error,
             "Java code generation failed",
           );
-          this.networkStatusService.stopNetworkRequest();
           return of();
         }),
       )
@@ -238,7 +223,6 @@ export class NetworkTreeService {
         a.download = root?.name + ".java";
         a.click();
         window.URL.revokeObjectURL(url);
-        this.networkStatusService.stopNetworkRequest();
       });
   }
 }

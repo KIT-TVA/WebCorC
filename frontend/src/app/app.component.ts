@@ -11,7 +11,6 @@ import { ProjectService } from "./services/project/project.service";
 import { NetworkTreeService } from "./services/tree/network/network-tree.service";
 import { CreateProjectDialogComponent } from "./components/project-explorer/create-project-dialog/create-project-dialog.component";
 import { first } from "rxjs";
-import { NetworkStatusService } from "./services/networkStatus/network-status.service";
 import { Toolbar } from "primeng/toolbar";
 import { Button } from "primeng/button";
 import { InputIcon } from "primeng/inputicon";
@@ -55,20 +54,13 @@ export class AppComponent implements OnInit {
   constructor(
     public treeService: TreeService,
     private networkTreeService: NetworkTreeService,
-    private networkStatus: NetworkStatusService,
     public dialogService: DialogService,
     protected router: Router,
     private route: ActivatedRoute,
     public projectService: ProjectService,
     private snackBar: MatSnackBar,
     protected globalSettingsService: GlobalSettingsService,
-  ) {
-    this.networkStatus.status.subscribe((status) => {
-      if (status != this._loadingState) {
-        this._loadingState = status;
-      }
-    });
-  }
+  ) {}
 
   public ngOnInit(): void {
     // Download workspace if project id is set

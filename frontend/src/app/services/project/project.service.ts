@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, first, Subject } from "rxjs";
+import { BehaviorSubject, firstValueFrom, Subject } from "rxjs";
 import { LocalCBCFormula } from "../../types/CBCFormula";
 import { NetworkProjectService } from "./network/network-project.service";
 import {
@@ -212,7 +212,7 @@ export class ProjectService {
    * Delete a project element from the tree
    * @param element
    */
-  public deleteElement(element: ProjectElement) {
+  public async deleteElement(element: ProjectElement) {
     let inode: Inode;
     switch (element.type) {
       case "CODE_FILE":
@@ -226,7 +226,7 @@ export class ProjectService {
         throw new Error("Unknown element type");
     }
     if (element.serverSideUrn) {
-      this.network.deleteFile(inode);
+      await this.network.deleteFile(inode);
     }
     const parent = this.getParentDirectory(element);
 
@@ -357,33 +357,19 @@ export class ProjectService {
   /**
    * Upload the current workspace (optionally waiting for network requests)
    */
-  public uploadWorkspace(wait: boolean = false) {
-    return new Promise<void>((resolve) => {
-      if (!wait) {
-        this._savedFinished
-          .pipe(first())
-          .subscribe(() => this.uploadFolder(this._rootDir));
-
-        this._saveNotify.next();
-
-        this.editorNotify.next();
-        resolve();
-        return;
-      }
-
-      this.editorNotify.next();
-
-      this.network.requestFinished
-        .pipe(first())
-        .subscribe(() => this.uploadFolder(this._rootDir));
-      resolve();
-    });
+  public async uploadWorkspace() {
+    const savedFinished = firstValueFrom(this._savedFinished);
+    this._saveNotify.next();
+    this.editorNotify.next();
+    await savedFinished;
+    await this.uploadFolder(this._rootDir);
+    return;
   }
 
   /**
    * Download project state from storage or network as needed
    */
-  public downloadWorkspace() {
+  public async downloadWorkspace() {
     const storedProjectTree = this.storage.getProjectTree();
     const storedProjectName = this.storage.getProjectName();
     const storedProjectId = this.storage.getProjectId();
@@ -391,21 +377,18 @@ export class ProjectService {
       this.projectId = storedProjectId;
     }
     if (!storedProjectTree) {
-      this.network.readProject().then(() => {
-        this._rootDir = this.storage.getProjectTree() ?? this._rootDir;
-        this._projectname = this.storage.getProjectName() ?? this._projectname;
-        this._dataChange.next(this._rootDir.contents);
-      });
+      await this.network.readProject();
+      this._rootDir = this.storage.getProjectTree() ?? this._rootDir;
+      this._projectname = this.storage.getProjectName() ?? this._projectname;
+      this._dataChange.next(this._rootDir.contents);
       return;
     }
     if (storedProjectId === this.projectId) {
       if (!storedProjectTree || !storedProjectName) {
-        this.network.readProject().then(() => {
-          this._rootDir = this.storage.getProjectTree() ?? this._rootDir;
-          this._projectname =
-            this.storage.getProjectName() ?? this._projectname;
-          this._dataChange.next(this._rootDir.contents);
-        });
+        await this.network.readProject();
+        this._rootDir = this.storage.getProjectTree() ?? this._rootDir;
+        this._projectname = this.storage.getProjectName() ?? this._projectname;
+        this._dataChange.next(this._rootDir.contents);
         return;
       }
       this._rootDir = storedProjectTree;
@@ -432,15 +415,15 @@ export class ProjectService {
     return this.storage.setProjectId(this.projectId!);
   }
 
-  private uploadFolder(folder: ProjectDirectory) {
+  private async uploadFolder(folder: ProjectDirectory) {
     for (const item of folder.contents) {
       switch (item.type) {
         case "DIRECTORY":
-          this.uploadFolder(item as ProjectDirectory);
+          await this.uploadFolder(item as ProjectDirectory);
           continue;
         case "CODE_FILE":
         case "DIAGRAM_FILE":
-          this.network.uploadFile(this.mapper.exportFile(item));
+          await this.network.uploadFile(this.mapper.exportFile(item));
           break;
         default:
           throw new Error("Unknown element type");

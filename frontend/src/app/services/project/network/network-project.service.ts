@@ -1,12 +1,8 @@
 import { Injectable } from "@angular/core";
 import { environment } from "../../../../environments/environment";
-import { BehaviorSubject, Observable, Subject, catchError, of } from "rxjs";
+import { firstValueFrom, Subject } from "rxjs";
 import { ConsoleService } from "../../console/console.service";
-import {
-  CBCFormula,
-  ICBCFormula,
-  LocalCBCFormula,
-} from "../../../types/CBCFormula";
+import { ICBCFormula, LocalCBCFormula } from "../../../types/CBCFormula";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { NetProject } from "./NetProject";
 import {
@@ -18,7 +14,6 @@ import {
   LocalDirectory,
 } from "../types/api-elements";
 import { CbcFormulaMapperService } from "../mapper/cbc-formula-mapper.service";
-import { NetworkStatusService } from "../../networkStatus/network-status.service";
 import { ProjectStorageService } from "../storage/project-storage.service";
 import { ProjectElementsMapperService } from "../types/project-elements-mapper.service";
 
@@ -30,12 +25,7 @@ import { ProjectElementsMapperService } from "../types/project-elements-mapper.s
 })
 export class NetworkProjectService {
   private static projects = "/projects";
-
-  private _projectId: string | undefined;
   private _projectname: string | undefined;
-  private _dataChange = new BehaviorSubject<ApiDirectory>(
-    new ApiDirectory("", []),
-  );
   private _finishedRequest = new Subject<void>();
 
   constructor(
@@ -43,38 +33,52 @@ export class NetworkProjectService {
     private mapper: CbcFormulaMapperService,
     private projectMapper: ProjectElementsMapperService,
     private consoleService: ConsoleService,
-    private networkStatusService: NetworkStatusService,
     private storage: ProjectStorageService,
   ) {}
+
+  private _projectId: string | undefined;
+
+  public get projectId() {
+    return this._projectId;
+  }
+
+  public set projectId(value: string | undefined) {
+    this._projectId = value;
+  }
+
+  public get projectName() {
+    return this._projectname;
+  }
+
+  public get requestFinished() {
+    return this._finishedRequest;
+  }
 
   /**
    * Create a new project
    * @param name The name of the project, should not be empty
    */
-  public createProject(name: string) {
-    return new Promise<void>((resolve, reject) => {
-      if (!name) return;
+  public async createProject(name: string) {
+    if (!name) return;
 
-      this.networkStatusService.startNetworkRequest();
-      this.http
-        .post<NetProject>(environment.apiUrl + NetworkProjectService.projects, {
-          name: name,
-        })
-        .pipe(
-          catchError((error: HttpErrorResponse): Observable<NetProject> => {
-            this.consoleService.addErrorResponse(error, "Creating Project");
-            this.networkStatusService.stopNetworkRequest();
-            reject();
-            return of();
-          }),
-        )
-        .subscribe((project) => {
-          this.projectId = project.id;
-          this._finishedRequest.next();
-          this.networkStatusService.stopNetworkRequest();
-          resolve();
-        });
-    });
+    try {
+      const project = await firstValueFrom(
+        this.http.post<NetProject>(
+          environment.apiUrl + NetworkProjectService.projects,
+          {
+            name: name,
+          },
+        ),
+      );
+      this.projectId = project.id;
+      this._finishedRequest.next();
+    } catch (error) {
+      this.consoleService.addErrorResponse(
+        error as HttpErrorResponse,
+        "Creating Project",
+      );
+      throw error;
+    }
   }
 
   /**
@@ -82,48 +86,39 @@ export class NetworkProjectService {
    * @param projectId The project id of the project to read from the backend
    */
   public async readProject(projectId: string | undefined = this._projectId) {
-    return new Promise<void>((resolve, reject) => {
-      this._projectId = projectId;
+    this._projectId = projectId;
 
-      this.networkStatusService.startNetworkRequest();
-
-      this.http
-        .get<NetProject>(this.buildProjectURL())
-        .pipe(
-          catchError((error: HttpErrorResponse): Observable<NetProject> => {
-            this.consoleService.addErrorResponse(error, "Reading Project");
-            this.networkStatusService.stopNetworkRequest();
-            reject();
-            return of();
-          }),
-        )
-        .subscribe((project) => {
-          this._projectname = project.name;
-          this._projectId = project.id;
-          const apiDirectory = new ApiDirectory(
-            project.files.urn,
-            project.files.content,
-          );
-          this._dataChange.next(apiDirectory);
-          this.networkStatusService.stopNetworkRequest();
-          this.storage.saveProject(
-            this.projectMapper.importProject(
-              fixUrns(LocalDirectory.fromApi(apiDirectory)) as LocalDirectory,
-            ),
-            project.name,
-          );
-          this.storage.setProjectId(project.id);
-          resolve();
-        });
-    });
+    try {
+      const project = await firstValueFrom(
+        this.http.get<NetProject>(this.buildProjectURL()),
+      );
+      this._projectname = project.name;
+      this._projectId = project.id;
+      const apiDirectory = new ApiDirectory(
+        project.files.urn,
+        project.files.content,
+      );
+      this.storage.saveProject(
+        this.projectMapper.importProject(
+          fixUrns(LocalDirectory.fromApi(apiDirectory)) as LocalDirectory,
+        ),
+        project.name,
+      );
+      this.storage.setProjectId(project.id);
+    } catch (error) {
+      this.consoleService.addErrorResponse(
+        error as HttpErrorResponse,
+        "Reading Project",
+      );
+      throw error;
+    }
   }
 
   /**
    * Upload the given file to the backend
    * @param file The file to upload
    */
-  public uploadFile(file: Inode) {
-    this.networkStatusService.startNetworkRequest();
+  public async uploadFile(file: Inode) {
     const formData = new FormData();
 
     const urn = file.urn;
@@ -142,39 +137,29 @@ export class NetworkProjectService {
 
     formData.append("fileUpload", realFile, urn);
 
-    this.http
-      .post(this.buildFileURL(urn), formData)
-      .pipe(
-        catchError((error: HttpErrorResponse): Observable<void> => {
-          this.consoleService.addErrorResponse(
-            error,
-            "Uploading file " + file.urn,
-          );
-          this.networkStatusService.stopNetworkRequest();
-          return of();
-        }),
-      )
-      .subscribe(() => this.networkStatusService.stopNetworkRequest());
+    try {
+      await firstValueFrom(this.http.post(this.buildFileURL(urn), formData));
+    } catch (error) {
+      this.consoleService.addErrorResponse(
+        error as HttpErrorResponse,
+        "Uploading file " + file.urn,
+      );
+    }
   }
 
   /**
    * Delete the given file in the backend
    * @param file The file to delete
    */
-  public deleteFile(file: Inode) {
-    this.http
-      .delete(this.buildFileURL(file.urn))
-      .pipe(
-        catchError((error: HttpErrorResponse): Observable<void> => {
-          this.consoleService.addErrorResponse(
-            error,
-            "Deleting file " + file.urn,
-          );
-          this.networkStatusService.stopNetworkRequest();
-          return of();
-        }),
-      )
-      .subscribe(() => this.networkStatusService.startNetworkRequest());
+  public async deleteFile(file: Inode) {
+    try {
+      await firstValueFrom(this.http.delete(this.buildFileURL(file.urn)));
+    } catch (error) {
+      this.consoleService.addErrorResponse(
+        error as HttpErrorResponse,
+        "Deleting file " + file.urn,
+      );
+    }
   }
 
   /**
@@ -183,7 +168,6 @@ export class NetworkProjectService {
    * @param urn
    */
   public async getFileContent(urn: string): Promise<string | LocalCBCFormula> {
-    this.networkStatusService.startNetworkRequest();
     const request = new Request(this.buildFileURL(urn), {
       method: "GET",
     });
@@ -204,7 +188,6 @@ export class NetworkProjectService {
           return file;
         }
 
-        this.networkStatusService.stopNetworkRequest();
         return this.mapper.importFormula(file);
       });
   }
@@ -217,25 +200,5 @@ export class NetworkProjectService {
 
   private buildFileURL(urn: string): string {
     return this.buildProjectURL() + "/files/" + encodeURIComponent(urn);
-  }
-
-  public get projectId() {
-    return this._projectId;
-  }
-
-  public get projectName() {
-    return this._projectname;
-  }
-
-  public set projectId(value: string | undefined) {
-    this._projectId = value;
-  }
-
-  public get dataChange() {
-    return this._dataChange;
-  }
-
-  public get requestFinished() {
-    return this._finishedRequest;
   }
 }
