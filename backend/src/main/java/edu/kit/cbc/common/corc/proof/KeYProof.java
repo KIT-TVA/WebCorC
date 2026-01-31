@@ -116,8 +116,8 @@ public class KeYProof {
             this.programVariables
         );
 
-        if (!this.includedFiles.isEmpty()) {
-            header += String.format(INCLUDE_FILES, this.printIncludedFiles());
+        for (Path included : this.includedFiles) {
+            header += String.format(INCLUDE_FILES, included);
         }
 
         header += String.format(
