@@ -1,6 +1,6 @@
 import { AbstractStatementNode } from "./abstract-statement-node";
 import { ISelectionStatement } from "../selection-statement";
-import { signal, WritableSignal } from "@angular/core";
+import { BehaviorSubject } from "rxjs";
 import { Condition, ICondition } from "../../condition/condition";
 import {
   createEmptyStatementNode,
@@ -9,7 +9,7 @@ import {
 import { StatementType } from "../abstract-statement";
 
 export class SelectionStatementNode extends AbstractStatementNode {
-  public guards: WritableSignal<ICondition>[];
+  public guards: BehaviorSubject<ICondition>[];
   override statement!: ISelectionStatement;
 
   constructor(
@@ -17,19 +17,19 @@ export class SelectionStatementNode extends AbstractStatementNode {
     parent: AbstractStatementNode | undefined,
   ) {
     super(statement, parent);
-    this.guards = statement.guards.map((g) => signal(g));
+    this.guards = statement.guards.map((g) => new BehaviorSubject<ICondition>(g));
     this.children = statement.commands.map((c) =>
       c ? statementNodeUtils(c, this) : undefined,
     );
   }
 
-  override overridePrecondition(condition: WritableSignal<ICondition>) {
+  override overridePrecondition(condition: BehaviorSubject<ICondition>) {
     super.overridePrecondition(condition);
     this.children.forEach((c, index) => {
       if (c && this.guards[index]) {
-        const computedCondition = signal(
+        const computedCondition = new BehaviorSubject<ICondition>(
           new Condition(
-            condition().condition + " & " + this.guards[index]().condition,
+            condition.getValue().condition + " & " + this.guards[index].getValue().condition,
           ),
         );
         c.overridePrecondition(computedCondition);
@@ -44,7 +44,7 @@ export class SelectionStatementNode extends AbstractStatementNode {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  override overridePostcondition(condition: WritableSignal<ICondition>) {
+  override overridePostcondition(condition: BehaviorSubject<ICondition>) {
     super.overridePostcondition(condition);
     //TODO check if we are deleting the postcondition of a statement with a different postcondition than this statement
     this.children.forEach((child) => child?.overridePostcondition(condition));
@@ -55,17 +55,17 @@ export class SelectionStatementNode extends AbstractStatementNode {
       return true;
     }
     this.getConditionConflicts(child);
-    return child.postcondition().condition == this.postcondition().condition;
+    return child.postcondition.getValue().condition == this.postcondition.getValue().condition;
   }
 
   override getConditionConflicts(child: AbstractStatementNode): {
-    version1: WritableSignal<ICondition>;
-    version2: WritableSignal<ICondition>;
+    version1: BehaviorSubject<ICondition>;
+    version2: BehaviorSubject<ICondition>;
     type: "PRECONDITION" | "POSTCONDITION";
   }[] {
     const conflicts: {
-      version1: WritableSignal<ICondition>;
-      version2: WritableSignal<ICondition>;
+      version1: BehaviorSubject<ICondition>;
+      version2: BehaviorSubject<ICondition>;
       type: "PRECONDITION" | "POSTCONDITION";
     }[] = [];
 
@@ -76,8 +76,8 @@ export class SelectionStatementNode extends AbstractStatementNode {
       return conflicts;
     }
 
-    if (this.postcondition() != child.postcondition()) {
-      if (this.postcondition().condition === child.postcondition().condition) {
+    if (this.postcondition.getValue() != child.postcondition.getValue()) {
+      if (this.postcondition.getValue().condition === child.postcondition.getValue().condition) {
         child.overridePostcondition(this.postcondition);
       } else {
         conflicts.push({
@@ -97,15 +97,15 @@ export class SelectionStatementNode extends AbstractStatementNode {
     });
     this.statement.guards = [];
     this.guards.forEach((g) => {
-      this.statement.guards.push(g());
+      this.statement.guards.push(g.getValue());
     });
   }
 
   addSelection() {
-    const condition = signal(new Condition(""));
+    const condition = new BehaviorSubject<ICondition>(new Condition(""));
     this.guards.push(condition);
     this.children.push(undefined);
-    this.statement.guards.push(condition());
+    this.statement.guards.push(condition.getValue());
     this.statement.commands.push(undefined);
   }
 
@@ -124,9 +124,9 @@ export class SelectionStatementNode extends AbstractStatementNode {
     const statementNode = createEmptyStatementNode(statementType, this);
     // If a guard exists for this branch, compute precondition as parentPrecondition & guard
     if (this.guards[idx]) {
-      const computedCondition = signal(
+      const computedCondition = new BehaviorSubject<ICondition>(
         new Condition(
-          this.precondition().condition + " & " + this.guards[idx]().condition,
+          this.precondition.getValue().condition + " & " + this.guards[idx].getValue().condition,
         ),
       );
       statementNode.overridePrecondition(computedCondition);

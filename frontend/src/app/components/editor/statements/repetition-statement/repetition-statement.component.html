@@ -1,17 +1,23 @@
 <app-statement-base icon="pi pi-sync" [_node]="_node" [refinement]="this">
   <div style="position: relative; display: flex; align-items: center; height: 100%; width: 230px">
-    <app-condition-editor placeholder="Invariant"
-      [(condition)]="_node.invariant"
+    <app-condition-editor
+      placeholder="Invariant"
+      [condition]="invariantSignal()"
+      (conditionChange)="onInvariantChange($event)"
     ></app-condition-editor>
   </div>
   <div style="position: relative; display: flex; align-items: center; height: 100%; width: 230px">
-    <app-condition-editor placeholder="Guard"
-      [(condition)]="_node.guard"
+    <app-condition-editor
+      placeholder="Guard"
+      [condition]="guardSignal()"
+      (conditionChange)="onGuardChange($event)"
     ></app-condition-editor>
   </div>
   <div style="position: relative; display: flex; align-items: center; height: 100%; width: 230px">
-    <app-condition-editor placeholder="Variant"
-      [(condition)]="_node.variant"
+    <app-condition-editor
+      placeholder="Variant"
+      [condition]="variantSignal()"
+      (conditionChange)="onVariantChange($event)"
     ></app-condition-editor>
   </div>
   <div style="width: fit-content">

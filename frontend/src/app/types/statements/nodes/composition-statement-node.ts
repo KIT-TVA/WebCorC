@@ -1,6 +1,6 @@
 import { ICompositionStatement } from "../composition-statement";
 import { ICondition } from "../../condition/condition";
-import { signal, WritableSignal } from "@angular/core";
+import { BehaviorSubject } from "rxjs";
 import { AbstractStatementNode } from "./abstract-statement-node";
 import {
   createEmptyStatementNode,
@@ -9,7 +9,7 @@ import {
 import { StatementType } from "../abstract-statement";
 
 export class CompositionStatementNode extends AbstractStatementNode {
-  public intermediateCondition: WritableSignal<ICondition>;
+  public intermediateCondition: BehaviorSubject<ICondition>;
   override statement!: ICompositionStatement;
   private _firstStatementNode: AbstractStatementNode | undefined;
   private _secondStatementNode: AbstractStatementNode | undefined;
@@ -39,7 +39,7 @@ export class CompositionStatementNode extends AbstractStatementNode {
     parent: AbstractStatementNode | undefined,
   ) {
     super(statement, parent);
-    this.intermediateCondition = signal(statement.intermediateCondition);
+    this.intermediateCondition = new BehaviorSubject<ICondition>(statement.intermediateCondition);
     if (statement.firstStatement) {
       this.firstStatementNode = statementNodeUtils(
         statement.firstStatement,
@@ -54,19 +54,19 @@ export class CompositionStatementNode extends AbstractStatementNode {
     }
   }
 
-  override overridePrecondition(condition: WritableSignal<ICondition>) {
+  override overridePrecondition(condition: BehaviorSubject<ICondition>) {
     super.overridePrecondition(condition);
     this.firstStatementNode?.overridePrecondition(condition);
   }
 
-  override overridePostcondition(condition: WritableSignal<ICondition>) {
+  override overridePostcondition(condition: BehaviorSubject<ICondition>) {
     this.postcondition = condition;
     this.secondStatementNode?.overridePostcondition(this.postcondition);
   }
 
   override finalize() {
     super.finalize();
-    this.statement.intermediateCondition = this.intermediateCondition();
+    this.statement.intermediateCondition = this.intermediateCondition.getValue();
     this.firstStatementNode?.finalize();
     this.secondStatementNode?.finalize();
   }
@@ -88,40 +88,40 @@ export class CompositionStatementNode extends AbstractStatementNode {
     let inSync;
     if (child == this._firstStatementNode) {
       inSync =
-        (this.precondition() == child.precondition() &&
-          this.intermediateCondition() == child.postcondition()) ||
+        (this.precondition.getValue() == child.precondition.getValue() &&
+          this.intermediateCondition.getValue() == child.postcondition.getValue()) ||
         child.statement.type == "REPETITION";
       if (!inSync) {
         this.getConditionConflicts(child);
       }
       inSync =
-        (this.precondition() == child.precondition() &&
-          this.intermediateCondition() == child.postcondition()) ||
+        (this.precondition.getValue() == child.precondition.getValue() &&
+          this.intermediateCondition.getValue() == child.postcondition.getValue()) ||
         child.statement.type == "REPETITION";
       return inSync;
     }
     inSync =
-      (this.intermediateCondition() == child.precondition() &&
-        this.postcondition() == child.postcondition()) ||
+      (this.intermediateCondition.getValue() == child.precondition.getValue() &&
+        this.postcondition.getValue() == child.postcondition.getValue()) ||
       child.statement.type == "REPETITION";
     if (!inSync) {
       this.getConditionConflicts(child);
     }
     inSync =
-      (this.intermediateCondition() == child.precondition() &&
-        this.postcondition() == child.postcondition()) ||
+      (this.intermediateCondition.getValue() == child.precondition.getValue() &&
+        this.postcondition.getValue() == child.postcondition.getValue()) ||
       child.statement.type == "REPETITION";
     return inSync;
   }
 
   override getConditionConflicts(child: AbstractStatementNode): {
-    version1: WritableSignal<ICondition>;
-    version2: WritableSignal<ICondition>;
+    version1: BehaviorSubject<ICondition>;
+    version2: BehaviorSubject<ICondition>;
     type: "PRECONDITION" | "POSTCONDITION";
   }[] {
     const conflicts: {
-      version1: WritableSignal<ICondition>;
-      version2: WritableSignal<ICondition>;
+      version1: BehaviorSubject<ICondition>;
+      version2: BehaviorSubject<ICondition>;
       type: string;
     }[] = [];
 
@@ -134,8 +134,8 @@ export class CompositionStatementNode extends AbstractStatementNode {
     }
 
     if (child == this._firstStatementNode) {
-      if (this.precondition() != child.precondition()) {
-        if (this.precondition().condition === child.precondition().condition) {
+      if (this.precondition.getValue() != child.precondition.getValue()) {
+        if (this.precondition.getValue().condition === child.precondition.getValue().condition) {
           child.overridePrecondition(this.precondition);
         } else {
           conflicts.push({
@@ -145,10 +145,10 @@ export class CompositionStatementNode extends AbstractStatementNode {
           });
         }
       }
-      if (this.intermediateCondition() != child.postcondition()) {
+      if (this.intermediateCondition.getValue() != child.postcondition.getValue()) {
         if (
-          this.intermediateCondition().condition ===
-          child.postcondition().condition
+          this.intermediateCondition.getValue().condition ===
+          child.postcondition.getValue().condition
         ) {
           child.overridePostcondition(this.intermediateCondition);
         } else {
@@ -163,10 +163,10 @@ export class CompositionStatementNode extends AbstractStatementNode {
       // @ts-expect-error
       return conflicts;
     }
-    if (this.intermediateCondition() != child.precondition()) {
+    if (this.intermediateCondition.getValue() != child.precondition.getValue()) {
       if (
-        this.intermediateCondition().condition ===
-        child.precondition().condition
+        this.intermediateCondition.getValue().condition ===
+        child.precondition.getValue().condition
       ) {
         child.overridePrecondition(this.intermediateCondition);
       } else {
@@ -177,8 +177,8 @@ export class CompositionStatementNode extends AbstractStatementNode {
         });
       }
     }
-    if (this.postcondition() != child.postcondition()) {
-      if (this.postcondition().condition === child.postcondition().condition) {
+    if (this.postcondition.getValue() != child.postcondition.getValue()) {
+      if (this.postcondition.getValue().condition === child.postcondition.getValue().condition) {
         child.overridePostcondition(this.postcondition);
       } else {
         conflicts.push({

@@ -3,9 +3,15 @@ import {
   ElementRef,
   EventEmitter,
   Input,
+  OnDestroy,
+  OnInit,
   Output,
   signal,
+  Signal,
   ViewChild,
+  WritableSignal,
+  Injector,
+  runInInjectionContext,
 } from "@angular/core";
 
 import { MatGridListModule } from "@angular/material/grid-list";
@@ -20,7 +26,6 @@ import { MatDrawer, MatSidenavModule } from "@angular/material/sidenav";
 import { MatButtonModule } from "@angular/material/button";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatListModule } from "@angular/material/list";
-import { AbstractStatement } from "../../../../types/statements/abstract-statement";
 import { AbstractStatementNode } from "../../../../types/statements/nodes/abstract-statement-node";
 import { HandleComponent } from "ngx-vflow";
 import { GridTileBorderDirective } from "../../../../directives/grid-tile-border.directive";
@@ -35,12 +40,12 @@ import { Toolbar } from "primeng/toolbar";
 import { GlobalSettingsService } from "../../../../services/global-settings.service";
 import { NetworkTreeService } from "../../../../services/tree/network/network-tree.service";
 import { ProjectService } from "../../../../services/project/project.service";
+import { ICondition } from "../../../../types/condition/condition";
+import { Subscription } from "rxjs";
+import { toSignal } from "@angular/core/rxjs-interop";
 
 /**
  * Component to present the statements.
- * This component is only to show the statement given.
- * It is used as the template for the statements.
- * This is not the (super) type Refinement.
  */
 @Component({
   selector: "app-statement-base",
@@ -68,15 +73,20 @@ import { ProjectService } from "../../../../services/project/project.service";
   styleUrl: "./statement.component.scss",
   standalone: true,
 })
-export class StatementComponent {
-  private static readonly EDITOR_CONTAINER_EXPANSION_TRIGGER = 150;
-  private static readonly EDITOR_CONTAINER_EXPANSION = 200;
-
+export class StatementComponent implements OnInit, OnDestroy {
   @Input() public refinement!: Refinement;
   @Input() public hideSourceHandle = false;
   @Input() public hideTargetHandle = false;
-  @Input({ required: true }) _node!: AbstractStatementNode;
   @Input() public icon = "pi pi-circle";
+  @Input()
+  set _node(value: AbstractStatementNode) {
+    this._nodeValue = value;
+    this.setupSignalsAndSubscriptions(value);
+  }
+  get _node(): AbstractStatementNode {
+    return this._nodeValue;
+  }
+  private _nodeValue!: AbstractStatementNode;
 
   @Output() delete = new EventEmitter();
 
@@ -87,12 +97,67 @@ export class StatementComponent {
 
   public isVerifying = signal(false);
 
+  preconditionSignal: WritableSignal<ICondition> = signal({ condition: '' });
+  postconditionSignal: WritableSignal<ICondition> = signal({ condition: '' });
+  preconditionEditableSignal!: Signal<boolean>;
+  postconditionEditableSignal!: Signal<boolean>;
+
+  private subscriptions = new Subscription();
+
   constructor(
     private treeService: TreeService,
     public globalSettingsService: GlobalSettingsService,
     private networkTreeService: NetworkTreeService,
     private projectService: ProjectService,
+    private injector: Injector,
   ) {}
+
+  ngOnInit(): void {
+    // Initialization is handled by the _node setter
+  }
+
+  private setupSignalsAndSubscriptions(node: AbstractStatementNode) {
+    this.subscriptions.unsubscribe();
+    this.subscriptions = new Subscription();
+
+    runInInjectionContext(this.injector, () => {
+      this.preconditionEditableSignal = toSignal(node.preconditionEditable, { initialValue: true });
+      this.postconditionEditableSignal = toSignal(node.postconditionEditable, { initialValue: true });
+    });
+
+    this.preconditionSignal.set(node.precondition.getValue());
+    this.postconditionSignal.set(node.postcondition.getValue());
+
+    this.subscriptions.add(node.precondition.subscribe(val => {
+      if (this.preconditionSignal() !== val) {
+        this.preconditionSignal.set(val);
+      }
+    }));
+
+    this.subscriptions.add(node.postcondition.subscribe(val => {
+      if (this.postconditionSignal() !== val) {
+        this.postconditionSignal.set(val);
+      }
+    }));
+  }
+
+  onPreconditionChange(newCondition: ICondition) {
+    this.preconditionSignal.set(newCondition);
+    if (this._nodeValue) {
+      this._nodeValue.precondition.next(newCondition);
+    }
+  }
+
+  onPostconditionChange(newCondition: ICondition) {
+    this.postconditionSignal.set(newCondition);
+    if (this._nodeValue) {
+      this._nodeValue.postcondition.next(newCondition);
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+  }
 
   public deleteRefinement(): void {
     this.treeService.deleteStatementNode(this._node);
@@ -116,34 +181,13 @@ export class StatementComponent {
     }
   }
 
-  //TODO reimplement this
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private setVerifcationState(statement: AbstractStatement) {
-    /*if (this.refinement.id == statement.id) {
-      this.refinement.proven = statement.proven
-      if (this.refinement.proven) {
-        this.boxTitleRef.nativeElement.style.backgroundColor = "rgb(140,182,60)";
-        this.refinementBoxRef.nativeElement.style.borderColor = "rgb(140,182,60)";
-      } else {
-        this.boxTitleRef.nativeElement.style.backgroundColor = "rgb(163,34,35)";
-        this.refinementBoxRef.nativeElement.style.borderColor = "rgb(163,34,35)";
-      }
-    }*/
-  }
-
   public verifyStatement(): void {
     if (this.isVerifying()) {
       return;
     }
     this.isVerifying.set(true);
-
-    // Finalize statements first
     this.treeService.finalizeStatements();
-
-    // Create temporary formula from this node
     const tempFormula = this.treeService.createTempFormulaFromNode(this._node);
-
-    // Verify the statement
     this.networkTreeService.verifyStatement(
       tempFormula,
       this._node,

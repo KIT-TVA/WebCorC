@@ -19,10 +19,10 @@ import {
   RootStatement,
 } from "../../types/statements/root-statement";
 import { RootStatementNode } from "../../types/statements/nodes/root-statement-node";
+import { RepetitionStatementNode } from "../../types/statements/nodes/repetition-statement-node";
 
 /**
  * Service for the context of the tree in the graphical editor.
- * The context includes the global conditions and the variables.
  */
 @Injectable({
   providedIn: "root",
@@ -48,17 +48,8 @@ export class TreeService {
   }
 
   setFormula(newFormula: LocalCBCFormula, urn: string) {
-    console.log(
-      "TreeService.setFormula called for urn:",
-      urn,
-      "incoming formula:",
-      newFormula,
-    );
-
     this._urn = urn;
     this._rootFormula = newFormula;
-    //commented out for optimization, uncomment if the editor breaks
-    //this.getStatementNodes();
     this._variables = [];
     this._renames = [];
     this._globalConditions = [];
@@ -73,14 +64,7 @@ export class TreeService {
     newFormula.globalConditions.forEach((condition) => {
       this.addGlobalCondition(condition.condition);
     });
-    console.log(
-      "TreeService.setFormula completed, internal rootFormula:",
-      this._rootFormula,
-    );
 
-    // Immediately build the statement nodes from the supplied formula so the
-    // internal rootStatementNode and statement node list mirror the formula.
-    // This avoids later callers producing an empty default RootStatement.
     try {
       this.generateStatementNodes();
     } catch (e) {
@@ -151,19 +135,10 @@ export class TreeService {
     return this.rootStatementNode;
   }
 
-  /**
-   * Export the content of the tree service.
-   * Including the statements, variables, global conditions and renames.
-   */
   public export(): void {
     this._exportNotifier.next();
   }
 
-  /**
-   * Add a variable to the formula
-   * Checks for duplicates
-   * @returns true, if added sucessful, else false
-   */
   public addVariable(name: string, kind: JavaVariableKind): boolean {
     const sizeBeforeAdd = this._variables.length;
     const newVariable = new JavaVariable(name, kind);
@@ -182,20 +157,9 @@ export class TreeService {
     return this._variables.length != sizeBeforeAdd;
   }
 
-  /**
-   * Remove a variable by name from the variables of the context
-   * @param names The names of the variables to remove
-   */
   public removeVariables(names: string[]): void {
     const variablesToBeRemoved: string[] = [];
-
-    //Old code extracted only variable name from the string
-    //Example: "int i" -> "i"
-    //Thus didn't work for variables with kind "LOCAL" from the example
-    // names.forEach((name) => variablesToBeRemoved.push(name.split(" ")[1]));
     names.forEach((name) => {
-      // If the string contains a space, extract everything after the first space (for "KIND name" format)
-      // Otherwise, use the whole string (for user-added variables without kind prefix)
       const variableName = name.includes(" ")
         ? name.split(" ").slice(1).join(" ")
         : name;
@@ -210,12 +174,6 @@ export class TreeService {
     this._variables = [];
   }
 
-  /**
-   * Add a global condition to the context,
-   * checks for duplicates.
-   * @param name the string representation of the condition
-   * @returns true, if added else false
-   */
   public addGlobalCondition(name: string): boolean {
     const sizeBeforeAdd = this._globalConditions.length;
 
@@ -233,10 +191,6 @@ export class TreeService {
     return this._globalConditions.length != sizeBeforeAdd;
   }
 
-  /**
-   * Remove a global condition
-   * @param name The string representation of the condition to remove
-   */
   public removeGlobalCondition(name: string): void {
     this._globalConditions = this._globalConditions.filter(
       (val) => val !== name,
@@ -262,7 +216,6 @@ export class TreeService {
   }
 
   public refreshNodes(): void {
-    // Re-emit the array so Angular Signals detect a change
     this._statementNodes.update((old) => [...old]);
   }
 
@@ -289,6 +242,9 @@ export class TreeService {
       return;
     }
     if (this._statementNodes().includes(statementNode)) {
+      if (statementNode.statement.type === "REPETITION") {
+        (statementNode as RepetitionStatementNode).destroy();
+      }
       statementNode.parent?.deleteChild(statementNode);
       this._statementNodes.update((old) =>
         old.filter((node) => node != statementNode),
@@ -297,11 +253,6 @@ export class TreeService {
   }
 
   public generateStatementNodes(): Signal<AbstractStatementNode[]> {
-    console.log(
-      "generateStatementNodes in treeservice called",
-      this.rootFormula,
-    );
-    console.trace();
     const rootStatementNode = this.rootFormula?.statement
       ? new RootStatementNode(
           this.rootFormula.statement as RootStatement,
@@ -328,22 +279,10 @@ export class TreeService {
     return this._statementNodes;
   }
 
-  /**
-   * Add renaming to the tree service
-   * @param type The type of the renaming
-   * @param original The original name of the renaming
-   * @param newName The new name of the renaming
-   */
   public addRenaming(type: string, original: string, newName: string): void {
     this._renames.push(new Renaming(type, original, newName));
   }
 
-  /**
-   * Remove renaming from the tree service
-   * @param type The type of the renaming
-   * @param original The original name of the renaming
-   * @param newName The new name of the renaming
-   */
   public removeRenaming(type: string, original: string, newName: string): void {
     this._renames = this._renames.filter(
       (val) => !val.equal(new Renaming(type, original, newName)),
@@ -357,7 +296,7 @@ export class TreeService {
     for (const parentNode of parentNodes) {
       if (parentNode) {
         childNodes = childNodes
-          .concat(parentNode.children.filter((child) => child != undefined))
+          .concat(parentNode.children.filter((child) => child != undefined) as AbstractStatementNode[])
           .concat(this.collectStatementNodeChildren(parentNode.children));
       }
     }
@@ -413,9 +352,6 @@ export class TreeService {
     }
   }
 
-  /**
-   * Prepares all statements for export by syncing their conditions etc.
-   */
   finalizeStatements() {
     this.rootStatementNode?.finalize();
     if (this.rootFormula) {
@@ -428,18 +364,12 @@ export class TreeService {
     this.finalizeNotifier.next()
   }
 
-  /**
-   * Find a statement node by its statement ID
-   * @param id The ID of the statement to find
-   * @returns The statement node if found, undefined otherwise
-   */
   public findStatementNodeById(id: string): AbstractStatementNode | undefined {
     const nodes = this._statementNodes();
     for (const node of nodes) {
       if (node.statement.id === id) {
         return node;
       }
-      // Recursively search children
       const found = this.findNodeInSubtree(node, id);
       if (found) {
         return found;
@@ -466,11 +396,6 @@ export class TreeService {
     return undefined;
   }
 
-  /**
-   * Collect all nodes in the subtree starting from the given node (including the node itself)
-   * @param node The root node of the subtree
-   * @returns Array of all nodes in the subtree
-   */
   public collectSubtreeNodes(
     node: AbstractStatementNode,
   ): AbstractStatementNode[] {
@@ -483,24 +408,16 @@ export class TreeService {
     return nodes;
   }
 
-  /**
-   * Create a temporary formula from a statement node for verification
-   * @param node The statement node to verify
-   * @returns A temporary LocalCBCFormula with the statement as root
-   */
   public createTempFormulaFromNode(
     node: AbstractStatementNode,
   ): LocalCBCFormula {
-    // Finalize the node to sync conditions
     node.finalize();
 
     let rootStatement: IRootStatement;
 
-    // If the node is already a ROOT type, use it directly
     if (node.statement.type === "ROOT") {
       rootStatement = node.statement as IRootStatement;
     } else {
-      // Otherwise, wrap the statement in a RootStatement
       rootStatement = new RootStatement(
         node.statement.name || "temp",
         node.statement.preCondition,
@@ -509,7 +426,6 @@ export class TreeService {
       );
     }
 
-    // Create temporary formula with global context from root formula
     const tempFormula = new LocalCBCFormula(
       node.statement.name || "temp",
       rootStatement,

@@ -1,7 +1,7 @@
 import {
   Component,
-  effect,
   Input,
+  OnDestroy,
   OnInit,
   signal,
   WritableSignal,
@@ -19,11 +19,11 @@ import { MatIconModule } from "@angular/material/icon";
 import { Position } from "../../../../types/position";
 import { AbstractStatement } from "../../../../types/statements/abstract-statement";
 import { SimpleStatementNode } from "../../../../types/statements/nodes/simple-statement-node";
-import { Condition, ICondition } from "../../../../types/condition/condition";
+import { ICondition } from "../../../../types/condition/condition";
+import { Subscription } from "rxjs";
 
 /**
  * Component representing an instande of {@link SimpleStatement} in the grahical editor.
- * The Root statement is also a simple statement, with one child element
  */
 @Component({
   selector: "app-simple-statement",
@@ -41,62 +41,60 @@ import { Condition, ICondition } from "../../../../types/condition/condition";
   standalone: true,
   styleUrl: "./simple-statement.component.scss",
 })
-export class SimpleStatementComponent extends Refinement implements OnInit {
-  @Input({ required: true }) _node!: SimpleStatementNode;
+export class SimpleStatementComponent extends Refinement implements OnInit, OnDestroy {
+  @Input()
+  set _node(value: SimpleStatementNode) {
+    this._nodeValue = value;
+    this.setupSignalsAndSubscriptions(value);
+  }
+  get _node(): SimpleStatementNode {
+    return this._nodeValue;
+  }
+  private _nodeValue!: SimpleStatementNode;
+
+  programStatementSignal: WritableSignal<ICondition> = signal({ condition: '' });
+  private subscriptions = new Subscription();
 
   override export(): AbstractStatement | undefined {
     throw new Error("Method not implemented.");
   }
 
-  private _statement: Refinement | undefined;
-
-  protected pseudoCondition: WritableSignal<ICondition> = signal(
-    new Condition(""),
-  );
-
   public constructor(treeService: TreeService) {
     super(treeService);
-    effect(() => {
-      this._node.statement.programStatement = this.pseudoCondition().condition;
-    });
   }
 
-  public ngOnInit() {
-    //Commented out the next line that causes the bug mentioned in issue #44
-    //Not sure if important thus the comment
-    this.pseudoCondition.set(
-      new Condition(this._node.statement.programStatement),
-    );
+  ngOnInit() {
+    // Initialization is now handled by the _node setter
+  }
+
+  private setupSignalsAndSubscriptions(node: SimpleStatementNode) {
+    this.programStatementSignal.set(node.programStatement.getValue());
+
+    this.subscriptions.unsubscribe();
+    this.subscriptions = new Subscription();
+
+    this.subscriptions.add(node.programStatement.subscribe(value => {
+      if (this.programStatementSignal() !== value) {
+        this.programStatementSignal.set(value);
+      }
+    }));
+  }
+
+  onProgramStatementChange(newCondition: ICondition) {
+    this.programStatementSignal.set(newCondition);
+    this._nodeValue.programStatement.next(newCondition);
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
   public override getTitle(): string {
     return "Assignment";
   }
 
-  public override refreshLinkState(): void {
-    super.refreshLinkState();
-
-    if (this._statement) {
-      this._statement.refreshLinkState();
-    }
-  }
-
   public override resetPosition(position: Position, offset: Position): void {
     this.position.set(position);
     this.position.add(offset);
-
-    if (this._statement) {
-      this._statement.resetPosition(this.position, new Position(100, -10));
-    }
   }
-
-  public get statement(): Refinement | undefined {
-    return this._statement;
-  }
-
-  public set statement(statement: Refinement | undefined) {
-    this._statement = statement;
-  }
-
-  protected readonly Condition = Condition;
 }

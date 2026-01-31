@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Inject, Input, model, ModelSignal, Output } from "@angular/core";
+import { Component, EventEmitter, Inject, Input, Output } from "@angular/core";
 import { Condition, ICondition } from "../../../../types/condition/condition";
 import { AiChatService } from "../../../../services/ai-chat/ai-chat.service";
 import { Textarea } from "primeng/textarea";
@@ -11,8 +11,6 @@ import { FormsModule } from "@angular/forms";
 
 /**
  * Editor in the statements for the {@link Condition}
- * @link https://material.angular.io/components/form-field/overview
- * @link https://angular.dev/guide/forms/reactive-forms
  */
 @Component({
   selector: "app-condition-editor",
@@ -25,7 +23,8 @@ export class ConditionEditorComponent {
   /**
    * Condition to edit
    */
-  public condition: ModelSignal<ICondition> = model.required<ICondition>();
+  @Input({ required: true }) condition!: ICondition;
+  @Output() conditionChange = new EventEmitter<ICondition>();
 
   /**
    * Flag to allow editing the condition content
@@ -51,8 +50,14 @@ export class ConditionEditorComponent {
    * @see AiChatService
    */
   public askAi(): void {
-    if (!this.condition()?.condition) return;
-    this._aiChatService.addCondition(this.condition()!);
+    if (!this.condition?.condition) return;
+    this._aiChatService.addCondition(this.condition);
+  }
+
+  onInputChange(event: Event) {
+    const newText = (event.target as HTMLTextAreaElement).value;
+    // Create a new Condition object to ensure immutability and trigger change detection
+    this.conditionChange.emit(new Condition(newText));
   }
 
   protected readonly $dt = $dt;

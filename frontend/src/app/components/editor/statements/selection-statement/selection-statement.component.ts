@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, OnDestroy, OnInit, signal, WritableSignal } from "@angular/core";
 
 import { StatementComponent } from "../statement/statement.component";
 import { Refinement } from "../../../../types/refinement";
@@ -19,13 +19,11 @@ import {
 import { Position } from "../../../../types/position";
 import { SelectionStatementNode } from "../../../../types/statements/nodes/selection-statement-node";
 import { HandleComponent } from "ngx-vflow";
-import { index } from "d3";
+import { ICondition } from "../../../../types/condition/condition";
+import { Subscription } from "rxjs";
 
 /**
  * Component in the graphical editor to represent the {@link SelectionStatement}
- * The Selectionstatement has n child statements and n guard statements.
- * The guard conditons and the precondition get propagated to the precondition
- * of the child.
  */
 @Component({
   selector: "app-selection-statement",
@@ -46,8 +44,19 @@ import { index } from "d3";
   styleUrl: "./selection-statement.component.scss",
   standalone: true,
 })
-export class SelectionStatementComponent extends Refinement {
-  @Input({ required: true }) _node!: SelectionStatementNode;
+export class SelectionStatementComponent extends Refinement implements OnInit, OnDestroy {
+  @Input()
+  set _node(value: SelectionStatementNode) {
+    this._nodeValue = value;
+    this.setupSignalsAndSubscriptions(value);
+  }
+  get _node(): SelectionStatementNode {
+    return this._nodeValue;
+  }
+  private _nodeValue!: SelectionStatementNode;
+
+  guardSignals: WritableSignal<ICondition>[] = [];
+  private subscriptions = new Subscription();
 
   override export(): AbstractStatement | undefined {
     return undefined;
@@ -58,8 +67,34 @@ export class SelectionStatementComponent extends Refinement {
     private dialog: MatDialog,
   ) {
     super(treeService);
+  }
 
-    // ensure at least one element is in the array to ensure rendering without errors
+  ngOnInit(): void {
+    // Initialization is now handled by the _node setter
+  }
+
+  private setupSignalsAndSubscriptions(node: SelectionStatementNode) {
+    this.guardSignals = node.guards.map(guard => signal(guard.getValue()));
+
+    this.subscriptions.unsubscribe();
+    this.subscriptions = new Subscription();
+
+    node.guards.forEach((guard, i) => {
+      this.subscriptions.add(guard.subscribe(value => {
+        if (this.guardSignals[i] && this.guardSignals[i]() !== value) {
+          this.guardSignals[i].set(value);
+        }
+      }));
+    });
+  }
+
+  onGuardChange(newCondition: ICondition, index: number) {
+    this.guardSignals[index].set(newCondition);
+    this._nodeValue.guards[index].next(newCondition);
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
   public override getTitle(): string {
@@ -68,6 +103,7 @@ export class SelectionStatementComponent extends Refinement {
 
   public addSelection() {
     this._node.addSelection();
+    this.setupSignalsAndSubscriptions(this._node); // Re-setup to include the new guard
   }
 
   public removeSelection() {
@@ -76,6 +112,7 @@ export class SelectionStatementComponent extends Refinement {
       this.treeService.deleteStatementNode(this._node.children[length - 1]!);
     }
     this._node.removeSelection();
+    this.setupSignalsAndSubscriptions(this._node); // Re-setup to remove the old guard
   }
 
   public override resetPosition(position: Position, offset: Position): void {
@@ -83,16 +120,7 @@ export class SelectionStatementComponent extends Refinement {
     this.position.add(offset);
   }
 
-  /**
-   * Add the child statement according to the
-   * index of the guard to add the statement to.
-   * @param index The position to add the statement
-   * @param type The type of statement to add
-   */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public chooseRefinement(index: number, type: StatementType): void {
     this.treeService.createNodeForStatement(this._node, type, index);
   }
-
-  protected readonly index = index;
 }
