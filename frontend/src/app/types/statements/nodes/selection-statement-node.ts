@@ -1,6 +1,6 @@
 import { AbstractStatementNode } from "./abstract-statement-node";
 import { ISelectionStatement } from "../selection-statement";
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, combineLatest, Subscription } from "rxjs";
 import { Condition, ICondition } from "../../condition/condition";
 import {
   createEmptyStatementNode,
@@ -11,6 +11,7 @@ import { StatementType } from "../abstract-statement";
 export class SelectionStatementNode extends AbstractStatementNode {
   public guards: BehaviorSubject<ICondition>[];
   override statement!: ISelectionStatement;
+  private childSubscriptions: Subscription[] = [];
 
   constructor(
     statement: ISelectionStatement,
@@ -23,29 +24,66 @@ export class SelectionStatementNode extends AbstractStatementNode {
     this.children = statement.commands.map((c) =>
       c ? statementNodeUtils(c, this) : undefined,
     );
+
+    // Initialize subscriptions for existing children
+    this.children.forEach((_, index) => {
+      this.setupChildPreconditionSubscription(index);
+    });
+  }
+
+  private setupChildPreconditionSubscription(index: number) {
+    if (this.childSubscriptions[index]) {
+      this.childSubscriptions[index].unsubscribe();
+    }
+
+    const child = this.children[index];
+    if (!child || !this.guards[index]) return;
+
+    // Create a subject that we will update with the computed condition
+    // We initialize it with the current value
+    const initialParentPre = this.precondition.getValue();
+    const initialGuard = this.guards[index].getValue();
+    const computedPreconditionSubject = new BehaviorSubject<ICondition>(
+      new Condition(
+        initialParentPre.condition + " && " + initialGuard.condition,
+      ),
+    );
+
+    child.overridePrecondition(computedPreconditionSubject);
+    child.preconditionEditable.next(false);
+
+    this.childSubscriptions[index] = combineLatest([
+      this.precondition,
+      this.guards[index],
+    ]).subscribe(([parentPre, guard]) => {
+      const newCond = new Condition(
+        parentPre.condition + " && " + guard.condition,
+      );
+      // Only update if different to avoid infinite loops or unnecessary updates?
+      // BehaviorSubject.next() will emit even if value is same object reference if we don't check.
+      // But here we create a new Condition object every time.
+      computedPreconditionSubject.next(newCond);
+    });
   }
 
   override overridePrecondition(condition: BehaviorSubject<ICondition>) {
     super.overridePrecondition(condition);
-    this.children.forEach((c, index) => {
-      if (c && this.guards[index]) {
-        const computedCondition = new BehaviorSubject<ICondition>(
-          new Condition(
-            condition.getValue().condition +
-              " & " +
-              this.guards[index].getValue().condition,
-          ),
-        );
-        c.overridePrecondition(computedCondition);
-        c.preconditionEditable.next(this.preconditionEditable.value);
-      }
+    // Re-setup all subscriptions because this.precondition has changed
+    this.children.forEach((_, index) => {
+      this.setupChildPreconditionSubscription(index);
     });
   }
 
   override deleteChild(node: AbstractStatementNode) {
     const index = this.children.findIndex((child) => child == node);
-    this.children[index] = undefined;
-    this.statement.commands[index] = undefined;
+    if (index !== -1) {
+      if (this.childSubscriptions[index]) {
+        this.childSubscriptions[index].unsubscribe();
+        delete this.childSubscriptions[index]; // or splice if we are removing the slot
+      }
+      this.children[index] = undefined;
+      this.statement.commands[index] = undefined;
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -121,12 +159,18 @@ export class SelectionStatementNode extends AbstractStatementNode {
     this.children.push(undefined);
     this.statement.guards.push(condition.getValue());
     this.statement.commands.push(undefined);
+    // No subscription needed yet as there is no child node
   }
 
   setSelection(index: number, node: AbstractStatementNode) {
     if (index < this.children.length) {
       this.children[index] = node;
       this.statement.commands[index] = node.statement;
+      this.setupChildPreconditionSubscription(index);
+
+      // Also sync postcondition
+      node.overridePostcondition(this.postcondition);
+      node.postconditionEditable.next(this.postconditionEditable.value);
     }
   }
 
@@ -136,29 +180,20 @@ export class SelectionStatementNode extends AbstractStatementNode {
   ): AbstractStatementNode {
     const idx = index ?? 0;
     const statementNode = createEmptyStatementNode(statementType, this);
-    // If a guard exists for this branch, compute precondition as parentPrecondition & guard
-    if (this.guards[idx]) {
-      const computedCondition = new BehaviorSubject<ICondition>(
-        new Condition(
-          this.precondition.getValue().condition +
-            " & " +
-            this.guards[idx].getValue().condition,
-        ),
-      );
-      statementNode.overridePrecondition(computedCondition);
-      statementNode.preconditionEditable.next(this.preconditionEditable.value);
-    } else {
-      statementNode.overridePrecondition(this.precondition);
-      statementNode.preconditionEditable.next(this.preconditionEditable.value);
-    }
-    // All branches should share the same postcondition as the selection
-    statementNode.overridePostcondition(this.postcondition);
-    statementNode.postconditionEditable.next(this.postconditionEditable.value);
-    this.addChild(statementNode, idx ?? 0);
+
+    // We add the child first, then setup subscriptions
+    // But addChild calls setSelection which calls setupChildPreconditionSubscription
+    this.addChild(statementNode, idx);
+
     return statementNode;
   }
 
   removeSelection() {
+    const index = this.guards.length - 1;
+    if (this.childSubscriptions[index]) {
+      this.childSubscriptions[index].unsubscribe();
+      this.childSubscriptions.pop();
+    }
     this.guards.pop();
     this.children.pop();
     this.statement.guards.pop();
