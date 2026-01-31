@@ -1,29 +1,29 @@
 <ul>
-  @for (conflict of conflictSignals; track i; let i = $index) {
+  @for (conflict of conflicts; track i; let i = $index) {
     <li style="display: flex; flex-direction: row; gap: 2rem">
       <div style="display: flex; flex-direction: column">
-        <app-condition-editor [(condition)]="conflict.version1">
+        <app-condition-editor [condition]="conflict.version1">
         </app-condition-editor>
         <p-button
           size="large"
           fluid
           label="use this condition"
           (mouseenter)="
-            setActiveCondition(conflict.version1(), conflict.version2())
+            setActiveCondition(conflict.version1.getValue(), conflict.version2.getValue())
           "
           (mouseleave)="removeActiveCondition()"
           (click)="_selectCondition(true, conflicts[i])"
         ></p-button>
       </div>
       <div style="display: flex; width: fit-content; flex-direction: column">
-        <app-condition-editor [(condition)]="conflict.version2">
+        <app-condition-editor [condition]="conflict.version2">
         </app-condition-editor>
         <p-button
           size="large"
           fluid
           label="use this condition"
           (mouseenter)="
-            setActiveCondition(conflict.version2(), conflict.version1())
+            setActiveCondition(conflict.version2.getValue(), conflict.version1.getValue())
           "
           (mouseleave)="removeActiveCondition()"
           (click)="_selectCondition(false, conflicts[i])"

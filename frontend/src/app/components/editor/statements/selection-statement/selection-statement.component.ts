@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit, signal, WritableSignal } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 
 import { StatementComponent } from "../statement/statement.component";
 import { Refinement } from "../../../../types/refinement";
@@ -19,8 +19,6 @@ import {
 import { Position } from "../../../../types/position";
 import { SelectionStatementNode } from "../../../../types/statements/nodes/selection-statement-node";
 import { HandleComponent } from "ngx-vflow";
-import { ICondition } from "../../../../types/condition/condition";
-import { Subscription } from "rxjs";
 
 /**
  * Component in the graphical editor to represent the {@link SelectionStatement}
@@ -44,19 +42,8 @@ import { Subscription } from "rxjs";
   styleUrl: "./selection-statement.component.scss",
   standalone: true,
 })
-export class SelectionStatementComponent extends Refinement implements OnInit, OnDestroy {
-  @Input()
-  set _node(value: SelectionStatementNode) {
-    this._nodeValue = value;
-    this.setupSignalsAndSubscriptions(value);
-  }
-  get _node(): SelectionStatementNode {
-    return this._nodeValue;
-  }
-  private _nodeValue!: SelectionStatementNode;
-
-  guardSignals: WritableSignal<ICondition>[] = [];
-  private subscriptions = new Subscription();
+export class SelectionStatementComponent extends Refinement implements OnInit {
+  @Input() _node!: SelectionStatementNode;
 
   override export(): AbstractStatement | undefined {
     return undefined;
@@ -70,31 +57,6 @@ export class SelectionStatementComponent extends Refinement implements OnInit, O
   }
 
   ngOnInit(): void {
-    // Initialization is now handled by the _node setter
-  }
-
-  private setupSignalsAndSubscriptions(node: SelectionStatementNode) {
-    this.guardSignals = node.guards.map(guard => signal(guard.getValue()));
-
-    this.subscriptions.unsubscribe();
-    this.subscriptions = new Subscription();
-
-    node.guards.forEach((guard, i) => {
-      this.subscriptions.add(guard.subscribe(value => {
-        if (this.guardSignals[i] && this.guardSignals[i]() !== value) {
-          this.guardSignals[i].set(value);
-        }
-      }));
-    });
-  }
-
-  onGuardChange(newCondition: ICondition, index: number) {
-    this.guardSignals[index].set(newCondition);
-    this._nodeValue.guards[index].next(newCondition);
-  }
-
-  ngOnDestroy(): void {
-    this.subscriptions.unsubscribe();
   }
 
   public override getTitle(): string {
@@ -103,7 +65,6 @@ export class SelectionStatementComponent extends Refinement implements OnInit, O
 
   public addSelection() {
     this._node.addSelection();
-    this.setupSignalsAndSubscriptions(this._node); // Re-setup to include the new guard
   }
 
   public removeSelection() {
@@ -112,7 +73,6 @@ export class SelectionStatementComponent extends Refinement implements OnInit, O
       this.treeService.deleteStatementNode(this._node.children[length - 1]!);
     }
     this._node.removeSelection();
-    this.setupSignalsAndSubscriptions(this._node); // Re-setup to remove the old guard
   }
 
   public override resetPosition(position: Position, offset: Position): void {

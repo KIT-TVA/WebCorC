@@ -4,20 +4,21 @@
       <p-icon-field>
         <p-float-label variant="on">
           <textarea
+            [ngModelOptions]="{ standalone: true }"
             id="field"
             pTextarea
             class="textarea"
             spellcheck="false"
             [rows]="inline ? 1 : 5"
-            [value]="condition.condition"
-            (input)="onInputChange($event)"
+            [ngModel]="(condition | async)?.condition"
+            (ngModelChange)="onConditionChange($event)"
             variant="filled"
             [disabled]="!editable"
             [dt]="{
               root: {
-                borderColor: redConditions.includes(condition)
+                borderColor: redConditions.includes((condition | async)!)
                   ? '#ff7e7e'
-                  : greenConditions.includes(condition)
+                  : greenConditions.includes((condition | async)!)
                     ? '#6ab77a'
                     : $dt('textarea.border.color').value,
               },

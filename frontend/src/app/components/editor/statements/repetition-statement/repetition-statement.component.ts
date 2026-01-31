@@ -1,10 +1,7 @@
 import {
   Component,
   Input,
-  OnDestroy,
   OnInit,
-  signal,
-  WritableSignal
 } from "@angular/core";
 
 import { StatementComponent } from "../statement/statement.component";
@@ -20,8 +17,6 @@ import { MatIconModule } from "@angular/material/icon";
 import { Position } from "../../../../types/position";
 import { RepetitionStatementNode } from "../../../../types/statements/nodes/repetition-statement-node";
 import { StatementType } from "../../../../types/statements/abstract-statement";
-import { ICondition } from "../../../../types/condition/condition";
-import { Subscription } from "rxjs";
 
 /**
  * Compoent in the Graphical Editor to represent an instance of {@link RepetitionStatement}
@@ -42,69 +37,14 @@ import { Subscription } from "rxjs";
   standalone: true,
   styleUrl: "./repetition-statement.component.scss",
 })
-export class RepetitionStatementComponent extends Refinement implements OnInit, OnDestroy {
-  @Input()
-  set _node(value: RepetitionStatementNode) {
-    this._nodeValue = value;
-    this.setupSignalsAndSubscriptions(value);
-  }
-  get _node(): RepetitionStatementNode {
-    return this._nodeValue;
-  }
-  private _nodeValue!: RepetitionStatementNode;
-
-  guardSignal: WritableSignal<ICondition> = signal({ condition: '' });
-  invariantSignal: WritableSignal<ICondition> = signal({ condition: '' });
-  variantSignal: WritableSignal<ICondition> = signal({ condition: '' });
-
-  private subscriptions = new Subscription();
+export class RepetitionStatementComponent extends Refinement implements OnInit {
+  @Input() _node!: RepetitionStatementNode;
 
   public constructor(treeService: TreeService) {
     super(treeService);
   }
 
   ngOnInit(): void {
-    // Initialization is now handled by the _node setter
-  }
-
-  private setupSignalsAndSubscriptions(node: RepetitionStatementNode) {
-    // This block handles data flow from the model (BehaviorSubject) to the UI (Signal)
-    this.guardSignal.set(node.guard.getValue());
-    this.invariantSignal.set(node.invariant.getValue());
-    this.variantSignal.set(node.variant.getValue());
-
-    this.subscriptions.unsubscribe();
-    this.subscriptions = new Subscription();
-
-    this.subscriptions.add(node.guard.subscribe(value => {
-      if (this.guardSignal() !== value) { this.guardSignal.set(value); }
-    }));
-    this.subscriptions.add(node.invariant.subscribe(value => {
-      if (this.invariantSignal() !== value) { this.invariantSignal.set(value); }
-    }));
-    this.subscriptions.add(node.variant.subscribe(value => {
-      if (this.variantSignal() !== value) { this.variantSignal.set(value); }
-    }));
-  }
-
-  // These methods handle data flow from the UI (conditionChange event) to the model (BehaviorSubject)
-  onGuardChange(newCondition: ICondition) {
-    this.guardSignal.set(newCondition);
-    this._nodeValue.guard.next(newCondition);
-  }
-
-  onInvariantChange(newCondition: ICondition) {
-    this.invariantSignal.set(newCondition);
-    this._nodeValue.invariant.next(newCondition);
-  }
-
-  onVariantChange(newCondition: ICondition) {
-    this.variantSignal.set(newCondition);
-    this._nodeValue.variant.next(newCondition);
-  }
-
-  ngOnDestroy(): void {
-    this.subscriptions.unsubscribe();
   }
 
   public override getTitle(): string {

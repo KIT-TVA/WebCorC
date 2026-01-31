@@ -2,22 +2,19 @@
   <div style="position: relative; display: flex; align-items: center; height: 100%; width: 230px">
     <app-condition-editor
       placeholder="Invariant"
-      [condition]="invariantSignal()"
-      (conditionChange)="onInvariantChange($event)"
+      [condition]="_node.invariant"
     ></app-condition-editor>
   </div>
   <div style="position: relative; display: flex; align-items: center; height: 100%; width: 230px">
     <app-condition-editor
       placeholder="Guard"
-      [condition]="guardSignal()"
-      (conditionChange)="onGuardChange($event)"
+      [condition]="_node.guard"
     ></app-condition-editor>
   </div>
   <div style="position: relative; display: flex; align-items: center; height: 100%; width: 230px">
     <app-condition-editor
       placeholder="Variant"
-      [condition]="variantSignal()"
-      (conditionChange)="onVariantChange($event)"
+      [condition]="_node.variant"
     ></app-condition-editor>
   </div>
   <div style="width: fit-content">

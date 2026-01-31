@@ -66,9 +66,8 @@
             <div class="conditionParent">
               <app-condition-editor
                 placeholder="Pre Condition"
-                [condition]="preconditionSignal()"
-                (conditionChange)="onPreconditionChange($event)"
-                [editable]="preconditionEditableSignal()"
+                [condition]="_node.precondition"
+                [editable]="_node.preconditionEditable | async"
               ></app-condition-editor>
             </div>
           </mat-drawer>
@@ -95,9 +94,8 @@
       <div style="width: fit-content" class="conditionParent">
         <app-condition-editor
           placeholder="Pre Condition"
-          [condition]="preconditionSignal()"
-          (conditionChange)="onPreconditionChange($event)"
-          [editable]="preconditionEditableSignal()"
+          [condition]="_node.precondition"
+          [editable]="_node.preconditionEditable | async"
         ></app-condition-editor>
       </div>
     }
@@ -116,9 +114,8 @@
           >
             <div class="conditionParent">
               <app-condition-editor
-                [condition]="postconditionSignal()"
-                (conditionChange)="onPostconditionChange($event)"
-                [editable]="postconditionEditableSignal()"
+                [condition]="_node.postcondition"
+                [editable]="_node.postconditionEditable | async"
               ></app-condition-editor>
             </div>
           </mat-drawer>
@@ -143,9 +140,8 @@
       <div style="width: fit-content" class="conditionParent">
         <app-condition-editor
           placeholder="Post Condition"
-          [condition]="postconditionSignal()"
-          (conditionChange)="onPostconditionChange($event)"
-          [editable]="postconditionEditableSignal()"
+          [condition]="_node.postcondition"
+          [editable]="_node.postconditionEditable | async"
         ></app-condition-editor>
       </div>
     }
