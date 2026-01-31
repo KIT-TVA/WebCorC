@@ -1,4 +1,4 @@
-import { signal, WritableSignal } from "@angular/core";
+import { BehaviorSubject } from "rxjs";
 import { ICondition } from "../../condition/condition";
 import { IAbstractStatement, StatementType } from "../abstract-statement";
 import { IPosition } from "../../position";
@@ -7,10 +7,22 @@ export class AbstractStatementNode {
   public statement: IAbstractStatement;
   public parent: AbstractStatementNode | undefined;
   public children: (AbstractStatementNode | undefined)[] = [];
-  public precondition: WritableSignal<ICondition>;
-  public postcondition: WritableSignal<ICondition>;
-  public preconditionEditable = signal(true);
-  public postconditionEditable = signal(true);
+  public precondition: BehaviorSubject<ICondition>;
+  public postcondition: BehaviorSubject<ICondition>;
+  private _preconditionEditable = new BehaviorSubject<boolean>(true);
+  public get preconditionEditable() {
+    return this._preconditionEditable;
+  }
+  public set preconditionEditable(value) {
+    this._preconditionEditable = value;
+  }
+  private _postconditionEditable = new BehaviorSubject<boolean>(true);
+  public get postconditionEditable() {
+    return this._postconditionEditable;
+  }
+  public set postconditionEditable(value) {
+    this._postconditionEditable = value;
+  }
 
   constructor(
     statement: IAbstractStatement,
@@ -18,28 +30,21 @@ export class AbstractStatementNode {
   ) {
     this.statement = statement;
     this.parent = parent;
-    this.precondition = signal(statement.preCondition);
-    this.postcondition = signal(statement.postCondition);
+    this.precondition = new BehaviorSubject<ICondition>(statement.preCondition);
+    this.postcondition = new BehaviorSubject<ICondition>(
+      statement.postCondition,
+    );
   }
 
-  /**
-   * Used when the precondition is controlled by the parent, eg. the pre- or intermediate condition of the parent statement.
-   * @param condition
-   */
-  public overridePrecondition(condition: WritableSignal<ICondition>): void {
+  public overridePrecondition(condition: BehaviorSubject<ICondition>): void {
     this.precondition = condition;
   }
 
-  /**
-   * Used when the postcondition is controlled by the child, probably always the postcondition of the child statement.
-   * @param condition
-   */
-  public overridePostcondition(condition: WritableSignal<ICondition>): void {
+  public overridePostcondition(condition: BehaviorSubject<ICondition>): void {
     this.postcondition = condition;
   }
 
   public deleteChild(node: AbstractStatementNode) {
-    //EXTEND THIS!
     if (this.children.includes(node)) {
       this.children = this.children.filter(
         (filteredNode) => filteredNode != node,
@@ -66,58 +71,53 @@ export class AbstractStatementNode {
     };
   }
 
-  /**
-   * Saves the potentially changed pre- and postconditions to the underlying statement.
-   */
   public finalize() {
-    this.statement.preCondition = this.precondition();
-    this.statement.postCondition = this.postcondition();
+    this.statement.preCondition = this.precondition.getValue();
+    this.statement.postCondition = this.postcondition.getValue();
     this.children.forEach((c) => c?.finalize());
   }
 
   public checkConditionSync(child: AbstractStatementNode) {
     let inSync =
-      (this.precondition() == child.precondition() &&
-        this.postcondition() == child.postcondition()) ||
+      (this.precondition.getValue() == child.precondition.getValue() &&
+        this.postcondition.getValue() == child.postcondition.getValue()) ||
       child.statement.type == "REPETITION";
     if (!inSync) {
       this.getConditionConflicts(child);
     }
     inSync =
-      (this.precondition() == child.precondition() &&
-        this.postcondition() == child.postcondition()) ||
+      (this.precondition.getValue() == child.precondition.getValue() &&
+        this.postcondition.getValue() == child.postcondition.getValue()) ||
       child.statement.type == "REPETITION";
     return inSync;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public addChild(statement: AbstractStatementNode, index: number) {
-    //EXTEND THIS!
     throw Error(
       "AbstractStatementNode does not support child statement nodes.",
     );
   }
 
   getConditionConflicts(child: AbstractStatementNode): {
-    version1: WritableSignal<ICondition>;
-    version2: WritableSignal<ICondition>;
+    version1: BehaviorSubject<ICondition>;
+    version2: BehaviorSubject<ICondition>;
     type: "PRECONDITION" | "POSTCONDITION";
   }[] {
     const conflicts: {
-      version1: WritableSignal<ICondition>;
-      version2: WritableSignal<ICondition>;
+      version1: BehaviorSubject<ICondition>;
+      version2: BehaviorSubject<ICondition>;
       type: "PRECONDITION" | "POSTCONDITION";
     }[] = [];
 
-    // If the child is a repetition, ignore differences in conditions — repetition statements
-    // can have different internal conditions (invariant/guard/variant) and shouldn't
-    // be treated as conflicts with their parent here.
     if (child.statement.type == "REPETITION") {
       return conflicts;
     }
 
-    if (this.precondition() != child.precondition()) {
-      if (this.precondition().condition === child.precondition().condition) {
+    if (this.precondition.getValue() != child.precondition.getValue()) {
+      if (
+        this.precondition.getValue().condition ===
+        child.precondition.getValue().condition
+      ) {
         child.overridePrecondition(this.precondition);
       } else {
         conflicts.push({
@@ -127,8 +127,11 @@ export class AbstractStatementNode {
         });
       }
     }
-    if (this.postcondition() != child.postcondition()) {
-      if (this.postcondition().condition === child.postcondition().condition) {
+    if (this.postcondition.getValue() != child.postcondition.getValue()) {
+      if (
+        this.postcondition.getValue().condition ===
+        child.postcondition.getValue().condition
+      ) {
         child.overridePostcondition(this.postcondition);
       } else {
         conflicts.push({
@@ -145,10 +148,6 @@ export class AbstractStatementNode {
     _statementType: StatementType,
     _index?: number,
   ): AbstractStatementNode {
-    // Mark unused params as used to satisfy lint rules
-    void _statementType;
-    void _index;
-    //EXTEND THIS!
     throw Error(
       "AbstractStatementNode does not support child statement nodes.",
     );

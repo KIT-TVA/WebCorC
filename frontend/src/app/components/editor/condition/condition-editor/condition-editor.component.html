@@ -10,14 +10,15 @@
             class="textarea"
             spellcheck="false"
             [rows]="inline ? 1 : 5"
-            [(ngModel)]="condition().condition"
+            [ngModel]="(condition | async)?.condition"
+            (ngModelChange)="onConditionChange($event)"
             variant="filled"
             [disabled]="!editable"
             [dt]="{
               root: {
-                borderColor: redConditions.includes(condition())
+                borderColor: redConditions.includes((condition | async)!)
                   ? '#ff7e7e'
-                  : greenConditions.includes(condition())
+                  : greenConditions.includes((condition | async)!)
                     ? '#6ab77a'
                     : $dt('textarea.border.color').value,
               },

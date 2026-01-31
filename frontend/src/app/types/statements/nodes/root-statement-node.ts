@@ -1,5 +1,5 @@
 import { ICondition } from "../../condition/condition";
-import { WritableSignal } from "@angular/core";
+import { BehaviorSubject } from "rxjs";
 import { AbstractStatementNode } from "./abstract-statement-node";
 import {
   createEmptyStatementNode,
@@ -42,15 +42,15 @@ export class RootStatementNode extends AbstractStatementNode {
     if (statement.statement) {
       this.childStatementNode = statementNodeUtils(statement.statement, this);
     }
-    console.log("Rootstatementnode", this.postcondition(), statement);
+    console.log("Rootstatementnode", this.postcondition.getValue(), statement);
   }
 
-  override overridePrecondition(condition: WritableSignal<ICondition>) {
+  override overridePrecondition(condition: BehaviorSubject<ICondition>) {
     super.overridePrecondition(condition);
     this._childStatementNode?.overridePrecondition(condition);
   }
 
-  override overridePostcondition(condition: WritableSignal<ICondition>) {
+  override overridePostcondition(condition: BehaviorSubject<ICondition>) {
     super.overridePostcondition(condition);
     this._childStatementNode?.overridePostcondition(condition);
   }

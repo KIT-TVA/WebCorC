@@ -1,9 +1,7 @@
 import {
   Component,
   Input,
-  signal,
-  ViewChild,
-  ViewContainerRef,
+  OnInit,
 } from "@angular/core";
 
 import { StatementComponent } from "../statement/statement.component";
@@ -18,9 +16,7 @@ import { MatInputModule } from "@angular/material/input";
 import { MatIconModule } from "@angular/material/icon";
 import { Position } from "../../../../types/position";
 import { RepetitionStatementNode } from "../../../../types/statements/nodes/repetition-statement-node";
-import { createEmptyStatementNode } from "../../../../types/statements/nodes/statement-node-utils";
 import { StatementType } from "../../../../types/statements/abstract-statement";
-import { Condition } from "../../../../types/condition/condition";
 
 /**
  * Compoent in the Graphical Editor to represent an instance of {@link RepetitionStatement}
@@ -41,20 +37,20 @@ import { Condition } from "../../../../types/condition/condition";
   standalone: true,
   styleUrl: "./repetition-statement.component.scss",
 })
-export class RepetitionStatementComponent extends Refinement {
-  @Input({ required: true }) _node!: RepetitionStatementNode;
+export class RepetitionStatementComponent extends Refinement implements OnInit {
+  @Input() _node!: RepetitionStatementNode;
 
   public constructor(treeService: TreeService) {
     super(treeService);
+  }
+
+  ngOnInit(): void {
   }
 
   public override getTitle(): string {
     return "Repetition";
   }
 
-  /**
-   * Add the child statement to the dom
-   */
   public chooseRefinement(type: StatementType) {
     this.treeService.createNodeForStatement(this._node, type);
   }
@@ -68,11 +64,6 @@ export class RepetitionStatementComponent extends Refinement {
     this.position.add(offset);
   }
 
-  /**
-   * Save the state of this component to the corresponding data only class
-   * @see RepetitionStatement
-   * @returns New Instance of data only Repetition Statement class
-   */
   public override export() {
     return undefined;
   }

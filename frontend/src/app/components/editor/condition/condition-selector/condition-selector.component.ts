@@ -3,8 +3,8 @@ import {
   Component,
   Inject,
   Input,
+  OnInit,
   output,
-  WritableSignal,
 } from "@angular/core";
 import { ConditionEditorComponent } from "../condition-editor/condition-editor.component";
 import { AbstractStatementNode } from "../../../../types/statements/nodes/abstract-statement-node";
@@ -14,6 +14,7 @@ import {
   GREEN_COLOURED_CONDITIONS,
   RED_COLOURED_CONDITIONS,
 } from "../../editor.component";
+import { BehaviorSubject } from "rxjs";
 
 @Component({
   selector: "app-condition-selector",
@@ -21,23 +22,53 @@ import {
   templateUrl: "./condition-selector.component.html",
   styleUrl: "./condition-selector.component.css",
 })
-export class ConditionSelectorComponent implements AfterViewInit {
-  @Input({ required: true })
-  parent!: AbstractStatementNode;
-  @Input({ required: true })
-  child!: AbstractStatementNode;
+export class ConditionSelectorComponent implements AfterViewInit, OnInit {
+  @Input()
+  set parent(value: AbstractStatementNode) {
+    this._parent = value;
+    this.updateConflicts();
+  }
+  get parent(): AbstractStatementNode {
+    return this._parent;
+  }
+  private _parent!: AbstractStatementNode;
+
+  @Input()
+  set child(value: AbstractStatementNode) {
+    this._child = value;
+    this.updateConflicts();
+  }
+  get child(): AbstractStatementNode {
+    return this._child;
+  }
+  private _child!: AbstractStatementNode;
+
   selectCondition = output();
+
   protected conflicts: {
-    version1: WritableSignal<ICondition>;
-    version2: WritableSignal<ICondition>;
+    version1: BehaviorSubject<ICondition>;
+    version2: BehaviorSubject<ICondition>;
     type: "PRECONDITION" | "POSTCONDITION";
   }[] = [];
+
   constructor(
     @Inject(GREEN_COLOURED_CONDITIONS) protected greenConditions: ICondition[],
     @Inject(RED_COLOURED_CONDITIONS) protected redConditions: ICondition[],
   ) {}
 
+  ngOnInit(): void {
+    // Initialization is handled by the input setters
+  }
+
   ngAfterViewInit(): void {
+    this.updateConflicts();
+  }
+
+  updateConflicts() {
+    if (!this.parent || !this.child) {
+      return;
+    }
+
     this.conflicts = this.parent.getConditionConflicts(this.child);
   }
 
@@ -51,16 +82,11 @@ export class ConditionSelectorComponent implements AfterViewInit {
     this.redConditions.pop();
   }
 
-  /**
-   *
-   * @param parent whether the condition we are choosing comes from the parent
-   * @param conflict
-   */
   public _selectCondition(
     parent: boolean,
     conflict: {
-      version1: WritableSignal<ICondition>;
-      version2: WritableSignal<ICondition>;
+      version1: BehaviorSubject<ICondition>;
+      version2: BehaviorSubject<ICondition>;
       type: "PRECONDITION" | "POSTCONDITION";
     },
   ) {
@@ -72,12 +98,12 @@ export class ConditionSelectorComponent implements AfterViewInit {
       }
     } else {
       if (conflict.type == "PRECONDITION") {
-        const childCond = conflict.version2();
-        conflict.version1.set(childCond);
+        const childCond = conflict.version2.getValue();
+        conflict.version1.next(childCond);
         this.child.overridePrecondition(conflict.version1);
       } else {
-        const childCond = conflict.version2();
-        conflict.version1.set(childCond);
+        const childCond = conflict.version2.getValue();
+        conflict.version1.next(childCond);
         this.child.overridePostcondition(conflict.version1);
       }
     }

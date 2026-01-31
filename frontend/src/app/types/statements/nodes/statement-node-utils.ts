@@ -22,12 +22,12 @@ import {
   StatementType,
 } from "../abstract-statement";
 import { AbstractStatementNode } from "./abstract-statement-node";
-import { Condition } from "../../condition/condition";
 import { SkipStatement } from "../strong-weak-statement";
+import { Condition, ICondition } from "../../condition/condition";
 import { RootStatementNode } from "./root-statement-node";
 import { RootStatement } from "../root-statement";
 import { IPosition } from "../../position";
-import { signal } from "@angular/core";
+import { BehaviorSubject } from "rxjs";
 
 class idGenerator {
   private static idCounter = 0;
@@ -176,10 +176,10 @@ export function disconnectNodes(
   child: AbstractStatementNode,
 ) {
   child.overridePostcondition(
-    signal(new Condition(child.postcondition().condition)),
+    new BehaviorSubject<ICondition>(new Condition(child.postcondition.getValue().condition)),
   );
   child.overridePrecondition(
-    signal(new Condition(child.precondition().condition)),
+    new BehaviorSubject<ICondition>(new Condition(child.precondition.getValue().condition)),
   );
   parent.deleteChild(child);
   child.parent = undefined;

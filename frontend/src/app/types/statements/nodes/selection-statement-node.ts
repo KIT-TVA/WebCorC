@@ -1,6 +1,6 @@
 import { AbstractStatementNode } from "./abstract-statement-node";
 import { ISelectionStatement } from "../selection-statement";
-import { signal, WritableSignal } from "@angular/core";
+import { BehaviorSubject, combineLatest, Subscription } from "rxjs";
 import { Condition, ICondition } from "../../condition/condition";
 import {
   createEmptyStatementNode,
@@ -9,45 +9,91 @@ import {
 import { StatementType } from "../abstract-statement";
 
 export class SelectionStatementNode extends AbstractStatementNode {
-  public guards: WritableSignal<ICondition>[];
+  public guards: BehaviorSubject<ICondition>[];
   override statement!: ISelectionStatement;
+  private childSubscriptions: Subscription[] = [];
 
   constructor(
     statement: ISelectionStatement,
     parent: AbstractStatementNode | undefined,
   ) {
     super(statement, parent);
-    this.guards = statement.guards.map((g) => signal(g));
+    this.guards = statement.guards.map(
+      (g) => new BehaviorSubject<ICondition>(g),
+    );
     this.children = statement.commands.map((c) =>
       c ? statementNodeUtils(c, this) : undefined,
     );
+
+    // Initialize subscriptions for existing children
+    this.children.forEach((_, index) => {
+      this.setupChildPreconditionSubscription(index);
+    });
   }
 
-  override overridePrecondition(condition: WritableSignal<ICondition>) {
+  private setupChildPreconditionSubscription(index: number) {
+    if (this.childSubscriptions[index]) {
+      this.childSubscriptions[index].unsubscribe();
+    }
+
+    const child = this.children[index];
+    if (!child || !this.guards[index]) return;
+
+    // Create a subject that we will update with the computed condition
+    // We initialize it with the current value
+    const initialParentPre = this.precondition.getValue();
+    const initialGuard = this.guards[index].getValue();
+    const computedPreconditionSubject = new BehaviorSubject<ICondition>(
+      new Condition(
+        initialParentPre.condition + " && " + initialGuard.condition,
+      ),
+    );
+
+    child.overridePrecondition(computedPreconditionSubject);
+    child.preconditionEditable.next(false);
+
+    this.childSubscriptions[index] = combineLatest([
+      this.precondition,
+      this.guards[index],
+    ]).subscribe(([parentPre, guard]) => {
+      const newCond = new Condition(
+        parentPre.condition + " && " + guard.condition,
+      );
+      // Only update if different to avoid infinite loops or unnecessary updates?
+      // BehaviorSubject.next() will emit even if value is same object reference if we don't check.
+      // But here we create a new Condition object every time.
+      computedPreconditionSubject.next(newCond);
+    });
+  }
+
+  override overridePrecondition(condition: BehaviorSubject<ICondition>) {
     super.overridePrecondition(condition);
-    this.children.forEach((c, index) => {
-      if (c && this.guards[index]) {
-        const computedCondition = signal(
-          new Condition(
-            condition().condition + " & " + this.guards[index]().condition,
-          ),
-        );
-        c.overridePrecondition(computedCondition);
-      }
+    // Re-setup all subscriptions because this.precondition has changed
+    this.children.forEach((_, index) => {
+      this.setupChildPreconditionSubscription(index);
     });
   }
 
   override deleteChild(node: AbstractStatementNode) {
     const index = this.children.findIndex((child) => child == node);
-    this.children[index] = undefined;
-    this.statement.commands[index] = undefined;
+    if (index !== -1) {
+      if (this.childSubscriptions[index]) {
+        this.childSubscriptions[index].unsubscribe();
+        delete this.childSubscriptions[index]; // or splice if we are removing the slot
+      }
+      this.children[index] = undefined;
+      this.statement.commands[index] = undefined;
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  override overridePostcondition(condition: WritableSignal<ICondition>) {
+  override overridePostcondition(condition: BehaviorSubject<ICondition>) {
     super.overridePostcondition(condition);
     //TODO check if we are deleting the postcondition of a statement with a different postcondition than this statement
-    this.children.forEach((child) => child?.overridePostcondition(condition));
+    this.children.forEach((child) => {
+      child?.overridePostcondition(condition);
+      child?.postconditionEditable.next(this.postconditionEditable.value);
+    });
   }
 
   override checkConditionSync(child: AbstractStatementNode): boolean {
@@ -55,17 +101,20 @@ export class SelectionStatementNode extends AbstractStatementNode {
       return true;
     }
     this.getConditionConflicts(child);
-    return child.postcondition().condition == this.postcondition().condition;
+    return (
+      child.postcondition.getValue().condition ==
+      this.postcondition.getValue().condition
+    );
   }
 
   override getConditionConflicts(child: AbstractStatementNode): {
-    version1: WritableSignal<ICondition>;
-    version2: WritableSignal<ICondition>;
+    version1: BehaviorSubject<ICondition>;
+    version2: BehaviorSubject<ICondition>;
     type: "PRECONDITION" | "POSTCONDITION";
   }[] {
     const conflicts: {
-      version1: WritableSignal<ICondition>;
-      version2: WritableSignal<ICondition>;
+      version1: BehaviorSubject<ICondition>;
+      version2: BehaviorSubject<ICondition>;
       type: "PRECONDITION" | "POSTCONDITION";
     }[] = [];
 
@@ -76,8 +125,11 @@ export class SelectionStatementNode extends AbstractStatementNode {
       return conflicts;
     }
 
-    if (this.postcondition() != child.postcondition()) {
-      if (this.postcondition().condition === child.postcondition().condition) {
+    if (this.postcondition.getValue() != child.postcondition.getValue()) {
+      if (
+        this.postcondition.getValue().condition ===
+        child.postcondition.getValue().condition
+      ) {
         child.overridePostcondition(this.postcondition);
       } else {
         conflicts.push({
@@ -97,22 +149,28 @@ export class SelectionStatementNode extends AbstractStatementNode {
     });
     this.statement.guards = [];
     this.guards.forEach((g) => {
-      this.statement.guards.push(g());
+      this.statement.guards.push(g.getValue());
     });
   }
 
   addSelection() {
-    const condition = signal(new Condition(""));
+    const condition = new BehaviorSubject<ICondition>(new Condition(""));
     this.guards.push(condition);
     this.children.push(undefined);
-    this.statement.guards.push(condition());
+    this.statement.guards.push(condition.getValue());
     this.statement.commands.push(undefined);
+    // No subscription needed yet as there is no child node
   }
 
   setSelection(index: number, node: AbstractStatementNode) {
     if (index < this.children.length) {
       this.children[index] = node;
       this.statement.commands[index] = node.statement;
+      this.setupChildPreconditionSubscription(index);
+
+      // Also sync postcondition
+      node.overridePostcondition(this.postcondition);
+      node.postconditionEditable.next(this.postconditionEditable.value);
     }
   }
 
@@ -122,24 +180,20 @@ export class SelectionStatementNode extends AbstractStatementNode {
   ): AbstractStatementNode {
     const idx = index ?? 0;
     const statementNode = createEmptyStatementNode(statementType, this);
-    // If a guard exists for this branch, compute precondition as parentPrecondition & guard
-    if (this.guards[idx]) {
-      const computedCondition = signal(
-        new Condition(
-          this.precondition().condition + " & " + this.guards[idx]().condition,
-        ),
-      );
-      statementNode.overridePrecondition(computedCondition);
-    } else {
-      statementNode.overridePrecondition(this.precondition);
-    }
-    // All branches should share the same postcondition as the selection
-    statementNode.overridePostcondition(this.postcondition);
-    this.addChild(statementNode, idx ?? 0);
+
+    // We add the child first, then setup subscriptions
+    // But addChild calls setSelection which calls setupChildPreconditionSubscription
+    this.addChild(statementNode, idx);
+
     return statementNode;
   }
 
   removeSelection() {
+    const index = this.guards.length - 1;
+    if (this.childSubscriptions[index]) {
+      this.childSubscriptions[index].unsubscribe();
+      this.childSubscriptions.pop();
+    }
     this.guards.pop();
     this.children.pop();
     this.statement.guards.pop();

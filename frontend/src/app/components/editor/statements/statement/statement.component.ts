@@ -6,35 +6,35 @@ import {
   Output,
   signal,
   ViewChild,
-} from "@angular/core";
+} from '@angular/core';
 
-import { MatGridListModule } from "@angular/material/grid-list";
-import { Refinement } from "../../../../types/refinement";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatInputModule } from "@angular/material/input";
-import { FormsModule } from "@angular/forms";
-import { ConditionEditorComponent } from "../../condition/condition-editor/condition-editor.component";
-import { TreeService } from "../../../../services/tree/tree.service";
-import { MatIconModule } from "@angular/material/icon";
-import { MatDrawer, MatSidenavModule } from "@angular/material/sidenav";
-import { MatButtonModule } from "@angular/material/button";
-import { MatExpansionModule } from "@angular/material/expansion";
-import { MatListModule } from "@angular/material/list";
-import { AbstractStatement } from "../../../../types/statements/abstract-statement";
-import { AbstractStatementNode } from "../../../../types/statements/nodes/abstract-statement-node";
-import { HandleComponent } from "ngx-vflow";
-import { GridTileBorderDirective } from "../../../../directives/grid-tile-border.directive";
-import { Card } from "primeng/card";
+import { MatGridListModule } from '@angular/material/grid-list';
+import { Refinement } from '../../../../types/refinement';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
+import { ConditionEditorComponent } from '../../condition/condition-editor/condition-editor.component';
+import { TreeService } from '../../../../services/tree/tree.service';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
+import { MatButtonModule } from '@angular/material/button';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatListModule } from '@angular/material/list';
+import { AbstractStatementNode } from '../../../../types/statements/nodes/abstract-statement-node';
+import { HandleComponent } from 'ngx-vflow';
+import { GridTileBorderDirective } from '../../../../directives/grid-tile-border.directive';
+import { Card } from 'primeng/card';
 import {
   Button,
   ButtonDirective,
   ButtonIcon,
   ButtonLabel,
-} from "primeng/button";
-import { Toolbar } from "primeng/toolbar";
-import { GlobalSettingsService } from "../../../../services/global-settings.service";
-import { NetworkTreeService } from "../../../../services/tree/network/network-tree.service";
-import { ProjectService } from "../../../../services/project/project.service";
+} from 'primeng/button';
+import { Toolbar } from 'primeng/toolbar';
+import { GlobalSettingsService } from '../../../../services/global-settings.service';
+import { NetworkTreeService } from '../../../../services/tree/network/network-tree.service';
+import { ProjectService } from '../../../../services/project/project.service';
+import { AsyncPipe } from '@angular/common';
 
 /**
  * Component to present the statements.
@@ -43,7 +43,7 @@ import { ProjectService } from "../../../../services/project/project.service";
  * This is not the (super) type Refinement.
  */
 @Component({
-  selector: "app-statement-base",
+  selector: 'app-statement-base',
   imports: [
     MatGridListModule,
     MatFormFieldModule,
@@ -63,9 +63,10 @@ import { ProjectService } from "../../../../services/project/project.service";
     ButtonDirective,
     ButtonIcon,
     ButtonLabel,
+    AsyncPipe,
   ],
-  templateUrl: "./statement.component.html",
-  styleUrl: "./statement.component.scss",
+  templateUrl: './statement.component.html',
+  styleUrl: './statement.component.scss',
   standalone: true,
 })
 export class StatementComponent {
@@ -76,14 +77,14 @@ export class StatementComponent {
   @Input() public hideSourceHandle = false;
   @Input() public hideTargetHandle = false;
   @Input({ required: true }) _node!: AbstractStatementNode;
-  @Input() public icon = "pi pi-circle";
+  @Input() public icon = 'pi pi-circle';
 
   @Output() delete = new EventEmitter();
 
-  @ViewChild("preconditionDrawer") private preconditionDrawer!: MatDrawer;
-  @ViewChild("postconditionDrawer") private postconditionDrawer!: MatDrawer;
-  @ViewChild("preconditionDiv") private preconditionDivRef!: ElementRef;
-  @ViewChild("postconditionDiv") private postconditionDivRef!: ElementRef;
+  @ViewChild('preconditionDrawer') private preconditionDrawer!: MatDrawer;
+  @ViewChild('postconditionDrawer') private postconditionDrawer!: MatDrawer;
+  @ViewChild('preconditionDiv') private preconditionDivRef!: ElementRef;
+  @ViewChild('postconditionDiv') private postconditionDivRef!: ElementRef;
 
   public isVerifying = signal(false);
 
@@ -109,26 +110,11 @@ export class StatementComponent {
 
     if (drawer.opened) {
       drawer.toggle();
-      editorRef.nativeElement.style.width = "50px";
+      editorRef.nativeElement.style.width = '50px';
     } else {
-      editorRef.nativeElement.style.width = "";
+      editorRef.nativeElement.style.width = '';
       drawer.toggle();
     }
-  }
-
-  //TODO reimplement this
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private setVerifcationState(statement: AbstractStatement) {
-    /*if (this.refinement.id == statement.id) {
-      this.refinement.proven = statement.proven
-      if (this.refinement.proven) {
-        this.boxTitleRef.nativeElement.style.backgroundColor = "rgb(140,182,60)";
-        this.refinementBoxRef.nativeElement.style.borderColor = "rgb(140,182,60)";
-      } else {
-        this.boxTitleRef.nativeElement.style.backgroundColor = "rgb(163,34,35)";
-        this.refinementBoxRef.nativeElement.style.borderColor = "rgb(163,34,35)";
-      }
-    }*/
   }
 
   public verifyStatement(): void {
@@ -158,15 +144,15 @@ export class StatementComponent {
   compactButton = {
     root: {
       sm: {
-        paddingX: "0.2rem",
+        paddingX: '0.2rem',
       },
-      paddingX: "0px",
+      paddingX: '0px',
     },
     button: {
-      paddingX: "0px",
+      paddingX: '0px',
       root: {
         sm: {
-          paddingX: "0px",
+          paddingX: '0px',
         },
       },
     },

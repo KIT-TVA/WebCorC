@@ -66,8 +66,8 @@
             <div class="conditionParent">
               <app-condition-editor
                 placeholder="Pre Condition"
-                [(condition)]="_node.precondition"
-                [editable]="_node.preconditionEditable()"
+                [condition]="_node.precondition"
+                [editable]="_node.preconditionEditable | async"
               ></app-condition-editor>
             </div>
           </mat-drawer>
@@ -94,8 +94,8 @@
       <div style="width: fit-content" class="conditionParent">
         <app-condition-editor
           placeholder="Pre Condition"
-          [(condition)]="_node.precondition"
-          [editable]="_node.preconditionEditable()"
+          [condition]="_node.precondition"
+          [editable]="_node.preconditionEditable | async"
         ></app-condition-editor>
       </div>
     }
@@ -114,8 +114,8 @@
           >
             <div class="conditionParent">
               <app-condition-editor
-                [(condition)]="_node.postcondition"
-                [editable]="_node.postconditionEditable()"
+                [condition]="_node.postcondition"
+                [editable]="_node.postconditionEditable | async"
               ></app-condition-editor>
             </div>
           </mat-drawer>
@@ -140,8 +140,8 @@
       <div style="width: fit-content" class="conditionParent">
         <app-condition-editor
           placeholder="Post Condition"
-          [(condition)]="_node.postcondition"
-          [editable]="_node.postconditionEditable()"
+          [condition]="_node.postcondition"
+          [editable]="_node.postconditionEditable | async"
         ></app-condition-editor>
       </div>
     }

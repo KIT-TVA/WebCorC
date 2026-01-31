@@ -20,8 +20,8 @@
       <div class="statement-container">
         <div class="guard">
           <app-condition-editor
-                  style="display: inline-block; align-self: center; width: 100%; justify-self: stretch"
-            [(condition)]="_node.guards[i]"
+            style="display: inline-block; align-self: center; width: 100%; justify-self: stretch"
+            [condition]="guard"
             [inline]="true"
             placeholder="Guard"
           ></app-condition-editor>
