@@ -71,12 +71,17 @@ export class AppComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    // read the query Params and setting them to the projectService
+    // Download workspace if project id is set
     this.route.queryParams.subscribe((params) => {
-      this.projectService.projectId = params["projectId"];
-      this.projectService.downloadWorkspace();
+      const id = params["projectId"];
+      if (id) {
+        this.projectService.projectId = id;
+        this.projectService.downloadWorkspace();
+      }
     });
-    this.projectService.downloadWorkspace();
+    if (this.projectService.projectId) {
+      this.projectService.downloadWorkspace();
+    }
   }
   /**
    * Triggered on pressing the verify Button in the Top Bar.
