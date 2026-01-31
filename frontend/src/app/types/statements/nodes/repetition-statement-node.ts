@@ -29,18 +29,22 @@ export class RepetitionStatementNode extends AbstractStatementNode {
     this.preconditionEditable.next(false);
     this.postconditionEditable.next(false);
 
-    this.internalConditionSubscription = combineLatest([this.invariant, this.guard]).subscribe(
-      ([invariant, guard]) => {
-        const conditions = [invariant.condition, guard.condition].filter(c => c && c.trim() !== '');
-        const newPrecondition = new Condition(conditions.join(' && '));
-        this.precondition.next(newPrecondition);
-        this.postcondition.next(invariant);
-      }
-    );
-
+    this.internalConditionSubscription = combineLatest([
+      this.invariant,
+      this.guard,
+    ]).subscribe(([invariant, guard]) => {
+      const conditions = [invariant.condition, guard.condition].filter(
+        (c) => c && c.trim() !== "",
+      );
+      const newPrecondition = new Condition(conditions.join(" && "));
+      this.precondition.next(newPrecondition);
+      this.postcondition.next(invariant);
+    });
     if (statement.loopStatement) {
-      const loopNode = statementNodeUtils(statement.loopStatement, this);
-      this.loopStatementNode = loopNode;
+      this.loopStatementNode = statementNodeUtils(
+        statement.loopStatement,
+        this,
+      );
     }
   }
 
@@ -50,27 +54,20 @@ export class RepetitionStatementNode extends AbstractStatementNode {
     return this._loopStatementNode;
   }
 
-  public set loopStatementNode(loopStatementNode: AbstractStatementNode | undefined) {
-    // Clean up any existing subscriptions to a previous child
-    this.childConditionSubscription?.unsubscribe();
+  override overridePrecondition(condition: BehaviorSubject<ICondition>) {}
 
+  override overridePostcondition(condition: BehaviorSubject<ICondition>) {}
+
+  public set loopStatementNode(loopStatementNode) {
     this.statement.loopStatement = loopStatementNode?.statement;
     this._loopStatementNode = loopStatementNode;
     this.children = loopStatementNode ? [loopStatementNode] : [];
 
     if (loopStatementNode) {
-      // The child's conditions are now read-only
-      loopStatementNode.preconditionEditable.next(false);
+      loopStatementNode.overridePrecondition(this.precondition);
+      loopStatementNode.overridePostcondition(this.postcondition);
       loopStatementNode.postconditionEditable.next(false);
-
-      // Create new subscriptions to pipe this node's conditions to the child
-      const preSub = this.precondition.subscribe(val => loopStatementNode.precondition.next(val));
-      const postSub = this.postcondition.subscribe(val => loopStatementNode.postcondition.next(val));
-      
-      this.childConditionSubscription = new Subscription(() => {
-        preSub.unsubscribe();
-        postSub.unsubscribe();
-      });
+      loopStatementNode.preconditionEditable.next(false);
     }
   }
 
@@ -92,6 +89,7 @@ export class RepetitionStatementNode extends AbstractStatementNode {
   override deleteChild(node: AbstractStatementNode) {
     if (node == this._loopStatementNode) {
       this.loopStatementNode = undefined;
+      this.children = [];
     }
   }
 
@@ -106,6 +104,7 @@ export class RepetitionStatementNode extends AbstractStatementNode {
   }
 
   override addChild(statement: AbstractStatementNode, index: number) {
+    this.statement.loopStatement = statement.statement;
     this.loopStatementNode = statement;
   }
 }
