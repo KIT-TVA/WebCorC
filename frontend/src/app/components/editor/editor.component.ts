@@ -1,7 +1,6 @@
 import {
   AfterViewInit,
   Component,
-  computed,
   effect,
   InjectionToken,
   Input,
@@ -19,7 +18,6 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatMenuModule } from "@angular/material/menu";
 import { ProjectService } from "../../services/project/project.service";
 import { LocalCBCFormula } from "../../types/CBCFormula";
-import { Router } from "@angular/router";
 import { EditorService } from "../../services/editor/editor.service";
 import { StatementDelegatorComponent } from "./statements/statement-delegator/statement-delegator.component";
 import { AbstractStatementNode } from "../../types/statements/nodes/abstract-statement-node";
@@ -100,14 +98,12 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
    * @param treeService The service to interact with the refinements
    * @param projectService The service to persist and laod the file content
    * @param editorService
-   * @param router
    * @param globalSettingsService
    */
   public constructor(
     private treeService: TreeService,
     private projectService: ProjectService,
     private editorService: EditorService,
-    private router: Router,
     protected globalSettingsService: GlobalSettingsService,
   ) {
     this.setupVFlowSync();
@@ -190,8 +186,8 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
 
   private setupVFlowSync() {
     effect(() => {
-      this.nodes = this.nodez();
-      this.edges = this.computeEdges(this.statements());
+      this.nodes = this.updateNodes(this.statements());
+      this.updateEdges(this.statements());
     });
   }
 
@@ -219,19 +215,98 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
    */
   protected nodes: DynamicNode<AbstractStatementNode>[] = [];
   protected edges: Edge[] = [];
-  protected nodez: Signal<DynamicNode[]> = computed(() =>
-    this.statements().map((statement) => {
-      return {
-        id: statement.statement.id,
-        type: "html-template",
-        point: signal({
-          x: statement.position().xinPx,
-          y: statement.position().yinPx,
-        }),
-        data: signal(statement),
-      };
-    }),
-  );
+
+  private nodeCache = new Map<
+    string,
+    HtmlTemplateDynamicNode<AbstractStatementNode>
+  >();
+  private lastStructureHash: string = "";
+  private lastNodeIds: string = "";
+  private lastNodesArray: DynamicNode<AbstractStatementNode>[] = [];
+
+  private updateNodes(
+    statements: AbstractStatementNode[],
+  ): DynamicNode<AbstractStatementNode>[] {
+    const currentIdsString = statements.map((s) => s.statement.id).join(",");
+    let nodesArray = this.lastNodesArray;
+
+    if (currentIdsString !== this.lastNodeIds) {
+      const newNodes: DynamicNode<AbstractStatementNode>[] = [];
+      const currentIds = new Set<string>();
+
+      for (const statement of statements) {
+        const id = statement.statement.id;
+        currentIds.add(id);
+
+        let node = this.nodeCache.get(id);
+        if (!node) {
+          node = {
+            id: id,
+            type: "html-template",
+            point: signal({
+              x: statement.position().xinPx,
+              y: statement.position().yinPx,
+            }),
+            data: signal(statement),
+          };
+          this.nodeCache.set(id, node);
+        }
+        newNodes.push(node);
+      }
+
+      for (const id of this.nodeCache.keys()) {
+        if (!currentIds.has(id)) {
+          this.nodeCache.delete(id);
+        }
+      }
+
+      nodesArray = newNodes;
+      this.lastNodesArray = newNodes;
+      this.lastNodeIds = currentIdsString;
+    }
+
+    // Update signals for all nodes
+    for (let i = 0; i < statements.length; i++) {
+      const statement = statements[i];
+      const node = nodesArray[
+        i
+      ] as HtmlTemplateDynamicNode<AbstractStatementNode>;
+
+      if (node.id !== statement.statement.id) {
+        // Fallback if order mismatch
+        this.lastNodeIds = "";
+        return this.updateNodes(statements);
+      }
+
+      const newX = statement.position().xinPx;
+      const newY = statement.position().yinPx;
+
+      node.point.set({ x: newX, y: newY });
+
+      if (node.data && node.data() !== statement) {
+        node.data.set(statement);
+      }
+    }
+
+    // Return the same array reference if structure hasn't changed to avoid re-triggering VFlow
+    return nodesArray;
+  }
+
+  private updateEdges(statements: AbstractStatementNode[]) {
+    const structureHash = statements
+      .map((s) => {
+        const childrenIds = s.children.map((c) => c?.statement.id).join(",");
+        const pre = s.precondition.getValue().condition;
+        const post = s.postcondition.getValue().condition;
+        return `${s.statement.id}:${childrenIds}:${pre}:${post}`;
+      })
+      .join("|");
+
+    if (structureHash !== this.lastStructureHash) {
+      this.edges = this.computeEdges(statements);
+      this.lastStructureHash = structureHash;
+    }
+  }
 
   protected computeEdges(statements: AbstractStatementNode[]): Edge[] {
     const edges: Edge[] = [];
