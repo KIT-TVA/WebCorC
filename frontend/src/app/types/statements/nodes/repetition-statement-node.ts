@@ -14,8 +14,11 @@ export class RepetitionStatementNode extends AbstractStatementNode {
   public invariant: BehaviorSubject<ICondition>;
   public variant: BehaviorSubject<ICondition>;
 
+  private dummyEditable = new BehaviorSubject<boolean>(false);
+
   private internalConditionSubscription: Subscription;
   private childConditionSubscription?: Subscription;
+  private editableSubscription: Subscription;
 
   constructor(
     statement: IRepetitionStatement,
@@ -26,8 +29,9 @@ export class RepetitionStatementNode extends AbstractStatementNode {
     this.invariant = new BehaviorSubject<ICondition>(statement.invariant);
     this.variant = new BehaviorSubject<ICondition>(statement.variant);
 
-    this.preconditionEditable.next(false);
-    this.postconditionEditable.next(false);
+    this.editableSubscription = this.dummyEditable.subscribe((newValue) =>
+      newValue ? this.dummyEditable.next(false) : undefined,
+    );
 
     this.internalConditionSubscription = combineLatest([
       this.invariant,
@@ -58,6 +62,14 @@ export class RepetitionStatementNode extends AbstractStatementNode {
 
   override overridePostcondition(condition: BehaviorSubject<ICondition>) {}
 
+  override get preconditionEditable() {
+    return this.dummyEditable;
+  }
+
+  override get postconditionEditable() {
+    return this.dummyEditable;
+  }
+
   public set loopStatementNode(loopStatementNode) {
     this.statement.loopStatement = loopStatementNode?.statement;
     this._loopStatementNode = loopStatementNode;
@@ -74,6 +86,7 @@ export class RepetitionStatementNode extends AbstractStatementNode {
   public destroy() {
     this.internalConditionSubscription.unsubscribe();
     this.childConditionSubscription?.unsubscribe();
+    this.editableSubscription.unsubscribe();
   }
 
   override createChild(

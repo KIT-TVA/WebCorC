@@ -9,8 +9,20 @@ export class AbstractStatementNode {
   public children: (AbstractStatementNode | undefined)[] = [];
   public precondition: BehaviorSubject<ICondition>;
   public postcondition: BehaviorSubject<ICondition>;
-  public preconditionEditable = new BehaviorSubject<boolean>(true);
-  public postconditionEditable = new BehaviorSubject<boolean>(true);
+  private _preconditionEditable = new BehaviorSubject<boolean>(true);
+  public get preconditionEditable() {
+    return this._preconditionEditable;
+  }
+  public set preconditionEditable(value) {
+    this._preconditionEditable = value;
+  }
+  private _postconditionEditable = new BehaviorSubject<boolean>(true);
+  public get postconditionEditable() {
+    return this._postconditionEditable;
+  }
+  public set postconditionEditable(value) {
+    this._postconditionEditable = value;
+  }
 
   constructor(
     statement: IAbstractStatement,
@@ -19,7 +31,9 @@ export class AbstractStatementNode {
     this.statement = statement;
     this.parent = parent;
     this.precondition = new BehaviorSubject<ICondition>(statement.preCondition);
-    this.postcondition = new BehaviorSubject<ICondition>(statement.postCondition);
+    this.postcondition = new BehaviorSubject<ICondition>(
+      statement.postCondition,
+    );
   }
 
   public overridePrecondition(condition: BehaviorSubject<ICondition>): void {
@@ -100,7 +114,10 @@ export class AbstractStatementNode {
     }
 
     if (this.precondition.getValue() != child.precondition.getValue()) {
-      if (this.precondition.getValue().condition === child.precondition.getValue().condition) {
+      if (
+        this.precondition.getValue().condition ===
+        child.precondition.getValue().condition
+      ) {
         child.overridePrecondition(this.precondition);
       } else {
         conflicts.push({
@@ -111,7 +128,10 @@ export class AbstractStatementNode {
       }
     }
     if (this.postcondition.getValue() != child.postcondition.getValue()) {
-      if (this.postcondition.getValue().condition === child.postcondition.getValue().condition) {
+      if (
+        this.postcondition.getValue().condition ===
+        child.postcondition.getValue().condition
+      ) {
         child.overridePostcondition(this.postcondition);
       } else {
         conflicts.push({

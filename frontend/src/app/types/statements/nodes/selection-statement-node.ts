@@ -17,7 +17,9 @@ export class SelectionStatementNode extends AbstractStatementNode {
     parent: AbstractStatementNode | undefined,
   ) {
     super(statement, parent);
-    this.guards = statement.guards.map((g) => new BehaviorSubject<ICondition>(g));
+    this.guards = statement.guards.map(
+      (g) => new BehaviorSubject<ICondition>(g),
+    );
     this.children = statement.commands.map((c) =>
       c ? statementNodeUtils(c, this) : undefined,
     );
@@ -29,10 +31,13 @@ export class SelectionStatementNode extends AbstractStatementNode {
       if (c && this.guards[index]) {
         const computedCondition = new BehaviorSubject<ICondition>(
           new Condition(
-            condition.getValue().condition + " & " + this.guards[index].getValue().condition,
+            condition.getValue().condition +
+              " & " +
+              this.guards[index].getValue().condition,
           ),
         );
         c.overridePrecondition(computedCondition);
+        c.preconditionEditable.next(this.preconditionEditable.value);
       }
     });
   }
@@ -47,7 +52,10 @@ export class SelectionStatementNode extends AbstractStatementNode {
   override overridePostcondition(condition: BehaviorSubject<ICondition>) {
     super.overridePostcondition(condition);
     //TODO check if we are deleting the postcondition of a statement with a different postcondition than this statement
-    this.children.forEach((child) => child?.overridePostcondition(condition));
+    this.children.forEach((child) => {
+      child?.overridePostcondition(condition);
+      child?.postconditionEditable.next(this.postconditionEditable.value);
+    });
   }
 
   override checkConditionSync(child: AbstractStatementNode): boolean {
@@ -55,7 +63,10 @@ export class SelectionStatementNode extends AbstractStatementNode {
       return true;
     }
     this.getConditionConflicts(child);
-    return child.postcondition.getValue().condition == this.postcondition.getValue().condition;
+    return (
+      child.postcondition.getValue().condition ==
+      this.postcondition.getValue().condition
+    );
   }
 
   override getConditionConflicts(child: AbstractStatementNode): {
@@ -77,7 +88,10 @@ export class SelectionStatementNode extends AbstractStatementNode {
     }
 
     if (this.postcondition.getValue() != child.postcondition.getValue()) {
-      if (this.postcondition.getValue().condition === child.postcondition.getValue().condition) {
+      if (
+        this.postcondition.getValue().condition ===
+        child.postcondition.getValue().condition
+      ) {
         child.overridePostcondition(this.postcondition);
       } else {
         conflicts.push({
@@ -126,15 +140,20 @@ export class SelectionStatementNode extends AbstractStatementNode {
     if (this.guards[idx]) {
       const computedCondition = new BehaviorSubject<ICondition>(
         new Condition(
-          this.precondition.getValue().condition + " & " + this.guards[idx].getValue().condition,
+          this.precondition.getValue().condition +
+            " & " +
+            this.guards[idx].getValue().condition,
         ),
       );
       statementNode.overridePrecondition(computedCondition);
+      statementNode.preconditionEditable.next(this.preconditionEditable.value);
     } else {
       statementNode.overridePrecondition(this.precondition);
+      statementNode.preconditionEditable.next(this.preconditionEditable.value);
     }
     // All branches should share the same postcondition as the selection
     statementNode.overridePostcondition(this.postcondition);
+    statementNode.postconditionEditable.next(this.postconditionEditable.value);
     this.addChild(statementNode, idx ?? 0);
     return statementNode;
   }

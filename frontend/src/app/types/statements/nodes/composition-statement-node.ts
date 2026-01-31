@@ -57,11 +57,13 @@ export class CompositionStatementNode extends AbstractStatementNode {
   override overridePrecondition(condition: BehaviorSubject<ICondition>) {
     super.overridePrecondition(condition);
     this.firstStatementNode?.overridePrecondition(condition);
+    this.firstStatementNode?.preconditionEditable.next(this.preconditionEditable.getValue());
   }
 
   override overridePostcondition(condition: BehaviorSubject<ICondition>) {
-    this.postcondition = condition;
+    super.overridePostcondition(condition);
     this.secondStatementNode?.overridePostcondition(this.postcondition);
+    this.secondStatementNode?.postconditionEditable.next(this.postconditionEditable.getValue());
   }
 
   override finalize() {
@@ -203,9 +205,11 @@ export class CompositionStatementNode extends AbstractStatementNode {
     // so that conditions are in sync immediately upon creation.
     if (idx === 0) {
       statementNode.overridePrecondition(this.precondition);
+      statementNode.preconditionEditable.next(this.preconditionEditable.value);
       statementNode.overridePostcondition(this.intermediateCondition);
     } else {
       statementNode.overridePrecondition(this.intermediateCondition);
+      statementNode.postconditionEditable.next(this.postconditionEditable.value);
       statementNode.overridePostcondition(this.postcondition);
     }
     this.addChild(statementNode, idx);
