@@ -12,6 +12,7 @@ import { ProjectElementsMapperService } from "./types/project-elements-mapper.se
 import { ProjectStorageService } from "./storage/project-storage.service";
 import { Inode, LocalDirectory } from "./types/api-elements";
 import { ProjectPredicate } from "../../types/ProjectPredicate";
+import { GlobalSettingsService } from "../global-settings.service";
 
 /**
  * Service for project management.
@@ -30,11 +31,11 @@ export class ProjectService {
   private _saveNotify = new Subject<void>();
   private _savedFinished = new Subject<void>();
   private _projectName: string = "";
-
   constructor(
     private network: NetworkProjectService,
     private mapper: ProjectElementsMapperService,
     private storage: ProjectStorageService,
+    private settings: GlobalSettingsService,
   ) {
     const projectIdFromStorage = storage.getProjectId();
     if (projectIdFromStorage) {
@@ -147,7 +148,10 @@ export class ProjectService {
     if (parentPath.endsWith("/")) {
       parentPath = parentPath.slice(0, -1);
     }
-    const newUrn = parentPath + "/" + name + "." + type;
+    const newUrn =
+      parentPath === ""
+        ? name + "." + type
+        : parentPath + "/" + name + "." + type;
 
     if (name.includes("/")) {
       throw new Error("File name contains forbidden character '/'");
@@ -292,6 +296,9 @@ export class ProjectService {
     }
     this.storage.saveProject(this._rootDir, this.projectName);
     this._savedFinished.next();
+    if (this.settings.autosave && this.projectId) {
+      this.network.uploadFile(this.mapper.exportFile(file));
+    }
   }
 
   /**

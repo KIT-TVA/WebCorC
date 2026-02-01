@@ -40,6 +40,20 @@
       </li>
     </ul>
   </p-fieldset>
+
+  <p-fieldset legend="Syncronization">
+    <ul>
+      <li style="display: flex; align-content: center; gap: 2rem">
+        <span>Autosave</span>
+        <span>
+          <p-toggle-switch
+            size="large"
+            [(ngModel)]="globalSettingsService.autosave"
+          >
+          </p-toggle-switch>
+        </span>
+      </li></ul
+  ></p-fieldset>
   <p-fieldset legend="Debugging">
     <ul>
       <li>
