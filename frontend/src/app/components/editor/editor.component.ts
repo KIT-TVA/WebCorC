@@ -206,7 +206,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     this.treeService.finalizeStatements();
     if (this._urn !== "" && this.treeService.rootFormula?.statement) {
       // save the current state outside the component
-      this.projectService.syncFileContent(this._urn, formula);
+      this.projectService.syncLocalFileContent(this._urn, formula);
     }
   }
 

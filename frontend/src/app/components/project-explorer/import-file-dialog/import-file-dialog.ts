@@ -104,7 +104,7 @@ export class ImportFileDialogComponent {
     if (this.config.data.parentURN === "/") {
       this.config.data.parentURN = "";
     }
-    this._projectService.syncFileContent(
+    this._projectService.syncLocalFileContent(
       this.config.data.parentURN + this.fileName + "." + this._fileType,
       this._fileContent,
     );

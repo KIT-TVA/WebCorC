@@ -97,7 +97,7 @@ export class ProjectService {
    * @returns The parent directory of the newly created directory
    */
   public addDirectory(parentPath: string, name: string): ProjectDirectory {
-    console.log(parentPath, name);
+    console.log("Adding Directory", parentPath, name);
     const parentDir = this.findByUrn(parentPath);
     if (name.includes("/")) {
       throw new Error("Directory name contains forbidden character '/'");
@@ -105,26 +105,27 @@ export class ProjectService {
     if (parentPath.endsWith("/")) {
       parentPath = parentPath.slice(0, -1);
     }
-    if (!parentDir || parentDir.type != "DIRECTORY") {
-      throw new Error("Parent dir of new dir not found");
-    }
+    if (parentDir && parentDir.type === "DIRECTORY") {
+      const definedParentDir = parentDir as ProjectDirectory;
+      let newDir = new ProjectDirectory(parentPath + "/" + name, [], true);
+      if (parentPath === "") {
+        newDir = new ProjectDirectory(name, [], true);
+      }
 
-    const dir = parentDir as ProjectDirectory;
-    let newDir = new ProjectDirectory(parentPath + "/" + name, [], true);
-    if (parentPath === "") {
-      newDir = new ProjectDirectory(name, [], true);
-    }
+      if (
+        definedParentDir.contents.find((element) => element.urn === newDir.urn)
+      ) {
+        throw new Error(
+          "Could not add directory, maybe you tried to create a duplicate?",
+        );
+      }
 
-    if (dir.contents.find((element) => element.urn === newDir.urn)) {
-      throw new Error(
-        "Could not add directory, maybe you tried to create a duplicate?",
-      );
+      definedParentDir.contents.push(newDir);
+      this._dataChange.next(this._rootDir.contents);
+      this.storage.saveProject(this._rootDir, this.projectName);
+      return definedParentDir;
     }
-
-    dir.contents.push(newDir);
-    this._dataChange.next(this._rootDir.contents);
-    this.storage.saveProject(this._rootDir, this.projectName);
-    return dir;
+    throw new Error("Parent directory of new directory not found");
   }
 
   /**
@@ -141,7 +142,7 @@ export class ProjectService {
     name: string,
     type: string,
   ): ProjectDirectory {
-    console.log(parentPath, name, type);
+    console.log("Creating file", parentPath, name, type);
     const parent = this.findByUrn(parentPath);
     if (parentPath.endsWith("/")) {
       parentPath = parentPath.slice(0, -1);
@@ -192,13 +193,10 @@ export class ProjectService {
     } else {
       parts = element.urn.split("/");
     }
-    console.log(parts);
     if (parts.length < 2) {
       return this._rootDir;
     }
     const parentUrn = parts.slice(0, parts.length - 1).join("/");
-    console.log(parts[parts.length - 2]);
-    console.log(parentUrn);
     const parentDir = this.findByUrn(parentUrn);
     if (!parentDir || parentDir.type != "DIRECTORY") {
       return this._rootDir;
@@ -242,7 +240,7 @@ export class ProjectService {
    * @param urn The Path of the file to save the content in
    * @param content The content to save in the file identified by the urn
    */
-  public syncFileContent(urn: string, content: string | LocalCBCFormula) {
+  public syncLocalFileContent(urn: string, content: string | LocalCBCFormula) {
     let file = this.findByUrn(urn);
     if (!file) {
       this._rootDir = this.storage.getProjectTree() ?? this._rootDir;
@@ -251,18 +249,6 @@ export class ProjectService {
         console.log(this._rootDir);
         throw new Error(`File ${urn} not found. Please create it first`);
       }
-      /*
-      const parentDir = this.getParentDirectory(urn);
-      if (!parentDir) {
-        throw new Error("Parent directory not found");
-      }
-      const type = urn.endsWith(".diagram")
-        ? "diagram"
-        : urn.endsWith(".java")
-          ? "java"
-          : "key";
-      this.addFile(parentDir?.urn, urn.split("/").pop() || "untitled", type);
-       */
     }
     switch (file.type) {
       case "DIAGRAM_FILE":
@@ -275,7 +261,6 @@ export class ProjectService {
         throw new Error("Unknown file type");
     }
     this.storage.saveProject(this._rootDir, this.projectName);
-
     this._savedFinished.next();
   }
 
@@ -296,24 +281,20 @@ export class ProjectService {
       }
     }
 
-    const needsToBeFetched = !file.present;
-
     let content: string | LocalCBCFormula =
       file.type === "CODE_FILE"
         ? ((file as CodeFile).content as string)
         : ((file as DiagramFile).formula as LocalCBCFormula);
 
-    //If file doesn't actually exist yet
-    if (this.projectId && needsToBeFetched) {
+    // If file not in local storage yet
+    if (!file.present) {
+      if (!this.projectId) {
+        throw new Error("Cannot fetch file content without a project ID set");
+      }
       content = await this.network.getFileContent(urn);
-      this.syncFileContent(urn, content);
+      this.syncLocalFileContent(urn, content);
     }
 
-    if (!this.projectId && needsToBeFetched) {
-      throw new Error("Cannot fetch file content without a project ID set");
-    }
-    // Persist loaded content into the in-memory model so other code (save flows)
-    // won't accidentally overwrite it with empty defaults.
     if (file.type === "DIAGRAM_FILE" && content) {
       (file as DiagramFile).formula = content as LocalCBCFormula;
     } else if (file.type === "CODE_FILE" && typeof content === "string") {
@@ -321,6 +302,7 @@ export class ProjectService {
     } else {
       throw new Error("Unknown file type");
     }
+
     file.present = true;
     this.storage.saveProject(this._rootDir, this.projectName);
     return content as string | LocalCBCFormula;
@@ -353,19 +335,13 @@ export class ProjectService {
   /**
    * Upload the current workspace (optionally waiting for network requests)
    */
-  public async uploadWorkspace(wait: boolean = false) {
-    if (!wait) {
-      const savedFinished = firstValueFrom(this._savedFinished);
-      this._saveNotify.next();
-      this.editorNotify.next();
-      await savedFinished;
-      await this.uploadFolder(this._rootDir);
-      return;
-    }
-
+  public async uploadWorkspace() {
+    const savedFinished = firstValueFrom(this._savedFinished);
+    this._saveNotify.next();
     this.editorNotify.next();
-    await firstValueFrom(this.network.requestFinished);
+    await savedFinished;
     await this.uploadFolder(this._rootDir);
+    return;
   }
 
   /**
@@ -373,11 +349,11 @@ export class ProjectService {
    */
   public async downloadWorkspace() {
     const localProjectTree = this.storage.getProjectTree();
-    const storedProjectName = this.storage.getProjectName();
-    const storedProjectId = this.storage.getProjectId();
+    const localProjectName = this.storage.getProjectName();
+    const localProjectId = this.storage.getProjectId();
 
-    if (!this.projectId && storedProjectId) {
-      this.projectId = storedProjectId;
+    if (!this.projectId && localProjectId) {
+      this.projectId = localProjectId;
     }
 
     if (this.projectId) {
@@ -399,7 +375,7 @@ export class ProjectService {
       }
     } else if (localProjectTree) {
       this._rootDir = localProjectTree;
-      this._projectName = storedProjectName ?? "";
+      this._projectName = localProjectName ?? "";
     }
 
     this._dataChange.next(this._rootDir.contents);
@@ -437,6 +413,7 @@ export class ProjectService {
   }
 
   private async uploadFolder(folder: ProjectDirectory) {
+    console.log("upload folder", folder);
     for (const item of folder.contents) {
       switch (item.type) {
         case "DIRECTORY":

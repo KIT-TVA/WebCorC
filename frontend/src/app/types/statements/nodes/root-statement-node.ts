@@ -42,7 +42,6 @@ export class RootStatementNode extends AbstractStatementNode {
     if (statement.statement) {
       this.childStatementNode = statementNodeUtils(statement.statement, this);
     }
-    console.log("Rootstatementnode", this.postcondition.getValue(), statement);
   }
 
   override overridePrecondition(condition: BehaviorSubject<ICondition>) {
