@@ -72,9 +72,7 @@ export class AppComponent implements OnInit {
         this.projectService.downloadWorkspace();
       }
     });
-    if (this.projectService.projectId) {
-      this.projectService.downloadWorkspace();
-    }
+    this.projectService.downloadWorkspace();
   }
   /**
    * Triggered on pressing the verify Button in the Top Bar.
