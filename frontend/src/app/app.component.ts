@@ -102,6 +102,7 @@ export class AppComponent implements OnInit {
         },
       });
     } else {
+      this.globalSettingsService.isVerifying = true;
       this.networkTreeService.verify(
         this.treeService.rootFormula,
         this.projectService.projectId,

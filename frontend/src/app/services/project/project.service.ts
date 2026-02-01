@@ -148,7 +148,10 @@ export class ProjectService {
     if (parentPath.endsWith("/")) {
       parentPath = parentPath.slice(0, -1);
     }
-    const newUrn = parentPath + "/" + name + "." + type;
+    const newUrn =
+      parentPath === ""
+        ? name + "." + type
+        : parentPath + "/" + name + "." + type;
 
     if (name.includes("/")) {
       throw new Error("File name contains forbidden character '/'");
