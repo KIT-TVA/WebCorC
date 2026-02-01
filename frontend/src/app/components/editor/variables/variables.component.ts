@@ -142,8 +142,6 @@ export class VariablesComponent implements AfterViewInit {
    * Clear the form
    */
   public removeAllVariables(): void {
-    console.log("Remove all vars");
-    console.trace();
     this.treeService.removeAllVariables();
     this.items.clear();
     this.variables.controls["newVariable"].reset();
