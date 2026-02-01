@@ -18,9 +18,10 @@ import { IconField } from "primeng/iconfield";
 import { DialogService } from "primeng/dynamicdialog";
 import { SettingsButtonComponent } from "./components/settings/settings-button/settings-button.component";
 import { Toast } from "primeng/toast";
-import { MessageService } from "primeng/api";
+import { MessageService, ConfirmationService } from "primeng/api";
 import { InputText } from "primeng/inputtext";
 import { GlobalSettingsService } from "./services/global-settings.service";
+import { ConfirmDialog } from "primeng/confirmdialog";
 
 /**
  * Top Component of this application,
@@ -42,15 +43,14 @@ import { GlobalSettingsService } from "./services/global-settings.service";
     SettingsButtonComponent,
     Toast,
     InputText,
+    ConfirmDialog,
   ],
   templateUrl: "./app.component.html",
-  providers: [DialogService, MessageService],
+  providers: [DialogService, MessageService, ConfirmationService],
   standalone: true,
   styleUrl: "./app.component.scss",
 })
 export class AppComponent implements OnInit {
-  private _loadingState = false;
-
   constructor(
     public treeService: TreeService,
     private networkTreeService: NetworkJobService,
@@ -60,6 +60,7 @@ export class AppComponent implements OnInit {
     public projectService: ProjectService,
     private snackBar: MatSnackBar,
     protected globalSettingsService: GlobalSettingsService,
+    private confirmationService: ConfirmationService,
   ) {}
 
   public ngOnInit(): void {
@@ -81,24 +82,25 @@ export class AppComponent implements OnInit {
    * This is needed for the backend to use the contents of helper.key
    */
   public verify(): void {
-    this.globalSettingsService.isVerifying = true;
     this.treeService.finalizeStatements();
-    if (
-      this.projectService.findByUrn("helper.key") &&
-      this.projectService.shouldCreateProject
-    ) {
-      this.projectService.requestFinished.pipe(first()).subscribe(() => {
-        this.projectService.editorNotify.pipe(first()).subscribe(() => {
+    if (this.projectService.shouldCreateProject) {
+      this.confirmationService.confirm({
+        message:
+          "You have unsaved changes. Do you want to save them before verifying?",
+        header: "Unsaved Changes",
+        icon: "pi pi-exclamation-triangle",
+        accept: () => {
+          this.openNewProjectDialog();
+        },
+        reject: () => {
+          this.globalSettingsService.isVerifying = true;
           this.networkTreeService.verify(
             this.treeService.rootFormula,
             this.projectService.projectId,
             this.treeService.urn,
           );
-        });
-
-        this.projectService.uploadWorkspace();
+        },
       });
-      this.openNewProjectDialog();
     } else {
       this.networkTreeService.verify(
         this.treeService.rootFormula,

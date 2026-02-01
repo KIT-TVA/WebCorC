@@ -29,7 +29,10 @@
   <ng-template #end>
     <div style="display: flex; gap: 1rem">
       <app-settings-button />
-      <p-button [disabled]="projectService.shouldCreateProject" (click)="share()">
+      <p-button
+        [disabled]="projectService.shouldCreateProject"
+        (click)="share()"
+      >
         <i class="pi pi-share-alt"></i>
         Share
       </p-button>
@@ -37,7 +40,11 @@
         <i class="pi pi-code"></i>
         Generate code
       </p-button>
-      <p-button (click)="verify()" [disabled]="!treeService.rootFormula" [loading]="globalSettingsService.isVerifying">
+      <p-button
+        (click)="verify()"
+        [disabled]="!treeService.rootFormula"
+        [loading]="globalSettingsService.isVerifying"
+      >
         <i class="pi pi-check-circle"></i>
         Verify
       </p-button>
@@ -58,4 +65,5 @@
     <router-outlet></router-outlet>
   </mat-drawer-content>
 </mat-drawer-container>
+<p-confirm-dialog />
 <p-toast></p-toast>
