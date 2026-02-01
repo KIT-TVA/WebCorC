@@ -1,14 +1,14 @@
 import { Component } from "@angular/core";
 import {
-  ApiDiagramFile,
-  ApiDirectory,
-  ApiTextFile,
+  LocalDiagramFile,
+  LocalDirectory,
+  LocalTextFile,
 } from "../../../services/project/types/api-elements";
 import { Listbox } from "primeng/listbox";
 import { Button } from "primeng/button";
 import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
 import { Condition } from "../../../types/condition/condition";
-import { CBCFormula } from "../../../types/CBCFormula";
+import { LocalCBCFormula } from "../../../types/CBCFormula";
 import { Position } from "../../../types/position";
 import { FormsModule } from "@angular/forms";
 import { ProjectService } from "../../../services/project/project.service";
@@ -31,7 +31,7 @@ export class LoadExampleDialogComponent {
   selectedExample: {
     name: string;
     icon: string;
-    project: ApiDirectory;
+    project: LocalDirectory;
   } | null = null;
 
   constructor(
@@ -43,15 +43,15 @@ export class LoadExampleDialogComponent {
   public readonly EXAMPLE_PROGRAMS: {
     name: string;
     icon: string;
-    project: ApiDirectory;
+    project: LocalDirectory;
   }[] = [
     {
       name: "SimpleAddition",
       icon: "exposure_plus_1",
-      project: new ApiDirectory("/", [
-        new ApiDiagramFile(
+      project: new LocalDirectory("", [
+        new LocalDiagramFile(
           "simpleAddition.diagram",
-          new CBCFormula(
+          new LocalCBCFormula(
             "SimpleAddition",
             new RootStatement(
               "Root",
@@ -66,8 +66,6 @@ export class LoadExampleDialogComponent {
               ),
               new Position(0, 0),
             ),
-            undefined,
-            undefined,
             [new JavaVariable("int i", "LOCAL")],
           ),
         ),
@@ -76,10 +74,10 @@ export class LoadExampleDialogComponent {
     {
       name: "LinearSearch",
       icon: "manage_search",
-      project: new ApiDirectory("/", [
-        new ApiDiagramFile(
+      project: new LocalDirectory("", [
+        new LocalDiagramFile(
           "linearSearch.diagram",
-          new CBCFormula(
+          new LocalCBCFormula(
             "LinearSearch",
             new RootStatement(
               "Root",
@@ -93,7 +91,9 @@ export class LoadExampleDialogComponent {
                 new Statement(
                   "Statement",
                   new Condition("appears(A, x, 0, A.length)"),
-                  new Condition("appears(A, x, 0, A.length) && i == A.length-1"),
+                  new Condition(
+                    "appears(A, x, 0, A.length) && i == A.length-1",
+                  ),
                   "i = A.length-1;",
                   new Position(0, 800),
                 ),
@@ -120,8 +120,6 @@ export class LoadExampleDialogComponent {
               ),
               new Position(0, 0),
             ),
-            new Condition("appears(A, x, 0, A.length)"),
-            new Condition("A[i] == x"),
             [
               new JavaVariable("int i", "LOCAL"),
               new JavaVariable("int x", "LOCAL"),
@@ -137,8 +135,8 @@ export class LoadExampleDialogComponent {
           ),
           "file",
         ),
-        new ApiDirectory("include", [
-          new ApiTextFile(
+        new LocalDirectory("include", [
+          new LocalTextFile(
             "include/predicates.key",
             "\\predicates {\n" +
               "    appears(int[], int, int, int);\n" +
@@ -164,10 +162,10 @@ export class LoadExampleDialogComponent {
     {
       name: "MaxElement",
       icon: "trending_up",
-      project: new ApiDirectory("/", [
-        new ApiDiagramFile(
+      project: new LocalDirectory("", [
+        new LocalDiagramFile(
           "maxElement.diagram",
-          new CBCFormula(
+          new LocalCBCFormula(
             "MaxElement",
             new RootStatement(
               "Root",
@@ -259,8 +257,6 @@ export class LoadExampleDialogComponent {
               ),
               new Position(0, 0),
             ),
-            undefined,
-            undefined,
             [
               new JavaVariable("int j", "LOCAL"),
               new JavaVariable("int i", "LOCAL"),
@@ -271,12 +267,12 @@ export class LoadExampleDialogComponent {
               new Condition("A.length > 0"),
               new Condition("A.length < 10"),
               new Condition("i >= 0 && i < A.length"),
-              new Condition("j >= 0 && j <= A.length")
+              new Condition("j >= 0 && j <= A.length"),
             ],
           ),
         ),
-        new ApiDirectory("include", [
-          new ApiTextFile(
+        new LocalDirectory("include", [
+          new LocalTextFile(
             "include/predicates.key",
             "\\predicates {\n" +
               "    maxe(int[], int, int, int);\n" +
@@ -302,10 +298,10 @@ export class LoadExampleDialogComponent {
     {
       name: "Transaction",
       icon: "account_balance",
-      project: new ApiDirectory("/", [
-        new ApiDiagramFile(
+      project: new LocalDirectory("", [
+        new LocalDiagramFile(
           "transaction.diagram",
-          new CBCFormula(
+          new LocalCBCFormula(
             "Transaction",
             new RootStatement(
               "Root",
@@ -372,8 +368,6 @@ export class LoadExampleDialogComponent {
               ),
               new Position(0, 0),
             ),
-            undefined,
-            undefined,
             [
               new JavaVariable("int limit", "LOCAL"),
               new JavaVariable("int newBalance", "LOCAL"),

@@ -91,7 +91,7 @@ export class PredicateService {
     if (!this.projectService.findByUrn("include/generatedPredicates.key")) {
       this.projectService.addFile("include", "generatedPredicates", "key");
     }
-    this.projectService.syncFileContent(
+    this.projectService.syncLocalFileContent(
       "include/generatedPredicates.key",
       result,
     );

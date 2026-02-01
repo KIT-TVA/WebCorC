@@ -23,6 +23,7 @@ import { IconField } from "primeng/iconfield";
 import { InputIcon } from "primeng/inputicon";
 import { $dt } from "@primeuix/themes";
 import { InputText } from "primeng/inputtext";
+import { Subscription } from "rxjs";
 
 /**
  * Component to edit the variables of the file.
@@ -51,8 +52,9 @@ import { InputText } from "primeng/inputtext";
   standalone: true,
   styleUrl: "./variables.component.scss",
 })
-export class VariablesComponent implements AfterViewInit {
+export class VariablesComponent implements AfterViewInit, OnDestroy {
   private isEmpty = true;
+  private subscriptions: Subscription = new Subscription();
   /**
    * Forms Template
    */
@@ -67,11 +69,15 @@ export class VariablesComponent implements AfterViewInit {
   ) {}
   ngAfterViewInit(): void {
     this.importDiagramVariables();
-    this.treeService.finalizeNotifier.subscribe(() => {
+    this.subscriptions.add(this.treeService.finalizeNotifier.subscribe(() => {
       if (this.treeService.rootFormula) {
         this.treeService.rootFormula.javaVariables = this.javaVariables;
       }
-    });
+    }));
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
   public importDiagramVariables() {
@@ -142,8 +148,6 @@ export class VariablesComponent implements AfterViewInit {
    * Clear the form
    */
   public removeAllVariables(): void {
-    console.log("Remove all vars");
-    console.trace();
     this.treeService.removeAllVariables();
     this.items.clear();
     this.variables.controls["newVariable"].reset();

@@ -8,10 +8,9 @@ import { TreeService } from "./services/tree/tree.service";
 import { ProjectExplorerComponent } from "./components/project-explorer/project-explorer.component";
 import { NuMonacoEditorModule } from "@ng-util/monaco-editor";
 import { ProjectService } from "./services/project/project.service";
-import { NetworkTreeService } from "./services/tree/network/network-tree.service";
+import { NetworkJobService } from "./services/tree/network/network-job.service";
 import { CreateProjectDialogComponent } from "./components/project-explorer/create-project-dialog/create-project-dialog.component";
 import { first } from "rxjs";
-import { NetworkStatusService } from "./services/networkStatus/network-status.service";
 import { Toolbar } from "primeng/toolbar";
 import { Button } from "primeng/button";
 import { InputIcon } from "primeng/inputicon";
@@ -54,29 +53,27 @@ export class AppComponent implements OnInit {
 
   constructor(
     public treeService: TreeService,
-    private networkTreeService: NetworkTreeService,
-    private networkStatus: NetworkStatusService,
+    private networkTreeService: NetworkJobService,
     public dialogService: DialogService,
     protected router: Router,
     private route: ActivatedRoute,
     public projectService: ProjectService,
     private snackBar: MatSnackBar,
     protected globalSettingsService: GlobalSettingsService,
-  ) {
-    this.networkStatus.status.subscribe((status) => {
-      if (status != this._loadingState) {
-        this._loadingState = status;
-      }
-    });
-  }
+  ) {}
 
   public ngOnInit(): void {
-    // read the query Params and setting them to the projectService
+    // Download workspace if project id is set
     this.route.queryParams.subscribe((params) => {
-      this.projectService.projectId = params["projectId"];
-      this.projectService.downloadWorkspace();
+      const id = params["projectId"];
+      if (id) {
+        this.projectService.projectId = id;
+        this.projectService.downloadWorkspace();
+      }
     });
-    this.projectService.downloadWorkspace();
+    if (this.projectService.projectId) {
+      this.projectService.downloadWorkspace();
+    }
   }
   /**
    * Triggered on pressing the verify Button in the Top Bar.

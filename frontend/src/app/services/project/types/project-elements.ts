@@ -60,8 +60,10 @@ export class ProjectDirectory extends ProjectElement {
   }
 
   public addElement(el: ProjectElement): boolean {
+    console.log("Add element", this.urn, el);
     if (this.contents.find((e) => e.urn === el.urn)) return false;
     this.contents.push(el);
+    console.log("Added");
     return true;
   }
 

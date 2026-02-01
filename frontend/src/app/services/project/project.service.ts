@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, first, Subject } from "rxjs";
+import { BehaviorSubject, firstValueFrom, Subject } from "rxjs";
 import { LocalCBCFormula } from "../../types/CBCFormula";
 import { NetworkProjectService } from "./network/network-project.service";
 import {
@@ -23,13 +23,13 @@ import { ProjectPredicate } from "../../types/ProjectPredicate";
 })
 export class ProjectService {
   // Use empty string as the project root urn - this aligns with ApiDirectory roots like '/'
-  private _rootDir = new ProjectDirectory("/", [], true);
+  private _rootDir = new ProjectDirectory("", [], true);
   private _dataChange = new BehaviorSubject<ProjectElement[]>(
     this._rootDir.contents,
   );
   private _saveNotify = new Subject<void>();
   private _savedFinished = new Subject<void>();
-  private _projectname: string = "";
+  private _projectName: string = "";
 
   constructor(
     private network: NetworkProjectService,
@@ -37,24 +37,22 @@ export class ProjectService {
     private storage: ProjectStorageService,
   ) {
     const projectIdFromStorage = storage.getProjectId();
-
     if (projectIdFromStorage) {
       this.network.projectId = projectIdFromStorage;
       const nameFromStorage = storage.getProjectName();
-      this.projectname = nameFromStorage ? nameFromStorage : "";
+      this.projectName = nameFromStorage ?? "";
     }
 
     const projectFileTree = storage.getProjectTree();
-
     if (projectFileTree) {
       this._rootDir = projectFileTree;
     }
   }
 
   /**
-   * Search for a element of the project by its path recursiv
+   * Search for an element of the project by its path recursively
    * @param urn The path of the element to retrieve
-   * @param directory The directory to search for, default: root
+   * @param directory The directory to begin searching in default: root
    * @returns The file identified by the given path, if no matching file is found null
    * @see ProjectElement
    */
@@ -62,8 +60,8 @@ export class ProjectService {
     urn: string,
     directory: ProjectDirectory = this._rootDir,
   ): ProjectElement | null {
-    if (urn === this._rootDir.urn) {
-      return this._rootDir;
+    if (urn === directory.urn) {
+      return directory;
     }
     const parts = urn.split("/").filter((e) => e.length > 0);
     if (parts.length < 1 || directory.urn === urn) {
@@ -99,7 +97,7 @@ export class ProjectService {
    * @returns The parent directory of the newly created directory
    */
   public addDirectory(parentPath: string, name: string): ProjectDirectory {
-    console.log(parentPath, name);
+    console.log("Adding Directory", parentPath, name);
     const parentDir = this.findByUrn(parentPath);
     if (name.includes("/")) {
       throw new Error("Directory name contains forbidden character '/'");
@@ -107,26 +105,27 @@ export class ProjectService {
     if (parentPath.endsWith("/")) {
       parentPath = parentPath.slice(0, -1);
     }
-    if (!parentDir || parentDir.type != "DIRECTORY") {
-      throw new Error("Parent dir of new dir not found");
-    }
+    if (parentDir && parentDir.type === "DIRECTORY") {
+      const definedParentDir = parentDir as ProjectDirectory;
+      let newDir = new ProjectDirectory(parentPath + "/" + name, [], true);
+      if (parentPath === "") {
+        newDir = new ProjectDirectory(name, [], true);
+      }
 
-    const dir = parentDir as ProjectDirectory;
-    let newDir = new ProjectDirectory(parentPath + "/" + name, [], true);
-    if (parentPath === "") {
-      newDir = new ProjectDirectory(name, [], true);
-    }
+      if (
+        definedParentDir.contents.find((element) => element.urn === newDir.urn)
+      ) {
+        throw new Error(
+          "Could not add directory, maybe you tried to create a duplicate?",
+        );
+      }
 
-    if (dir.contents.find((element) => element.urn === newDir.urn)) {
-      throw new Error(
-        "Could not add directory, maybe you tried to create a duplicate?",
-      );
+      definedParentDir.contents.push(newDir);
+      this._dataChange.next(this._rootDir.contents);
+      this.storage.saveProject(this._rootDir, this.projectName);
+      return definedParentDir;
     }
-
-    dir.contents.push(newDir);
-    this._dataChange.next(this._rootDir.contents);
-    this.storage.saveProject(this._rootDir, this.projectname);
-    return dir;
+    throw new Error("Parent directory of new directory not found");
   }
 
   /**
@@ -143,7 +142,7 @@ export class ProjectService {
     name: string,
     type: string,
   ): ProjectDirectory {
-    console.log(parentPath, name, type);
+    console.log("Creating file", parentPath, name, type);
     const parent = this.findByUrn(parentPath);
     if (parentPath.endsWith("/")) {
       parentPath = parentPath.slice(0, -1);
@@ -181,12 +180,13 @@ export class ProjectService {
 
     parentDir.contents.push(newFile);
     this._dataChange.next(this._rootDir.contents);
-    this.storage.saveProject(this._rootDir, this.projectname);
+    this.storage.saveProject(this._rootDir, this.projectName);
     return parentDir;
   }
 
   public getParentDirectory(
     element: ProjectElement | string,
+    directory: ProjectDirectory = this._rootDir,
   ): ProjectDirectory | undefined {
     let parts: string[] = [];
     if (typeof element === "string") {
@@ -194,16 +194,13 @@ export class ProjectService {
     } else {
       parts = element.urn.split("/");
     }
-    console.log(parts);
     if (parts.length < 2) {
-      return this._rootDir;
+      return directory;
     }
     const parentUrn = parts.slice(0, parts.length - 1).join("/");
-    console.log(parts[parts.length - 2]);
-    console.log(parentUrn);
-    const parentDir = this.findByUrn(parentUrn);
+    const parentDir = this.findByUrn(parentUrn, directory);
     if (!parentDir || parentDir.type != "DIRECTORY") {
-      return this._rootDir;
+      return directory;
     }
     return parentDir as ProjectDirectory;
   }
@@ -213,29 +210,58 @@ export class ProjectService {
    * @param element
    */
   public deleteElement(element: ProjectElement) {
-    let inode: Inode;
-    switch (element.type) {
-      case "CODE_FILE":
-      case "DIAGRAM_FILE":
-        inode = this.mapper.exportFile(element);
-        break;
-      case "DIRECTORY":
-        inode = this.mapper.exportDirectory(element as ProjectDirectory);
-        break;
-      default:
-        throw new Error("Unknown element type");
-    }
-    if (element.serverSideUrn) {
-      this.network.deleteFile(inode);
-    }
-    const parent = this.getParentDirectory(element);
+    const rubbishBinName = ".rubbishBin";
+    let rubbishBin = this.findByUrn(rubbishBinName) as ProjectDirectory;
 
-    if (parent) {
-      parent.contents = parent.contents.filter(
-        (child) => child.urn !== element.urn,
-      );
+    if (!rubbishBin) {
+      this.addDirectory("", rubbishBinName);
+      rubbishBin = this.findByUrn(rubbishBinName) as ProjectDirectory;
     }
-    this.storage.saveProject(this._rootDir, this._projectname);
+
+    // If the element is already in the rubbish bin, permanently delete it
+    if (element.urn.startsWith(rubbishBinName)) {
+      const parent = this.getParentDirectory(element);
+
+      if (parent) {
+        parent.contents = parent.contents.filter(
+          (child) => child.urn !== element.urn,
+        );
+      }
+    } else {
+      // Move to rubbish bin
+      this.moveElement(element, rubbishBin);
+    }
+
+    this.storage.saveProject(this._rootDir, this._projectName);
+    this._dataChange.next(this._rootDir.contents);
+  }
+
+  public async clearRubbishBin() {
+    const rubbishBinName = ".rubbishBin";
+    const rubbishBin = this.findByUrn("/" + rubbishBinName) as ProjectDirectory;
+
+    if (!rubbishBin) {
+      return;
+    }
+
+    // Recursively delete contents
+    const deleteContents = async (dir: ProjectDirectory) => {
+      for (const item of [...dir.contents]) {
+        if (item.type === "DIRECTORY") {
+          await deleteContents(item as ProjectDirectory);
+        }
+        await this.deleteElement(item);
+      }
+    };
+
+    await deleteContents(rubbishBin);
+
+    // Remove the bin itself
+    const parent = this.getParentDirectory(rubbishBin);
+    if (parent) {
+      parent.removeElement(rubbishBin.name);
+    }
+    this.storage.saveProject(this._rootDir, this._projectName);
     this._dataChange.next(this._rootDir.contents);
   }
 
@@ -244,7 +270,7 @@ export class ProjectService {
    * @param urn The Path of the file to save the content in
    * @param content The content to save in the file identified by the urn
    */
-  public syncFileContent(urn: string, content: string | LocalCBCFormula) {
+  public syncLocalFileContent(urn: string, content: string | LocalCBCFormula) {
     let file = this.findByUrn(urn);
     if (!file) {
       this._rootDir = this.storage.getProjectTree() ?? this._rootDir;
@@ -253,18 +279,6 @@ export class ProjectService {
         console.log(this._rootDir);
         throw new Error(`File ${urn} not found. Please create it first`);
       }
-      /*
-      const parentDir = this.getParentDirectory(urn);
-      if (!parentDir) {
-        throw new Error("Parent directory not found");
-      }
-      const type = urn.endsWith(".diagram")
-        ? "diagram"
-        : urn.endsWith(".java")
-          ? "java"
-          : "key";
-      this.addFile(parentDir?.urn, urn.split("/").pop() || "untitled", type);
-       */
     }
     switch (file.type) {
       case "DIAGRAM_FILE":
@@ -276,8 +290,7 @@ export class ProjectService {
       default:
         throw new Error("Unknown file type");
     }
-    this.storage.saveProject(this._rootDir, this.projectname);
-
+    this.storage.saveProject(this._rootDir, this.projectName);
     this._savedFinished.next();
   }
 
@@ -289,35 +302,29 @@ export class ProjectService {
   public async getFileContent(urn: string): Promise<string | LocalCBCFormula> {
     let file = this.findByUrn(urn);
     if (!file) {
-      const rootDir = this.storage.getProjectTree();
-      if (!rootDir) {
-        throw new Error("Empty session storage: File not found");
+      const remoteTree = this.storage.getRemoteProjectTree();
+      if (remoteTree) {
+        file = this.findByUrn(urn, remoteTree);
       }
-      this._rootDir = rootDir;
-      this._dataChange.next(this._rootDir.contents);
-      file = this.findByUrn(urn);
       if (!file) {
-        throw new Error("File not found");
+        throw new Error("File not found in local or remote storage");
       }
     }
-
-    const needsToBeFetched = !file.present;
 
     let content: string | LocalCBCFormula =
       file.type === "CODE_FILE"
         ? ((file as CodeFile).content as string)
         : ((file as DiagramFile).formula as LocalCBCFormula);
 
-    //If file doesn't actually exist yet
-    if (this.projectId && needsToBeFetched) {
+    // If file not in local storage yet
+    if (!file.present) {
+      if (!this.projectId) {
+        throw new Error("Cannot fetch file content without a project ID set");
+      }
       content = await this.network.getFileContent(urn);
+      this.syncLocalFileContent(urn, content);
     }
 
-    if (!this.projectId && needsToBeFetched) {
-      throw new Error("Cannot fetch file content without a project ID set");
-    }
-    // Persist loaded content into the in-memory model so other code (save flows)
-    // won't accidentally overwrite it with empty defaults.
     if (file.type === "DIAGRAM_FILE" && content) {
       (file as DiagramFile).formula = content as LocalCBCFormula;
     } else if (file.type === "CODE_FILE" && typeof content === "string") {
@@ -325,8 +332,9 @@ export class ProjectService {
     } else {
       throw new Error("Unknown file type");
     }
+
     file.present = true;
-    this.storage.saveProject(this._rootDir, this.projectname);
+    this.storage.saveProject(this._rootDir, this.projectName);
     return content as string | LocalCBCFormula;
   }
 
@@ -349,7 +357,7 @@ export class ProjectService {
   public importProject(rootDir: LocalDirectory, projectname: string) {
     const imported = this.mapper.importProject(rootDir as LocalDirectory);
     this._rootDir = imported;
-    this._projectname = projectname;
+    this._projectName = projectname;
     this.storage.saveProject(imported, projectname);
     this._dataChange.next(this._rootDir.contents);
   }
@@ -357,66 +365,70 @@ export class ProjectService {
   /**
    * Upload the current workspace (optionally waiting for network requests)
    */
-  public uploadWorkspace(wait: boolean = false) {
-    return new Promise<void>((resolve) => {
-      if (!wait) {
-        this._savedFinished
-          .pipe(first())
-          .subscribe(() => this.uploadFolder(this._rootDir));
-
-        this._saveNotify.next();
-
-        this.editorNotify.next();
-        resolve();
-        return;
-      }
-
-      this.editorNotify.next();
-
-      this.network.requestFinished
-        .pipe(first())
-        .subscribe(() => this.uploadFolder(this._rootDir));
-      resolve();
-    });
+  public async uploadWorkspace() {
+    console.log("Before preparing upload", this._rootDir);
+    const savedFinished = firstValueFrom(this._savedFinished);
+    this._saveNotify.next();
+    this.editorNotify.next();
+    await savedFinished;
+    console.log("After preparing upload", this._rootDir);
+    await this.uploadFolder(this._rootDir);
+    return;
   }
 
   /**
    * Download project state from storage or network as needed
    */
-  public downloadWorkspace() {
-    const storedProjectTree = this.storage.getProjectTree();
-    const storedProjectName = this.storage.getProjectName();
-    const storedProjectId = this.storage.getProjectId();
-    if (!this.projectId && storedProjectId) {
-      this.projectId = storedProjectId;
-    }
-    if (!storedProjectTree) {
-      this.network.readProject().then(() => {
-        this._rootDir = this.storage.getProjectTree() ?? this._rootDir;
-        this._projectname = this.storage.getProjectName() ?? this._projectname;
-        this._dataChange.next(this._rootDir.contents);
-      });
-      return;
-    }
-    if (storedProjectId === this.projectId) {
-      if (!storedProjectTree || !storedProjectName) {
-        this.network.readProject().then(() => {
-          this._rootDir = this.storage.getProjectTree() ?? this._rootDir;
-          this._projectname =
-            this.storage.getProjectName() ?? this._projectname;
-          this._dataChange.next(this._rootDir.contents);
-        });
-        return;
-      }
-      this._rootDir = storedProjectTree;
-      this._dataChange.next(this._rootDir.contents);
-      return;
+  public async downloadWorkspace() {
+    const localProjectTree = this.storage.getProjectTree();
+    const localProjectName = this.storage.getProjectName();
+    const localProjectId = this.storage.getProjectId();
+
+    if (!this.projectId && localProjectId) {
+      this.projectId = localProjectId;
     }
 
-    if (!storedProjectId && !this.projectId && !!storedProjectTree) {
-      this._rootDir = storedProjectTree;
-      this._dataChange.next(this._rootDir.contents);
-      return;
+    if (this.projectId) {
+      const {
+        project: remoteProject,
+        name,
+        id,
+      } = await this.network.readProject();
+      this.storage.saveRemoteProject(remoteProject, name);
+      this.storage.setProjectId(id);
+
+      if (!localProjectTree) {
+        this.storage.saveProject(remoteProject, name);
+        this._rootDir = remoteProject;
+        this._projectName = name;
+      } else {
+        this.mergeTrees(this._rootDir, remoteProject);
+        this.storage.saveProject(this._rootDir, this.projectName);
+      }
+    } else if (localProjectTree) {
+      this._rootDir = localProjectTree;
+      this._projectName = localProjectName ?? "";
+    }
+
+    this._dataChange.next(this._rootDir.contents);
+  }
+
+  private mergeTrees(local: ProjectDirectory, remote: ProjectDirectory) {
+    for (const remoteElement of remote.contents) {
+      const localElement = local.contents.find(
+        (e) => e.urn === remoteElement.urn,
+      );
+      if (!localElement) {
+        local.contents.push(remoteElement);
+      } else if (
+        localElement.type === "DIRECTORY" &&
+        remoteElement.type === "DIRECTORY"
+      ) {
+        this.mergeTrees(
+          localElement as ProjectDirectory,
+          remoteElement as ProjectDirectory,
+        );
+      }
     }
   }
 
@@ -424,24 +436,74 @@ export class ProjectService {
    * Create a project in the backend
    */
   public async createProject() {
-    if (!this._projectname || this._projectname.trim() === "") {
+    if (!this._projectName || this._projectName.trim() === "") {
       throw new Error("Project name cannot be empty");
     }
-    await this.network.createProject(this._projectname);
+    await this.network.createProject(this._projectName);
     this.projectId = this.network.projectId!;
     return this.storage.setProjectId(this.projectId!);
   }
 
-  private uploadFolder(folder: ProjectDirectory) {
+  private async uploadFolder(folder: ProjectDirectory) {
+    console.log("upload folder", folder);
     for (const item of folder.contents) {
+      if (item.serverSideUrn && item.serverSideUrn !== item.urn) {
+        const inodeType = item.type === "DIRECTORY" ? "directory" : "file";
+        const inode: Inode = {
+          urn: item.serverSideUrn,
+          inodeType: inodeType,
+        };
+
+        const remoteRoot = this.storage.getRemoteProjectTree();
+        if (remoteRoot) {
+          const remoteElement = this.findByUrn(item.serverSideUrn, remoteRoot);
+          if (remoteElement && remoteElement.urn === item.serverSideUrn) {
+            await this.network.deleteFile(inode);
+
+            const parent = this.getParentDirectory(remoteElement, remoteRoot);
+            if (parent) {
+              parent.removeElement(remoteElement.name);
+              console.log("removed from remote parent");
+            }
+          }
+          this.storage.saveRemoteProject(remoteRoot, this.projectName);
+        }
+
+        item.serverSideUrn = undefined;
+      }
+
       switch (item.type) {
         case "DIRECTORY":
-          this.uploadFolder(item as ProjectDirectory);
+          await this.uploadFolder(item as ProjectDirectory);
           continue;
         case "CODE_FILE":
-        case "DIAGRAM_FILE":
-          this.network.uploadFile(this.mapper.exportFile(item));
+        case "DIAGRAM_FILE": {
+          const success = await this.network.uploadFile(
+            this.mapper.exportFile(item),
+          );
+          if (success) {
+            const remoteRoot = this.storage.getRemoteProjectTree();
+            if (remoteRoot) {
+              const remoteElement = this.findByUrn(item.urn, remoteRoot);
+              if (remoteElement) {
+                // This is a simplified update. A more robust implementation
+                // would merge properties instead of overwriting.
+                Object.assign(remoteElement, item);
+              } else {
+                // If the element doesn't exist in the remote tree, add it.
+                const parent = this.getParentDirectory(item.urn);
+                if (parent) {
+                  const remoteParent = this.findByUrn(parent.urn, remoteRoot);
+                  if (remoteParent && remoteParent.type === "DIRECTORY") {
+                    (remoteParent as ProjectDirectory).contents.push(item);
+                  }
+                }
+              }
+              this.storage.saveRemoteProject(remoteRoot, this.projectName);
+            }
+          }
           break;
+        }
         default:
           throw new Error("Unknown element type");
       }
@@ -456,8 +518,18 @@ export class ProjectService {
     target: ProjectElement,
     name?: string,
   ) {
-    const newParentPath = target.path;
+    const newParentPath = target.urn;
     const oldUrn = file.urn + "";
+
+    if (!file.serverSideUrn) {
+      const remoteTree = this.storage.getRemoteProjectTree();
+      if (remoteTree) {
+        const remoteElement = this.findByUrn(oldUrn, remoteTree);
+        if (remoteElement) {
+          file.serverSideUrn = oldUrn;
+        }
+      }
+    }
 
     if (
       target instanceof ProjectDirectory &&
@@ -466,7 +538,6 @@ export class ProjectService {
     ) {
       const newUrn = newParentPath + "/" + (name ? name : file.name);
       file.urn = newUrn;
-
       // If we're moving a directory, recursively update all children URNs
       if (file.type === "DIRECTORY") {
         const dir = file as ProjectDirectory;
@@ -499,6 +570,7 @@ export class ProjectService {
       );
       oldParent.removeElement(file.name);
     }
+    this.storage.saveProject(this._rootDir, this._projectName);
     this._dataChange.next(this._rootDir.contents);
     return true;
   }
@@ -536,7 +608,7 @@ export class ProjectService {
       dir.contents.forEach(updateChild);
     }
 
-    this.storage.saveProject(this._rootDir, this._projectname);
+    this.storage.saveProject(this._rootDir, this._projectName);
     this._dataChange.next(this._rootDir.contents);
   }
 
@@ -560,12 +632,12 @@ export class ProjectService {
     return this._dataChange;
   }
 
-  public get projectname(): string {
-    return this._projectname;
+  public get projectName(): string {
+    return this._projectName;
   }
 
-  public set projectname(value: string) {
-    this._projectname = value;
+  public set projectName(value: string) {
+    this._projectName = value;
   }
 
   public set projectId(value: string) {
@@ -587,7 +659,7 @@ export class ProjectService {
   public dump() {
     return {
       projectId: this.projectId,
-      projectName: this.projectname,
+      projectName: this.projectName,
       rootDir: this._rootDir,
     };
   }

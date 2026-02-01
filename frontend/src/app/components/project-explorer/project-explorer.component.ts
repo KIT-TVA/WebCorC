@@ -290,6 +290,8 @@ export class ProjectExplorerComponent {
    * @param node the node
    */
   public deleteElement(node: ProjectElement) {
+    //TODO: Put this back in when supported by backend
+    return;
     this.projectService.deleteElement(node);
   }
 
@@ -401,7 +403,7 @@ export class ProjectExplorerComponent {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = this.projectService.projectname + ".json";
+      a.download = this.projectService.projectName + ".json";
       a.click();
       window.URL.revokeObjectURL(url);
     });
@@ -413,6 +415,8 @@ export class ProjectExplorerComponent {
    * @param event event emitted on dropping the node
    */
   public dropNode(event: TreeNodeDropEvent) {
+    //TODO Put this back in when supported by backend
+    return;
     const node = event.dragNode?.data;
     let target = event.dropNode?.data;
     if (!target) {

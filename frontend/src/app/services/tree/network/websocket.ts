@@ -19,10 +19,12 @@ export class WebSocketService {
 
         this.socket.onerror = (event) => {
             console.error("Websocket error:", event);
+            this.messagesSubject.error(event);
         };
 
         this.socket.onclose = (event) => {
             console.log("Websocket closed:", event);
+            this.messagesSubject.complete();
         }
     }
 

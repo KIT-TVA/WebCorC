@@ -55,7 +55,7 @@ export class FileEditorComponent implements AfterViewInit, OnDestroy {
 
     if (this.code !== "") {
       // save the current code outside of the component
-      this.projectService.syncFileContent(this._urn, this.code);
+      this.projectService.syncLocalFileContent(this._urn, this.code);
     }
 
     // finally override the old urn
@@ -77,7 +77,7 @@ export class FileEditorComponent implements AfterViewInit, OnDestroy {
 
   public ngOnDestroy(): void {
     this.subscription!.unsubscribe();
-    this.projectService.syncFileContent(this._urn, this.code);
+    this.projectService.syncLocalFileContent(this._urn, this.code);
     this._viewInit = false;
   }
 
@@ -125,6 +125,6 @@ export class FileEditorComponent implements AfterViewInit, OnDestroy {
   }
 
   private saveContentToFile(): void {
-    this.projectService.syncFileContent(this._urn, this.code);
+    this.projectService.syncLocalFileContent(this._urn, this.code);
   }
 }

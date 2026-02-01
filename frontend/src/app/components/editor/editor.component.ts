@@ -39,7 +39,7 @@ import {
 import { EditorSidemenuComponent } from "./editor-sidemenu/editor-sidemenu.component";
 import { EditorBottommenuComponent } from "./editor-bottommenu/editor-bottommenu.component";
 import { GlobalSettingsService } from "../../services/global-settings.service";
-import { fromEvent } from "rxjs";
+import { fromEvent, Subscription } from "rxjs";
 import { Button } from "primeng/button";
 import { Popover } from "primeng/popover";
 import { ConditionSelectorComponent } from "./condition/condition-selector/condition-selector.component";
@@ -93,6 +93,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     this.treeService.generateStatementNodes();
   @ViewChild("sidemenu") private sidemenu!: EditorSidemenuComponent;
   private _viewInit: boolean = false;
+  private subscriptions: Subscription = new Subscription();
 
   /**
    * Constructor for dependency injection of the services
@@ -110,7 +111,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     protected globalSettingsService: GlobalSettingsService,
   ) {
     this.setupVFlowSync();
-    this.treeService.exportNotifier.subscribe(() => this.export());
+    this.subscriptions.add(this.treeService.exportNotifier.subscribe(() => this.export()));
   }
 
   private _urn: string = "";
@@ -147,22 +148,23 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     console.log("Editor view initialized");
     this._viewInit = true;
     this.loadFileContent();
-    this.projectService.editorNotify.subscribe(() => {
+    this.subscriptions.add(this.projectService.editorNotify.subscribe(() => {
       this.saveContentToFile();
-    });
-    this.editorService.reload.subscribe(() => {
+    }));
+    this.subscriptions.add(this.editorService.reload.subscribe(() => {
       this.loadFileContent();
-    });
-    fromEvent(document, "keydown").subscribe((e) => {
+    }));
+    this.subscriptions.add(fromEvent(document, "keydown").subscribe((e) => {
       if ((e as KeyboardEvent).key === "Delete") {
         this.deleteEdge();
       }
-    });
+    }));
   }
 
   public ngOnDestroy(): void {
     this.saveContentToFile();
     this._viewInit = false;
+    this.subscriptions.unsubscribe();
   }
 
   /**
@@ -206,7 +208,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     this.treeService.finalizeStatements();
     if (this._urn !== "" && this.treeService.rootFormula?.statement) {
       // save the current state outside the component
-      this.projectService.syncFileContent(this._urn, formula);
+      this.projectService.syncLocalFileContent(this._urn, formula);
     }
   }
 

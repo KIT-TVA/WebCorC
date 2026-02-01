@@ -8,7 +8,6 @@ import { ICBCFormula, LocalCBCFormula } from "../../../types/CBCFormula";
 import { environment } from "../../../../environments/environment";
 import { catchError, map, Observable, of } from "rxjs";
 import { VerificationService } from "../verification/verification.service";
-import { NetworkStatusService } from "../../networkStatus/network-status.service";
 import { ConsoleService } from "../../console/console.service";
 import { ProjectService } from "../../project/project.service";
 import { CbcFormulaMapperService } from "../../project/mapper/cbc-formula-mapper.service";
@@ -25,7 +24,7 @@ import { TreeService } from "../tree.service";
 @Injectable({
   providedIn: "root",
 })
-export class NetworkTreeService {
+export class NetworkJobService {
   private static readonly verifyPath = "/editor/verify";
   private static readonly verifyWebSocketPath = "/ws/verify/";
   private static readonly verifyResultPath = "/editor/jobs/";
@@ -35,7 +34,6 @@ export class NetworkTreeService {
     private readonly http: HttpClient,
     private readonly mapper: CbcFormulaMapperService,
     private readonly verificationService: VerificationService,
-    private readonly networkStatusService: NetworkStatusService,
     private readonly consoleService: ConsoleService,
     private readonly projectService: ProjectService,
     private readonly treeService: TreeService,
@@ -58,11 +56,9 @@ export class NetworkTreeService {
       params = params.set("projectId", projectId);
     }
 
-    this.networkStatusService.startNetworkRequest();
-
     this.http
       .post<string>(
-        environment.apiUrl + NetworkTreeService.verifyPath,
+        environment.apiUrl + NetworkJobService.verifyPath,
         root
           ? new ApiDiagramFile("", this.mapper.exportFormula(root), "file")
               .content
@@ -74,26 +70,23 @@ export class NetworkTreeService {
       .pipe(
         catchError((error: HttpErrorResponse): Observable<string> => {
           this.consoleService.addErrorResponse(error, "Verification failed");
-          this.networkStatusService.stopNetworkRequest();
           return of();
         }),
       )
       .subscribe((uuid: string) => {
         const ws = new WebSocketService(
-          environment.apiUrl + NetworkTreeService.verifyWebSocketPath + uuid,
+          environment.apiUrl + NetworkJobService.verifyWebSocketPath + uuid,
         );
         ws.messages$.subscribe((msg: string) => {
           if (msg === "verification complete") {
             ws.disconnect();
-            this.networkStatusService.startNetworkRequest();
             this.http
               .get<ICBCFormula>(
-                environment.apiUrl + NetworkTreeService.verifyResultPath + uuid,
+                environment.apiUrl + NetworkJobService.verifyResultPath + uuid,
               )
               .pipe(map((formula) => this.mapper.importFormula(formula)))
               .subscribe((formula: LocalCBCFormula) => {
                 this.verificationService.next(formula, urn);
-                this.networkStatusService.stopNetworkRequest();
                 this.projectService.downloadWorkspace();
               });
           }
@@ -125,11 +118,9 @@ export class NetworkTreeService {
       params = params.set("projectId", projectId);
     }
 
-    this.networkStatusService.startNetworkRequest();
-
     this.http
       .post<string>(
-        environment.apiUrl + NetworkTreeService.verifyPath,
+        environment.apiUrl + NetworkJobService.verifyPath,
         formula
           ? new ApiDiagramFile("", this.mapper.exportFormula(formula), "file")
               .content
@@ -149,7 +140,6 @@ export class NetworkTreeService {
               error,
               `Verification failed for statement "${statementNode.statement.name}"`,
             );
-            this.networkStatusService.stopNetworkRequest();
             onComplete();
             return of();
           }
@@ -157,7 +147,6 @@ export class NetworkTreeService {
             error,
             `Verification failed for statement "${statementNode.statement.name}"`,
           );
-          this.networkStatusService.stopNetworkRequest();
           onComplete();
           return of();
         }),
@@ -168,15 +157,14 @@ export class NetworkTreeService {
           return;
         }
         const ws = new WebSocketService(
-          environment.apiUrl + NetworkTreeService.verifyWebSocketPath + uuid,
+          environment.apiUrl + NetworkJobService.verifyWebSocketPath + uuid,
         );
         ws.messages$.subscribe((msg: string) => {
           if (msg === "verification complete") {
             ws.disconnect();
-            this.networkStatusService.startNetworkRequest();
             this.http
               .get<ICBCFormula>(
-                environment.apiUrl + NetworkTreeService.verifyResultPath + uuid,
+                environment.apiUrl + NetworkJobService.verifyResultPath + uuid,
               )
               .pipe(map((formula) => this.mapper.importFormula(formula)))
               .subscribe((formula: LocalCBCFormula) => {
@@ -185,7 +173,6 @@ export class NetworkTreeService {
                   statementNode,
                   urn,
                 );
-                this.networkStatusService.stopNetworkRequest();
                 onComplete();
               });
           }
@@ -209,10 +196,9 @@ export class NetworkTreeService {
       params = params.set("projectId", projectId);
     }
 
-    this.networkStatusService.startNetworkRequest();
     this.http
       .post(
-        environment.apiUrl + NetworkTreeService.generatePath,
+        environment.apiUrl + NetworkJobService.generatePath,
         root ? this.mapper.exportFormula(root) : undefined,
         {
           params: params,
@@ -226,7 +212,6 @@ export class NetworkTreeService {
             error,
             "Java code generation failed",
           );
-          this.networkStatusService.stopNetworkRequest();
           return of();
         }),
       )
@@ -238,7 +223,6 @@ export class NetworkTreeService {
         a.download = root?.name + ".java";
         a.click();
         window.URL.revokeObjectURL(url);
-        this.networkStatusService.stopNetworkRequest();
       });
   }
 }

@@ -58,7 +58,7 @@ export class VerificationService {
       ) {
         (currentFormula as LocalCBCFormula).statement!.isProven = true;
       }
-      this.projectService.syncFileContent(urn, currentFormula);
+      this.projectService.syncLocalFileContent(urn, currentFormula);
     }
     this.globalSettingsService.isVerifying = false;
     if (formula.isProven) {
@@ -127,9 +127,7 @@ export class VerificationService {
       const subtreeStmt = subtreeStatements[i];
 
       // Find the node corresponding to this statement
-      const node = subtreeNodes.find(
-        (n) => n.statement.id === subtreeStmt.id,
-      );
+      const node = subtreeNodes.find((n) => n.statement.id === subtreeStmt.id);
       if (node) {
         node.statement.isProven = resultStmt.isProven || false;
       }

@@ -98,7 +98,8 @@ export class ApiDiagramFile extends ApiFile {
     formattedContent.preCondition = content.statement.preCondition;
     formattedContent.postCondition = content.statement.postCondition;
     if ("position" in content.statement)
-      formattedContent.position = content.statement.position as IPosition;
+      formattedContent.position =
+        content.position ?? (content.statement.position as IPosition);
     formattedContent.globalConditions = content.globalConditions;
     formattedContent.javaVariables = content.javaVariables;
     formattedContent.renamings = content.renamings;
@@ -123,6 +124,7 @@ export class ApiDiagramFile extends ApiFile {
         local.content.globalConditions,
         local.content.renamings,
         local.content.isProven,
+        local.content.statement?.position,
       ),
       local.inodeType,
     );
@@ -280,8 +282,12 @@ export class LocalDiagramFile extends LocalFile {
         api.content.preCondition,
         api.content.postCondition,
         api.content.statement,
-        api.content.position,
+        {
+          xinPx: api.content.statement?.position?.xinPx ?? 0,
+          yinPx: (api.content.statement?.position?.yinPx ?? 0) - 100,
+        },
       );
+      console.log(rootStmt.position);
     }
 
     return new LocalDiagramFile(
@@ -322,9 +328,10 @@ export class LocalTextFile extends LocalFile {
 }
 
 export function fixUrns(inode: LocalInode, prefix: string = "") {
-  inode.urn = prefix.endsWith("/")
-    ? prefix + inode.urn
-    : prefix + "/" + inode.urn;
+  inode.urn =
+    prefix.endsWith("/") || prefix === ""
+      ? prefix + inode.urn
+      : prefix + "/" + inode.urn;
   if (inode.inodeType === "directory") {
     (inode as LocalDirectory).content.forEach((child) =>
       fixUrns(child, inode.urn),

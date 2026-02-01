@@ -1,9 +1,9 @@
-import { Component } from "@angular/core";
+import { Component, OnDestroy } from "@angular/core";
 
 import { MatButtonModule } from "@angular/material/button";
 import { TreeService } from "../../../services/tree/tree.service";
 import { ProjectService } from "../../../services/project/project.service";
-import { first } from "rxjs";
+import { first, Subscription } from "rxjs";
 import { EditorService } from "../../../services/editor/editor.service";
 import { MatIconModule } from "@angular/material/icon";
 
@@ -18,21 +18,27 @@ import { MatIconModule } from "@angular/material/icon";
   standalone: true,
   styleUrl: "./options.component.scss",
 })
-export class OptionsComponent {
+export class OptionsComponent implements OnDestroy {
+  private subscriptions: Subscription = new Subscription();
+
   constructor(
     private treeService: TreeService,
     private projectService: ProjectService,
     private editorService: EditorService,
   ) {}
 
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+  }
+
   /**
    * Function executed on clicking Reset Positions
    */
   public resetPositions() {
     //TODO: Reimplement
-    this.projectService.explorerNotify.pipe(first()).subscribe(() => {
+    this.subscriptions.add(this.projectService.explorerNotify.pipe(first()).subscribe(() => {
       this.editorService.reload.next();
-    });
+    }));
 
     this.projectService.editorNotify.next();
   }
