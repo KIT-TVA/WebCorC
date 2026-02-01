@@ -34,7 +34,7 @@ import { SimpleStatementNode } from "../../../../types/statements/nodes/simple-s
   ],
   templateUrl: "./simple-statement.component.html",
   standalone: true,
-  styleUrl: "./simple-statement.component.scss",
+  styleUrl: "./simple-statement.component.css",
 })
 export class SimpleStatementComponent extends Refinement implements OnInit {
   @Input() _node!: SimpleStatementNode;

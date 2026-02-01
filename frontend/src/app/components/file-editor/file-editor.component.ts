@@ -15,7 +15,7 @@ import { Subscription } from "rxjs";
   selector: "app-file-editor",
   imports: [FormsModule, NuMonacoEditorModule],
   templateUrl: "./file-editor.component.html",
-  styleUrl: "./file-editor.component.scss",
+  styleUrl: "./file-editor.component.css",
 })
 export class FileEditorComponent implements AfterViewInit, OnDestroy {
   private _urn: string = "";

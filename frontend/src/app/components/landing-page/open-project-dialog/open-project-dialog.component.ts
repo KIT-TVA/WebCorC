@@ -16,7 +16,7 @@ import { InputText } from "primeng/inputtext";
   imports: [FormsModule, Button, FloatLabel, InputText],
   templateUrl: "./open-project-dialog.component.html",
   standalone: true,
-  styleUrl: "./open-project-dialog.component.scss",
+  styleUrl: "./open-project-dialog.component.css",
 })
 export class OpenProjectDialogComponent {
   private _projectId: string = "";

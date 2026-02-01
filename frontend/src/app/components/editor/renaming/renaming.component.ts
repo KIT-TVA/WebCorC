@@ -30,7 +30,7 @@ import {IRenaming} from "../../../types/Renaming";
     imports: [FormsModule, MatButtonModule, MatDividerModule, MatFormFieldModule, MatInputModule, MatListModule, ReactiveFormsModule, MatIconModule, MatTooltipModule],
     templateUrl: './renaming.component.html',
     standalone: true,
-    styleUrl: './renaming.component.scss'
+    styleUrl: './renaming.component.css'
 })
 export class RenamingComponent {
 

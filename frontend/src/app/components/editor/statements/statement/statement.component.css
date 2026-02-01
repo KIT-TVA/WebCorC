@@ -1,0 +1,65 @@
+.refinementBox {
+  border: 2px solid slategray;
+  border-radius: 1em;
+  width: fit-content;
+}
+
+.refinementBoxTitle {
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  margin: 0;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  cursor: move;
+  display: flex;
+}
+.refinementBoxTitle p {
+  margin: 0;
+}
+
+.example-container {
+  border-left-width: 0;
+  background-color: transparent;
+  height: 100%;
+  overflow: hidden;
+}
+.example-sidenav {
+  border-left-width: 0;
+  border-right-width: 0;
+  overflow: hidden;
+}
+.example-sidenav-content {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+
+:host {
+  --mat-sidenav-container-background-color: transparent;
+  background-color: transparent !important;
+}
+
+.verticalButton {
+  position: absolute;
+  overflow: hidden;
+}
+.bottomRight {
+  transform: rotate(-90deg);
+}
+.bottomLeft {
+  transform: rotate(90deg);
+}
+
+.conditionParent {
+  padding-right: 0.7em;
+  padding-left: 0.7em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}

@@ -9,7 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
     selector: 'app-not-found-error-page',
     imports: [MatCardModule, MatIconModule],
     templateUrl: './not-found-error-page.component.html',
-    styleUrl: './not-found-error-page.component.scss'
+    styleUrl: './not-found-error-page.component.css'
 })
 export class NotFoundErrorPageComponent implements AfterViewInit {
 

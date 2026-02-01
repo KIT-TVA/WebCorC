@@ -20,7 +20,7 @@ import { PredicateManagerComponent } from "../predicate-manager/predicate-manage
   ],
   templateUrl: "./editor-bottommenu.component.html",
   standalone: true,
-  styleUrl: "./editor-bottommenu.component.scss",
+  styleUrl: "./editor-bottommenu.component.css",
 })
 export class EditorBottommenuComponent {
   tabValue = signal(0);

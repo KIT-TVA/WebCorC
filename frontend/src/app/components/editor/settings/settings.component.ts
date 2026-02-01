@@ -12,7 +12,7 @@ import {ResetVariant} from "../../../types/ResetVariant";
     ],
     templateUrl: './settings.component.html',
     standalone: true,
-    styleUrl: './settings.component.scss'
+    styleUrl: './settings.component.css'
 })
 export class SettingsComponent {
     private _resetVariant: ResetVariant = ResetVariant.ReingoldTilford

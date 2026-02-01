@@ -7,7 +7,7 @@ import { AbstractStatementNode } from "../../../types/statements/nodes/abstract-
   selector: "app-operations",
   imports: [Button],
   templateUrl: "./operations.component.html",
-  styleUrl: "./operations.component.scss",
+  styleUrl: "./operations.component.css",
 })
 export class OperationsComponent {
   public constructor(private treeservice: TreeService) {}

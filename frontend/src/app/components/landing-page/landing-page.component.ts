@@ -32,7 +32,7 @@ import { LocalDirectory } from "../../services/project/types/api-elements";
   providers: [DialogService],
   templateUrl: "./landing-page.component.html",
   standalone: true,
-  styleUrl: "./landing-page.component.scss",
+  styleUrl: "./landing-page.component.css",
 })
 export class LandingPageComponent {
   /**

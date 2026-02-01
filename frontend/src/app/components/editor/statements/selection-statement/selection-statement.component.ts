@@ -39,7 +39,7 @@ import { HandleComponent } from "ngx-vflow";
     HandleComponent,
   ],
   templateUrl: "./selection-statement.component.html",
-  styleUrl: "./selection-statement.component.scss",
+  styleUrl: "./selection-statement.component.css",
   standalone: true,
 })
 export class SelectionStatementComponent extends Refinement implements OnInit {

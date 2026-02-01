@@ -24,7 +24,7 @@ import { SkipStatement } from "../../../types/statements/strong-weak-statement";
   selector: "app-load-example-dialog",
   imports: [Listbox, Button, FormsModule],
   templateUrl: "./load-example-dialog.component.html",
-  styleUrl: "./load-example-dialog.component.scss",
+  styleUrl: "./load-example-dialog.component.css",
   standalone: true,
 })
 export class LoadExampleDialogComponent {

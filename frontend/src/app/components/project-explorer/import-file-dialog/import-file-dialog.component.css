@@ -1,0 +1,10 @@
+.fileInput {
+    display: none;
+}
+p {
+    padding-bottom: 1em;
+}
+.customFileInput {
+    display: flex;
+    flex-direction: row;
+}

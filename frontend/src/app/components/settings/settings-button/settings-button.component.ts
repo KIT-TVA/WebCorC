@@ -8,7 +8,7 @@ import { SettingsComponent } from "../settings/settings.component";
   imports: [Button],
   providers: [DialogService],
   templateUrl: "./settings-button.component.html",
-  styleUrl: "./settings-button.component.scss",
+  styleUrl: "./settings-button.component.css",
 })
 export class SettingsButtonComponent {
   constructor(public dialogService: DialogService) {}

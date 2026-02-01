@@ -85,7 +85,7 @@ export const GREEN_COLOURED_CONDITIONS = new InjectionToken<ICondition>(
   ],
   templateUrl: "./editor.component.html",
   standalone: true,
-  styleUrl: "./editor.component.scss",
+  styleUrl: "./editor.component.css",
 })
 export class EditorComponent implements AfterViewInit, OnDestroy {
   public showResetButton: boolean = true;

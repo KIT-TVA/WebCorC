@@ -1,0 +1,30 @@
+mat-toolbar > h1 {
+  font-size: 1.7em;
+  color: white;
+  letter-spacing: -1px;
+  font-weight: bold;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.editorWindow {
+  height: calc(100% - 64px);
+}
+
+.consoleWindow {
+  height: 100%
+}
+
+.editor {
+  overflow: hidden;
+}
+
+.mat-badge-content {
+  background-color: red;
+}
+
+.chatWindow {
+  height: 100%;
+}

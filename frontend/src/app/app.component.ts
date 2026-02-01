@@ -48,7 +48,7 @@ import { ConfirmDialog } from "primeng/confirmdialog";
   templateUrl: "./app.component.html",
   providers: [DialogService, MessageService, ConfirmationService],
   standalone: true,
-  styleUrl: "./app.component.scss",
+  styleUrl: "./app.component.css",
 })
 export class AppComponent implements OnInit {
   constructor(

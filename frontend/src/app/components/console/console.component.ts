@@ -24,7 +24,7 @@ import { ProgressSpinner } from "primeng/progressspinner";
   ],
   templateUrl: "./console.component.html",
   standalone: true,
-  styleUrl: "./console.component.scss",
+  styleUrl: "./console.component.css",
 })
 export class ConsoleComponent {
   public constructor(protected service: ConsoleService) {}

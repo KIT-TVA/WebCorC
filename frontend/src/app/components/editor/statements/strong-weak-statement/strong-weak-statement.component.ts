@@ -28,7 +28,7 @@ import { SkipStatementNode } from "../../../../types/statements/nodes/skip-state
   ],
   templateUrl: "./strong-weak-statement.component.html",
   standalone: true,
-  styleUrl: "./strong-weak-statement.component.scss",
+  styleUrl: "./strong-weak-statement.component.css",
 })
 export class StrongWeakStatementComponent extends Refinement {
   private _weakPreCondition: Condition;

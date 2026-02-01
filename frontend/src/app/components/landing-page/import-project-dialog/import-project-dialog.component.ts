@@ -19,7 +19,7 @@ import { Button } from "primeng/button";
   imports: [FormsModule, FileUpload, Button],
   templateUrl: "./import-project-dialog.component.html",
   standalone: true,
-  styleUrl: "./import-project-dialog.component.scss",
+  styleUrl: "./import-project-dialog.component.css",
 })
 export class ImportProjectDialogComponent {
   protected _accepted: boolean = false;

@@ -24,7 +24,7 @@ import { AsyncPipe } from '@angular/common';
   imports: [Textarea, IconField, InputIcon, FloatLabelModule, FormsModule, AsyncPipe],
   templateUrl: './condition-editor.component.html',
   standalone: true,
-  styleUrl: './condition-editor.component.scss',
+  styleUrl: './condition-editor.component.css',
 })
 export class ConditionEditorComponent {
   /**

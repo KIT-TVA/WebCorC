@@ -26,7 +26,7 @@ import { RootStatementNode } from "../../../../types/statements/nodes/root-state
 ],
   templateUrl: "./statement-delegator.component.html",
   standalone: true,
-  styleUrl: "./statement-delegator.component.scss",
+  styleUrl: "./statement-delegator.component.css",
 })
 export class StatementDelegatorComponent {
   @Input() statement!: AbstractStatementNode;

@@ -67,7 +67,7 @@ import { PredicateService } from "../../services/predicates/predicate.service";
   providers: [TreeDragDropService, DialogService],
   templateUrl: "./project-explorer.component.html",
   standalone: true,
-  styleUrl: "./project-explorer.component.scss",
+  styleUrl: "./project-explorer.component.css",
 })
 export class ProjectExplorerComponent {
   menuItems: MenuItem[] = [

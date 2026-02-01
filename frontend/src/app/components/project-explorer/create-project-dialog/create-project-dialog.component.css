@@ -1,0 +1,12 @@
+#projectName {
+    width: 100%;
+}
+
+mat-dialog-actions {
+    display: flex;
+    width: 100%;
+
+    .confirm {
+        margin-left: auto;
+    }
+}
