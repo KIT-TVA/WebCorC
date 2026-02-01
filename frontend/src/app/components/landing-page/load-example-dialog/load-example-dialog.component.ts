@@ -378,5 +378,210 @@ export class LoadExampleDialogComponent {
         ),
       ]),
     },
+    {
+      name: "Bubblesort",
+      icon: "swap_vert",
+      project: new LocalDirectory("", [
+        new LocalDiagramFile(
+          "bubblesort.diagram",
+          new LocalCBCFormula(
+            "bubblesort",
+            new RootStatement(
+              "Root",
+              new Condition("true"),
+              new Condition("containsOldElements(A, \\old(A)) && sort(A)"),
+              new CompositionStatement(
+                "0",
+                new Condition("true"),
+                new Condition("containsOldElements(A, \\old(A)) && sort(A)"),
+                new Condition("i==0"),
+                new Statement(
+                  "1",
+                  new Condition("true"),
+                  new Condition("i==0"),
+                  "i=0;",
+                  new Position(-25, 650),
+                ),
+                new RepetitionStatement(
+                  "2",
+                  new Condition("partSort(A,i) && i < A.length"),
+                  new Condition("partSort(A,i)"),
+                  new CompositionStatement(
+                    "3",
+                    new Condition("partSort(A,i) && i < A.length"),
+                    new Condition("partSort(A,i)"),
+                    new Condition("partSort(A,i) && i < A.length && j == A.length-2"),
+                    new Statement(
+                      "4",
+                      new Condition("partSort(A,i) && i < A.length"),
+                      new Condition(
+                        "partSort(A,i) && i < A.length && j == A.length-2",
+                      ),
+                      "j=A.length-2;",
+                      new Position(450, 1250),
+                    ),
+                    new CompositionStatement(
+                      "5",
+                      new Condition("partSort(A,i) && i < A.length && j == A.length-2"),
+                      new Condition("partSort(A,i)"),
+                      new Condition("partSort(A,i+1)"),
+                      new RepetitionStatement(
+                        "7",
+                        new Condition(
+                          "partSort(A,i) && (\\forall int h; (j < h && h < A.length ==> A[j+1] <= A[h])) && j>=i",
+                        ),
+                        new Condition(
+                          "partSort(A,i) && (\\forall int h; (j < h && h < A.length ==> A[j+1] <= A[h]))",
+                        ),
+                        new CompositionStatement(
+                          "8",
+                          new Condition(
+                            "partSort(A,i) && (\\forall int h; (j < h && h < A.length ==> A[j+1] <= A[h])) && j>=i",
+                          ),
+                          new Condition(
+                            "partSort(A,i) && (\\forall int h; (j < h && h < A.length ==> A[j+1] <= A[h]))",
+                          ),
+                          new Condition(
+                            "partSort(A,i) && (\\forall int h; (j < h && h < A.length ==> A[j] <= A[h]))",
+                          ),
+                          new SelectionStatement(
+                            "10",
+                            new Condition(
+                              "partSort(A,i) && (\\forall int h; (j < h && h < A.length ==> A[j+1] <= A[h])) && j>=i",
+                            ),
+                            new Condition(
+                              "partSort(A,i) && (\\forall int h; (j < h && h < A.length ==> A[j] <= A[h]))",
+                            ),
+                            [
+                              new Condition("A[j] > A[j+1]"),
+                              new Condition("A[j] <= A[j+1]"),
+                            ],
+                            [
+                              new Statement(
+                                "11",
+                                new Condition(
+                                  "partSort(A,i) && (\\forall int h; (j < h && h < A.length ==> A[j+1] <= A[h])) && j>=i & A[j] > A[j+1]",
+                                ),
+                                new Condition(
+                                  "partSort(A,i) && (\\forall int h; (j < h && h < A.length ==> A[j] <= A[h]))",
+                                ),
+                                "tmp = A[j]; A[j] = A[j+1]; A[j+1] = tmp;",
+                                new Position(425, 2625),
+                              ),
+                              new SkipStatement(
+                                "12",
+                                new Condition(
+                                  "partSort(A,i) && (\\forall int h; (j < h && h < A.length ==> A[j+1] <= A[h])) && j>=i & A[j] <= A[j+1]",
+                                ),
+                                new Condition(
+                                  "partSort(A,i) && (\\forall int h; (j < h && h < A.length ==> A[j] <= A[h]))",
+                                ),
+                                new Position(1250, 2600),
+                              ),
+                            ],
+                            false,
+                            new Position(250, 2150),
+                          ),
+                          new Statement(
+                            "9",
+                            new Condition(
+                              "partSort(A,i) && (\\forall int h; (j < h && h < A.length ==> A[j] <= A[h]))",
+                            ),
+                            new Condition(
+                              "partSort(A,i) && (\\forall int h; (j < h && h < A.length ==> A[j+1] <= A[h]))",
+                            ),
+                            "j=j-1;",
+                            new Position(1550, 2175),
+                          ),
+                          new Position(600, 1850),
+                        ),
+                        new Condition("j+1"),
+                        new Condition(
+                          "partSort(A,i) && (\\forall int h; (j < h && h < A.length ==> A[j+1] <= A[h]))",
+                        ),
+                        new Condition("j>=i"),
+                        false,
+                        false,
+                        false,
+                        new Position(300, 1550),
+                      ),
+                      new Statement(
+                        "6",
+                        new Condition("partSort(A,i+1)"),
+                        new Condition("partSort(A,i)"),
+                        "i=i+1;",
+                        new Position(1650, 1550),
+                      ),
+                      new Position(1350, 1250),
+                    ),
+                    new Position(1000, 950),
+                  ),
+                  new Condition("A.length-i"),
+                  new Condition("partSort(A,i)"),
+                  new Condition("i < A.length"),
+                  false,
+                  false,
+                  false,
+                  new Position(750, 650),
+                ),
+                new Position(525, 350),
+              ),
+              new Position(0, 0),
+            ),
+            [
+              new JavaVariable("int[] A", "LOCAL"),
+              new JavaVariable("int i", "LOCAL"),
+              new JavaVariable("int j", "LOCAL"),
+              new JavaVariable("int tmp", "LOCAL"),
+            ],
+            [
+              new Condition("A!=null"),
+              new Condition("j <= A.length-2 && j >=i-1"),
+              new Condition("i >= 0 && i <= A.length"),
+            ],
+          ),
+        ),
+        new LocalDirectory("include", [
+          new LocalTextFile(
+            "include/generatedPredicates.key",
+            "\\predicates {\n" +
+              "partSort(int[], int);\n" +
+              "sort(int[]);\n" +
+              "containsOldElements(int[], int[]);\n" +
+              "}\n" +
+              "\\rules {\n" +
+              "partSort {\n" +
+              "\\schemaVar \\term int[] list;\n" +
+              "\\schemaVar \\term int index;\n" +
+              "\\schemaVar \\variable  int k;\n" +
+              "\\schemaVar \\variable  int m;\n" +
+              "\\find(partSort(list, index))\n" +
+              "\\varcond (\\notFreeIn(k, list), \\notFreeIn(k, index), \\notFreeIn(m, list), \\notFreeIn(m, index))\n" +
+              "\\replacewith ((\\forall int k; (0 <= k & k < index -> (\\forall int m; (k < m & m <length(list) -> list[k] <= list[m])))))\n" +
+              "\\heuristics(simplify)\n" +
+              "};\n" +
+              "sort {\n" +
+              "\\schemaVar \\term int[] list;\n" +
+              "\\schemaVar \\variable  int k;\n" +
+              "\\find(sort(list))\n" +
+              "\\varcond (\\notFreeIn(k, list))\n" +
+              "\\replacewith (\\forall int k; (0 <= k & k <length(list)-1 -> (list[k] <= list[k+1])))\n" +
+              "\\heuristics(simplify)\n" +
+              "};\n" +
+              "containsOldElements {\n" +
+              "\\schemaVar \\term int[] list;\n" +
+              "\\schemaVar \\term int[] oldList;\n" +
+              "\\schemaVar \\variable  int k;\n" +
+              "\\schemaVar \\variable  int z;\n" +
+              "\\find(containsOldElements(list, oldList))\n" +
+              "\\varcond (\\notFreeIn(k, list), \\notFreeIn(k, oldList), \\notFreeIn(z, list), \\notFreeIn(z, oldList))\n" +
+              "\\replacewith (\\forall int k; (0 <= k & k <length(oldList) -> (\\exists int z; (0 <= z & z <length(list) & list[z] = oldList[k]))))\n" +
+              "\\heuristics(simplify)\n" +
+              "};\n" +
+              "}\n",
+          ),
+        ]),
+      ]),
+    },    
   ];
 }
