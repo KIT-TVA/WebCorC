@@ -1,23 +1,23 @@
 <app-statement-base icon="pi pi-sync" [_node]="_node" [refinement]="this">
-  <div style="position: relative; display: flex; align-items: center; height: 100%; width: 230px">
+  <div class="relative flex items-center h-full w-56">
     <app-condition-editor
       placeholder="Invariant"
       [condition]="_node.invariant"
     ></app-condition-editor>
   </div>
-  <div style="position: relative; display: flex; align-items: center; height: 100%; width: 230px">
+  <div class="relative flex items-center h-full w-56">
     <app-condition-editor
       placeholder="Guard"
       [condition]="_node.guard"
     ></app-condition-editor>
   </div>
-  <div style="position: relative; display: flex; align-items: center; height: 100%; width: 230px">
+  <div class="relative flex items-center h-full w-56">
     <app-condition-editor
       placeholder="Variant"
       [condition]="_node.variant"
     ></app-condition-editor>
   </div>
-  <div style="width: fit-content">
+  <div class="w-fit">
     @if (!_node.loopStatementNode) {
       <app-refinement-widget
         text="Loop Statement"

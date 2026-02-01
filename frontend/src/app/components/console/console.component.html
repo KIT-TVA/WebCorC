@@ -11,12 +11,11 @@
             colorFour: '{primary.900}',
           },
         }"
-        class="spinner"
-        style="width: 1rem; height: 1rem"
+        class="spinner w-4 h-4"
       >
       </p-progressSpinner>
       <span
-        style="align-self: center; padding-right: 0.5rem; padding-left: 0.5rem"
+        class="self-center px-2"
       >
         {{ service.loadingMessage() }}
       </span>
@@ -40,8 +39,8 @@
           <span matListItemLine> {{ deconstructLogError(line) }} </span>
         </mat-list-item>
       } @else if (isInfo(line)) {
-        <div style="padding: 0.3rem">
-          <span matListItemTitle style="text-wrap: wrap">
+        <div class="p-1">
+          <span matListItemTitle class="whitespace-normal">
             <i [class]="line.icon ?? 'pi pi-angle-double-right'"></i>
             {{ line.message }}
           </span>

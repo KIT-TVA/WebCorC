@@ -1,4 +1,4 @@
-<div style="width: fit-content" (mousedown)="$event.stopImmediatePropagation()">
+<div class="w-fit" (mousedown)="$event.stopImmediatePropagation()">
   <div (focusout)="conditionEditingFinished.emit()">
     <form>
       <p-icon-field>
@@ -29,8 +29,7 @@
         </p-float-label>
         <p-inputicon
           (click)="askAi()"
-          style="cursor: pointer"
-          class="pi pi-microchip-ai"
+          class="cursor-pointer pi pi-microchip-ai"
         ></p-inputicon>
       </p-icon-field>
     </form>

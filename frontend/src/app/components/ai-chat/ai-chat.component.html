@@ -16,10 +16,10 @@
         }
     </div>
     <div class="aiQuestion">
-        <mat-form-field [style.width]="'100%'" appearance="outline" [formGroup]="questionGroup" (keydown.enter)="onEnter($event)" >
-            <textarea formControlName="question" matNativeControl cdkTextareaAutosize="'false'" placeholder="Ask me in the context" [style.width]="'100%'"></textarea>
+        <mat-form-field class="w-full" appearance="outline" [formGroup]="questionGroup" (keydown.enter)="onEnter($event)" >
+            <textarea formControlName="question" matNativeControl cdkTextareaAutosize="'false'" placeholder="Ask me in the context" class="w-full"></textarea>
             <button matSuffix mat-icon-button (click)="deleteHistory()" matTooltip="Delete message history">
-                <mat-icon [style.color]="'rgb(162,34,35)'">delete</mat-icon>
+                <mat-icon class="text-red-700">delete</mat-icon>
             </button>
             <button matSuffix mat-icon-button (click)="addMessage()" matTooltip="Send message">
                 <mat-icon>send</mat-icon>

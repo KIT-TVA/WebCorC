@@ -20,7 +20,7 @@
       <div class="statement-container">
         <div class="guard">
           <app-condition-editor
-            style="display: inline-block; align-self: center; width: 100%; justify-self: stretch"
+            class="inline-block self-center w-full justify-self-stretch"
             [condition]="guard"
             [inline]="true"
             placeholder="Guard"
@@ -39,10 +39,10 @@
       </div>
     }
   </div>
-  <div style="display: flex; flex-direction: column; width: 0">
-    <div style="height: 3em; width: 0"></div>
+  <div class="flex flex-col w-0">
+    <div class="h-12 w-0"></div>
     @for (guard of _node.guards; track guard; let i = $index) {
-      <div style="height: 5em; width: 0">
+      <div class="h-20 w-0">
         <handle position="right" type="source" [id]="i + ''" />
       </div>
     }

@@ -9,6 +9,7 @@ import { Textarea } from "primeng/textarea";
 import { PredicateService } from "../../../services/predicates/predicate.service";
 import { FormsModule } from "@angular/forms";
 import { ProjectPredicate } from "../../../types/ProjectPredicate";
+import { Message } from "primeng/message";
 
 @Component({
   selector: "app-predicate-manager",
@@ -21,6 +22,7 @@ import { ProjectPredicate } from "../../../types/ProjectPredicate";
     InputText,
     Textarea,
     FormsModule,
+    Message,
   ],
   templateUrl: "./predicate-manager.component.html",
   styleUrl: "./predicate-manager.component.css",

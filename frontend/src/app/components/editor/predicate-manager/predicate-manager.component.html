@@ -1,5 +1,5 @@
 <p-fluid
-  style="display: flex; flex-direction: column; gap: 1rem; padding: 0.5rem"
+  class="flex flex-col gap-4 p-2"
 >
   <p-input-group>
     <p-select (onChange)="selectPredicate()" [(ngModel)]="selectedPredicate" [options]="predicates" optionLabel="name" inputId="id" dataKey="id" placeholder="Select Predicate"> </p-select>
@@ -41,4 +41,7 @@
       (click)="deletePredicate()"
     ></p-button>
   </p-input-group>
+    <p-message icon="pi pi-info-circle" severity="secondary" size="small" variant="text">
+        Predicates you create here will be parsed to include/generatedPredicates.key
+    </p-message>
 </p-fluid>
