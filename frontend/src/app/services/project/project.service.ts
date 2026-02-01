@@ -10,7 +10,7 @@ import {
 } from "./types/project-elements";
 import { ProjectElementsMapperService } from "./types/project-elements-mapper.service";
 import { ProjectStorageService } from "./storage/project-storage.service";
-import { Inode, LocalDirectory } from "./types/api-elements";
+import { LocalDirectory } from "./types/api-elements";
 import { ProjectPredicate } from "../../types/ProjectPredicate";
 
 /**
@@ -208,28 +208,57 @@ export class ProjectService {
    * Delete a project element from the tree
    * @param element
    */
-  public async deleteElement(element: ProjectElement) {
-    let inode: Inode;
-    switch (element.type) {
-      case "CODE_FILE":
-      case "DIAGRAM_FILE":
-        inode = this.mapper.exportFile(element);
-        break;
-      case "DIRECTORY":
-        inode = this.mapper.exportDirectory(element as ProjectDirectory);
-        break;
-      default:
-        throw new Error("Unknown element type");
-    }
-    if (element.serverSideUrn) {
-      await this.network.deleteFile(inode);
-    }
-    const parent = this.getParentDirectory(element);
+  public deleteElement(element: ProjectElement) {
+    const rubbishBinName = ".rubbishBin";
+    let rubbishBin = this.findByUrn(rubbishBinName) as ProjectDirectory;
 
+    if (!rubbishBin) {
+      this.addDirectory("", rubbishBinName);
+      rubbishBin = this.findByUrn(rubbishBinName) as ProjectDirectory;
+    }
+
+    // If the element is already in the rubbish bin, permanently delete it
+    if (element.urn.startsWith(rubbishBinName)) {
+      const parent = this.getParentDirectory(element);
+
+      if (parent) {
+        parent.contents = parent.contents.filter(
+          (child) => child.urn !== element.urn,
+        );
+      }
+    } else {
+      // Move to rubbish bin
+      this.moveElement(element, rubbishBin);
+    }
+
+    this.storage.saveProject(this._rootDir, this._projectName);
+    this._dataChange.next(this._rootDir.contents);
+  }
+
+  public async clearRubbishBin() {
+    const rubbishBinName = ".rubbishBin";
+    const rubbishBin = this.findByUrn("/" + rubbishBinName) as ProjectDirectory;
+
+    if (!rubbishBin) {
+      return;
+    }
+
+    // Recursively delete contents
+    const deleteContents = async (dir: ProjectDirectory) => {
+      for (const item of [...dir.contents]) {
+        if (item.type === "DIRECTORY") {
+          await deleteContents(item as ProjectDirectory);
+        }
+        await this.deleteElement(item);
+      }
+    };
+
+    await deleteContents(rubbishBin);
+
+    // Remove the bin itself
+    const parent = this.getParentDirectory(rubbishBin);
     if (parent) {
-      parent.contents = parent.contents.filter(
-        (child) => child.urn !== element.urn,
-      );
+      parent.removeElement(rubbishBin.name);
     }
     this.storage.saveProject(this._rootDir, this._projectName);
     this._dataChange.next(this._rootDir.contents);
@@ -461,7 +490,7 @@ export class ProjectService {
     target: ProjectElement,
     name?: string,
   ) {
-    const newParentPath = target.path;
+    const newParentPath = target.urn;
     const oldUrn = file.urn + "";
 
     if (
@@ -471,7 +500,6 @@ export class ProjectService {
     ) {
       const newUrn = newParentPath + "/" + (name ? name : file.name);
       file.urn = newUrn;
-
       // If we're moving a directory, recursively update all children URNs
       if (file.type === "DIRECTORY") {
         const dir = file as ProjectDirectory;
@@ -504,6 +532,7 @@ export class ProjectService {
       );
       oldParent.removeElement(file.name);
     }
+    this.storage.saveProject(this._rootDir, this._projectName);
     this._dataChange.next(this._rootDir.contents);
     return true;
   }
