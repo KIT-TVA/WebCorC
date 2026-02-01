@@ -290,6 +290,8 @@ export class ProjectExplorerComponent {
    * @param node the node
    */
   public deleteElement(node: ProjectElement) {
+    //TODO: Put this back in when supported by backend
+    return;
     this.projectService.deleteElement(node);
   }
 
@@ -413,6 +415,8 @@ export class ProjectExplorerComponent {
    * @param event event emitted on dropping the node
    */
   public dropNode(event: TreeNodeDropEvent) {
+    //TODO Put this back in when supported by backend
+    return;
     const node = event.dragNode?.data;
     let target = event.dropNode?.data;
     if (!target) {

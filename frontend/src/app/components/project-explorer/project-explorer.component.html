@@ -7,8 +7,8 @@
   </p-menubar>
   <p-tree
     [value]="treeNodes"
-    [draggableNodes]="true"
-    [droppableNodes]="true"
+    [draggableNodes]="false"
+    [droppableNodes]="false"
     draggableScope="self"
     droppableScope="self"
     (onNodeExpand)="setExpanded($event)"
@@ -55,13 +55,14 @@
             (click)="importElement(node.data)"
           >
           </p-button>
+<!-- TODO: Put back in when supported
           <p-button
             icon="pi pi-file-edit"
             severity="contrast"
             text
             (click)="toggleRename(node.data)"
           >
-          </p-button>
+          </p-button>-->
           <p-button
             icon="pi pi-plus"
             text
@@ -69,6 +70,7 @@
             (click)="addElementToDirectory(node.data)"
           >
           </p-button>
+<!-- TODO: Put back in when supported
           <p-button
             icon="pi pi-trash"
             text
@@ -76,6 +78,7 @@
             (click)="deleteElement(node.data)"
           >
           </p-button>
+-->
         </span>
       </div>
     </ng-template>
@@ -191,6 +194,7 @@
         >
         </p-button>
         <span style="justify-self: end">
+          <!-- TODO: Put back in when supported
           <p-button
             icon="pi pi-file-edit"
             text
@@ -205,6 +209,7 @@
             (click)="deleteElement(node.data)"
           >
           </p-button>
+-->
         </span>
       </div>
     </ng-template>
