@@ -31,7 +31,7 @@ export class FileEditorComponent implements AfterViewInit, OnDestroy {
   ) {}
 
   //Todo: make language configurable
-  public editorOptions = {
+  public editorOptions: any = {
     theme: "vs",
     language: "java",
     scrollBeyondLastLine: false,
@@ -115,6 +115,12 @@ export class FileEditorComponent implements AfterViewInit, OnDestroy {
         language: "plaintext",
         scrollBeyondLastLine: false,
       };
+    }
+
+    if (this._urn === "include/generatedPredicates.key") {
+      this.editorOptions.readOnly = true;
+    } else {
+      this.editorOptions.readOnly = false;
     }
 
     if (newCode) {
