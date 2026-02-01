@@ -18,6 +18,13 @@ export class PredicateService {
   }
   private idCounter = 0;
   public getPredicates() {
+    this.predicates = this.projectService.getPredicates();
+    this.idCounter =
+      this.predicates
+        .map((p) => parseInt(p.id))
+        .reduce((prev, current) => {
+          return Math.max(prev, current);
+        }, 0) + 1;
     return this.predicates;
   }
   public addPredicate() {
