@@ -401,7 +401,7 @@ export class ProjectExplorerComponent {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = this.projectService.projectname + ".json";
+      a.download = this.projectService.projectName + ".json";
       a.click();
       window.URL.revokeObjectURL(url);
     });

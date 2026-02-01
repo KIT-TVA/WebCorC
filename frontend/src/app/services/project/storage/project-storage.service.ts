@@ -15,6 +15,7 @@ export class ProjectStorageService {
   private static readonly projectIdKey = "projectId";
   private static readonly projectNameKey = "projectName";
   private static readonly projectFileTreeKey = "fileTree";
+  private static readonly remoteFileTreeKey = "remoteFileTree";
   private static readonly projectFileUrnPrefix = "_webCorc_";
   private static readonly projectPredicatesKey = "predicates";
 
@@ -75,6 +76,14 @@ export class ProjectStorageService {
     );
   }
 
+  public saveRemoteProject(root: ProjectDirectory, projectname: string) {
+    this.setProjectName(projectname);
+    sessionStorage.setItem(
+      ProjectStorageService.remoteFileTreeKey,
+      JSON.stringify(root),
+    );
+  }
+
   /**
    * Get the slim version of the project tree to get the folder structure after a refresh
    * @returns The project tree without the file contents
@@ -82,6 +91,16 @@ export class ProjectStorageService {
   public getProjectTree(): ProjectDirectory | null {
     const storageContent = sessionStorage.getItem(
       ProjectStorageService.projectFileTreeKey,
+    );
+    if (!storageContent) return null;
+    const iProjectElement: IProjectElement = JSON.parse(storageContent);
+    console.log(iProjectElement);
+    return this.projectElementsMapperService.parseProjectTree(iProjectElement);
+  }
+
+  public getRemoteProjectTree(): ProjectDirectory | null {
+    const storageContent = sessionStorage.getItem(
+      ProjectStorageService.remoteFileTreeKey,
     );
     if (!storageContent) return null;
     const iProjectElement: IProjectElement = JSON.parse(storageContent);

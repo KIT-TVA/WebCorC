@@ -103,7 +103,7 @@ export class LandingPageComponent {
     dialogRef?.onClose.subscribe((selectedExample) => {
       if (selectedExample) {
         this.projectService.importProject(
-          LocalDirectory.fromApi(selectedExample.project),
+          selectedExample.project,
           selectedExample.name,
         );
       }

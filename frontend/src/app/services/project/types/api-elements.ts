@@ -322,9 +322,10 @@ export class LocalTextFile extends LocalFile {
 }
 
 export function fixUrns(inode: LocalInode, prefix: string = "") {
-  inode.urn = prefix.endsWith("/")
-    ? prefix + inode.urn
-    : prefix + "/" + inode.urn;
+  inode.urn =
+    prefix.endsWith("/") || prefix === ""
+      ? prefix + inode.urn
+      : prefix + "/" + inode.urn;
   if (inode.inodeType === "directory") {
     (inode as LocalDirectory).content.forEach((child) =>
       fixUrns(child, inode.urn),

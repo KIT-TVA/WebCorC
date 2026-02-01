@@ -33,10 +33,10 @@ export class CreateProjectDialogComponent {
   }
 
   get projectname() {
-    return this.projectService.projectname;
+    return this.projectService.projectName;
   }
 
   set projectname(name: string) {
-    this.projectService.projectname = name;
+    this.projectService.projectName = name;
   }
 }

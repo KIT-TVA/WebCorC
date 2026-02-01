@@ -7,7 +7,6 @@ import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { NetProject } from "./NetProject";
 import {
   ApiDiagramFile,
-  ApiDirectory,
   ApiTextFile,
   fixUrns,
   Inode,
@@ -95,12 +94,8 @@ export class NetworkProjectService {
       );
       this._projectname = projectData.name;
       this._projectId = projectData.id;
-      const apiDirectory = new ApiDirectory(
-        projectData.files.urn,
-        projectData.files.content,
-      );
       const importedProject = this.projectMapper.importProject(
-        fixUrns(LocalDirectory.fromApi(apiDirectory)) as LocalDirectory,
+        fixUrns(LocalDirectory.fromApi(projectData.files)) as LocalDirectory,
       );
       return {
         project: importedProject,
@@ -120,7 +115,7 @@ export class NetworkProjectService {
    * Upload the given file to the backend
    * @param file The file to upload
    */
-  public async uploadFile(file: Inode) {
+  public async uploadFile(file: Inode): Promise<boolean> {
     const realFile = this.createFileFromInode(file);
     const formData = new FormData();
     formData.append("fileUpload", realFile, file.urn);
@@ -129,11 +124,13 @@ export class NetworkProjectService {
       await firstValueFrom(
         this.http.post(this.buildFileURL(file.urn), formData),
       );
+      return true;
     } catch (error) {
       this.consoleService.addErrorResponse(
         error as HttpErrorResponse,
         "Uploading file " + file.urn,
       );
+      return false;
     }
   }
 
