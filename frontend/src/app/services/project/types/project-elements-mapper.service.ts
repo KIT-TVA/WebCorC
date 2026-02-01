@@ -194,22 +194,25 @@ export class ProjectElementsMapperService {
   }
 
   private parseProjectElement(element: IProjectElement): ProjectElement {
+    let newElement: ProjectElement;
     if (element.type === "DIRECTORY") {
       const dir = element as ProjectDirectory;
-      return new ProjectDirectory(
+      newElement = new ProjectDirectory(
         dir.urn,
         dir.contents.map((el) => this.parseProjectElement(el)),
         dir.present,
       );
-    }
-    if (element.type === "CODE_FILE") {
+    } else if (element.type === "CODE_FILE") {
       const file = element as CodeFile;
-      return new CodeFile(file.urn, file.content, file.present);
-    }
-    if (element.type === "DIAGRAM_FILE") {
+      newElement = new CodeFile(file.urn, file.content, file.present);
+    } else if (element.type === "DIAGRAM_FILE") {
       const file = element as DiagramFile;
-      return new DiagramFile(file.urn, file.formula, file.present);
+      newElement = new DiagramFile(file.urn, file.formula, file.present);
+    } else {
+      throw new Error(`Unknown project element type: ${element.type}`);
     }
-    throw new Error(`Unknown project element type: ${element.type}`);
+    newElement.serverSideUrn = element.serverSideUrn;
+    newElement.renamed = element.renamed;
+    return newElement;
   }
 }

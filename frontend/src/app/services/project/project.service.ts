@@ -10,7 +10,7 @@ import {
 } from "./types/project-elements";
 import { ProjectElementsMapperService } from "./types/project-elements-mapper.service";
 import { ProjectStorageService } from "./storage/project-storage.service";
-import { LocalDirectory } from "./types/api-elements";
+import { Inode, LocalDirectory } from "./types/api-elements";
 import { ProjectPredicate } from "../../types/ProjectPredicate";
 
 /**
@@ -60,8 +60,8 @@ export class ProjectService {
     urn: string,
     directory: ProjectDirectory = this._rootDir,
   ): ProjectElement | null {
-    if (urn === this._rootDir.urn) {
-      return this._rootDir;
+    if (urn === directory.urn) {
+      return directory;
     }
     const parts = urn.split("/").filter((e) => e.length > 0);
     if (parts.length < 1 || directory.urn === urn) {
@@ -186,6 +186,7 @@ export class ProjectService {
 
   public getParentDirectory(
     element: ProjectElement | string,
+    directory: ProjectDirectory = this._rootDir,
   ): ProjectDirectory | undefined {
     let parts: string[] = [];
     if (typeof element === "string") {
@@ -194,12 +195,12 @@ export class ProjectService {
       parts = element.urn.split("/");
     }
     if (parts.length < 2) {
-      return this._rootDir;
+      return directory;
     }
     const parentUrn = parts.slice(0, parts.length - 1).join("/");
-    const parentDir = this.findByUrn(parentUrn);
+    const parentDir = this.findByUrn(parentUrn, directory);
     if (!parentDir || parentDir.type != "DIRECTORY") {
-      return this._rootDir;
+      return directory;
     }
     return parentDir as ProjectDirectory;
   }
@@ -365,10 +366,12 @@ export class ProjectService {
    * Upload the current workspace (optionally waiting for network requests)
    */
   public async uploadWorkspace() {
+    console.log("Before preparing upload", this._rootDir);
     const savedFinished = firstValueFrom(this._savedFinished);
     this._saveNotify.next();
     this.editorNotify.next();
     await savedFinished;
+    console.log("After preparing upload", this._rootDir);
     await this.uploadFolder(this._rootDir);
     return;
   }
@@ -444,6 +447,31 @@ export class ProjectService {
   private async uploadFolder(folder: ProjectDirectory) {
     console.log("upload folder", folder);
     for (const item of folder.contents) {
+      if (item.serverSideUrn && item.serverSideUrn !== item.urn) {
+        const inodeType = item.type === "DIRECTORY" ? "directory" : "file";
+        const inode: Inode = {
+          urn: item.serverSideUrn,
+          inodeType: inodeType,
+        };
+
+        const remoteRoot = this.storage.getRemoteProjectTree();
+        if (remoteRoot) {
+          const remoteElement = this.findByUrn(item.serverSideUrn, remoteRoot);
+          if (remoteElement && remoteElement.urn === item.serverSideUrn) {
+            await this.network.deleteFile(inode);
+
+            const parent = this.getParentDirectory(remoteElement, remoteRoot);
+            if (parent) {
+              parent.removeElement(remoteElement.name);
+              console.log("removed from remote parent");
+            }
+          }
+          this.storage.saveRemoteProject(remoteRoot, this.projectName);
+        }
+
+        item.serverSideUrn = undefined;
+      }
+
       switch (item.type) {
         case "DIRECTORY":
           await this.uploadFolder(item as ProjectDirectory);
@@ -492,6 +520,16 @@ export class ProjectService {
   ) {
     const newParentPath = target.urn;
     const oldUrn = file.urn + "";
+
+    if (!file.serverSideUrn) {
+      const remoteTree = this.storage.getRemoteProjectTree();
+      if (remoteTree) {
+        const remoteElement = this.findByUrn(oldUrn, remoteTree);
+        if (remoteElement) {
+          file.serverSideUrn = oldUrn;
+        }
+      }
+    }
 
     if (
       target instanceof ProjectDirectory &&
