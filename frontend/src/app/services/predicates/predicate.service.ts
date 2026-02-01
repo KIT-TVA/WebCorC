@@ -14,12 +14,23 @@ export class PredicateService {
         .map((p) => parseInt(p.id))
         .reduce((prev, current) => {
           return Math.max(prev, current);
-        }, 0) + 1;
+        }, -1) + 1;
   }
   private idCounter = 0;
   public getPredicates() {
     return this.predicates;
   }
+
+  public retrievePredicates() {
+    this.predicates = this.projectService.getPredicates();
+    this.idCounter =
+      this.predicates
+        .map((p) => parseInt(p.id))
+        .reduce((prev, current) => {
+          return Math.max(prev, current);
+        }, -1) + 1;
+  }
+
   public addPredicate() {
     const newPredicate: ProjectPredicate = {
       id: String(this.idCounter),

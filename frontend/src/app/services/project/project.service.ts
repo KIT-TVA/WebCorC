@@ -340,6 +340,32 @@ export class ProjectService {
 
   public savePredicates(predicates: ProjectPredicate[]) {
     this.storage.setPredicates(predicates);
+
+    const internalDirName = ".internal";
+    const predicatesFileName = "predicates";
+    const predicatesFileExtension = "key";
+    const predicatesFileUrn = `${internalDirName}/${predicatesFileName}.${predicatesFileExtension}`;
+
+    if (!this.findByUrn(internalDirName)) {
+      this.addDirectory("", internalDirName);
+    }
+
+    if (!this.findByUrn(predicatesFileUrn)) {
+      this.addFile(
+        internalDirName,
+        predicatesFileName,
+        predicatesFileExtension,
+      );
+    }
+
+    try {
+      this.syncLocalFileContent(
+        predicatesFileUrn,
+        JSON.stringify(predicates, null, 2),
+      );
+    } catch (e) {
+      console.error(`Could not sync predicates file: ${e}`);
+    }
   }
 
   public getPredicates(): ProjectPredicate[] {
@@ -359,6 +385,7 @@ export class ProjectService {
     this._rootDir = imported;
     this._projectName = projectname;
     this.storage.saveProject(imported, projectname);
+    this.loadPredicatesFromFile();
     this._dataChange.next(this._rootDir.contents);
   }
 
@@ -410,6 +437,7 @@ export class ProjectService {
       this._projectName = localProjectName ?? "";
     }
 
+    this.loadPredicatesFromFile();
     this._dataChange.next(this._rootDir.contents);
   }
 
@@ -610,6 +638,22 @@ export class ProjectService {
 
     this.storage.saveProject(this._rootDir, this._projectName);
     this._dataChange.next(this._rootDir.contents);
+  }
+
+  private async loadPredicatesFromFile() {
+    const predicatesFileUrn = ".internal/predicates.key";
+    try {
+      const content = await this.getFileContent(predicatesFileUrn);
+      if (typeof content === "string") {
+        const predicates = JSON.parse(content) as ProjectPredicate[];
+        this.storage.setPredicates(predicates);
+      }
+    } catch (e) {
+      console.log(
+        "Predicates file not found or invalid, starting with empty predicates.",
+      );
+      this.storage.setPredicates([]);
+    }
   }
 
   public notifyEditortoSave() {

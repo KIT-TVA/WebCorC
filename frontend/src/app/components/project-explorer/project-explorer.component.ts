@@ -153,7 +153,7 @@ export class ProjectExplorerComponent {
     // Build nodes and inject a synthetic RenameProjectElement next to the element being renamed
     const nodes: TreeNode<ProjectElement>[] = [];
 
-    for (const element of content) {
+    for (const element of content.filter(e => !e.name.startsWith('.'))) {
       let icon = "pi pi-file";
       let children: TreeNode<ProjectElement>[] = [];
       const pseudoElement: ProjectElement = element;

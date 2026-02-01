@@ -31,6 +31,7 @@ export class PredicateManagerComponent implements OnInit {
   constructor(private predicateService: PredicateService) {}
 
   ngOnInit() {
+    this.predicateService.retrievePredicates();
     this.predicates = this.predicateService.getPredicates();
   }
 
@@ -47,7 +48,7 @@ export class PredicateManagerComponent implements OnInit {
     this.selectedPredicate.name = this.predicateName;
     this.selectedPredicate.definition = this.predicateDefinition;
     this.selectedPredicate.signature = this.predicateSignature;
-    this.predicateService.save()
+    this.predicateService.save();
   }
 
   protected predicateName: string = "";
