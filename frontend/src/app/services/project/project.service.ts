@@ -311,6 +311,7 @@ export class ProjectService {
     //If file doesn't actually exist yet
     if (this.projectId && needsToBeFetched) {
       content = await this.network.getFileContent(urn);
+      this.syncFileContent(urn, content);
     }
 
     if (!this.projectId && needsToBeFetched) {
@@ -357,13 +358,19 @@ export class ProjectService {
   /**
    * Upload the current workspace (optionally waiting for network requests)
    */
-  public async uploadWorkspace() {
-    const savedFinished = firstValueFrom(this._savedFinished);
-    this._saveNotify.next();
+  public async uploadWorkspace(wait: boolean = false) {
+    if (!wait) {
+      const savedFinished = firstValueFrom(this._savedFinished);
+      this._saveNotify.next();
+      this.editorNotify.next();
+      await savedFinished;
+      await this.uploadFolder(this._rootDir);
+      return;
+    }
+
     this.editorNotify.next();
-    await savedFinished;
+    await firstValueFrom(this.network.requestFinished);
     await this.uploadFolder(this._rootDir);
-    return;
   }
 
   /**
@@ -377,17 +384,21 @@ export class ProjectService {
       this.projectId = storedProjectId;
     }
     if (!storedProjectTree) {
-      await this.network.readProject();
-      this._rootDir = this.storage.getProjectTree() ?? this._rootDir;
-      this._projectname = this.storage.getProjectName() ?? this._projectname;
+      const { project, name, id } = await this.network.readProject();
+      this.storage.saveProject(project, name);
+      this.storage.setProjectId(id);
+      this._rootDir = project;
+      this._projectname = name;
       this._dataChange.next(this._rootDir.contents);
       return;
     }
     if (storedProjectId === this.projectId) {
       if (!storedProjectTree || !storedProjectName) {
-        await this.network.readProject();
-        this._rootDir = this.storage.getProjectTree() ?? this._rootDir;
-        this._projectname = this.storage.getProjectName() ?? this._projectname;
+        const { project, name, id } = await this.network.readProject();
+        this.storage.saveProject(project, name);
+        this.storage.setProjectId(id);
+        this._rootDir = project;
+        this._projectname = name;
         this._dataChange.next(this._rootDir.contents);
         return;
       }

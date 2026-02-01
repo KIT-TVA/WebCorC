@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { environment } from "../../../../environments/environment";
 import { firstValueFrom, Subject } from "rxjs";
 import { ConsoleService } from "../../console/console.service";
-import { ICBCFormula, LocalCBCFormula } from "../../../types/CBCFormula";
+import { LocalCBCFormula } from "../../../types/CBCFormula";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { NetProject } from "./NetProject";
 import {
@@ -14,8 +14,8 @@ import {
   LocalDirectory,
 } from "../types/api-elements";
 import { CbcFormulaMapperService } from "../mapper/cbc-formula-mapper.service";
-import { ProjectStorageService } from "../storage/project-storage.service";
 import { ProjectElementsMapperService } from "../types/project-elements-mapper.service";
+import { ProjectDirectory } from "../types/project-elements";
 
 /**
  * Service to interact with the backend for managing the project via hhtp rest calls.
@@ -33,7 +33,6 @@ export class NetworkProjectService {
     private mapper: CbcFormulaMapperService,
     private projectMapper: ProjectElementsMapperService,
     private consoleService: ConsoleService,
-    private storage: ProjectStorageService,
   ) {}
 
   private _projectId: string | undefined;
@@ -85,26 +84,29 @@ export class NetworkProjectService {
    * Read the project from the backend based on its id
    * @param projectId The project id of the project to read from the backend
    */
-  public async readProject(projectId: string | undefined = this._projectId) {
+  public async readProject(
+    projectId: string | undefined = this._projectId,
+  ): Promise<{ project: ProjectDirectory; name: string; id: string }> {
     this._projectId = projectId;
 
     try {
-      const project = await firstValueFrom(
+      const projectData = await firstValueFrom(
         this.http.get<NetProject>(this.buildProjectURL()),
       );
-      this._projectname = project.name;
-      this._projectId = project.id;
+      this._projectname = projectData.name;
+      this._projectId = projectData.id;
       const apiDirectory = new ApiDirectory(
-        project.files.urn,
-        project.files.content,
+        projectData.files.urn,
+        projectData.files.content,
       );
-      this.storage.saveProject(
-        this.projectMapper.importProject(
-          fixUrns(LocalDirectory.fromApi(apiDirectory)) as LocalDirectory,
-        ),
-        project.name,
+      const importedProject = this.projectMapper.importProject(
+        fixUrns(LocalDirectory.fromApi(apiDirectory)) as LocalDirectory,
       );
-      this.storage.setProjectId(project.id);
+      return {
+        project: importedProject,
+        name: projectData.name,
+        id: projectData.id,
+      };
     } catch (error) {
       this.consoleService.addErrorResponse(
         error as HttpErrorResponse,
@@ -119,26 +121,14 @@ export class NetworkProjectService {
    * @param file The file to upload
    */
   public async uploadFile(file: Inode) {
+    const realFile = this.createFileFromInode(file);
     const formData = new FormData();
-
-    const urn = file.urn;
-
-    let realFile;
-
-    if (file instanceof ApiDiagramFile) {
-      realFile = new File([JSON.stringify(file.content)], urn, {
-        type: "application/json",
-      });
-    } else {
-      realFile = new File([(file as ApiTextFile).content], urn, {
-        type: "text/plain",
-      });
-    }
-
-    formData.append("fileUpload", realFile, urn);
+    formData.append("fileUpload", realFile, file.urn);
 
     try {
-      await firstValueFrom(this.http.post(this.buildFileURL(urn), formData));
+      await firstValueFrom(
+        this.http.post(this.buildFileURL(file.urn), formData),
+      );
     } catch (error) {
       this.consoleService.addErrorResponse(
         error as HttpErrorResponse,
@@ -164,32 +154,31 @@ export class NetworkProjectService {
 
   /**
    * Get the content of the file from the backend.
-   * Caution: Not fully implemented
    * @param urn
    */
   public async getFileContent(urn: string): Promise<string | LocalCBCFormula> {
-    const request = new Request(this.buildFileURL(urn), {
-      method: "GET",
-    });
+    const response = await fetch(this.buildFileURL(urn));
+    const blob = await response.blob();
 
-    return await fetch(request)
-      .then((response: Response) => response.blob())
-      .then(async (blob) => {
-        let file: string | ICBCFormula;
-        if (blob.type === "application/json") {
-          file = JSON.parse(await blob.text());
-        } else {
-          file = await blob.text();
-        }
-        return file;
-      })
-      .then((file) => {
-        if (typeof file === "string") {
-          return file;
-        }
+    if (blob.type === "application/json") {
+      const text = await blob.text();
+      const file = JSON.parse(text);
+      return this.mapper.importFormula(file);
+    } else {
+      return await blob.text();
+    }
+  }
 
-        return this.mapper.importFormula(file);
+  private createFileFromInode(file: Inode): File {
+    if (file instanceof ApiDiagramFile) {
+      return new File([JSON.stringify(file.content)], file.urn, {
+        type: "application/json",
       });
+    } else {
+      return new File([(file as ApiTextFile).content], file.urn, {
+        type: "text/plain",
+      });
+    }
   }
 
   private buildProjectURL(): string {
