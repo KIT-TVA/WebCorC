@@ -27,12 +27,7 @@ import {
   TreeDragDropService,
   TreeNode,
 } from "primeng/api";
-import {
-  Tree,
-  TreeNodeCollapseEvent,
-  TreeNodeDropEvent,
-  TreeNodeExpandEvent,
-} from "primeng/tree";
+import { Tree, TreeNodeCollapseEvent, TreeNodeDropEvent } from "primeng/tree";
 import { Button } from "primeng/button";
 import { InputText } from "primeng/inputtext";
 import { FloatLabel } from "primeng/floatlabel";
@@ -428,9 +423,9 @@ export class ProjectExplorerComponent {
     });
   }
 
-  setExpanded(event: TreeNodeExpandEvent) {
-    this.expandedNodes.push(event.node.data.path);
-    event.node.icon = "pi pi-folder-open";
+  setExpanded(node: TreeNode) {
+    this.expandedNodes.push(node.data.path);
+    node.icon = "pi pi-folder-open";
   }
 
   setCollapsed(event: TreeNodeCollapseEvent) {
@@ -440,8 +435,9 @@ export class ProjectExplorerComponent {
     event.node.icon = "pi pi-folder";
   }
 
-  protected addElementToDirectory(directory: ProjectElement) {
+  protected addElementToDirectory(directory: ProjectElement, node: TreeNode) {
     this.directoryForNewFile = directory;
+    this.setExpanded(node);
     this.treeNodes = this.getTreeNodes(this.projectService.root.content);
   }
 

@@ -10,7 +10,7 @@
     [droppableNodes]="false"
     draggableScope="self"
     droppableScope="self"
-    (onNodeExpand)="setExpanded($event)"
+    (onNodeExpand)="setExpanded($event.node)"
     (onNodeCollapse)="setCollapsed($event)"
     (onNodeDrop)="dropNode($event)"
     emptyMessage="No files yet."
@@ -61,7 +61,7 @@
             icon="pi pi-plus"
             text
             severity="success"
-            (click)="addElementToDirectory(node.data)"
+            (click)="addElementToDirectory(node.data, node)"
           >
           </p-button>
 <!-- TODO: Put back in when supported
