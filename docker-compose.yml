@@ -16,7 +16,7 @@ services:
     restart: always
 
    webcorc-backend:
-    image: ghcr.io/kit-tva/webcorc-backend:latest
+    image: ${BACKEND_IMAGE:-ghcr.io/kit-tva/webcorc-backend:latest}
     build:
       context: backend
     env_file:
@@ -29,7 +29,7 @@ services:
     restart: always
 
    webcorc-frontend:
-    image: ghcr.io/kit-tva/webcorc-frontend:latest
+    image: ${FRONTEND_IMAGE:-ghcr.io/kit-tva/webcorc-frontend:latest}
     build:
       context: frontend
     restart: always

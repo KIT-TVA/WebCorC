@@ -1,0 +1,85 @@
+name: Deploy to Main Server
+
+on:
+  workflow_run:
+    workflows: ["compile-backend"]
+    branches: [main]
+    types: [completed]
+  push:
+    branches: [main]
+
+# Required permissions to push to GHCR
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  be-compile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push Backend
+        run: |
+          # Lowercase the repo name to avoid Docker tag errors
+          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/webcorc-backend-main
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          
+          docker build ./backend --tag $IMAGE_ID:latest --tag $IMAGE_ID:${{ github.sha }}
+          docker push $IMAGE_ID --all-tags
+
+  fe-compile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push Frontend
+        run: |
+          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/webcorc-frontend-main
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          
+          docker build ./frontend --tag $IMAGE_ID:latest --tag $IMAGE_ID:${{ github.sha }}
+          docker push $IMAGE_ID --all-tags
+
+  deploy:
+    needs: ["be-compile", "fe-compile"]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Execute remote SSH commands
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.MAIN_HOST }}
+          username: ${{ secrets.MAIN_USER }}
+          key: ${{ secrets.MAIN_PRIVATE_KEY }}
+          script: |
+            cd /opt/WebCorC
+            
+            # Pull latest changes to get the updated docker-compose.yml
+            git pull
+
+            REPO_OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+            echo "${{ secrets.GITHUB_TOKEN }}" | sudo docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+            sudo docker pull ghcr.io/$REPO_OWNER/webcorc-backend-main:latest
+            sudo docker pull ghcr.io/$REPO_OWNER/webcorc-frontend-main:latest
+
+            # Define image variables for main deployment
+            export BACKEND_IMAGE=ghcr.io/$REPO_OWNER/webcorc-backend-main:latest
+            export FRONTEND_IMAGE=ghcr.io/$REPO_OWNER/webcorc-frontend-main:latest
+
+            # Pass the variables to docker compose
+            sudo -E docker compose up -d --force-recreate
+
+            sudo docker image prune -f
