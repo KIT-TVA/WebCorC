@@ -14,10 +14,6 @@ import {
 import {AiChatComponent} from "../../ai-chat/ai-chat.component";
 import {ConsoleComponent} from "../../console/console.component";
 import {PredicateManagerComponent} from "../predicate-manager/predicate-manager.component";
-import {OperationsComponent} from "../operations/operations.component";
-import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
-import {SettingsComponent} from "../settings/settings.component";
-
 @Component({
     selector: "app-editor-sidemenu",
     imports: [
@@ -36,7 +32,6 @@ import {SettingsComponent} from "../settings/settings.component";
         AiChatComponent,
         ConsoleComponent,
         PredicateManagerComponent,
-        OperationsComponent,
     ],
     templateUrl: "./editor-sidemenu.component.html",
     standalone: true,
@@ -46,7 +41,6 @@ export class EditorSidemenuComponent {
     @ViewChild("variables") public variables!: VariablesComponent;
     @ViewChild("conditions") public conditions!: GlobalConditionsComponent;
     @ViewChild("renaming") public renaming!: RenamingComponent;
-    @ViewChild("settings") public settings!: SettingsComponent;
     @Output() tabOpened = new EventEmitter<boolean>();
 
     tabValue = signal(0);

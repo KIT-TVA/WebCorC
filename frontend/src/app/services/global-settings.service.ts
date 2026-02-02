@@ -1,4 +1,5 @@
-import { Injectable } from "@angular/core";
+import { Injectable, signal } from "@angular/core";
+import { ResetVariant } from "../types/ResetVariant";
 
 @Injectable({
   providedIn: "root",
@@ -8,4 +9,11 @@ export class GlobalSettingsService {
   public showMiniMap: boolean = false;
   public isVerifying: boolean = false;
   public autosave: boolean = false;
+
+  private _resetVariant = signal<ResetVariant>(ResetVariant.ReingoldTilford);
+  readonly resetVariant = this._resetVariant.asReadonly();
+
+  setResetVariant(variant: ResetVariant) {
+    this._resetVariant.set(variant);
+  }
 }

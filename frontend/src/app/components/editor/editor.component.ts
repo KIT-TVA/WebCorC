@@ -430,7 +430,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   }
 
   protected resetNodePosition() {
-    switch (this.sidemenu.settings.resetVariant) {
+    switch (this.globalSettingsService.resetVariant()) {
       case ResetVariant.ReingoldTilford:
         this.resetNodePositionsRT();
         break;
