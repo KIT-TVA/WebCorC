@@ -41,6 +41,7 @@ import { InputIcon } from "primeng/inputicon";
 import { DialogService } from "primeng/dynamicdialog";
 import { TreeService } from "../../services/tree/tree.service";
 import { PredicateService } from "../../services/predicates/predicate.service";
+import { Tag } from "primeng/tag";
 
 /**
  * Component for the file management and navigating between the files,
@@ -63,6 +64,7 @@ import { PredicateService } from "../../services/predicates/predicate.service";
     FloatLabel,
     IconField,
     InputIcon,
+    Tag,
   ],
   providers: [TreeDragDropService, DialogService],
   templateUrl: "./project-explorer.component.html",
@@ -447,4 +449,6 @@ export class ProjectExplorerComponent {
     this.addingToRoot = true;
     this.treeNodes = this.getTreeNodes(this.projectService.root.content);
   }
+
+  protected readonly ProjectElement = ProjectElement;
 }

@@ -168,6 +168,9 @@
           [label]="node.label"
         >
         </p-button>
+          @if ((node.data.urn) === "include/generatedPredicates.key") {
+              <p-tag severity="secondary" icon="pi pi-info-circle" value="read only" class="whitespace-nowrap"/>
+          }
         <span class="self-end">
           <!-- TODO: Put back in when supported
           <p-button
