@@ -1,7 +1,6 @@
 <div class="drawer-content">
   <p-menubar
-    style="border-radius: 0; border: 0; z-index: 1"
-    class="project-actions"
+    class="rounded-none border-0 z-10 project-actions"
     [model]="menuItems"
   >
   </p-menubar>
@@ -33,21 +32,16 @@
     <ng-template
       let-node
       pTemplate="directory"
-      style="width: 100%; box-sizing: content-box"
+      class="w-full box-content"
     >
       <div
-        style="
-          width: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-        "
+        class="w-full flex items-center justify-between"
       >
         <span>
           {{ node.label }}
         </span>
 
-        <span style="justify-self: end">
+        <span class="self-end">
           <p-button
             icon="pi pi-upload"
             severity="contrast"
@@ -85,31 +79,25 @@
     <ng-template
       let-node
       pTemplate="fake"
-      style="width: 100%; box-sizing: content-box"
+      class="w-full box-content"
     >
       <div
-        style="
-          width: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-        "
+        class="w-full flex items-center justify-between"
       >
         <span>
           <p-float-label variant="on">
             <p-icon-field>
-              <input pInputText #newElement [style.width]="'100%'" />
+              <input pInputText #newElement class="w-full" />
               <label for="newElement">New Element</label>
               <p-inputicon
-                class="pi pi-times"
-                style="color: var(--p-danger)"
+                class="pi pi-times text-danger"
                 (click)="deleteElement(node.data)"
               >
               </p-inputicon>
             </p-icon-field>
           </p-float-label>
         </span>
-        <span style="justify-self: end">
+        <span class="self-end">
           <p-button
             icon="pi pi-sitemap"
             text
@@ -144,24 +132,18 @@
     <ng-template
       let-node
       pTemplate="rename"
-      style="width: 100%; box-sizing: content-box"
+      class="w-full box-content"
     >
       <div
-        style="
-          width: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-        "
+        class="w-full flex items-center justify-between"
       >
         <span>
           <p-float-label variant="on">
             <p-icon-field>
-              <input pInputText #renameInput [style.width]="'100%'" />
+              <input pInputText #renameInput class="w-full" />
               <label for="renameInput">Rename Element</label>
               <p-inputicon
-                class="pi pi-check"
-                style="color: var(--p-success)"
+                class="pi pi-check text-success"
                 (click)="renameElement(node.data, renameInput.value)"
               >
               </p-inputicon>
@@ -173,27 +155,23 @@
     <ng-template
       let-node
       pTemplate="file"
-      style="width: 100%; box-sizing: content-box"
+      class="w-full box-content"
     >
       <div
-        style="
-          width: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-        "
+        class="w-full flex items-center justify-between"
       >
         <p-button
-          [style]="{
-            width: '100%',
-          }"
+          class="w-full"
           (click)="navigate(node.data)"
           text
           severity="contrast"
           [label]="node.label"
         >
         </p-button>
-        <span style="justify-self: end">
+          @if ((node.data.urn) === "include/generatedPredicates.key") {
+              <p-tag severity="secondary" icon="pi pi-info-circle" value="read only" class="whitespace-nowrap"/>
+          }
+        <span class="self-end">
           <!-- TODO: Put back in when supported
           <p-button
             icon="pi pi-file-edit"

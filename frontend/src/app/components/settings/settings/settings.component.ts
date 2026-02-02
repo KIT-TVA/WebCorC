@@ -15,7 +15,7 @@ import { TreeService } from "../../../services/tree/tree.service";
   selector: "app-settings",
   imports: [ToggleSwitch, Fieldset, Button, FormsModule, Dialog],
   templateUrl: "./settings.component.html",
-  styleUrl: "./settings.component.scss",
+  styleUrl: "./settings.component.css",
 })
 export class SettingsComponent {
   constructor(

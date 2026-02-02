@@ -40,7 +40,7 @@ import { HandleComponent } from "ngx-vflow";
     HandleComponent,
   ],
   templateUrl: "./composition-statement.component.html",
-  styleUrl: "./composition-statement.component.scss",
+  styleUrl: "./composition-statement.component.css",
   standalone: true,
 })
 export class CompositionStatementComponent

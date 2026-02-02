@@ -41,7 +41,7 @@ import { AiChatService } from "../../../services/ai-chat/ai-chat.service";
   ],
   templateUrl: "./global-conditions.component.html",
   standalone: true,
-  styleUrl: "./global-conditions.component.scss",
+  styleUrl: "./global-conditions.component.css",
 })
 export class GlobalConditionsComponent {
   /**

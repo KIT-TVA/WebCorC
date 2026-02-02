@@ -1,18 +1,12 @@
 <p>Open Project by its id</p>
-<div style="width: 100%">
+<div class="w-full">
   <p-float-label variant="on">
     <input #projectName pInputText fluid [(ngModel)]="projectId" />
     <label for="projectName">Project Id</label>
   </p-float-label>
 </div>
 <div
-  style="
-    width: 100%;
-    display: flex;
-    justify-content: end;
-    gap: 1rem;
-    padding-top: 1em;
-  "
+  class="w-full flex justify-end gap-4 pt-4"
 >
   <p-button text (click)="ref.close()">Abort</p-button>
   <p-button (click)="confirm()" class="confirm"> Confirm </p-button>

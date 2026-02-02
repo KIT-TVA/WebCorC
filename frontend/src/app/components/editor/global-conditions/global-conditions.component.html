@@ -2,7 +2,7 @@
   @for (variableForm of items.controls; track variableForm; let i = $index) {
     <ng-container formArrayName="items">
       <ng-container [formGroupName]="i">
-        <mat-form-field [style.width]="'100%'" (keydown.delete)="onDelete($event, i)">
+        <mat-form-field class="w-full" (keydown.delete)="onDelete($event, i)">
           <mat-label>Condition</mat-label>
           <input matInput formControlName="name">
           <button matSuffix mat-icon-button aria-label="Ask ai" (click)="askAi(i)" (keydown.enter)="$event.preventDefault()" matTooltip="Explain with Ai" matTooltipPosition="before"><mat-icon>psychology_alt</mat-icon></button>
@@ -13,14 +13,14 @@
       </ng-container>
     </ng-container>
   }
-  <mat-form-field [style.width]="'100%'" (keydown.enter)="onEnter($event)">
+  <mat-form-field class="w-full" (keydown.enter)="onEnter($event)">
     <mat-label>Add Condition</mat-label>
     <input matInput formControlName="newCondition" >
     <button matSuffix mat-icon-button aria-label="Add" (click)="addCondition()" #tooltip="matTooltip" matTooltip="Add Condition" matTooltipPosition="left">
       <mat-icon>add</mat-icon>
     </button>
     @if (dirtyState) {
-      <mat-hint [style.color]="'rgb(186, 26, 26)'"> Press enter or click the plus to add the condition  </mat-hint>
+      <mat-hint class="text-red-700"> Press enter or click the plus to add the condition  </mat-hint>
     }
   </mat-form-field>
 </form>

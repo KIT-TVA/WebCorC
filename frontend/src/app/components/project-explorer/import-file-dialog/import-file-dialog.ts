@@ -18,7 +18,7 @@ import { FileUpload } from "primeng/fileupload";
   imports: [FormsModule, Button, FileUpload],
   templateUrl: "./import-file-dialog.component.html",
   standalone: true,
-  styleUrl: "./import-file-dialog.component.scss",
+  styleUrl: "./import-file-dialog.component.css",
 })
 export class ImportFileDialogComponent {
   private _fileContent: LocalCBCFormula | string;

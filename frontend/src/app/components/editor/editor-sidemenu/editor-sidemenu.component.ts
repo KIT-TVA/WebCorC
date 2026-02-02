@@ -40,7 +40,7 @@ import {SettingsComponent} from "../settings/settings.component";
     ],
     templateUrl: "./editor-sidemenu.component.html",
     standalone: true,
-    styleUrl: "./editor-sidemenu.component.scss",
+    styleUrl: "./editor-sidemenu.component.css",
 })
 export class EditorSidemenuComponent {
     @ViewChild("variables") public variables!: VariablesComponent;

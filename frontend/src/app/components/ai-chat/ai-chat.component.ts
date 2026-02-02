@@ -23,7 +23,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     imports: [MatChipsModule, MatInputModule, MatFormFieldModule, MatListModule, MatCardModule, MatButtonModule, MatIconModule, MatMenuModule, MatCheckboxModule, FormsModule, ReactiveFormsModule, MatTooltipModule],
     templateUrl: './ai-chat.component.html',
     standalone: true,
-    styleUrl: './ai-chat.component.scss'
+    styleUrl: './ai-chat.component.css'
 })
 export class AiChatComponent {
 

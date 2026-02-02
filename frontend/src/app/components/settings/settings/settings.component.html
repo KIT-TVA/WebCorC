@@ -1,7 +1,7 @@
-<div style="width: 80rem; max-width: 96vw">
+<div class="w-[80rem] max-w-[96vw]">
   <p-fieldset legend="Appearance">
     <ul>
-      <li style="display: flex; align-content: center; gap: 2rem">
+      <li class="flex items-center gap-8">
         <span> Dark Mode </span>
         <span>
           <p-toggle-switch
@@ -11,14 +11,14 @@
           >
             <ng-template #handle let-checked="checked">
               <i
-                style="font-size: 0.5rem"
+                class="text-xs"
                 [class]="['pi', checked ? 'pi-moon' : 'pi-sun']"
               ></i>
             </ng-template>
           </p-toggle-switch>
         </span>
       </li>
-      <li style="display: flex; align-content: center; gap: 2rem">
+      <li class="flex items-center gap-8">
         <span> Conditions always open </span>
         <span>
           <p-toggle-switch
@@ -28,7 +28,7 @@
           </p-toggle-switch>
         </span>
       </li>
-      <li style="display: flex; align-content: center; gap: 2rem">
+      <li class="flex items-center gap-8">
         <span> Minimap in editor </span>
         <span>
           <p-toggle-switch
@@ -43,7 +43,7 @@
 
   <p-fieldset legend="Syncronization">
     <ul>
-      <li style="display: flex; align-content: center; gap: 2rem">
+      <li class="flex items-center gap-8">
         <span>Autosave</span>
         <span>
           <p-toggle-switch
@@ -80,13 +80,7 @@
   </p-fieldset>
 </div>
 <div
-  style="
-    width: 100%;
-    display: flex;
-    justify-content: end;
-    gap: 1rem;
-    padding-top: 1em;
-  "
+  class="w-full flex justify-end gap-4 pt-4"
 >
   <p-button (click)="ref.close()">Done</p-button>
 </div>
@@ -94,7 +88,7 @@
   header="json dump"
   [modal]="true"
   [(visible)]="dialogVisible"
-  [style]="{ width: '50rem' }"
+  class="w-[50rem]"
   [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
 >
   <pre [innerHTML]="dialogContent"></pre>

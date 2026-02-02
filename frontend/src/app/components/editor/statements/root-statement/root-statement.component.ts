@@ -36,7 +36,7 @@ import { RootStatementNode } from "../../../../types/statements/nodes/root-state
     MatIconModule,
   ],
   templateUrl: "./root-statement.component.html",
-  styleUrl: "./root-statement.component.scss",
+  styleUrl: "./root-statement.component.css",
   standalone: true,
 })
 export class RootStatementComponent extends Refinement {

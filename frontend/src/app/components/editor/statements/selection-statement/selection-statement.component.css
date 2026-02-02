@@ -1,0 +1,35 @@
+.statements {
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+    overflow: visible;
+
+    .first-row {
+        height: 3em;
+        display: grid;
+        place-items: center;
+        color: #e0e0e0;
+    }
+
+    .statement-container {
+        height: 5em;
+        display: flex;
+        flex-direction: row;
+        align-content: center;
+
+        .guard {
+            display: flex;
+            flex-grow: 3;
+            position: relative;
+            height: 100%;
+        }
+
+        .statement {
+            align-content: center;
+            flex-grow: 1;
+            width: 100px;
+            display: grid;
+            place-items: center;
+        }
+    }
+}

@@ -1,0 +1,12 @@
+.monaco {
+    height: 100%;
+    width: 100%;
+    display: block;
+}
+
+.monaco-parent {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    display: block;
+}

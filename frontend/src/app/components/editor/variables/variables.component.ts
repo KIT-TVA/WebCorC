@@ -50,7 +50,7 @@ import { Subscription } from "rxjs";
   ],
   templateUrl: "./variables.component.html",
   standalone: true,
-  styleUrl: "./variables.component.scss",
+  styleUrl: "./variables.component.css",
 })
 export class VariablesComponent implements AfterViewInit, OnDestroy {
   private isEmpty = true;

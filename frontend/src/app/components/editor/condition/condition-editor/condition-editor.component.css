@@ -1,0 +1,19 @@
+div {
+  text-align: center;
+  .ai-icon {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+  }
+  .textarea {
+    resize: none;
+  }
+  .mat-mdc-text-field-wrapper {
+    background-color: rgb(97, 97, 97) !important;
+    color: #e0e0e0 !important;
+  }
+  .mdc-text-field__input {
+    color: #e6e6e6 !important;
+    caret-color:#e0e0e0 !important;
+  }
+}

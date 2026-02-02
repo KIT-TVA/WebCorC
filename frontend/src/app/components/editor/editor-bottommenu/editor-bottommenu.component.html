@@ -1,44 +1,24 @@
 <p-tabs [(value)]="tabValue" [dt]="{ tab: { padding: '0.3rem' } }">
   <p-tablist>
-    <div style="margin-left: auto"></div>
+    <div class="ml-auto"></div>
     <p-tab
       [value]="1"
-      style="
-        display: flex;
-        justify-items: center;
-        gap: 1rem;
-        align-items: center;
-      "
+      class="flex justify-items-center gap-4 items-center"
       ><i class="pi pi-code"></i>Console</p-tab
     >
     <p-tab
       [value]="2"
-      style="
-        display: flex;
-        justify-items: center;
-        gap: 1rem;
-        align-items: center;
-      "
+      class="flex justify-items-center gap-4 items-center"
       ><i class="pi pi-microchip-ai"></i>Ai Chat</p-tab
     >
     <p-tab
       [value]="3"
-      style="
-        display: flex;
-        justify-items: center;
-        gap: 1rem;
-        align-items: center;
-      "
+      class="flex justify-items-center gap-4 items-center"
       ><i class="pi pi-globe"></i>Global</p-tab
     >
     <p-tab
       [value]="4"
-      style="
-        display: flex;
-        justify-items: center;
-        gap: 1rem;
-        align-items: center;
-      "
+      class="flex justify-items-center gap-4 items-center"
     >
       <i class="pi pi-tags"></i>
       Predicates
@@ -53,9 +33,9 @@
   </p-tablist>
   @if (tabValue() > 0) {
     <p-tabpanels>
-      <p-tabpanel [value]="1" style="max-height: 20rem">
-        <div style="max-height: 20rem; overflow-y: scroll">
-          <app-console style="max-height: 20rem" />
+      <p-tabpanel [value]="1" class="max-h-80">
+        <div class="max-h-80 overflow-y-scroll">
+          <app-console class="max-h-80" />
         </div>
       </p-tabpanel>
       <p-tabpanel [value]="2">

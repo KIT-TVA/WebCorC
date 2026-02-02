@@ -8,7 +8,7 @@
   <ng-template #header>
     <p-toolbar
       #boxTitle
-      style="border: none; padding-top: 0; border-radius: 1em"
+      class="border-none pt-0 rounded-2xl"
     >
       <ng-template #start>
         <i [class]="icon"> </i>
@@ -16,7 +16,7 @@
       <ng-template #center>
         <p>
           {{ refinement.getTitle() }}
-          <span style="color: var(--p-surface-400)">{{
+          <span class="text-surface-400">{{
             _node.statement.name
           }}</span>
         </p>
@@ -27,7 +27,8 @@
           outlined
           [severity]="_node.statement.isProven ? 'success' : 'secondary'"
           [disabled]="isVerifying()"
-          [style.cursor]="isVerifying() ? 'wait' : 'pointer'"
+          [class.cursor-wait]="isVerifying()"
+          [class.cursor-pointer]="!isVerifying()"
           [style.height]="'1.5rem'"
           (click)="verifyStatement()"
           size="small"
@@ -40,7 +41,7 @@
               isVerifying() ? 'pi pi-spin pi-spinner' : 'pi pi-check-circle'
             "
           ></i>
-          <span pButtonLabel style="font-weight: normal">
+          <span pButtonLabel class="font-normal">
             {{ _node.statement.isProven ? "verified" : "verify" }}
           </span>
         </button>
@@ -49,7 +50,7 @@
             text
             icon="pi pi-trash"
             severity="danger"
-            [style.cursor]="'pointer'"
+            class="cursor-pointer"
             (click)="deleteRefinement()"
           >
           </p-button>
@@ -58,9 +59,9 @@
     </p-toolbar>
   </ng-template>
 
-  <div style="display: flex">
+  <div class="flex">
     @if (!globalSettingsService.conditionsAlwaysOpen) {
-      <div appGtBorder #preconditionDiv style="width: 50px; min-height: 140px">
+      <div appGtBorder #preconditionDiv class="w-12 min-h-36">
         <mat-drawer-container class="example-container" autosize>
           <mat-drawer #preconditionDrawer class="example-sidenav" mode="side">
             <div class="conditionParent">
@@ -91,7 +92,7 @@
         </mat-drawer-container>
       </div>
     } @else {
-      <div style="width: fit-content" class="conditionParent">
+      <div class="w-fit conditionParent">
         <app-condition-editor
           placeholder="Pre Condition"
           [condition]="_node.precondition"
@@ -100,11 +101,11 @@
       </div>
     }
 
-    <div style="display: flex; align-items: center">
+    <div class="flex items-center">
       <ng-content></ng-content>
     </div>
     @if (!globalSettingsService.conditionsAlwaysOpen) {
-      <div appGtBorder #postconditionDiv style="width: 50px">
+      <div appGtBorder #postconditionDiv class="w-12">
         <mat-drawer-container class="example-container" autosize>
           <mat-drawer
             #postconditionDrawer
@@ -137,7 +138,7 @@
         </mat-drawer-container>
       </div>
     } @else {
-      <div style="width: fit-content" class="conditionParent">
+      <div class="w-fit conditionParent">
         <app-condition-editor
           placeholder="Post Condition"
           [condition]="_node.postcondition"

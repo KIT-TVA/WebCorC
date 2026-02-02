@@ -35,7 +35,7 @@ import { StatementType } from "../../../../types/statements/abstract-statement";
   ],
   templateUrl: "./repetition-statement.component.html",
   standalone: true,
-  styleUrl: "./repetition-statement.component.scss",
+  styleUrl: "./repetition-statement.component.css",
 })
 export class RepetitionStatementComponent extends Refinement implements OnInit {
   @Input() _node!: RepetitionStatementNode;

@@ -66,7 +66,7 @@ import { AsyncPipe } from "@angular/common";
     AsyncPipe,
   ],
   templateUrl: "./statement.component.html",
-  styleUrl: "./statement.component.scss",
+  styleUrl: "./statement.component.css",
   standalone: true,
 })
 export class StatementComponent {

@@ -41,6 +41,7 @@ import { InputIcon } from "primeng/inputicon";
 import { DialogService } from "primeng/dynamicdialog";
 import { TreeService } from "../../services/tree/tree.service";
 import { PredicateService } from "../../services/predicates/predicate.service";
+import { Tag } from "primeng/tag";
 
 /**
  * Component for the file management and navigating between the files,
@@ -63,11 +64,12 @@ import { PredicateService } from "../../services/predicates/predicate.service";
     FloatLabel,
     IconField,
     InputIcon,
+    Tag,
   ],
   providers: [TreeDragDropService, DialogService],
   templateUrl: "./project-explorer.component.html",
   standalone: true,
-  styleUrl: "./project-explorer.component.scss",
+  styleUrl: "./project-explorer.component.css",
 })
 export class ProjectExplorerComponent {
   menuItems: MenuItem[] = [
@@ -77,30 +79,9 @@ export class ProjectExplorerComponent {
       command: () => this.save(),
     },
     {
-      label: "Add",
-      icon: "pi pi-add",
-      items: [
-        {
-          label: "Schema",
-          icon: "pi pi-sitemap",
-          command: () => this.addFileToRoot("schema", "diagram"),
-        },
-        {
-          label: "Helper",
-          icon: "pi pi-code",
-          command: () => this.addFileToRoot("helper", "key"),
-        },
-        {
-          label: "Code",
-          icon: "pi pi-code",
-          command: () => this.addFileToRoot("code", "java"),
-        },
-        {
-          label: "New Directory",
-          icon: "pi pi-folder-plus",
-          command: () => this.addFolderToRoot("directory"),
-        },
-      ],
+      label: "New",
+      icon: "pi pi-plus",
+      command: () => this.prepareAddElementToRoot(),
     },
     {
       label: "Import",
@@ -132,6 +113,7 @@ export class ProjectExplorerComponent {
   // Track the element currently being renamed (ephemeral, UI-only)
   private renamingElement: ProjectElement | null = null;
   private directoryForNewFile: ProjectElement | null = null;
+  private addingToRoot = false;
 
   public constructor(
     public projectService: ProjectService,
@@ -153,7 +135,7 @@ export class ProjectExplorerComponent {
     // Build nodes and inject a synthetic RenameProjectElement next to the element being renamed
     const nodes: TreeNode<ProjectElement>[] = [];
 
-    for (const element of content.filter(e => !e.name.startsWith('.'))) {
+    for (const element of content.filter((e) => !e.name.startsWith("."))) {
       let icon = "pi pi-file";
       let children: TreeNode<ProjectElement>[] = [];
       const pseudoElement: ProjectElement = element;
@@ -212,6 +194,22 @@ export class ProjectExplorerComponent {
       });
     }
 
+    if (content === this.projectService.root.content && this.addingToRoot) {
+      this.addingToRoot = false;
+      nodes.push({
+        key: this.projectService.root.urn + "/new-file",
+        label: "new-file",
+        data: this.projectService.root,
+        droppable: false,
+        draggable: false,
+        expanded: false,
+        icon: "pi pi-file-edit",
+        type: "fake",
+        children: [],
+        leaf: true,
+      } as TreeNode<ProjectElement>);
+    }
+
     // If parentPath has no children with the element we want to rename but the renamingParentPath
     // exactly matches parentPath and the renamingElement is null in the content (edge case),
     // don't inject anything. We only inject next to the matched element.
@@ -232,14 +230,6 @@ export class ProjectExplorerComponent {
     this.projectService.addDirectory(node.path, name);
   }
 
-  public addFolderToRoot(name: string) {
-    if (!name) {
-      return;
-    }
-
-    this.projectService.addDirectory(this.projectService.root.urn, name);
-  }
-
   /**
    * Add a new file to the file tree
    * @param node The parent node
@@ -252,37 +242,6 @@ export class ProjectExplorerComponent {
       return;
     }
     this.projectService.addFile(node.path, name, type);
-  }
-
-  public addFileToRoot(name: string, type: string) {
-    if (!name) {
-      return;
-    }
-
-    const baseFileName = `${name}.${type}`;
-
-    // If there is no file with the same name, create it
-    if (
-      !this.projectService.root.content.some((pe) => pe.name === baseFileName)
-    ) {
-      this.projectService.addFile(this.projectService.root.urn, name, type);
-      return;
-    }
-
-    // Else create the file with the suffix name-i
-    let i = 1;
-    const existingNames = this.projectService.root.content.map((pe) => pe.name);
-
-    // Keep incrementing until a unique name is found
-    while (existingNames.includes(`${name}-${i}.${type}`)) {
-      i++;
-    }
-    // Create the file with the next free suffix
-    this.projectService.addFile(
-      this.projectService.root.urn,
-      `${name}-${i}`,
-      type,
-    );
   }
 
   /**
@@ -485,4 +444,11 @@ export class ProjectExplorerComponent {
     this.directoryForNewFile = directory;
     this.treeNodes = this.getTreeNodes(this.projectService.root.content);
   }
+
+  protected prepareAddElementToRoot() {
+    this.addingToRoot = true;
+    this.treeNodes = this.getTreeNodes(this.projectService.root.content);
+  }
+
+  protected readonly ProjectElement = ProjectElement;
 }

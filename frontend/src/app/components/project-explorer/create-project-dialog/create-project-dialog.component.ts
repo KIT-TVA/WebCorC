@@ -14,7 +14,7 @@ import { FloatLabel } from "primeng/floatlabel";
   imports: [FormsModule, Button, InputText, FloatLabel],
   templateUrl: "./create-project-dialog.component.html",
   standalone: true,
-  styleUrl: "./create-project-dialog.component.scss",
+  styleUrl: "./create-project-dialog.component.css",
 })
 export class CreateProjectDialogComponent {
   protected loading = false;

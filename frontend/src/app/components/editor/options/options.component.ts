@@ -16,7 +16,7 @@ import { MatIconModule } from "@angular/material/icon";
   imports: [MatButtonModule, MatIconModule],
   templateUrl: "./options.component.html",
   standalone: true,
-  styleUrl: "./options.component.scss",
+  styleUrl: "./options.component.css",
 })
 export class OptionsComponent implements OnDestroy {
   private subscriptions: Subscription = new Subscription();

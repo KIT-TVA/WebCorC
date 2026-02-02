@@ -1,4 +1,4 @@
-<form [formGroup]="variables" style="display: flex; flex-direction: column; gap: 0.5rem">
+<form [formGroup]="variables" class="flex flex-col gap-2">
   @for (variableForm of items.controls; track variableForm; let i = $index) {
     <ng-container formArrayName="items">
       <ng-container [formGroupName]="i">
@@ -17,8 +17,7 @@
           <p-inputicon
             (keydown.enter)="$event.preventDefault()"
             (click)="removeVariable(i)"
-            style="cursor: pointer"
-            class="pi pi-minus"
+            class="cursor-pointer pi pi-minus"
           ></p-inputicon>
         </p-icon-field>
       </ng-container>
@@ -40,12 +39,11 @@
     <p-inputicon
       (keydown.enter)="$event.preventDefault()"
       (click)="addVariable()"
-      style="cursor: pointer"
-      class="pi pi-plus"
+      class="cursor-pointer pi pi-plus"
     ></p-inputicon>
   </p-icon-field>
   @if (dirtyState) {
-    <mat-hint [style.color]="'rgb(186, 26, 26)'">
+    <mat-hint class="text-red-700">
       Press enter or click the plus to add the variable
     </mat-hint>
   }

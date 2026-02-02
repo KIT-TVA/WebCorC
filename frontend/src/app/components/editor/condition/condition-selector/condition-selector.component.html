@@ -1,7 +1,7 @@
 <ul>
   @for (conflict of conflicts; track i; let i = $index) {
-    <li style="display: flex; flex-direction: row; gap: 2rem">
-      <div style="display: flex; flex-direction: column">
+    <li class="flex flex-row gap-8">
+      <div class="flex flex-col">
         <app-condition-editor [condition]="conflict.version1">
         </app-condition-editor>
         <p-button
@@ -15,7 +15,7 @@
           (click)="_selectCondition(true, conflicts[i])"
         ></p-button>
       </div>
-      <div style="display: flex; width: fit-content; flex-direction: column">
+      <div class="flex w-fit flex-col">
         <app-condition-editor [condition]="conflict.version2">
         </app-condition-editor>
         <p-button

@@ -1,6 +1,3 @@
-@use '@angular/material' as mat;
-
-// Customize the entire app. Change :root to your selector if you want to scope the styles.
 mat-toolbar > h1 {
   font-size: 1.7em;
   color: white;
