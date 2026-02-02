@@ -543,7 +543,7 @@ export class LoadExampleDialogComponent {
         ),
         new LocalDirectory("include", [
           new LocalTextFile(
-            "include/generatedPredicates.key",
+            "include/bubblesort.key",
             "\\predicates {\n" +
               "partSort(int[], int);\n" +
               "sort(int[]);\n" +
