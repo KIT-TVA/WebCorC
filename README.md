@@ -56,6 +56,8 @@ For more in-depth information on the concepts, visit the [CorC Wiki](https://kit
 - **Containerization**: Docker & Docker Compose
 - **Reverse Proxy**: Caddy
 
+> **Browser Note**: WebCorC does not support WebKit-based browsers such as Safari.
+> Please use browsers like Chrome, Edge, or Firefox.
 ---
 
 ## 🚀 Getting Started
