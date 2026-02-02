@@ -29,6 +29,7 @@
           [disabled]="isVerifying()"
           [class.cursor-wait]="isVerifying()"
           [class.cursor-pointer]="!isVerifying()"
+          [style.height]="'1.5rem'"
           (click)="verifyStatement()"
           size="small"
           [dt]="compactButton"
