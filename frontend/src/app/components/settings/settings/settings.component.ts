@@ -10,10 +10,12 @@ import { ProjectService } from "../../../services/project/project.service";
 import { Dialog } from "primeng/dialog";
 import { prettyPrintJson } from "pretty-print-json";
 import { TreeService } from "../../../services/tree/tree.service";
+import { ResetVariant } from "../../../types/ResetVariant";
+import { MatRadioButton, MatRadioGroup } from "@angular/material/radio";
 
 @Component({
   selector: "app-settings",
-  imports: [ToggleSwitch, Fieldset, Button, FormsModule, Dialog],
+  imports: [ToggleSwitch, Fieldset, Button, FormsModule, Dialog, MatRadioGroup, MatRadioButton],
   templateUrl: "./settings.component.html",
   styleUrl: "./settings.component.scss",
 })
@@ -56,4 +58,6 @@ export class SettingsComponent {
     this.dialogContent = prettyPrintJson.toHtml(this.treeService.dump());
     this.dialogVisible = true;
   }
+
+  protected readonly ResetVariant = ResetVariant;
 }
