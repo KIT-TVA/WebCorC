@@ -61,6 +61,7 @@ export class AppComponent implements OnInit {
     private snackBar: MatSnackBar,
     protected globalSettingsService: GlobalSettingsService,
     private confirmationService: ConfirmationService,
+    private messageService: MessageService,
   ) {}
 
   public ngOnInit(): void {
@@ -88,7 +89,23 @@ export class AppComponent implements OnInit {
         header: "Unsaved Changes",
         icon: "pi pi-exclamation-triangle",
         accept: () => {
-          this.openNewProjectDialog();
+          this.openNewProjectDialog()?.onClose.subscribe((created) => {
+            if (created) {
+              this.projectService.uploadWorkspace().then(() => {
+                this.messageService.add({
+                  summary: "Save successful",
+                  severity: "success",
+                });
+                this.verify();
+              });
+            } else {
+              this.messageService.add({
+                summary: "Save cancelled",
+                detail: "No project specified to save to",
+                severity: "warn",
+              });
+            }
+          });
         },
         reject: () => {
           this.globalSettingsService.isVerifying = true;
@@ -110,7 +127,7 @@ export class AppComponent implements OnInit {
   }
 
   private openNewProjectDialog() {
-    this.dialogService.open(CreateProjectDialogComponent, {
+    return this.dialogService.open(CreateProjectDialogComponent, {
       header: "Select Project",
       modal: true,
     });
