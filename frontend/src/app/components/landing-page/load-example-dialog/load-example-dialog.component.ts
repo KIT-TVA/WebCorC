@@ -536,7 +536,7 @@ export class LoadExampleDialogComponent {
             ],
             [
               new Condition("A!=null"),
-              new Condition("j <= A.length-2 && j >=i-1"),
+              new Condition("j <= A.length-2 && j >= i"),
               new Condition("i >= 0 && i <= A.length"),
             ],
           ),
