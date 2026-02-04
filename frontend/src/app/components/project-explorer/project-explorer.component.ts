@@ -37,6 +37,7 @@ import { DialogService } from "primeng/dynamicdialog";
 import { TreeService } from "../../services/tree/tree.service";
 import { PredicateService } from "../../services/predicates/predicate.service";
 import { Tag } from "primeng/tag";
+import { Tooltip } from "primeng/tooltip";
 
 /**
  * Component for the file management and navigating between the files,
@@ -60,6 +61,7 @@ import { Tag } from "primeng/tag";
     IconField,
     InputIcon,
     Tag,
+    Tooltip,
   ],
   providers: [TreeDragDropService, DialogService],
   templateUrl: "./project-explorer.component.html",
