@@ -536,6 +536,7 @@ export class LoadExampleDialogComponent {
             ],
             [
               new Condition("A!=null"),
+              new Condition("(\forall int m; (0 <= m && m < A.length ==> (\forall int n; (0 <= n && n < A.length ==> (m != n ==> A[m] != A[n])))))"),
               new Condition("j <= A.length-2 && j >= i"),
               new Condition("i >= 0 && i <= A.length"),
             ],
