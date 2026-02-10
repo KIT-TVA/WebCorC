@@ -1,7 +1,6 @@
 services:
   rustfs:
     image: rustfs/rustfs:latest
-
     env_file:
       - docker-compose.env
     ports:
@@ -13,11 +12,10 @@ services:
       RUSTFS_CONSOLE_ADDRESS: "0.0.0.0:9001"
       RUSTFS_CONSOLE_ENABLE: "true"
       RUSTFS_EXTERNAL_ADDRESS: ":9000"
-      RUSFTFS_CORS_ALLOWED_ORIGINS: "*"
+      RUSTFS_CORS_ALLOWED_ORIGINS: "*"   # fixed typo here
       RUSTFS_CONSOLE_CORS_ALLOWED_ORIGINS: "*"
       RUSTFS_ACCESS_KEY: "root"
       RUSTFS_SECRET_KEY: "changeme"
-
 
   mongo:
     image: mongo
@@ -32,6 +30,11 @@ services:
       - docker-compose.env
     environment:
       DEVELOPMENT: true
+      AWS_ACCESS_KEY_ID: root        # added for Micronaut
+      AWS_SECRET_ACCESS_KEY: changeme  # added for Micronaut
+      AWS_REGION: us-east-1          # added for Micronaut
+      MICRONAUT_ENVIRONMENTS: dev
+      MICRONAUT_APPLICATION_ALLOW_DEFAULT_CREDENTIALS: "true"   # <--- added here
     ports:
       - "8081:8080"
     develop:

@@ -1,0 +1,51 @@
+services:
+  rustfs:
+    image: rustfs/rustfs:latest
+    container_name: rustfs
+    env_file:
+      - docker-compose.env
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    networks:
+      - webcorc-net
+
+  mongo:
+    image: mongo
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    networks:
+      - webcorc-net
+
+  webcorc-backend:
+    image: webcorc-be:fmae
+    container_name: webcorc-backend
+    env_file:
+      - docker-compose.env
+    environment:
+      MICRONAUT_SERVER_HOST: "0.0.0.0"
+      DEVELOPMENT: "true"
+    ports:
+      - "8081:8080"
+    depends_on:
+      - mongo
+      - rustfs
+    networks:
+      - webcorc-net
+
+  webcorc-frontend:
+    image: webcorc-fe:fmae
+    container_name: webcorc-frontend
+    env_file:
+      - docker-compose.env
+    ports:
+      - "4200:4200"
+    depends_on:
+      - webcorc-backend
+    networks:
+      - webcorc-net
+
+networks:
+  webcorc-net:
+    name: webcorc-net
