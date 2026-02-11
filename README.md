@@ -12,7 +12,7 @@
 
 ---
 
-## 📖 Project Overview
+## Project Overview
 
 **WebCorC** is a modern, web-based evolution of the Eclipse-based [CorC](https://github.com/KIT-TVA/CorC) tool. It provides a graphical and textual Integrated Development Environment (IDE) designed to support the **Correctness-by-Construction (CbC)** approach to software development.
 
@@ -24,21 +24,124 @@ Correctness-by-Construction is a methodology where programs are developed increm
 
 > **Live Demo**: Try out the public instance at [corc.informatik.kit.edu](https://corc.informatik.kit.edu/)
 
-For more in-depth information on the concepts, visit the [CorC Wiki](https://kit-tva.github.io/WebCorC/).
+---
+
+## Artifact Evaluation Instructions
+
+For the FM'26 artifact evaluation, we provide two multi-platform Docker images.
+
+### Prerequisites
+- Docker ≥ 24.x  
+- Docker Compose v2
+
+### Artifact Setup Instructions
+
+The following steps must be executed **in the unpacked artifact archive**, i.e., in the directory where the `README.md` file is located.
+
+#### 1. Load the Prebuilt Docker Images
+
+Load the backend and frontend images provided with the artifact:
+
+```bash
+docker load < webcorc-be-fm.tar.xz
+docker load < webcorc-fe-fm.tar.xz
+```
+
+#### 2. Start the Artifact Evaluation Setup
+
+```bash
+docker compose -f artifacteval-compose.yml up -d
+```
+
+After startup completes, the WebCorC web interface will be available at:
+
+```
+http://localhost:4200
+```
+
+> **Browser Note**: WebCorC does not support WebKit-based browsers such as Safari.
+> Please use browsers like Chrome, Edge, or Firefox.
+
+#### 3. Stopping the System
+
+```bash
+docker compose -f artifacteval-compose.yml down
+```
+
+#### (4.) Local Build Fallback
+
+```bash
+docker compose -f docker-compose.dev.yml up --build
+```
+
+This builds all images locally from the Dockerfiles.
 
 ---
 
-## ✨ Key Features
+## Reproduction of Examples from Tutorial Paper
 
-- **Web-Based IDE**: Accessible from any modern browser without complex local installation requirements for users.
-- **Graphical & Textual Editing**: Flexible views to suit different development preferences.
-- **Incremental Refinement**: Step-by-step guidance to build correct software.
-- **Integrated Verification**: Built-in support for verifying refinement steps against formal specifications.
-- **Modern Stack**: Built with performance and developer experience in mind using Angular and Micronaut.
+
+### 0. Important Note
+WebCorC stores a project ID in the browser session.\
+We recommend accessing WebCorC in **incognito/private browser tabs** to
+avoid state conflicts.
+
+
+Before loading an example in a project already containing files, you **must reset the project** .
+
+You can do this in one of the following ways:
+
+-   **Option A (Recommended):**\
+    Open examples in a new **incognito/private browser tab**.
+
+-   **Option B (Manual Reset):**
+
+    1.  Click the **settings wheel** in the top bar.\
+    2.  Click the red button **"Resetting project ID"**.
+    3.  Load example as described below.
+
+### 1. Transaction Example
+
+The first example from the tutorial paper is the **Transaction** algorithm.\
+It can be reconstructed manually using the instructions from Detours 1-3 of
+the paper, but it is also fully available as a predefined example.
+
+#### Steps for Loading the Predefined Example
+
+1.  On the landing page, click **Load Example**.
+2.  Select **Transaction** and **Load Example**.
+3.  Open the **Project Explorer** on the left side.
+4.  Select the file **transaction.diagram**.
+5.  Click into the editor to close the project explorer.
+6.  Click the **Verify** button in the top-right corner.
+7.  Confirm the **saving** dialog.
+8.  Wait until verification completes (this may take a few seconds).
+9.  Successful verification is indicated by the green **Verified** icons in the refinements of the program and in the **Console** which can be opened on the right-hand side of the editor.
+
+### 2. BubbleSort Example
+
+The second example from the tutorial paper is **BubbleSort**.\
+It can be constructed following the paper's theoretical descriptions or loaded
+directly as a predefined example.
+
+> **Important:** Make sure to **reset the project** before loading this example (see
+> above).
+
+#### Steps for Loading the Predefined Example
+
+1.  On the landing page, click **Load Example**.
+2.  Select **Bubblesort** and **Load Example**.
+3.  Open the **Project Explorer** on the left side.
+4.  Select the file **bubblesort.diagram**.
+5.  Click into the editor to close the project explorer.
+6.  Click the **Verify** button in the top-right corner.
+7.  Confirm the **saving** dialog.
+8.  Wait until verification completes (this may take a few seconds).
+9.  Successful verification is indicated by the green **Verified** icons in the refinements of the program and in the **Console** which can be opened on the right-hand side of the editor.
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 ### Frontend
 - **Framework**: [Angular 19](https://angular.dev/)
@@ -56,75 +159,9 @@ For more in-depth information on the concepts, visit the [CorC Wiki](https://kit
 - **Containerization**: Docker & Docker Compose
 - **Reverse Proxy**: Caddy
 
-> **Browser Note**: WebCorC does not support WebKit-based browsers such as Safari.
-> Please use browsers like Chrome, Edge, or Firefox.
 ---
 
-## 🚀 Getting Started
-
-You can run WebCorC entirely using Docker, or set up the development environment manually.
-
-### Prerequisites
-- **Git**
-- **Docker** & **Docker Compose** (for containerized run)
-- **Java 21 JDK** (for manual backend run)
-- **Node.js** (for manual frontend run)
-
-### Option 1: Quick Start (Docker)
-The easiest way to get up and running is with Docker Compose. This will spin up the Frontend, Backend, Database, and Caddy server.
-
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/KIT-TVA/WebCorC.git
-    cd WebCorC
-    ```
-
-2.  **Start the development environment:**
-    ```bash
-    docker compose -f docker-compose.dev.yml up --build
-    ```
-    > **Tip**: Press `w` in the terminal after starting to enable **Hot Reloading** via Docker Compose Watch.
-
-3.  **Access the application:**
-    Open your browser and navigate to `http://localhost`.
-> **Note**: For the AI-Features to work, you'll need to also add your OpenAPI key to the docker-compose.env
-### Option 2: Manual Development Setup
-
-If you prefer to run services individually for debugging or native performance:
-
-#### Backend Setup
-The backend exposes a REST API and verifies your CbC programs.
-
-1.  Navigate to the backend directory:
-    ```bash
-    cd backend
-    ```
-2.  Run the application using the Maven wrapper:
-    ```bash
-    ./mvnw mn:run
-    ```
-    *The backend Swagger UI will be available at: `http://localhost:8080/swagger-ui`*
-
-#### Frontend Setup
-The frontend provides the user interface.
-
-1.  Navigate to the frontend directory:
-    ```bash
-    cd frontend
-    ```
-2.  Install dependencies:
-    ```bash
-    npm install
-    ```
-3.  Start the development server:
-    ```bash
-    npm run ng serve
-    ```
-    *Access the frontend at: `http://localhost:4200`*
-
----
-
-## 📂 Project Structure
+##  Project Structure
 
 ```
 WebCorC/
