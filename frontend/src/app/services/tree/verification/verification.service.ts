@@ -174,4 +174,8 @@ export class VerificationService {
       }
     }
   }
+
+  abort(urn: string) {
+    this.globalSettingsService.isVerifying = false;
+  }
 }

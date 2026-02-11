@@ -101,6 +101,7 @@
           <p-button
             icon="pi pi-sitemap"
             text
+            pTooltip="Diagram file"
             severity="contrast"
             (click)="addFile(node.data, newElement.value, 'diagram')"
           >
@@ -109,18 +110,21 @@
             text
             severity="contrast"
             icon="pi pi-code"
+            pTooltip="Java file"
             (click)="addFile(node.data, newElement.value, 'java')"
           >
           </p-button>
           <p-button
             text
             severity="contrast"
-            icon="pi pi-code"
+            icon="pi pi-key"
+            pTooltip="Key file"
             (click)="addFile(node.data, newElement.value, 'key')"
           >
           </p-button>
           <p-button
             icon="pi pi-folder"
+            pTooltip="Directory"
             (click)="addFolder(node.data, newElement.value)"
             severity="contrast"
             text

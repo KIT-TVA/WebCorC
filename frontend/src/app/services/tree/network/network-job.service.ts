@@ -69,7 +69,12 @@ export class NetworkJobService {
       )
       .pipe(
         catchError((error: HttpErrorResponse): Observable<string> => {
-          this.consoleService.addErrorResponse(error, "Verification failed");
+          console.log(error);
+          this.consoleService.addErrorResponse(
+            error,
+            `Verification failed: ${error.error._embedded.errors[0].message}`,
+          );
+          this.verificationService.abort(urn);
           return of();
         }),
       )
@@ -132,20 +137,21 @@ export class NetworkJobService {
       .pipe(
         catchError((error: HttpErrorResponse): Observable<string> => {
           // Handle 500 and other errors
+          console.log(error);
           if (error.status === 500 || error.status >= 400) {
             // Mark statement as unverified
             statementNode.statement.isProven = false;
             this.treeService.refreshNodes();
             this.consoleService.addErrorResponse(
               error,
-              `Verification failed for statement "${statementNode.statement.name}"`,
+              `Verification failed for statement "${statementNode.statement.name}": ${error.error._embedded.errors[0].message}`,
             );
             onComplete();
             return of();
           }
           this.consoleService.addErrorResponse(
             error,
-            `Verification failed for statement "${statementNode.statement.name}"`,
+            `Verification failed for statement "${statementNode.statement.name}": ${error.error._embedded.errors[0].message}`,
           );
           onComplete();
           return of();
