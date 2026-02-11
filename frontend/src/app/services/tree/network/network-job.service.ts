@@ -74,6 +74,7 @@ export class NetworkJobService {
             error,
             `Verification failed: ${error.error._embedded.errors[0].message}`,
           );
+          this.verificationService.abort(urn);
           return of();
         }),
       )
