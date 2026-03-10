@@ -73,10 +73,13 @@ export class AiChatComponent {
         this._chatservice.deleteHistory()
     }
 
-    public getSeverity(message: AiMessage): 'info' | 'secondary' {
+    public getResponseType(message: AiMessage): 'info' | 'secondary' {
         return message.isResponse ? "secondary" : "info"
     }
 
+    public getChatRole(message: AiMessage): string {
+        return message.isResponse ? "message-response" : "message-question"
+    }
     /**
      * The messages listed in this component.
      */

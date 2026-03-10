@@ -52,12 +52,13 @@
 /*  max-width: 50em;*/
 /*}*/
 
-/* Layout: toolbar sticks to bottom of parent */
+/* Layout: toolbar at bottom, messages scroll with visible edges */
 .chat-container {
   display: flex;
   flex-direction: column;
   height: 100%;
   width: 400px;
+  overflow: hidden;
 }
 
 .message-container {
@@ -66,8 +67,42 @@
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  margin: 10px;
+  gap: 8px;
+  padding: 10px 12px;
+  box-sizing: border-box;
+}
+
+/* AI responses on the left */
+.message-response {
+  align-self: flex-start;
+  max-width: 85%;
+  min-width: 0;
+}
+
+/* User messages on the right */
+.message-question {
+  align-self: flex-end;
+  max-width: 85%;
+  min-width: 0;
+}
+
+/* Message box: no clip, allow vertical growth, force text to wrap */
+.message-container ::ng-deep .p-message {
+  margin: 0;
+  flex-shrink: 0;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.message-container ::ng-deep .p-message .p-message-content,
+.message-container ::ng-deep .p-message .p-message-text {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .chat-toolbar {

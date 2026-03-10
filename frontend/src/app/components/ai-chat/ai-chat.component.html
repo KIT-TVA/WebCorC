@@ -27,12 +27,10 @@
 <!--        </mat-form-field>-->
 <!--    </div>-->
 <!--</div>-->
-<div class="chat-container" style="display: flex; flex-direction: column; height: 100%; width: 400px;">
-    <div class="message-container" style="display:flex; flex-direction: column; gap: 5px; margin: 10px">
+<div class="chat-container">
+    <div class="message-container">
         @for (message of messages; track message.id) {
-            <p-message [severity]="getSeverity(message)">
-                {{message.content}}
-            </p-message>
+            <p-message [class]="getChatRole(message)" [severity]="getResponseType(message)">{{message.content}}</p-message>
         } @empty {
         }
     </div>
