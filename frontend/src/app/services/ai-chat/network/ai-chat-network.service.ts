@@ -4,23 +4,22 @@ import { ConsoleService } from "../../console/console.service";
 import { catchError, Observable, of, Subject } from "rxjs";
 import {
   AiMessage,
-  OpenAiMessage,
-  OpenAiRequest,
-  OpenAiResponse,
+  LLMMessage,
+  LLMProviderType,
+  LLMRequest,
+  LLMResponse,
 } from "../ai-message";
 import { environment } from "../../../../environments/environment";
 
 /**
- * Service for sending the message in the ai chat to the backend to get a answer answered by a llm.
- * This service expects a request and response in the format of the openai response api.
- * {@see https://platform.openai.com/docs/api-reference/responses/create}
+ * Service for sending the message in the ai chat to the backend to get an answer from an LLM.
+ * Supports multiple providers via the provider/model parameters.
  */
 @Injectable({
   providedIn: "root",
 })
 export class AiChatNetworkService {
   private static readonly path = "/editor/askquestion";
-  private static readonly model = "gpt-4-turbo";
   private _answer = new Subject<string>();
 
   public constructor(
@@ -29,34 +28,37 @@ export class AiChatNetworkService {
   ) {}
 
   /**
-   * Send the history to the backend to get a response from the llm.
+   * Send the history to the backend to get a response from the selected LLM.
    * @param messages The messages to include in the context for the answer.
+   * @param provider The LLM provider to use.
+   * @param model The specific model name.
    */
-  public sendHistory(messages: AiMessage[]): void {
-    const context: OpenAiMessage[] = [];
+  public sendHistory(messages: AiMessage[], provider: LLMProviderType, model: string): void {
+    const context: LLMMessage[] = [];
 
     for (const message of messages) {
       context.push(message.export());
     }
 
-    const request: OpenAiRequest = {
-      model: AiChatNetworkService.model,
+    const request: LLMRequest = {
+      model: model,
+      provider: provider,
       input: context,
     };
 
     this.http
-      .post<OpenAiResponse>(
+      .post<LLMResponse>(
         environment.apiUrl + AiChatNetworkService.path,
         request,
       )
       .pipe(
-        catchError((error: HttpErrorResponse): Observable<OpenAiResponse> => {
+        catchError((error: HttpErrorResponse): Observable<LLMResponse> => {
           this.consoleService.addErrorResponse(error, "Asking LLM question");
           return of();
         }),
       )
       .subscribe((response) => {
-        this._answer.next(response.output[0].content[0].text);
+        this._answer.next(response.text);
       });
   }
 

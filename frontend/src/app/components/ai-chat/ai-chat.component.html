@@ -28,7 +28,7 @@
 <!--    </div>-->
 <!--</div>-->
 <div class="chat-container">
-    <div class="message-container">
+    <div class="message-container" #messageContainer>
         @for (message of messages; track message.id) {
             <p-message [class]="getChatRole(message)" [severity]="getResponseType(message)">{{message.content}}</p-message>
         } @empty {
@@ -36,7 +36,8 @@
     </div>
     <p-toolbar class="chat-toolbar">
         <ng-template #start>
-            <p-button icon="pi pi-plus" text></p-button>
+            <p-button [label]="selectedProviderLabel" icon="pi pi-chevron-down" text (click)="modelMenu.toggle($event)"></p-button>
+            <p-menu #modelMenu [model]="modelMenuItems" [popup]="true" appendTo="body"></p-menu>
         </ng-template>
         <ng-template #center>
             <div class="input-wrapper" [formGroup]="questionGroup">

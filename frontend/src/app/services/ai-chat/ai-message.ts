@@ -29,65 +29,39 @@ export class AiMessage {
     }
 
     /**
-     * Export to open ai compatible message for processing via api calls.
+     * Export to LLM-compatible message for processing via api calls.
      */
-    public export() : OpenAiMessage {
+    public export() : LLMMessage {
         return {role : this._role, content: this._content}
     }
 }
 
 
 /**
- * Message in the input of the {@see OpenAiRequest } 
+ * Single message in the input of the LLM request.
  */
-export interface OpenAiMessage {
+export interface LLMMessage {
     role : string
     content : string
 }
 
 /**
- * Request body of the response api of openai {@see https://platform.openai.com/docs/api-reference/responses/create}
+ * Available LLM provider identifiers matching the backend enum.
  */
-export interface OpenAiRequest {
+export type LLMProviderType = "OPENAI" | "ANTHROPIC" | "XAI" | "GOOGLE"
+
+/**
+ * Request body sent to the backend /editor/askquestion endpoint.
+ */
+export interface LLMRequest {
     model : string
-    input : OpenAiMessage[]
+    provider : LLMProviderType
+    input : LLMMessage[]
 }
 
 /**
- * Content of the output of the OpenAiReponse {@see OpenAiOutput }
+ * Simplified response from the backend (provider-agnostic).
  */
-export interface OpenAiOutputContent {
-    type : string
+export interface LLMResponse {
     text : string
-    annotations : []
-}
-
-/**
- * Single element in the output of the OpenAiResponse which includes meta data
- * {@see OpenAiResponse }
- * 
-*/
-export interface OpenAiOutput {
-    type : string
-    id : string
-    status : string
-    role : messageRoles
-    content : OpenAiOutputContent[]
-}
-
-/**
- * Response of the openai responses api. Not complete
- * {@see https://platform.openai.com/docs/api-reference/responses/create}
- */
-export interface OpenAiResponse {
-    id : string
-    object : string
-    created : number
-    status : string
-    error : string | null
-    incomplete_details : string | null
-    instructions : string | null
-    max_output_tokens : null
-    model : string
-    output : OpenAiOutput[]
 }

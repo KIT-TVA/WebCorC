@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {AfterViewChecked, Component, ElementRef, ViewChild} from '@angular/core';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {MatChipsModule} from '@angular/material/chips';
@@ -9,13 +9,15 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {AiMessage} from '../../services/ai-chat/ai-message';
-import {AiChatService} from '../../services/ai-chat/ai-chat.service';
+import {AiChatService, LLM_PROVIDERS, LLMProviderOption} from '../../services/ai-chat/ai-chat.service';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {Message} from "primeng/message";
 import {Toolbar} from "primeng/toolbar";
 import {Button} from "primeng/button";
 import {Textarea} from "primeng/textarea";
+import {Menu} from "primeng/menu";
+import {MenuItem} from "primeng/api";
 
 
 /**
@@ -23,52 +25,56 @@ import {Textarea} from "primeng/textarea";
  */
 @Component({
     selector: 'app-ai-chat',
-    imports: [MatChipsModule, MatInputModule, MatFormFieldModule, MatListModule, MatCardModule, MatButtonModule, MatIconModule, MatMenuModule, MatCheckboxModule, FormsModule, ReactiveFormsModule, MatTooltipModule, Message, Toolbar, Button, Textarea],
+    imports: [MatChipsModule, MatInputModule, MatFormFieldModule, MatListModule, MatCardModule, MatButtonModule, MatIconModule, MatMenuModule, MatCheckboxModule, FormsModule, ReactiveFormsModule, MatTooltipModule, Message, Toolbar, Button, Textarea, Menu],
     templateUrl: './ai-chat.component.html',
     standalone: true,
     styleUrl: './ai-chat.component.css'
 })
-export class AiChatComponent {
+export class AiChatComponent implements AfterViewChecked {
+
+    @ViewChild('messageContainer') private messageContainer!: ElementRef<HTMLDivElement>;
 
     private _chatservice: AiChatService
     private _questionGroup: FormGroup = this.fb.group({
         question: ""
     })
+    private _lastMessageCount = 0;
 
-    /**
-     * Constructor for depdendency injection
-     * @param aichatservice Service for holding and mangement of the messages
-     * @param fb Formbuilder for defining the question input
-     */
+    modelMenuItems: MenuItem[] = LLM_PROVIDERS.map(p => ({
+        label: p.label,
+        command: () => this.selectProvider(p)
+    }));
+
     constructor(aichatservice: AiChatService, private fb: FormBuilder) {
         this._chatservice = aichatservice
     }
 
-    /**
-     * Triggered on pressing Enter in the formular for the question at the button of the component.
-     * This function prevents the default behaviour of submitting the formular.
-     * @param event The event which gets triggered on pressing enter in the formular
-     */
+    ngAfterViewChecked(): void {
+        if (this.messages.length !== this._lastMessageCount) {
+            this._lastMessageCount = this.messages.length;
+            this.scrollToBottom();
+        }
+    }
+
+    private scrollToBottom(): void {
+        const el = this.messageContainer?.nativeElement;
+        if (el) {
+            el.scrollTop = el.scrollHeight;
+        }
+    }
+
     public onEnter(event: Event) {
         event.preventDefault()
         this.addMessage()
     }
 
-    /**
-     * Add a new Message with the content of the question input in the form.
-     * Clears the content of the question input in the form, when the question gets added.
-     */
     public addMessage(): void {
-        if (!(this._questionGroup.get("question")!.value.trim())) return; //if message contains only white-spaces return
+        if (!(this._questionGroup.get("question")!.value.trim())) return;
         if (this._chatservice.addMessage(this._questionGroup.get("question")!.value)) {
             this._questionGroup.get("question")!.setValue("")
         }
-
     }
 
-    /**
-     * Delete the current history
-     */
     public deleteHistory(): void {
         this._chatservice.deleteHistory()
     }
@@ -80,18 +86,20 @@ export class AiChatComponent {
     public getChatRole(message: AiMessage): string {
         return message.isResponse ? "message-response" : "message-question"
     }
-    /**
-     * The messages listed in this component.
-     */
+
     public get messages(): AiMessage[] {
         return this._chatservice.messages
     }
 
-    /**
-     * Form for the question input at the bottom of the component.
-     */
     public get questionGroup(): FormGroup {
         return this._questionGroup
     }
 
+    public get selectedProviderLabel(): string {
+        return this._chatservice.selectedProvider.label
+    }
+
+    private selectProvider(provider: LLMProviderOption): void {
+        this._chatservice.selectedProvider = provider
+    }
 }

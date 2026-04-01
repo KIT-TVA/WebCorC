@@ -3,12 +3,14 @@ package edu.kit.cbc.editor;
 import edu.kit.cbc.common.Problem;
 import edu.kit.cbc.common.corc.cbcmodel.CbCFormula;
 import edu.kit.cbc.common.corc.codegeneration.CodeGenerator;
+import edu.kit.cbc.editor.llm.LLMClientRegistry;
 import edu.kit.cbc.editor.llm.LLMQueryDto;
 import edu.kit.cbc.editor.llm.LLMResponse;
-import edu.kit.cbc.editor.llm.OpenAIClient;
 import edu.kit.cbc.projects.files.controller.FilesController;
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
+import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Controller;
@@ -22,18 +24,22 @@ import jakarta.validation.Valid;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 @Controller("/editor")
 @ExecuteOn(TaskExecutors.BLOCKING)
 public class EditorController {
 
+    // #region agent log
+    private static final Logger LOGGER = Logger.getGlobal();
+    // #endregion
     private final FilesController filesController;
-    private final OpenAIClient openai;
+    private final LLMClientRegistry llmRegistry;
     private final VerificationOrchestrator orchestrator;
 
-    EditorController(FilesController filesController, OpenAIClient openai, VerificationOrchestrator orchestrator) {
+    EditorController(FilesController filesController, LLMClientRegistry llmRegistry, VerificationOrchestrator orchestrator) {
         this.filesController = filesController;
-        this.openai = openai;
+        this.llmRegistry = llmRegistry;
         this.orchestrator = orchestrator;
     }
 
@@ -81,7 +87,22 @@ public class EditorController {
     @Post(uri = "/askquestion")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public HttpResponse<LLMResponse> askQuestion(@Body @Valid LLMQueryDto query) {
-        return HttpResponse.ok(openai.sendQuery(query));
+    public HttpResponse<?> askQuestion(@Body @Valid LLMQueryDto query) {
+        // #region agent log
+        try {
+            LLMResponse result = llmRegistry.getClient(query.provider()).sendQuery(query);
+            LOGGER.info("askQuestion succeeded, returning 200");
+            return HttpResponse.ok(result);
+        } catch (HttpClientResponseException e) {
+            String body = e.getResponse().getBody(String.class).orElse("no body");
+            LOGGER.severe(String.format("askQuestion caught HttpClientResponseException, forwarding to client. Status=%d, Body=%s",
+                e.getStatus().getCode(), body));
+            return HttpResponse.status(HttpStatus.valueOf(e.getStatus().getCode())).body(body);
+        } catch (Exception e) {
+            LOGGER.severe(String.format("askQuestion caught unexpected exception: %s: %s",
+                e.getClass().getSimpleName(), e.getMessage()));
+            return HttpResponse.serverError(e.getMessage());
+        }
+        // #endregion
     }
 }
