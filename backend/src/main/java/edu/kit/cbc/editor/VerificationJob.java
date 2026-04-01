@@ -11,9 +11,11 @@ import java.time.Duration;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.logging.Logger;
@@ -24,9 +26,9 @@ public class VerificationJob extends Thread {
 
     private static final String LOGGER_FORMAT = "%s %s\n";
 
-    @Getter private String log;
+    @Getter private List<String> logMessages;
     @Getter private boolean hasResult = false;
-    private HashSet<Function<String, Boolean>> listeners;
+    private Set<Function<String, Boolean>> listeners;
 
     private ProofContext.ProofContextBuilder context;
     private Optional<String> projectId;
@@ -37,8 +39,8 @@ public class VerificationJob extends Thread {
     private static final Logger LOGGER = Logger.getGlobal();
 
     VerificationJob(Optional<String> projectId, CbCFormula formula, FilesController filesController, Runnable onFinished) throws IOException {
-        log = "";
-        listeners = new HashSet<Function<String, Boolean>>();
+        logMessages = new CopyOnWriteArrayList<>();
+        listeners = new CopyOnWriteArraySet<>();
         this.projectId = projectId;
         this.formula = formula;
         this.filesController = filesController;
@@ -138,7 +140,7 @@ public class VerificationJob extends Thread {
     }
 
     private void log(String message) {
-        log += String.format(LOGGER_FORMAT, this.getCurrentTimestamp(), message);
+        logMessages.add(String.format(LOGGER_FORMAT, this.getCurrentTimestamp(), message));
 
         //Call all listeners. The listener returns true if it detects that its WebSocket connection was closed,
         //so it will be removed from the listener pool
