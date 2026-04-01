@@ -6,7 +6,9 @@ export class WebSocketService {
     public messages$ = this.messagesSubject.asObservable();
 
     constructor(url: string) {
-        this.socket = new WebSocket(url);
+        const absoluteUrl = new URL(url, window.location.href);
+        absoluteUrl.protocol = absoluteUrl.protocol.replace('http', 'ws');
+        this.socket = new WebSocket(absoluteUrl.href);
 
         this.socket.onopen = (event) => {
             console.log("Websocket connected:", event);

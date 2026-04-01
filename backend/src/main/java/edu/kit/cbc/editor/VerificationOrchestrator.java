@@ -45,7 +45,7 @@ public class VerificationOrchestrator {
     }
 
     public String[] getJobLog(UUID jobId) {
-        return jobs.get(jobId).getLog().split("\n");
+        return jobs.get(jobId).getLogMessages().toArray(new String[0]);
     }
 
     public boolean addListener(UUID jobId, Function<String, Boolean> onMessage) {
