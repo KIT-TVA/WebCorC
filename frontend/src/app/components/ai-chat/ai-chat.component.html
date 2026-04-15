@@ -1,62 +1,30 @@
-<!--<div class="aiChatWindow">-->
-<!--    <div class="aiChatHistory">-->
-<!--        @for (message of messages; track message.id) {-->
-<!--            <div class="message">-->
-<!--                <mat-card appearance="outlined" [class]="getClasses(message)">-->
-<!--                    <mat-card-content>-->
-<!--                        {{message.content}}-->
-<!--                    </mat-card-content>-->
-<!--                 </mat-card>-->
-<!--            </div>-->
-<!--            -->
-<!--        } @empty {-->
-<!--            <div class="emptyMessage">-->
-<!--               <p>No Messages</p>-->
-<!--            </div>-->
-<!--        }-->
-<!--    </div>-->
-<!--    <div class="aiQuestion">-->
-<!--        <mat-form-field class="w-full" appearance="outline" [formGroup]="questionGroup" (keydown.enter)="onEnter($event)" >-->
-<!--            <textarea formControlName="question" matNativeControl cdkTextareaAutosize="'false'" placeholder="Ask me in the context" class="w-full"></textarea>-->
-<!--            <button matSuffix mat-icon-button (click)="deleteHistory()" matTooltip="Delete message history">-->
-<!--                <mat-icon class="text-red-700">delete</mat-icon>-->
-<!--            </button>-->
-<!--            <button matSuffix mat-icon-button (click)="addMessage()" matTooltip="Send message">-->
-<!--                <mat-icon>send</mat-icon>-->
-<!--            </button>-->
-<!--        </mat-form-field>-->
-<!--    </div>-->
-<!--</div>-->
-<div class="chat-container">
-    <div class="message-container" #messageContainer>
+<div class="aiChatWindow">
+    <div class="aiChatHistory">
         @for (message of messages; track message.id) {
-            <p-message [class]="getChatRole(message)" [severity]="getResponseType(message)">{{message.content}}</p-message>
+            <div class="message">
+                <mat-card appearance="outlined" [class]="getClasses(message)">
+                    <mat-card-content>
+                        {{message.content}}
+                    </mat-card-content>
+                 </mat-card>
+            </div>
+            
         } @empty {
+            <div class="emptyMessage">
+               <p>No Messages</p>
+            </div>
         }
     </div>
-    <p-toolbar class="chat-toolbar">
-        <ng-template #start>
-            <p-button [label]="selectedProviderLabel" icon="pi pi-chevron-down" text (click)="modelMenu.toggle($event)"></p-button>
-            <p-menu #modelMenu [model]="modelMenuItems" [popup]="true" appendTo="body"></p-menu>
-        </ng-template>
-        <ng-template #center>
-            <div class="input-wrapper" [formGroup]="questionGroup">
-                <textarea
-                        formControlName="question"
-                        (keydown.Enter)="onEnter($event)"
-                        class="chat-input"
-                        rows=1
-                        pTextarea
-                        [autoResize]="true"
-                        placeholder="Ask me a question.."
-                        fluid
-                >
-                </textarea>
-            </div>
-        </ng-template>
-        <ng-template #end>
-            <p-button icon="pi pi-send" text (click)="addMessage()"></p-button>
-        </ng-template>
-    </p-toolbar>
-
+    <div class="aiQuestion">
+        <mat-form-field class="w-full" appearance="outline" [formGroup]="questionGroup" (keydown.enter)="onEnter($event)" >
+            <textarea formControlName="question" matNativeControl cdkTextareaAutosize="'false'" placeholder="Ask me in the context" class="w-full"></textarea>
+            <button matSuffix mat-icon-button (click)="deleteHistory()" matTooltip="Delete message history">
+                <mat-icon class="text-red-700">delete</mat-icon>
+            </button>
+            <button matSuffix mat-icon-button (click)="addMessage()" matTooltip="Send message">
+                <mat-icon>send</mat-icon>
+            </button>
+        </mat-form-field>
+    </div>
 </div>
+

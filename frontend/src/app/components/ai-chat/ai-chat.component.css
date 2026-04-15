@@ -1,111 +1,53 @@
-/*.aiChatWindow {*/
-/*  height: 100%;*/
-/*  width: 100%;*/
-/*  overflow: hidden;*/
-/*  display: flex;*/
-/*  flex-direction: column;*/
-/*}*/
-
-/*.aiChatHistory {*/
-/*  flex: 1;*/
-/*  width: calc(100% - 5px - 2px);*/
-/*  margin-left: 5px;*/
-/*  margin-right: 2px;*/
-/*  overflow-y: scroll;*/
-
-/*  .message {*/
-/*    margin-top: 5px;*/
-/*    position: relative;*/
-/*    display: flex;*/
-/*    flex-direction: row;*/
-/*    width: 100%;*/
-
-/*    .inContext {*/
-/*      color: #009682;*/
-/*    }*/
-/*  }*/
-
-
-/*  .response {*/
-/*    left: 0;*/
-/*    max-width: 98%;*/
-/*  }*/
-
-/*  .question {*/
-/*    margin-left: auto;*/
-/*    margin-right: 5px;*/
-/*    max-width: 98%;*/
-/*    background-color: #5c79bc;*/
-/*  }*/
-
-/*  .emptyMessage {*/
-/*    text-align: center;*/
-/*  }*/
-/*}*/
-
-/*.aiQuestion {*/
-/*  position: relative;*/
-/*  bottom: 0;*/
-/*  right: 0;*/
-/*  align-self: end;*/
-/*  width: 100%;*/
-/*  max-width: 50em;*/
-/*}*/
-
-/* Layout: toolbar at bottom, messages scroll with visible edges */
-.chat-container {
-  display: flex;
-  flex-direction: column;
+.aiChatWindow {
   height: 100%;
-  width: 400px;
+  width: 100%;
   overflow: hidden;
-}
-
-.message-container {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 10px 12px;
-  box-sizing: border-box;
 }
 
-/* AI responses on the left */
-.message-response {
-  align-self: flex-start;
-  max-width: 85%;
-  min-width: 0;
+.aiChatHistory {
+  flex: 1;
+  width: calc(100% - 5px - 2px);
+  margin-left: 5px;
+  margin-right: 2px;
+  overflow-y: scroll;
+
+  .message {
+    margin-top: 5px;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+
+    .inContext {
+      color: #009682;
+    }
+  }
+
+
+  .response {
+    left: 0;
+    max-width: 98%;
+  }
+
+  .question {
+    margin-left: auto;
+    margin-right: 5px;
+    max-width: 98%;
+    background-color: #5c79bc;
+  }
+
+  .emptyMessage {
+    text-align: center;
+  }
 }
 
-/* User messages on the right */
-.message-question {
-  align-self: flex-end;
-  max-width: 85%;
-  min-width: 0;
-}
-
-/* Message box: no clip, allow vertical growth, force text to wrap */
-.message-container ::ng-deep .p-message {
-  margin: 0;
-  flex-shrink: 0;
+.aiQuestion {
+  position: relative;
+  bottom: 0;
+  right: 0;
+  align-self: end;
   width: 100%;
-  min-width: 0;
-  box-sizing: border-box;
-}
-
-.message-container ::ng-deep .p-message .p-message-content,
-.message-container ::ng-deep .p-message .p-message-text {
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  word-break: break-word;
-  max-width: 100%;
-  min-width: 0;
-}
-
-.chat-toolbar {
-  flex-shrink: 0;
-  width: 100%;
+  max-width: 50em;
 }

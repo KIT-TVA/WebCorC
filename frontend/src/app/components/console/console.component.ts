@@ -43,16 +43,7 @@ export class ConsoleComponent {
    */
   public deconstructLogError(line: ConsoleErrorLine): string {
     if (line.error instanceof HttpErrorResponse) {
-      // #region agent log
-      const base = "(" + line.error.status + ") " + line.error.statusText;
-      if (line.error.error) {
-        const body = typeof line.error.error === 'string'
-          ? line.error.error
-          : JSON.stringify(line.error.error);
-        return base + ': ' + body;
-      }
-      return base;
-      // #endregion
+      return "(" + line.error.status + ") " + line.error.statusText;
     }
 
     return line.error as string;

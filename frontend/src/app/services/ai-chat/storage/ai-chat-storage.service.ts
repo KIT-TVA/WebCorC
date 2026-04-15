@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AiMessage, LLMMessage } from '../ai-message';
+import { AiMessage, OpenAiMessage } from '../ai-message';
 
 /**
  * Service to persist the current message history of the ai-chat service in the session Storage
@@ -18,7 +18,7 @@ export class AiChatStorageService {
    * @param messages The messages to save to session storage.
    */
   public persistHistory(messages : AiMessage[]) {
-    const history : LLMMessage[] = []
+    const history : OpenAiMessage[] = []
 
     for (const message of messages) {
       history.push(message.export())
@@ -38,7 +38,7 @@ export class AiChatStorageService {
     const storageContent : string | null = sessionStorage.getItem(AiChatStorageService.historyKey)
     if (!storageContent) return history
 
-    const storageHistory : LLMMessage[] = JSON.parse(storageContent)
+    const storageHistory : OpenAiMessage[] = JSON.parse(storageContent)
 
     for (const message of storageHistory) {
       history.push(new AiMessage(freeId, message.content, message.role === "assistant"))

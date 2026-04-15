@@ -39,8 +39,5 @@ aws:
   services.s3.endpoint-override: "${MICRONAUT_RUSTFS_ADDRESS:`http://localhost:9000`}"
 
 openai.accessToken: '${OPENAI_ACCESS_TOKEN:changeme}'
-anthropic.accessToken: '${ANTHROPIC_ACCESS_TOKEN:changeme}'
-xai.accessToken: '${XAI_ACCESS_TOKEN:changeme}'
-google.accessToken: '${GOOGLE_ACCESS_TOKEN:changeme}'
 
 development: '${DEVELOPMENT:false}'
