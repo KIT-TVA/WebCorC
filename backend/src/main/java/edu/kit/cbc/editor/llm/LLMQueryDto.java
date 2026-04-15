@@ -8,13 +8,17 @@ import jakarta.validation.constraints.Pattern;
 import java.util.List;
 
 @Serdeable
-public record LLMQueryDto(@NotNull @Valid List<LLMQueryInput> input, @Pattern(regexp = "gpt-4-turbo") String model) {
+public record LLMQueryDto(
+        @NotNull @Valid List<LLMQueryInput> input,
+        @NotBlank String model,
+        @NotNull LLMProvider provider
+) {
     @Serdeable
     public record LLMQueryInput(
             @NotBlank String content,
             @Pattern(regexp = "user|assistant") String role
     ) {
-        private static final int TOKEN_LIMIT = 3800; //Taken from CorC
+        private static final int TOKEN_LIMIT = 3800;
 
         public LLMQueryInput {
             if ((content.length() / 4) > TOKEN_LIMIT) {
