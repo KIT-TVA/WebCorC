@@ -73,10 +73,13 @@ public class GeminiClient implements LLMClient {
 
     @Serdeable
     record GeminiResponseBody(List<GeminiCandidate> candidates) {
+
         @Serdeable
         record GeminiCandidate(GeminiContent content) {}
+
         @Serdeable
         record GeminiContent(List<GeminiPart> parts) {}
+
         @Serdeable
         record GeminiPart(String text) {}
     }

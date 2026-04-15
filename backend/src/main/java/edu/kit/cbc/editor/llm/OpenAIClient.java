@@ -48,8 +48,10 @@ public class OpenAIClient implements LLMClient {
 
     @Serdeable
     record OpenAIResponseBody(List<OpenAIOutput> output) {
+
         @Serdeable
         record OpenAIOutput(List<OpenAIOutputContent> content) {}
+
         @Serdeable
         record OpenAIOutputContent(String text) {}
     }

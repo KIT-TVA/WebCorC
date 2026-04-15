@@ -50,8 +50,10 @@ public class GrokClient implements LLMClient {
 
     @Serdeable
     record GrokResponseBody(List<GrokChoice> choices) {
+
         @Serdeable
         record GrokChoice(GrokMessage message) {}
+
         @Serdeable
         record GrokMessage(String role, String content) {}
     }
