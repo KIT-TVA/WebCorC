@@ -55,7 +55,7 @@ export class NetworkJobService {
     if (projectId) {
       params = params.set("projectId", projectId);
     }
-
+    let disconnectOnNextMessage = false;
     this.http
       .post<string>(
         environment.apiUrl + NetworkJobService.verifyPath,
@@ -83,8 +83,11 @@ export class NetworkJobService {
           environment.apiUrl + NetworkJobService.verifyWebSocketPath + uuid,
         );
         ws.messages$.subscribe((msg: string) => {
-          if (msg === "verification complete") {
+          if (disconnectOnNextMessage) {
             ws.disconnect();
+          }
+          if (msg === "verification complete") {
+            disconnectOnNextMessage = true;
             this.http
               .get<ICBCFormula>(
                 environment.apiUrl + NetworkJobService.verifyResultPath + uuid,
@@ -122,7 +125,7 @@ export class NetworkJobService {
     if (projectId) {
       params = params.set("projectId", projectId);
     }
-
+    let disconnectOnNextMessage = false;
     this.http
       .post<string>(
         environment.apiUrl + NetworkJobService.verifyPath,
@@ -166,8 +169,11 @@ export class NetworkJobService {
           environment.apiUrl + NetworkJobService.verifyWebSocketPath + uuid,
         );
         ws.messages$.subscribe((msg: string) => {
-          if (msg === "verification complete") {
+          if (disconnectOnNextMessage) {
             ws.disconnect();
+          }
+          if (msg === "verification complete") {
+            disconnectOnNextMessage = true;
             this.http
               .get<ICBCFormula>(
                 environment.apiUrl + NetworkJobService.verifyResultPath + uuid,

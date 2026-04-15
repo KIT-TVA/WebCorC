@@ -33,8 +33,8 @@ export class VerificationService {
         this.consoleService.addStringInfo("Verification initialized.");
         break;
       case "verification complete":
-        break;
       default:
+        this.consoleService.addStringInfo(msg);
         break;
     }
   }
