@@ -1,8 +1,8 @@
 package edu.kit.cbc.common.corc.parsing;
 
+
 import edu.kit.cbc.common.corc.cbcmodel.CbCFormula;
 import edu.kit.cbc.common.corc.cbcmodel.Condition;
-import edu.kit.cbc.common.corc.cbcmodel.JavaVariable;
 import edu.kit.cbc.common.corc.cbcmodel.statements.AbstractStatement;
 import edu.kit.cbc.common.corc.cbcmodel.statements.CompositionStatement;
 import edu.kit.cbc.common.corc.cbcmodel.statements.SelectionStatement;
@@ -10,6 +10,7 @@ import edu.kit.cbc.common.corc.cbcmodel.statements.SmallRepetitionStatement;
 import edu.kit.cbc.common.corc.cbcmodel.statements.Statement;
 import edu.kit.cbc.common.corc.parsing.condition.ast.ExistsTree;
 import edu.kit.cbc.common.corc.parsing.condition.ast.ForAllTree;
+import edu.kit.cbc.common.corc.parsing.condition.ast.OldTree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.ArrayAcessTree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.BinaryOperationTree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.CallTree;
@@ -20,8 +21,6 @@ import edu.kit.cbc.common.corc.parsing.parser.ast.UnaryOperationTree;
 import edu.kit.cbc.common.corc.parsing.program.ast.AssignTree;
 import edu.kit.cbc.common.corc.parsing.program.ast.BlockTree;
 import edu.kit.cbc.common.corc.parsing.program.ast.StatementTree;
-import edu.kit.cbc.common.corc.parsing.condition.ast.OldTree;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -31,8 +30,9 @@ public class SemanticChecker {
     private static final java.util.List<String> IGNORED_VARIABLES = java.util.List.of("true", "false");
 
     public static void checkVariables(CbCFormula formula) throws SemanticException {
-        if (formula == null)
+        if (formula == null) {
             return;
+        }
 
         Set<String> declaredVariables = new HashSet<>();
         if (formula.getJavaVariables() != null) {
@@ -57,8 +57,9 @@ public class SemanticChecker {
 
     private static void checkStatement(AbstractStatement statement, Set<String> declaredVariables)
             throws SemanticException {
-        if (statement == null)
+        if (statement == null) {
             return;
+        }
 
         checkCondition(statement.getPreCondition(), declaredVariables);
         checkCondition(statement.getPostCondition(), declaredVariables);
@@ -89,14 +90,16 @@ public class SemanticChecker {
     }
 
     private static void checkCondition(Condition condition, Set<String> declaredVariables) throws SemanticException {
-        if (condition == null)
+        if (condition == null) {
             return;
+        }
         checkTree(condition.getParsedCondition(), declaredVariables);
     }
 
     private static void checkTree(Tree node, Set<String> scope) throws SemanticException {
-        if (node == null)
+        if (node == null) {
             return;
+        }
 
         if (node instanceof ForAllTree forAll) {
             Set<String> newScope = new HashSet<>(scope);

@@ -6,7 +6,6 @@ import edu.kit.cbc.common.corc.parsing.condition.ast.OldTree;
 import edu.kit.cbc.common.corc.parsing.program.ast.AssignTree;
 import edu.kit.cbc.common.corc.parsing.program.ast.BlockTree;
 import edu.kit.cbc.common.corc.parsing.program.ast.StatementTree;
-
 import java.util.function.Consumer;
 
 /**

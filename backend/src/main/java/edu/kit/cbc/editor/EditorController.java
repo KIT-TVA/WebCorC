@@ -1,10 +1,5 @@
 package edu.kit.cbc.editor;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
 
 import edu.kit.cbc.common.Problem;
 import edu.kit.cbc.common.corc.cbcmodel.CbCFormula;
@@ -31,6 +26,10 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Logger;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 @Controller("/editor")
 @ExecuteOn(TaskExecutors.BLOCKING)
@@ -67,13 +66,13 @@ public class EditorController {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public HttpResponse<?> verify(@QueryValue Optional<String> projectId, @Body @Valid CbCFormula formula)
-            throws IOException {
+        throws IOException {
         try {
             edu.kit.cbc.common.corc.parsing.SemanticChecker.checkVariables(formula);
         } catch (edu.kit.cbc.common.corc.parsing.SemanticException e) {
 
             return HttpResponse
-                    .badRequest(Map.of("_embedded", Map.of("errors", List.of(Map.of("message", e.getMessage())))));
+                .badRequest(Map.of("_embedded", Map.of("errors", List.of(Map.of("message", e.getMessage())))));
         }
 
         UUID jobId = orchestrator.addJob(projectId, formula, filesController);
