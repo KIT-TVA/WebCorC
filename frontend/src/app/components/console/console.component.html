@@ -14,9 +14,7 @@
         class="spinner w-4 h-4"
       >
       </p-progressSpinner>
-      <span
-        class="self-center px-2"
-      >
+      <span class="self-center px-2">
         {{ service.loadingMessage() }}
       </span>
     } @else {
@@ -44,6 +42,32 @@
             <i [class]="line.icon ?? 'pi pi-angle-double-right'"></i>
             {{ line.message }}
           </span>
+        </div>
+      } @else if (isGroup(line)) {
+        <div class="m-1 border" style="border-radius: 1rem; overflow: hidden">
+          @for (subLine of line.lines; track j; let j = $index) {
+            @if (isError(subLine)) {
+              <mat-list-item>
+                <span matListItemTitle> {{ subLine.action }} </span>
+                <span matListItemLine>
+                  {{ deconstructLogError(subLine) }}
+                </span>
+              </mat-list-item>
+            } @else if (isInfo(subLine)) {
+              <div class="p-1">
+                <span matListItemTitle class="whitespace-normal">
+                  <i [class]="subLine.icon ?? 'pi pi-angle-double-right'"></i>
+                  {{ subLine.message }}
+                </span>
+              </div>
+            }
+          }
+          <div [style]="{width: '100%', height: '1rem' , backgroundColor: line.status === 'FAIL' ? 'red' : line.status === 'SUCCESS'? 'var(--p-primary-color)' : 'transparent'}">
+              <!--- Status indicator -->
+              @if (line.status === 'RUNNING') {
+                  <p-progressbar mode="indeterminate" [style]="{ height: '100%' }" />
+              }
+          </div>
         </div>
       }
     }

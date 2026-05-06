@@ -7,6 +7,7 @@ import { ConsoleService } from "../../console/console.service";
 import { IAbstractStatement } from "../../../types/statements/abstract-statement";
 import { AbstractStatementNode } from "../../../types/statements/nodes/abstract-statement-node";
 import { GlobalSettingsService } from "../../global-settings.service";
+import { ConsoleInfoLine, ConsoleLogGroup } from "../../console/log";
 
 /**
  * Service to distribute the verification result from the http response to the tree service.
@@ -23,23 +24,33 @@ export class VerificationService {
     private globalSettingsService: GlobalSettingsService,
   ) {}
 
-  public verifyInfo(msg: string) {
+  public beginVerificationLog() {
+    const group = this.consoleService.addGroup();
+    group.status = "RUNNING";
+    return group;
+  }
+
+  public verifyInfo(group: ConsoleLogGroup, msg: string) {
     switch (msg) {
       case "verification started":
-        this.consoleService.addStringInfo("Verification started.");
+        group.lines.push(new ConsoleInfoLine("Verification started."));
         this.consoleService.beginLoading("verifying");
         break;
       case "verification initialized":
-        this.consoleService.addStringInfo("Verification initialized.");
+        group.lines.push(new ConsoleInfoLine("Verification initialized."));
         break;
       case "verification complete":
       default:
-        this.consoleService.addStringInfo(msg);
+        group.lines.push(new ConsoleInfoLine(msg));
         break;
     }
   }
 
-  public async next(formula: LocalCBCFormula, urn: string) {
+  public async next(
+    group: ConsoleLogGroup,
+    formula: LocalCBCFormula,
+    urn: string,
+  ) {
     this.consoleService.finishLoading();
     if (formula.statement) {
       const currentFormula = await this.projectService.getFileContent(urn);
@@ -62,15 +73,21 @@ export class VerificationService {
     }
     this.globalSettingsService.isVerifying = false;
     if (formula.isProven) {
-      this.consoleService.addStringInfo(
-        `Verification successful: The formula "${formula.name}" is verified.`,
-        "pi pi-check-circle",
+      group.lines.push(
+        new ConsoleInfoLine(
+          `Verification successful: The formula "${formula.name}" is verified.`,
+          "pi pi-check-circle",
+        ),
       );
+      group.status = "SUCCESS";
     } else {
-      this.consoleService.addStringInfo(
-        `Verification failed: The formula "${formula.name}" could not be (completely) verified.`,
-        "pi pi-times-circle",
+      group.lines.push(
+        new ConsoleInfoLine(
+          `Verification failed: The formula "${formula.name}" could not be (completely) verified.`,
+          "pi pi-times-circle",
+        ),
       );
+      group.status = "FAIL";
     }
   }
 
@@ -81,6 +98,7 @@ export class VerificationService {
    * @param urn urn of the file being verified
    */
   public async nextStatement(
+    group: ConsoleLogGroup,
     formula: LocalCBCFormula,
     statementNode: AbstractStatementNode,
     urn: string,
@@ -88,10 +106,13 @@ export class VerificationService {
     this.consoleService.finishLoading();
 
     if (!formula.statement) {
-      this.consoleService.addStringInfo(
-        `Verification failed: No statement in response for "${statementNode.statement.name}".`,
-        "pi pi-times-circle",
+      group.lines.push(
+        new ConsoleInfoLine(
+          `Verification failed: No statement in response for "${statementNode.statement.name}".`,
+          "pi pi-times-circle",
+        ),
       );
+      group.status = "FAIL";
       return;
     }
 
@@ -146,15 +167,21 @@ export class VerificationService {
 
     // Show success/failure message
     if (formula.isProven) {
-      this.consoleService.addStringInfo(
-        `Verification successful: The statement "${statementNode.statement.name}" and its subtree are verified.`,
-        "pi pi-check-circle",
+      group.lines.push(
+        new ConsoleInfoLine(
+          `Verification successful: The statement "${statementNode.statement.name}" and its subtree are verified.`,
+          "pi pi-check-circle",
+        ),
       );
+      group.status = "SUCCESS";
     } else {
-      this.consoleService.addStringInfo(
-        `Verification failed: The statement "${statementNode.statement.name}" or its subtree could not be (completely) verified.`,
-        "pi pi-times-circle",
+      group.lines.push(
+        new ConsoleInfoLine(
+          `Verification failed: The statement "${statementNode.statement.name}" or its subtree could not be (completely) verified.`,
+          "pi pi-times-circle",
+        ),
       );
+      group.status = "FAIL";
     }
   }
 

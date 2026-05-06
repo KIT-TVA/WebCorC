@@ -4,10 +4,16 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { ConsoleService } from "../../services/console/console.service";
 import { MatListModule } from "@angular/material/list";
-import { ConsoleErrorLine, isError, isInfo } from "../../services/console/log";
+import {
+  ConsoleErrorLine,
+  isError,
+  isGroup,
+  isInfo,
+} from "../../services/console/log";
 import { HttpErrorResponse } from "@angular/common/http";
 import { Button } from "primeng/button";
 import { ProgressSpinner } from "primeng/progressspinner";
+import { ProgressBar } from "primeng/progressbar";
 
 /**
  * Visual representation of the errors in the application
@@ -21,6 +27,7 @@ import { ProgressSpinner } from "primeng/progressspinner";
     MatListModule,
     Button,
     ProgressSpinner,
+    ProgressBar,
   ],
   templateUrl: "./console.component.html",
   standalone: true,
@@ -55,4 +62,5 @@ export class ConsoleComponent {
 
   protected readonly isError = isError;
   protected readonly isInfo = isInfo;
+  protected readonly isGroup = isGroup;
 }

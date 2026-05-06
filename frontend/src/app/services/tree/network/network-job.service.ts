@@ -82,6 +82,7 @@ export class NetworkJobService {
         const ws = new WebSocketService(
           environment.apiUrl + NetworkJobService.verifyWebSocketPath + uuid,
         );
+        const consoleGroup = this.verificationService.beginVerificationLog();
         ws.messages$.subscribe((msg: string) => {
           if (disconnectOnNextMessage) {
             ws.disconnect();
@@ -94,11 +95,11 @@ export class NetworkJobService {
               )
               .pipe(map((formula) => this.mapper.importFormula(formula)))
               .subscribe((formula: LocalCBCFormula) => {
-                this.verificationService.next(formula, urn);
+                this.verificationService.next(consoleGroup, formula, urn);
                 this.projectService.downloadWorkspace();
               });
           }
-          this.verificationService.verifyInfo(msg);
+          this.verificationService.verifyInfo(consoleGroup, msg);
 
           //TODO: consoleService needs an endpoint for non-errors
         });
@@ -168,6 +169,7 @@ export class NetworkJobService {
         const ws = new WebSocketService(
           environment.apiUrl + NetworkJobService.verifyWebSocketPath + uuid,
         );
+        const consoleGroup = this.verificationService.beginVerificationLog();
         ws.messages$.subscribe((msg: string) => {
           if (disconnectOnNextMessage) {
             ws.disconnect();
@@ -181,6 +183,7 @@ export class NetworkJobService {
               .pipe(map((formula) => this.mapper.importFormula(formula)))
               .subscribe((formula: LocalCBCFormula) => {
                 this.verificationService.nextStatement(
+                  consoleGroup,
                   formula,
                   statementNode,
                   urn,
@@ -188,7 +191,7 @@ export class NetworkJobService {
                 onComplete();
               });
           }
-          this.verificationService.verifyInfo(msg);
+          this.verificationService.verifyInfo(consoleGroup, msg);
         });
       });
   }
