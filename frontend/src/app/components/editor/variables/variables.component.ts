@@ -114,7 +114,6 @@ export class VariablesComponent implements AfterViewInit, OnDestroy {
 
     this.items.push(variable);
     this.variables.controls["newVariable"].reset();
-    this.treeService.markWholeTreeUnverified();
   }
 
   /**
