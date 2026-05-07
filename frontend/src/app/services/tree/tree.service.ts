@@ -408,6 +408,24 @@ export class TreeService {
     return nodes;
   }
 
+  public markSubtreeUnverified(node: AbstractStatementNode): void {
+    const subtreeNodes = this.collectSubtreeNodes(node);
+    subtreeNodes.forEach((subtreeNode) => {
+      subtreeNode.statement.isProven = false;
+    });
+    if (this.rootFormula) {
+      this.rootFormula.isProven = false;
+    }
+    this.refreshNodes();
+  }
+
+  public markWholeTreeUnverified(): void {
+    if (!this.rootStatementNode) {
+      return;
+    }
+    this.markSubtreeUnverified(this.rootStatementNode);
+  }
+
   public createTempFormulaFromNode(
     node: AbstractStatementNode,
   ): LocalCBCFormula {

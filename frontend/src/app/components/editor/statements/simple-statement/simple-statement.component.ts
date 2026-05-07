@@ -50,6 +50,10 @@ export class SimpleStatementComponent extends Refinement implements OnInit {
   ngOnInit() {
   }
 
+  public onEditableContentChanged(): void {
+    this.treeService.markSubtreeUnverified(this._node);
+  }
+
   public override getTitle(): string {
     return "Assignment";
   }

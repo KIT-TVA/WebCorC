@@ -69,6 +69,7 @@
                 placeholder="Pre Condition"
                 [condition]="_node.precondition"
                 [editable]="_node.preconditionEditable | async"
+                (textChanged)="onEditableContentChanged()"
               ></app-condition-editor>
             </div>
           </mat-drawer>
@@ -97,6 +98,7 @@
           placeholder="Pre Condition"
           [condition]="_node.precondition"
           [editable]="_node.preconditionEditable | async"
+          (textChanged)="onEditableContentChanged()"
         ></app-condition-editor>
       </div>
     }
@@ -117,6 +119,7 @@
               <app-condition-editor
                 [condition]="_node.postcondition"
                 [editable]="_node.postconditionEditable | async"
+                (textChanged)="onEditableContentChanged()"
               ></app-condition-editor>
             </div>
           </mat-drawer>
@@ -143,6 +146,7 @@
           placeholder="Post Condition"
           [condition]="_node.postcondition"
           [editable]="_node.postconditionEditable | async"
+          (textChanged)="onEditableContentChanged()"
         ></app-condition-editor>
       </div>
     }

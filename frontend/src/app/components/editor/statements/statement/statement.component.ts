@@ -100,6 +100,10 @@ export class StatementComponent {
     this.delete.emit();
   }
 
+  public onEditableContentChanged(): void {
+    this.treeService.markSubtreeUnverified(this._node);
+  }
+
   public toggleConditionEditorView(postcondition: boolean): void {
     let drawer = this.preconditionDrawer;
     let editorRef = this.preconditionDivRef;

@@ -57,6 +57,10 @@ export class CompositionStatementComponent
   ngOnInit(): void {
   }
 
+  public onEditableContentChanged(): void {
+    this.treeService.markSubtreeUnverified(this._node);
+  }
+
   public override getTitle(): string {
     return "Sequence";
   }

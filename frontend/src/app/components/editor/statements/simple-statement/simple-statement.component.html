@@ -3,6 +3,7 @@
         <app-condition-editor
                 [condition]="_node.programStatement"
                 [editable]="true"
+                (textChanged)="onEditableContentChanged()"
                 placeholder="Statement">
         </app-condition-editor>
     </div>

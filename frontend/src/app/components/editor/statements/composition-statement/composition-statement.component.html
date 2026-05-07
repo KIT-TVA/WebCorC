@@ -14,6 +14,7 @@
     <app-condition-editor
       [condition]="_node.intermediateCondition"
       placeholder="Intermediate"
+      (textChanged)="onEditableContentChanged()"
     ></app-condition-editor>
   </div>
   <div class="w-fit">

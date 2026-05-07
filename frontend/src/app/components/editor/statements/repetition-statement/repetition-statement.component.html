@@ -3,18 +3,21 @@
     <app-condition-editor
       placeholder="Invariant"
       [condition]="_node.invariant"
+      (textChanged)="onEditableContentChanged()"
     ></app-condition-editor>
   </div>
   <div class="relative flex items-center h-full w-56">
     <app-condition-editor
       placeholder="Guard"
       [condition]="_node.guard"
+      (textChanged)="onEditableContentChanged()"
     ></app-condition-editor>
   </div>
   <div class="relative flex items-center h-full w-56">
     <app-condition-editor
       placeholder="Variant"
       [condition]="_node.variant"
+      (textChanged)="onEditableContentChanged()"
     ></app-condition-editor>
   </div>
   <div class="w-fit">
