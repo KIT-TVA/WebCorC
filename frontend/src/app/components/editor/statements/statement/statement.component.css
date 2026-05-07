@@ -4,6 +4,10 @@
   width: fit-content;
 }
 
+.refinementBox.refinementBox--verified {
+  border-color: var(--p-green-500, #22c55e);
+}
+
 .refinementBoxTitle {
   width: 100%;
   align-items: center;

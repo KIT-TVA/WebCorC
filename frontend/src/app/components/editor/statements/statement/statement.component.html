@@ -1,4 +1,9 @@
-<p-card class="refinementBox" cdkDragBoundary="#editorContainer" #refinementBox>
+<p-card
+  class="refinementBox"
+  [class.refinementBox--verified]="_node.statement.isProven"
+  cdkDragBoundary="#editorContainer"
+  #refinementBox
+>
   @if (!hideTargetHandle) {
     <handle type="target" position="top" />
   }
