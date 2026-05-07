@@ -71,6 +71,7 @@ export class GlobalConditionsComponent {
 
     if (!this.treeService.addGlobalCondition(value)) {
       this.conditions.controls["newCondition"].reset();
+      this.treeService.markWholeTreeUnverified();
       return;
     }
 
@@ -91,7 +92,7 @@ export class GlobalConditionsComponent {
    */
   public onDelete(event: Event, index: number) {
     event.preventDefault();
-    this.removeCondition(index);
+      this.removeCondition(index);
   }
 
   /**
@@ -109,7 +110,8 @@ export class GlobalConditionsComponent {
    */
   public removeCondition(index: number): void {
     this.treeService.removeGlobalCondition(this.items.at(index).value.name);
-    this.items.removeAt(index);
+      this.treeService.markWholeTreeUnverified();
+      this.items.removeAt(index);
   }
 
   /**
@@ -132,6 +134,7 @@ export class GlobalConditionsComponent {
 
     this.items.clear();
     this.conditions.controls["newCondition"].reset();
+    this.treeService.markWholeTreeUnverified();
   }
 
   /**
@@ -147,6 +150,7 @@ export class GlobalConditionsComponent {
       this.items.push(conditionControl);
       this.treeService.addGlobalCondition(condition.condition);
     }
+    this.treeService.markWholeTreeUnverified();
   }
 
   /**
