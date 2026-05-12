@@ -1,0 +1,24 @@
+{
+    "name": "SimpleAssignment",
+    "statement": {
+        "name": "Statement1",
+        "programStatement": "i = 1;",
+        "type": "STATEMENT",
+        "preCondition": {
+            "condition": "i == 0"
+        },
+        "postCondition": {
+            "condition": "i == 1"
+        },
+        "isProven": false
+    },
+    "javaVariables": [
+        {
+            "name": "int i",
+            "kind": "LOCAL"
+        }
+    ],
+    "globalConditions": [],
+    "renamings": [],
+    "isProven": false
+}

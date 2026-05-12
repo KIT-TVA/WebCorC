@@ -1,0 +1,7 @@
+development: true
+mongodb:
+  uri: "mongodb://localhost:27017"
+micronaut:
+  test:
+    resources:
+      enabled: false

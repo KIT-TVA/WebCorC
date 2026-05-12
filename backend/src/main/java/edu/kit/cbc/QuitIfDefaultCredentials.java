@@ -2,6 +2,7 @@ package edu.kit.cbc;
 
 import io.micronaut.context.DefaultApplicationContext;
 import io.micronaut.context.annotation.Property;
+import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.event.ApplicationEventListener;
 import io.micronaut.context.event.StartupEvent;
 import io.micronaut.scheduling.TaskExecutors;
@@ -13,6 +14,7 @@ import java.util.logging.Logger;
 
 @ExecuteOn(TaskExecutors.SCHEDULED)
 @Singleton
+@Requires(notEnv = "test")
 public class QuitIfDefaultCredentials implements ApplicationEventListener<StartupEvent> {
 
     private static final String DEFAULT_PASSWORD = "changeme";
