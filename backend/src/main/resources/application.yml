@@ -1,5 +1,9 @@
 micronaut:
   application.name: webcorc-backend
+  http:
+    client:
+      read-timeout: 180s
+      connect-timeout: 30s
   object-storage:
     aws:
       default:

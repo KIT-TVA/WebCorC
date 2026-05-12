@@ -27,10 +27,12 @@
           </textarea>
           <label for="field">{{ placeholder }}</label>
         </p-float-label>
-        <p-inputicon
-          (click)="askAi()"
-          class="cursor-pointer pi pi-microchip-ai"
-        ></p-inputicon>
+        @if (showAiButton) {
+          <p-inputicon
+            (click)="onAiButtonClick()"
+            [class]="aiButtonClass"
+          ></p-inputicon>
+        }
       </p-icon-field>
     </form>
   </div>

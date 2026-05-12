@@ -101,8 +101,18 @@
       </div>
     }
 
-    <div class="flex items-center">
+    <div class="flex items-center statementCenter">
       <ng-content></ng-content>
+      @if (showSynthesisButton) {
+        <p-button
+          text
+          icon="pi pi-sparkles"
+          severity="secondary"
+          class="cursor-pointer synthesisCenterButton"
+          (click)="synthesizeWithAi()"
+          title="Synthesize statement with AI"
+        />
+      }
     </div>
     @if (!globalSettingsService.conditionsAlwaysOpen) {
       <div appGtBorder #postconditionDiv class="w-12">

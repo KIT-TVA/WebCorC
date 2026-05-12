@@ -29,6 +29,9 @@
 <!--</div>-->
 <div class="chat-container">
     <div class="message-container" #messageContainer>
+        @if (synthesisInProgress) {
+            <div class="synthesis-overlay">Statements gets synthezied by AI.</div>
+        }
         @for (message of messages; track message.id) {
             <p-message [class]="getChatRole(message)" [severity]="getResponseType(message)">{{message.content}}</p-message>
         } @empty {
@@ -55,6 +58,13 @@
             </div>
         </ng-template>
         <ng-template #end>
+            <p-button
+              icon="pi pi-trash"
+              text
+              severity="danger"
+              (click)="deleteHistory()"
+              title="Delete message history"
+            ></p-button>
             <p-button icon="pi pi-send" text (click)="addMessage()"></p-button>
         </ng-template>
     </p-toolbar>

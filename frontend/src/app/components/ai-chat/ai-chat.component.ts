@@ -99,6 +99,10 @@ export class AiChatComponent implements AfterViewChecked {
         return this._chatservice.selectedProvider.label
     }
 
+    public get synthesisInProgress(): boolean {
+        return this._chatservice.synthesisInProgress
+    }
+
     private selectProvider(provider: LLMProviderOption): void {
         this._chatservice.selectedProvider = provider
     }

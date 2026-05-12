@@ -35,6 +35,7 @@ import { GlobalSettingsService } from "../../../../services/global-settings.serv
 import { NetworkJobService } from "../../../../services/tree/network/network-job.service";
 import { ProjectService } from "../../../../services/project/project.service";
 import { AsyncPipe } from "@angular/common";
+import { AiChatService } from "../../../../services/ai-chat/ai-chat.service";
 
 /**
  * Component to present the statements.
@@ -90,6 +91,7 @@ export class StatementComponent {
 
   constructor(
     private treeService: TreeService,
+    private aiChatService: AiChatService,
     public globalSettingsService: GlobalSettingsService,
     private networkTreeService: NetworkJobService,
     private projectService: ProjectService,
@@ -139,6 +141,19 @@ export class StatementComponent {
         this.isVerifying.set(false);
       },
     );
+  }
+
+  public synthesizeWithAi(): void {
+    const pre = this._node.precondition.getValue().condition;
+    const post = this._node.postcondition.getValue().condition;
+    const variables = this.treeService.rootFormula?.javaVariables ?? [];
+    const isLoopUpdate = this._node.statement.type === "REPETITION";
+    this.aiChatService.addSynthesisPrompt(variables, pre, post, isLoopUpdate);
+  }
+
+  public get showSynthesisButton(): boolean {
+    if (this._node.statement.type === "SKIP") return false;
+    return this._node.children.filter((c) => c !== undefined).length === 0;
   }
 
   compactButton = {
