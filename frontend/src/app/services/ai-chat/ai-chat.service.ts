@@ -13,10 +13,10 @@ export interface LLMProviderOption {
 }
 
 export const LLM_PROVIDERS: LLMProviderOption[] = [
-  { label: "GPT-4",  provider: "OPENAI",    model: "gpt-4-turbo" },
+  { label: "GPT",    provider: "OPENAI",    model: "gpt-5.5" },
   { label: "Claude",   provider: "ANTHROPIC",  model: "claude-opus-4-7" },
-  { label: "Grok",     provider: "XAI",        model: "grok-3" },
-  { label: "Gemini",   provider: "GOOGLE",     model: "gemini-2.0-flash" },
+  { label: "Grok",     provider: "XAI",        model: "grok-4.3" },
+  { label: "Gemini",   provider: "GOOGLE",     model: "gemini-3.1-pro-preview" },
 ];
 
 /**
