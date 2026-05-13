@@ -4,6 +4,7 @@ import { ICondition } from "../../types/condition/condition";
 import { AiChatStorageService } from "./storage/ai-chat-storage.service";
 import { AiChatNetworkService } from "./network/ai-chat-network.service";
 import { IJavaVariable } from "../../types/JavaVariable";
+import { BehaviorSubject } from "rxjs";
 
 export interface LLMProviderOption {
   label: string;
@@ -13,7 +14,7 @@ export interface LLMProviderOption {
 
 export const LLM_PROVIDERS: LLMProviderOption[] = [
   { label: "GPT-4",  provider: "OPENAI",    model: "gpt-4-turbo" },
-  { label: "Claude",   provider: "ANTHROPIC",  model: "claude-sonnet-4-20250514" },
+  { label: "Claude",   provider: "ANTHROPIC",  model: "claude-opus-4-7" },
   { label: "Grok",     provider: "XAI",        model: "grok-3" },
   { label: "Gemini",   provider: "GOOGLE",     model: "gemini-2.0-flash" },
 ];
@@ -31,26 +32,54 @@ export class AiChatService {
 
   private _messages: AiMessage[] = [];
   private _freeId: number = 0;
-  private _selectedProvider: LLMProviderOption = LLM_PROVIDERS[0];
+  private _selectedProvider: LLMProviderOption = LLM_PROVIDERS[1];
   private _awaitingSynthesisResponse = false;
   private _synthesisInProgress = false;
+  private _synthesisTarget?: BehaviorSubject<ICondition>;
+  private _synthesisResponseIds = new Set<number>();
+  private _synthesisRawByMessageId = new Map<number, string>();
+  private _synthesisStatementName?: string;
+  private _synthesisProviderByMessageId = new Map<number, string>();
+  private _synthesisStatementByMessageId = new Map<number, string>();
 
   constructor(
     private storage: AiChatStorageService,
     private network: AiChatNetworkService,
   ) {
     this._messages = this.storage.readHistory();
+    this._freeId = this._messages.length;
     this.network.answer.subscribe((answer) => {
       if (this._awaitingSynthesisResponse) {
         this._awaitingSynthesisResponse = false;
         this._synthesisInProgress = false;
-        const javaOnly = this.extractJavaOnly(answer);
+        const javaOnly = this.ensureTrailingSemicolon(this.extractJavaOnly(answer));
         if (javaOnly && javaOnly.trim()) {
-          this.addMessage(javaOnly, false);
+          const message = this.pushMessage(javaOnly, false);
+          if (message) {
+            this._synthesisResponseIds.add(message.id);
+            this._synthesisRawByMessageId.set(message.id, javaOnly);
+            this._synthesisProviderByMessageId.set(
+              message.id,
+              this._selectedProvider.label,
+            );
+            if (this._synthesisStatementName) {
+              this._synthesisStatementByMessageId.set(
+                message.id,
+                this._synthesisStatementName,
+              );
+            }
+          }
         }
         return;
       }
-      this.addMessage(answer, false);
+      this.pushMessage(answer, false);
+    });
+    this.network.error.subscribe((errorText) => {
+      if (this._awaitingSynthesisResponse) {
+        this._awaitingSynthesisResponse = false;
+        this._synthesisInProgress = false;
+      }
+      this.pushMessage(`Model error: ${errorText}`, false);
     });
   }
 
@@ -61,8 +90,15 @@ export class AiChatService {
    * @returns success
    */
   public addMessage(content: string, getAnswer: boolean = true): boolean {
+    return this.pushMessage(content, getAnswer) !== undefined;
+  }
+
+  private pushMessage(
+    content: string,
+    getAnswer: boolean = true,
+  ): AiMessage | undefined {
     if (!content || !content.trim()) {
-      return false;
+      return undefined;
     }
 
     const message = new AiMessage(this._freeId, content, !getAnswer);
@@ -74,7 +110,7 @@ export class AiChatService {
     }
 
     if (sumOfTokens > AiChatService.APPROX_MAX_TOKENS) {
-      return false;
+      return undefined;
     }
 
     this._messages.push(message);
@@ -86,13 +122,17 @@ export class AiChatService {
         this._selectedProvider.model,
       );
     }
-    return true;
+    return message;
   }
 
   public deleteHistory(): void {
     this._messages = [];
     this.storage.persistHistory([]);
     this._freeId = 0;
+    this._synthesisResponseIds.clear();
+    this._synthesisRawByMessageId.clear();
+    this._synthesisProviderByMessageId.clear();
+    this._synthesisStatementByMessageId.clear();
   }
 
   public addCondition(condition: ICondition) {
@@ -208,6 +248,14 @@ Now solve this synthesis task JSON:`;
     return trimmed;
   }
 
+  private ensureTrailingSemicolon(code: string): string {
+    const trimmed = (code || "").trim();
+    if (!trimmed) {
+      return trimmed;
+    }
+    return trimmed.endsWith(";") ? trimmed : `${trimmed};`;
+  }
+
   public get newMessages(): boolean {
     return this._messages.length > 0;
   }
@@ -226,5 +274,37 @@ Now solve this synthesis task JSON:`;
 
   public get synthesisInProgress(): boolean {
     return this._synthesisInProgress;
+  }
+
+  public setSynthesisTarget(target?: BehaviorSubject<ICondition>): void {
+    this._synthesisTarget = target;
+  }
+
+  public setSynthesisStatementName(statementName?: string): void {
+    this._synthesisStatementName = statementName;
+  }
+
+  public isSynthesisResponse(message: AiMessage): boolean {
+    return this._synthesisResponseIds.has(message.id);
+  }
+
+  public applySynthesisToTarget(message: AiMessage): boolean {
+    if (!this._synthesisTarget || !this.isSynthesisResponse(message)) {
+      return false;
+    }
+    const condition = this._synthesisTarget.getValue();
+    const rawSynthesisCode =
+      this._synthesisRawByMessageId.get(message.id) ?? message.content;
+    condition.condition = rawSynthesisCode;
+    this._synthesisTarget.next(condition);
+    return true;
+  }
+
+  public getSynthesisProviderLabel(message: AiMessage): string {
+    return this._synthesisProviderByMessageId.get(message.id) ?? "";
+  }
+
+  public getSynthesisStatementLabel(message: AiMessage): string {
+    return this._synthesisStatementByMessageId.get(message.id) ?? "";
   }
 }

@@ -92,7 +92,7 @@
         </mat-drawer-container>
       </div>
     } @else {
-      <div class="w-fit conditionParent">
+      <div class="w-56 conditionParent">
         <app-condition-editor
           placeholder="Pre Condition"
           [condition]="_node.precondition"
@@ -106,7 +106,7 @@
       @if (showSynthesisButton) {
         <p-button
           text
-          icon="pi pi-sparkles"
+          icon="pi pi-microchip-ai"
           severity="secondary"
           class="cursor-pointer synthesisCenterButton"
           (click)="synthesizeWithAi()"
@@ -148,7 +148,7 @@
         </mat-drawer-container>
       </div>
     } @else {
-      <div class="w-fit conditionParent">
+      <div class="w-56 conditionParent">
         <app-condition-editor
           placeholder="Post Condition"
           [condition]="_node.postcondition"

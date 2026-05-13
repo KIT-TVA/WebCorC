@@ -1,13 +1,13 @@
-<div class="w-fit" (mousedown)="$event.stopImmediatePropagation()">
+<div class="condition-editor-root" (mousedown)="$event.stopImmediatePropagation()">
   <div (focusout)="conditionEditingFinished.emit()">
     <form>
-      <p-icon-field>
+      <p-icon-field class="condition-icon-field">
         <p-float-label variant="on">
           <textarea
             [ngModelOptions]="{ standalone: true }"
             id="field"
             pTextarea
-            class="textarea"
+            class="textarea condition-textarea"
             spellcheck="false"
             [rows]="inline ? 1 : 5"
             [ngModel]="(condition | async)?.condition"

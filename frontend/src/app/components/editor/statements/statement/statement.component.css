@@ -66,12 +66,13 @@
 
 .statementCenter {
   position: relative;
+  gap: 0.5rem;
 }
 
 .synthesisCenterButton {
   position: absolute;
   top: 50%;
-  left: 50%;
+  left: calc(50% + 95px);
   transform: translate(-50%, -50%);
   z-index: 2;
 }

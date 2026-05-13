@@ -124,3 +124,30 @@
   flex-shrink: 0;
   width: 100%;
 }
+
+.synthesis-clickable {
+  cursor: pointer;
+}
+
+.synthesis-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  margin-bottom: 0.15rem;
+}
+
+.synthesis-provider {
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.synthesis-statement {
+  font-size: 0.72rem;
+  color: #6b7280;
+  line-height: 1;
+}
+
+.synthesis-code {
+  white-space: pre-wrap;
+}

@@ -67,7 +67,7 @@ export class ConditionEditorComponent {
   }
 
   public get aiButtonClass(): string {
-    return 'cursor-pointer pi pi-microchip-ai';
+    return 'cursor-pointer pi pi-sparkles';
   }
 
   public onConditionChange(newConditionString: string): void {

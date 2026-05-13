@@ -36,6 +36,7 @@ import { NetworkJobService } from "../../../../services/tree/network/network-job
 import { ProjectService } from "../../../../services/project/project.service";
 import { AsyncPipe } from "@angular/common";
 import { AiChatService } from "../../../../services/ai-chat/ai-chat.service";
+import { SimpleStatementNode } from "../../../../types/statements/nodes/simple-statement-node";
 
 /**
  * Component to present the statements.
@@ -148,6 +149,12 @@ export class StatementComponent {
     const post = this._node.postcondition.getValue().condition;
     const variables = this.treeService.rootFormula?.javaVariables ?? [];
     const isLoopUpdate = this._node.statement.type === "REPETITION";
+    const synthesisTarget =
+      this._node.statement.type === "STATEMENT"
+        ? (this._node as SimpleStatementNode).programStatement
+        : undefined;
+    this.aiChatService.setSynthesisTarget(synthesisTarget);
+    this.aiChatService.setSynthesisStatementName(this._node.statement.name);
     this.aiChatService.addSynthesisPrompt(variables, pre, post, isLoopUpdate);
   }
 
