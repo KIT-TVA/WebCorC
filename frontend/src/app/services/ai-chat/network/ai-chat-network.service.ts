@@ -21,6 +21,7 @@ import { environment } from "../../../../environments/environment";
 export class AiChatNetworkService {
   private static readonly path = "/editor/askquestion";
   private _answer = new Subject<string>();
+  private _error = new Subject<string>();
 
   public constructor(
     private http: HttpClient,
@@ -54,15 +55,22 @@ export class AiChatNetworkService {
       .pipe(
         catchError((error: HttpErrorResponse): Observable<LLMResponse> => {
           this.consoleService.addErrorResponse(error, "Asking LLM question");
-          return of();
+          this._error.next("Model Error");
+          return of({ text: "" });
         }),
       )
       .subscribe((response) => {
-        this._answer.next(response.text);
+        if (response?.text) {
+          this._answer.next(response.text);
+        }
       });
   }
 
   public get answer(): Subject<string> {
     return this._answer;
+  }
+
+  public get error(): Subject<string> {
+    return this._error;
   }
 }

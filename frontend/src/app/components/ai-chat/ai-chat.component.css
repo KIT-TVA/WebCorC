@@ -62,6 +62,7 @@
 }
 
 .message-container {
+  position: relative;
   flex: 1;
   min-height: 0;
   overflow-y: auto;
@@ -70,6 +71,20 @@
   gap: 8px;
   padding: 10px 12px;
   box-sizing: border-box;
+}
+
+.synthesis-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  text-align: center;
+  color: #6b7280;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 0.5rem;
+  padding: 0.4rem 0.7rem;
+  pointer-events: none;
 }
 
 /* AI responses on the left */
@@ -108,4 +123,31 @@
 .chat-toolbar {
   flex-shrink: 0;
   width: 100%;
+}
+
+.synthesis-clickable {
+  cursor: pointer;
+}
+
+.synthesis-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  margin-bottom: 0.15rem;
+}
+
+.synthesis-provider {
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.synthesis-statement {
+  font-size: 0.72rem;
+  color: #6b7280;
+  line-height: 1;
+}
+
+.synthesis-code {
+  white-space: pre-wrap;
 }

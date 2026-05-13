@@ -38,6 +38,7 @@ export class ConditionEditorComponent {
   @Input() public placeholder: string = 'Type here';
   @Input() public editable: boolean | null = true;
   @Input() public inline = false;
+  @Input() public showAiButton = true;
 
   /**
    * Emitter to emit the condition
@@ -59,6 +60,14 @@ export class ConditionEditorComponent {
     const currentCondition = this.condition.getValue();
     if (!currentCondition?.condition) return;
     this._aiChatService.addCondition(currentCondition);
+  }
+
+  public onAiButtonClick(): void {
+    this.askAi();
+  }
+
+  public get aiButtonClass(): string {
+    return 'cursor-pointer pi pi-sparkles';
   }
 
   public onConditionChange(newConditionString: string): void {
