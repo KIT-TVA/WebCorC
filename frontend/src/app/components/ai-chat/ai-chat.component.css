@@ -151,3 +151,31 @@
 .synthesis-code {
   white-space: pre-wrap;
 }
+
+.system-message {
+  align-self: flex-end !important;
+  max-width: 85%;
+}
+
+::ng-deep p-message.system-message {
+  --p-message-info-background: #ebe4fc !important;
+  --p-message-secondary-background: #ebe4fc !important;
+  --p-message-info-border-color: #e1d5fa !important;
+  --p-message-secondary-border-color: #e1d5fa !important;
+  --p-message-info-text-color: #7c3aed !important;
+  --p-message-secondary-text-color: #7c3aed !important;
+}
+
+::ng-deep p-message.system-message .p-message {
+  background-color: #ebe4fc !important;
+  border-color: #e1d5fa !important;
+  color: #7c3aed !important;
+}
+
+::ng-deep p-message.system-message .p-message-text {
+  color: #7c3aed !important;
+}
+
+::ng-deep p-message.system-message .p-message-icon {
+  color: #7c3aed !important;
+}

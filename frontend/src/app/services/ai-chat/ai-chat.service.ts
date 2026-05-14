@@ -72,14 +72,20 @@ export class AiChatService {
         }
         return;
       }
-      this.pushMessage(answer, false);
+      const message = this.pushMessage(answer, false);
+      if (message) {
+        this._synthesisProviderByMessageId.set(message.id, this._selectedProvider.label);
+      }
     });
     this.network.error.subscribe((errorText) => {
       if (this._awaitingSynthesisResponse) {
         this._awaitingSynthesisResponse = false;
         this._synthesisInProgress = false;
       }
-      this.pushMessage(`Model error: ${errorText}`, false);
+      const message = this.pushMessage(`Model error: ${errorText}`, false);
+      if (message) {
+        this._synthesisProviderByMessageId.set(message.id, this._selectedProvider.label);
+      }
     });
   }
 
@@ -87,10 +93,16 @@ export class AiChatService {
    * Add Message to the history if the sum of the approximate tokens is smaller than 3800.
    * @param content the message content
    * @param getAnswer if true send history to backend.
+   * @param label optional label for the message (e.g., "User", "System").
    * @returns success
    */
-  public addMessage(content: string, getAnswer: boolean = true): boolean {
-    return this.pushMessage(content, getAnswer) !== undefined;
+ public addMessage(content: string, getAnswer: boolean = true, label?: string): boolean {
+    const message = this.pushMessage(content, getAnswer);
+    if (message && getAnswer) {
+      // Mark messages with provided label or default to "User"
+      this._synthesisProviderByMessageId.set(message.id, label || "User");
+    }
+    return message !== undefined;
   }
 
   private pushMessage(
@@ -138,6 +150,8 @@ export class AiChatService {
   public addCondition(condition: ICondition) {
     this.addMessage(
       AiChatService.EXPLAIN_CONDITION_CONTENT_PROMPT + condition.condition,
+      true,
+      "System"
     );
   }
 
@@ -202,6 +216,16 @@ Now solve this synthesis task JSON:`;
 
     this._awaitingSynthesisResponse = true;
     this._synthesisInProgress = true;
+
+    // Add system message for synthesis task
+    const systemMessage = this.pushMessage(
+      `Synthesis for statement ${this._synthesisStatementName || "unknown"}`,
+      false
+    );
+    if (systemMessage) {
+      this._synthesisProviderByMessageId.set(systemMessage.id, "System");
+    }
+
     this.network.sendHistory(
       [synthesisMessage],
       this._selectedProvider.provider,
