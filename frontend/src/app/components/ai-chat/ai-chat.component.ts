@@ -91,12 +91,32 @@ export class AiChatComponent implements AfterViewChecked {
         return this._chatservice.messages
     }
 
+    public isApplicableSynthesisMessage(message: AiMessage): boolean {
+        return this._chatservice.isSynthesisResponse(message)
+    }
+
+    public applySynthesisMessage(message: AiMessage): void {
+        this._chatservice.applySynthesisToTarget(message)
+    }
+
+    public getSynthesisProviderLabel(message: AiMessage): string {
+        return this._chatservice.getSynthesisProviderLabel(message)
+    }
+
+    public getSynthesisStatementLabel(message: AiMessage): string {
+        return this._chatservice.getSynthesisStatementLabel(message)
+    }
+
     public get questionGroup(): FormGroup {
         return this._questionGroup
     }
 
     public get selectedProviderLabel(): string {
         return this._chatservice.selectedProvider.label
+    }
+
+    public get synthesisInProgress(): boolean {
+        return this._chatservice.synthesisInProgress
     }
 
     private selectProvider(provider: LLMProviderOption): void {
