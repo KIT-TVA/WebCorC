@@ -50,6 +50,7 @@ export class VerificationService {
       // The statements should be in the same order, since the structure should be unchanged.
       currentStatements.forEach((stmt, index) => {
         stmt.isProven = newStatements[index]?.isProven;
+        stmt.nodeState = newStatements[index]?.isProven ? 'success' : 'warn';
       });
       if (
         (currentFormula as LocalCBCFormula).statement &&

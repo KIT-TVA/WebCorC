@@ -141,6 +141,7 @@ export class NetworkJobService {
           if (error.status === 500 || error.status >= 400) {
             // Mark statement as unverified
             statementNode.statement.isProven = false;
+            statementNode.statement.nodeState = 'warn';
             this.treeService.refreshNodes();
             this.consoleService.addErrorResponse(
               error,

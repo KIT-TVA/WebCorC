@@ -412,6 +412,7 @@ export class TreeService {
     const subtreeNodes = this.collectSubtreeNodes(node);
     subtreeNodes.forEach((subtreeNode) => {
       subtreeNode.statement.isProven = false;
+      subtreeNode.statement.nodeState = 'secondary'
     });
     if (this.rootFormula) {
       this.rootFormula.isProven = false;

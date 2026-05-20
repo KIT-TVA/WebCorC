@@ -1,159 +1,165 @@
 <p-card
-  class="refinementBox"
-  [class.refinementBox--verified]="_node.statement.isProven"
-  cdkDragBoundary="#editorContainer"
-  #refinementBox
+        class="refinementBox"
+        [ngClass]="{
+        'refinementBox--verified': _node.statement.nodeState === 'success',
+        'refinementBox--failed': _node.statement.nodeState === 'warn'
+  }"
+        cdkDragBoundary="#editorContainer"
+        #refinementBox
 >
-  @if (!hideTargetHandle) {
-    <handle type="target" position="top" />
-  }
-  @if (!hideSourceHandle) {
-    <handle type="source" position="bottom" id="0" />
-  }
-  <ng-template #header>
-    <p-toolbar
-      #boxTitle
-      class="border-none pt-0 rounded-2xl"
-    >
-      <ng-template #start>
-        <i [class]="icon"> </i>
-      </ng-template>
-      <ng-template #center>
-        <p>
-          {{ refinement.getTitle() }}
-          <span class="text-surface-400">{{
-            _node.statement.name
-          }}</span>
-        </p>
-      </ng-template>
-      <ng-template #end>
-        <button
-          pButton
-          outlined
-          [severity]="_node.statement.isProven ? 'success' : 'secondary'"
-          [disabled]="isVerifying()"
-          [class.cursor-wait]="isVerifying()"
-          [class.cursor-pointer]="!isVerifying()"
-          [style.height]="'1.5rem'"
-          (click)="verifyStatement()"
-          size="small"
-          [dt]="compactButton"
-          [title]="isVerifying() ? 'Verifying...' : 'Verify this statement'"
+    @if (!hideTargetHandle) {
+        <handle type="target" position="top"/>
+    }
+    @if (!hideSourceHandle) {
+        <handle type="source" position="bottom" id="0"/>
+    }
+    <ng-template #header>
+        <p-toolbar
+            #boxTitle
+            class="border-none pt-0 rounded-2xl"
         >
-          <i
-            pButtonIcon
-            [class]="
+            <ng-template #start>
+                <i [class]="icon"> </i>
+            </ng-template>
+            <ng-template #center>
+                <p>
+                    {{ refinement.getTitle() }}
+                    <span class="text-surface-400">{{
+                            _node.statement.name
+                        }}</span>
+                </p>
+            </ng-template>
+            <ng-template #end>
+                <button
+                        pButton
+                        outlined
+                        [severity]="_node.statement.nodeState"
+                        [disabled]="isVerifying()"
+                        [class.cursor-wait]="isVerifying()"
+                        [class.cursor-pointer]="!isVerifying()"
+                        [style.height]="'1.5rem'"
+                        (click)="verifyStatement()"
+                        size="small"
+                        [dt]="compactButton"
+                        [title]="isVerifying() ? 'Verifying...' : 'Verify this statement'"
+                >
+                    <i
+                            pButtonIcon
+                            [class]="
               isVerifying() ? 'pi pi-spin pi-spinner' : 'pi pi-check-circle'
             "
-          ></i>
-          <span pButtonLabel class="font-normal">
-            {{ _node.statement.isProven ? "verified" : "verify" }}
+                    ></i>
+                    <span pButtonLabel class="font-normal">
+            {{
+                            _node.statement.isProven ?
+                                "verified" : (_node.statement.nodeState == 'warn' ? "failed" : "unverified")
+                        }}
           </span>
-        </button>
-        @if (_node.parent) {
-          <p-button
-            text
-            icon="pi pi-trash"
-            severity="danger"
-            class="cursor-pointer"
-            (click)="deleteRefinement()"
-          >
-          </p-button>
-        }
-      </ng-template>
-    </p-toolbar>
-  </ng-template>
+                </button>
+                @if (_node.parent) {
+                    <p-button
+                            text
+                            icon="pi pi-trash"
+                            severity="danger"
+                            class="cursor-pointer"
+                            (click)="deleteRefinement()"
+                    >
+                    </p-button>
+                }
+            </ng-template>
+        </p-toolbar>
+    </ng-template>
 
-  <div class="flex">
-    @if (!globalSettingsService.conditionsAlwaysOpen) {
-      <div appGtBorder #preconditionDiv class="w-12 min-h-36">
-        <mat-drawer-container class="example-container" autosize>
-          <mat-drawer #preconditionDrawer class="example-sidenav" mode="side">
-            <div class="conditionParent">
-              <app-condition-editor
-                placeholder="Pre Condition"
-                [condition]="_node.precondition"
-                [editable]="_node.preconditionEditable | async"
-                (textChanged)="onEditableContentChanged()"
-              ></app-condition-editor>
-            </div>
-          </mat-drawer>
+    <div class="flex">
+        @if (!globalSettingsService.conditionsAlwaysOpen) {
+            <div appGtBorder #preconditionDiv class="w-12 min-h-36">
+                <mat-drawer-container class="example-container" autosize>
+                    <mat-drawer #preconditionDrawer class="example-sidenav" mode="side">
+                        <div class="conditionParent">
+                            <app-condition-editor
+                                    placeholder="Pre Condition"
+                                    [condition]="_node.precondition"
+                                    [editable]="_node.preconditionEditable | async"
+                                    (textChanged)="onEditableContentChanged()"
+                            ></app-condition-editor>
+                        </div>
+                    </mat-drawer>
 
-          <mat-drawer-content class="example-sidenav-content">
-            <p-button
-              text
-              severity="secondary"
-              (click)="toggleConditionEditorView(false)"
-              class="verticalButton bottomRight"
-              iconPos="right"
-              [icon]="
+                    <mat-drawer-content class="example-sidenav-content">
+                        <p-button
+                                text
+                                severity="secondary"
+                                (click)="toggleConditionEditorView(false)"
+                                class="verticalButton bottomRight"
+                                iconPos="right"
+                                [icon]="
                 preconditionDrawer.opened
                   ? 'pi pi-chevron-down'
                   : 'pi pi-chevron-up'
               "
-              label="Precondition"
-            >
-            </p-button>
-          </mat-drawer-content>
-        </mat-drawer-container>
-      </div>
-    } @else {
-      <div class="w-fit conditionParent">
-        <app-condition-editor
-          placeholder="Pre Condition"
-          [condition]="_node.precondition"
-          [editable]="_node.preconditionEditable | async"
-          (textChanged)="onEditableContentChanged()"
-        ></app-condition-editor>
-      </div>
-    }
-
-    <div class="flex items-center">
-      <ng-content></ng-content>
-    </div>
-    @if (!globalSettingsService.conditionsAlwaysOpen) {
-      <div appGtBorder #postconditionDiv class="w-12">
-        <mat-drawer-container class="example-container" autosize>
-          <mat-drawer
-            #postconditionDrawer
-            class="example-sidenav"
-            mode="side"
-            position="end"
-          >
-            <div class="conditionParent">
-              <app-condition-editor
-                [condition]="_node.postcondition"
-                [editable]="_node.postconditionEditable | async"
-                (textChanged)="onEditableContentChanged()"
-              ></app-condition-editor>
+                                label="Precondition"
+                        >
+                        </p-button>
+                    </mat-drawer-content>
+                </mat-drawer-container>
             </div>
-          </mat-drawer>
-          <mat-drawer-content class="example-sidenav-content">
-            <p-button
-              text
-              severity="secondary"
-              (click)="toggleConditionEditorView(true)"
-              class="verticalButton bottomRight"
-              [icon]="
+        } @else {
+            <div class="w-fit conditionParent">
+                <app-condition-editor
+                        placeholder="Pre Condition"
+                        [condition]="_node.precondition"
+                        [editable]="_node.preconditionEditable | async"
+                        (textChanged)="onEditableContentChanged()"
+                ></app-condition-editor>
+            </div>
+        }
+
+        <div class="flex items-center">
+            <ng-content></ng-content>
+        </div>
+        @if (!globalSettingsService.conditionsAlwaysOpen) {
+            <div appGtBorder #postconditionDiv class="w-12">
+                <mat-drawer-container class="example-container" autosize>
+                    <mat-drawer
+                        #postconditionDrawer
+                        class="example-sidenav"
+                        mode="side"
+                        position="end"
+                    >
+                        <div class="conditionParent">
+                            <app-condition-editor
+                                    [condition]="_node.postcondition"
+                                    [editable]="_node.postconditionEditable | async"
+                                    (textChanged)="onEditableContentChanged()"
+                            ></app-condition-editor>
+                        </div>
+                    </mat-drawer>
+                    <mat-drawer-content class="example-sidenav-content">
+                        <p-button
+                                text
+                                severity="secondary"
+                                (click)="toggleConditionEditorView(true)"
+                                class="verticalButton bottomRight"
+                                [icon]="
                 postconditionDrawer.opened
                   ? 'pi pi-chevron-up'
                   : 'pi pi-chevron-down'
               "
-              label="Postcondition"
-            >
-            </p-button>
-          </mat-drawer-content>
-        </mat-drawer-container>
-      </div>
-    } @else {
-      <div class="w-fit conditionParent">
-        <app-condition-editor
-          placeholder="Post Condition"
-          [condition]="_node.postcondition"
-          [editable]="_node.postconditionEditable | async"
-          (textChanged)="onEditableContentChanged()"
-        ></app-condition-editor>
-      </div>
-    }
-  </div>
+                                label="Postcondition"
+                        >
+                        </p-button>
+                    </mat-drawer-content>
+                </mat-drawer-container>
+            </div>
+        } @else {
+            <div class="w-fit conditionParent">
+                <app-condition-editor
+                        placeholder="Post Condition"
+                        [condition]="_node.postcondition"
+                        [editable]="_node.postconditionEditable | async"
+                        (textChanged)="onEditableContentChanged()"
+                ></app-condition-editor>
+            </div>
+        }
+    </div>
 </p-card>

@@ -34,7 +34,7 @@ import { Toolbar } from "primeng/toolbar";
 import { GlobalSettingsService } from "../../../../services/global-settings.service";
 import { NetworkJobService } from "../../../../services/tree/network/network-job.service";
 import { ProjectService } from "../../../../services/project/project.service";
-import { AsyncPipe } from "@angular/common";
+import {AsyncPipe, NgClass} from "@angular/common";
 
 /**
  * Component to present the statements.
@@ -44,27 +44,28 @@ import { AsyncPipe } from "@angular/common";
  */
 @Component({
   selector: "app-statement-base",
-  imports: [
-    MatGridListModule,
-    MatFormFieldModule,
-    MatInputModule,
-    FormsModule,
-    ConditionEditorComponent,
-    MatIconModule,
-    MatSidenavModule,
-    MatButtonModule,
-    MatExpansionModule,
-    MatListModule,
-    HandleComponent,
-    GridTileBorderDirective,
-    Card,
-    Button,
-    Toolbar,
-    ButtonDirective,
-    ButtonIcon,
-    ButtonLabel,
-    AsyncPipe,
-  ],
+    imports: [
+        MatGridListModule,
+        MatFormFieldModule,
+        MatInputModule,
+        FormsModule,
+        ConditionEditorComponent,
+        MatIconModule,
+        MatSidenavModule,
+        MatButtonModule,
+        MatExpansionModule,
+        MatListModule,
+        HandleComponent,
+        GridTileBorderDirective,
+        Card,
+        Button,
+        Toolbar,
+        ButtonDirective,
+        ButtonIcon,
+        ButtonLabel,
+        AsyncPipe,
+        NgClass,
+    ],
   templateUrl: "./statement.component.html",
   styleUrl: "./statement.component.css",
   standalone: true,
@@ -119,6 +120,14 @@ export class StatementComponent {
       editorRef.nativeElement.style.width = "";
       drawer.toggle();
     }
+  }
+
+  public getBorderColor(node: AbstractStatementNode): String {
+      switch (node.statement.nodeState) {
+          case 'success': return '.refinementBox--failed';
+          case 'warn': return '.refinementBox--failed';
+          default: return '';
+      }
   }
 
   public verifyStatement(): void {

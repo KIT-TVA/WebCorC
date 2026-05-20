@@ -7,6 +7,9 @@
 .refinementBox.refinementBox--verified {
   border-color: var(--p-green-500, #22c55e);
 }
+.refinementBox.refinementBox--failed {
+    border-color: var(--p-red-200, #802323)
+}
 
 .refinementBoxTitle {
   width: 100%;
