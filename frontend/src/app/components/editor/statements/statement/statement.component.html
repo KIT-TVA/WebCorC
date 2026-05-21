@@ -1,9 +1,5 @@
 <p-card
-        class="refinementBox"
-        [ngClass]="{
-        'refinementBox--verified': _node.statement.nodeState === 'success',
-        'refinementBox--failed': _node.statement.nodeState === 'warn'
-  }"
+        [class]="`refinementBox refinementBox--${_node.statement.nodeState}`"
         cdkDragBoundary="#editorContainer"
         #refinementBox
 >
@@ -33,7 +29,7 @@
                 <button
                         pButton
                         outlined
-                        [severity]="_node.statement.nodeState"
+                        [severity]="getStatementSeverity(_node)"
                         [disabled]="isVerifying()"
                         [class.cursor-wait]="isVerifying()"
                         [class.cursor-pointer]="!isVerifying()"
@@ -50,11 +46,8 @@
             "
                     ></i>
                     <span pButtonLabel class="font-normal">
-            {{
-                            _node.statement.isProven ?
-                                "verified" : (_node.statement.nodeState == 'warn' ? "failed" : "unverified")
-                        }}
-          </span>
+                        {{ _node.statement.nodeState}}
+                    </span>
                 </button>
                 @if (_node.parent) {
                     <p-button

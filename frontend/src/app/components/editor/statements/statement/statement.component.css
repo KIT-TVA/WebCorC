@@ -1,14 +1,20 @@
+
 .refinementBox {
-  border: 2px solid slategray;
-  border-radius: 1em;
-  width: fit-content;
+    border: 2px solid;
+    border-radius: 1em;
+    width: fit-content;
 }
 
-.refinementBox.refinementBox--verified {
-  border-color: var(--p-green-500, #22c55e);
+.refinementBox--unverified {
+    border-color: slategray;
+
 }
-.refinementBox.refinementBox--failed {
-    border-color: var(--p-red-200, #802323)
+
+.refinementBox--verified {
+  border-color: lightgreen;
+}
+.refinementBox--failed {
+    border-color: lightcoral;
 }
 
 .refinementBoxTitle {

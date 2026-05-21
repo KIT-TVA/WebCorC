@@ -122,11 +122,11 @@ export class StatementComponent {
     }
   }
 
-  public getBorderColor(node: AbstractStatementNode): String {
+  public getStatementSeverity(node: AbstractStatementNode): 'success' | 'secondary' | 'warn'  {
       switch (node.statement.nodeState) {
-          case 'success': return '.refinementBox--failed';
-          case 'warn': return '.refinementBox--failed';
-          default: return '';
+          case 'verified': return 'success';
+          case 'failed': return 'warn';
+          case 'unverified': return 'secondary'
       }
   }
 
