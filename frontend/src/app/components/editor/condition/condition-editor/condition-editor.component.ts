@@ -45,6 +45,7 @@ export class ConditionEditorComponent {
    */
   @Output() public conditionEditingFinished: EventEmitter<void> =
     new EventEmitter<void>();
+  @Output() public textChanged: EventEmitter<void> = new EventEmitter<void>();
 
   public constructor(
     private _aiChatService: AiChatService,
@@ -86,6 +87,7 @@ export class ConditionEditorComponent {
         // Should not happen if initialized correctly, but as a fallback
         this.condition.next(new Condition(newConditionString));
     }
+    this.textChanged.emit();
   }
 
   protected readonly $dt = $dt;

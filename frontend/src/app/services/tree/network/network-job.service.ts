@@ -141,6 +141,8 @@ export class NetworkJobService {
           if (error.status === 500 || error.status >= 400) {
             // Mark statement as unverified
             statementNode.statement.isProven = false;
+            statementNode.statement.nodeState = 'failed';
+            console.log("Check for root fail " + statementNode.statement.name);
             this.treeService.refreshNodes();
             this.consoleService.addErrorResponse(
               error,

@@ -5,6 +5,8 @@
                 [editable]="true"
                 placeholder="Statement"
                 [showAiButton]="false">
+                (textChanged)="onEditableContentChanged()"
+                placeholder="Statement">
         </app-condition-editor>
     </div>
 

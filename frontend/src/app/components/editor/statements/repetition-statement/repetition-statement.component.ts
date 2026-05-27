@@ -47,6 +47,10 @@ export class RepetitionStatementComponent extends Refinement implements OnInit {
   ngOnInit(): void {
   }
 
+  public onEditableContentChanged(): void {
+    this.treeService.markSubtreeUnverified(this._node);
+  }
+
   public override getTitle(): string {
     return "Repetition";
   }

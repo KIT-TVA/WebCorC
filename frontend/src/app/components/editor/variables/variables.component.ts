@@ -142,6 +142,7 @@ export class VariablesComponent implements AfterViewInit, OnDestroy {
   public removeVariable(index: number): void {
     this.treeService.removeVariables([this.items.at(index).value.name]);
     this.items.removeAt(index);
+    this.treeService.markWholeTreeUnverified();
   }
 
   /**
@@ -151,6 +152,7 @@ export class VariablesComponent implements AfterViewInit, OnDestroy {
     this.treeService.removeAllVariables();
     this.items.clear();
     this.variables.controls["newVariable"].reset();
+    this.treeService.markWholeTreeUnverified();
   }
 
   /**

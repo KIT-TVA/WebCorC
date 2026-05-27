@@ -46,27 +46,27 @@ import { SimpleStatementNode } from "../../../../types/statements/nodes/simple-s
  */
 @Component({
   selector: "app-statement-base",
-  imports: [
-    MatGridListModule,
-    MatFormFieldModule,
-    MatInputModule,
-    FormsModule,
-    ConditionEditorComponent,
-    MatIconModule,
-    MatSidenavModule,
-    MatButtonModule,
-    MatExpansionModule,
-    MatListModule,
-    HandleComponent,
-    GridTileBorderDirective,
-    Card,
-    Button,
-    Toolbar,
-    ButtonDirective,
-    ButtonIcon,
-    ButtonLabel,
-    AsyncPipe,
-  ],
+    imports: [
+        MatGridListModule,
+        MatFormFieldModule,
+        MatInputModule,
+        FormsModule,
+        ConditionEditorComponent,
+        MatIconModule,
+        MatSidenavModule,
+        MatButtonModule,
+        MatExpansionModule,
+        MatListModule,
+        HandleComponent,
+        GridTileBorderDirective,
+        Card,
+        Button,
+        Toolbar,
+        ButtonDirective,
+        ButtonIcon,
+        ButtonLabel,
+        AsyncPipe,
+    ],
   templateUrl: "./statement.component.html",
   styleUrl: "./statement.component.css",
   standalone: true,
@@ -103,6 +103,10 @@ export class StatementComponent {
     this.delete.emit();
   }
 
+  public onEditableContentChanged(): void {
+    this.treeService.markSubtreeUnverified(this._node);
+  }
+
   public toggleConditionEditorView(postcondition: boolean): void {
     let drawer = this.preconditionDrawer;
     let editorRef = this.preconditionDivRef;
@@ -118,6 +122,14 @@ export class StatementComponent {
       editorRef.nativeElement.style.width = "";
       drawer.toggle();
     }
+  }
+
+  public getStatementSeverity(node: AbstractStatementNode): 'success' | 'secondary' | 'warn'  {
+      switch (node.statement.nodeState) {
+          case 'verified': return 'success';
+          case 'failed': return 'warn';
+          case 'unverified': return 'secondary'
+      }
   }
 
   public verifyStatement(): void {
