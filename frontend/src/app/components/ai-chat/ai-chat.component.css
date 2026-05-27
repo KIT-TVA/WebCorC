@@ -1,53 +1,181 @@
-.aiChatWindow {
-  height: 100%;
-  width: 100%;
-  overflow: hidden;
+/*.aiChatWindow {*/
+/*  height: 100%;*/
+/*  width: 100%;*/
+/*  overflow: hidden;*/
+/*  display: flex;*/
+/*  flex-direction: column;*/
+/*}*/
+
+/*.aiChatHistory {*/
+/*  flex: 1;*/
+/*  width: calc(100% - 5px - 2px);*/
+/*  margin-left: 5px;*/
+/*  margin-right: 2px;*/
+/*  overflow-y: scroll;*/
+
+/*  .message {*/
+/*    margin-top: 5px;*/
+/*    position: relative;*/
+/*    display: flex;*/
+/*    flex-direction: row;*/
+/*    width: 100%;*/
+
+/*    .inContext {*/
+/*      color: #009682;*/
+/*    }*/
+/*  }*/
+
+
+/*  .response {*/
+/*    left: 0;*/
+/*    max-width: 98%;*/
+/*  }*/
+
+/*  .question {*/
+/*    margin-left: auto;*/
+/*    margin-right: 5px;*/
+/*    max-width: 98%;*/
+/*    background-color: #5c79bc;*/
+/*  }*/
+
+/*  .emptyMessage {*/
+/*    text-align: center;*/
+/*  }*/
+/*}*/
+
+/*.aiQuestion {*/
+/*  position: relative;*/
+/*  bottom: 0;*/
+/*  right: 0;*/
+/*  align-self: end;*/
+/*  width: 100%;*/
+/*  max-width: 50em;*/
+/*}*/
+
+/* Layout: toolbar at bottom, messages scroll with visible edges */
+.chat-container {
   display: flex;
   flex-direction: column;
+  height: 100%;
+  width: 400px;
+  overflow: hidden;
 }
 
-.aiChatHistory {
-  flex: 1;
-  width: calc(100% - 5px - 2px);
-  margin-left: 5px;
-  margin-right: 2px;
-  overflow-y: scroll;
-
-  .message {
-    margin-top: 5px;
-    position: relative;
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-
-    .inContext {
-      color: #009682;
-    }
-  }
-
-
-  .response {
-    left: 0;
-    max-width: 98%;
-  }
-
-  .question {
-    margin-left: auto;
-    margin-right: 5px;
-    max-width: 98%;
-    background-color: #5c79bc;
-  }
-
-  .emptyMessage {
-    text-align: center;
-  }
-}
-
-.aiQuestion {
+.message-container {
   position: relative;
-  bottom: 0;
-  right: 0;
-  align-self: end;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+  box-sizing: border-box;
+}
+
+.synthesis-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  text-align: center;
+  color: #6b7280;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 0.5rem;
+  padding: 0.4rem 0.7rem;
+  pointer-events: none;
+}
+
+/* AI responses on the left */
+.message-response {
+  align-self: flex-start;
+  max-width: 85%;
+  min-width: 0;
+}
+
+/* User messages on the right */
+.message-question {
+  align-self: flex-end;
+  max-width: 85%;
+  min-width: 0;
+}
+
+/* Message box: no clip, allow vertical growth, force text to wrap */
+.message-container ::ng-deep .p-message {
+  margin: 0;
+  flex-shrink: 0;
   width: 100%;
-  max-width: 50em;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.message-container ::ng-deep .p-message .p-message-content,
+.message-container ::ng-deep .p-message .p-message-text {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.chat-toolbar {
+  flex-shrink: 0;
+  width: 100%;
+}
+
+.synthesis-clickable {
+  cursor: pointer;
+}
+
+.synthesis-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  margin-bottom: 0.15rem;
+}
+
+.synthesis-provider {
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.synthesis-statement {
+  font-size: 0.72rem;
+  color: #6b7280;
+  line-height: 1;
+}
+
+.synthesis-code {
+  white-space: pre-wrap;
+}
+
+.system-message {
+  align-self: flex-end !important;
+  max-width: 85%;
+}
+
+::ng-deep p-message.system-message {
+  --p-message-info-background: #ebe4fc !important;
+  --p-message-secondary-background: #ebe4fc !important;
+  --p-message-info-border-color: #e1d5fa !important;
+  --p-message-secondary-border-color: #e1d5fa !important;
+  --p-message-info-text-color: #7c3aed !important;
+  --p-message-secondary-text-color: #7c3aed !important;
+}
+
+::ng-deep p-message.system-message .p-message {
+  background-color: #ebe4fc !important;
+  border-color: #e1d5fa !important;
+  color: #7c3aed !important;
+}
+
+::ng-deep p-message.system-message .p-message-text {
+  color: #7c3aed !important;
+}
+
+::ng-deep p-message.system-message .p-message-icon {
+  color: #7c3aed !important;
 }

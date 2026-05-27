@@ -34,7 +34,9 @@ import { Toolbar } from "primeng/toolbar";
 import { GlobalSettingsService } from "../../../../services/global-settings.service";
 import { NetworkJobService } from "../../../../services/tree/network/network-job.service";
 import { ProjectService } from "../../../../services/project/project.service";
-import {AsyncPipe, NgClass} from "@angular/common";
+import { AsyncPipe } from "@angular/common";
+import { AiChatService } from "../../../../services/ai-chat/ai-chat.service";
+import { SimpleStatementNode } from "../../../../types/statements/nodes/simple-statement-node";
 
 /**
  * Component to present the statements.
@@ -64,7 +66,6 @@ import {AsyncPipe, NgClass} from "@angular/common";
         ButtonIcon,
         ButtonLabel,
         AsyncPipe,
-        NgClass,
     ],
   templateUrl: "./statement.component.html",
   styleUrl: "./statement.component.css",
@@ -91,6 +92,7 @@ export class StatementComponent {
 
   constructor(
     private treeService: TreeService,
+    private aiChatService: AiChatService,
     public globalSettingsService: GlobalSettingsService,
     private networkTreeService: NetworkJobService,
     private projectService: ProjectService,
@@ -152,6 +154,25 @@ export class StatementComponent {
         this.isVerifying.set(false);
       },
     );
+  }
+
+  public synthesizeWithAi(): void {
+    const pre = this._node.precondition.getValue().condition;
+    const post = this._node.postcondition.getValue().condition;
+    const variables = this.treeService.rootFormula?.javaVariables ?? [];
+    const isLoopUpdate = this._node.statement.type === "REPETITION";
+    const synthesisTarget =
+      this._node.statement.type === "STATEMENT"
+        ? (this._node as SimpleStatementNode).programStatement
+        : undefined;
+    this.aiChatService.setSynthesisTarget(synthesisTarget);
+    this.aiChatService.setSynthesisStatementName(this._node.statement.name);
+    this.aiChatService.addSynthesisPrompt(variables, pre, post, isLoopUpdate);
+  }
+
+  public get showSynthesisButton(): boolean {
+    if (this._node.statement.type === "SKIP") return false;
+    return this._node.children.filter((c) => c !== undefined).length === 0;
   }
 
   compactButton = {
