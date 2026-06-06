@@ -61,6 +61,7 @@ export class VerificationService {
       // The statements should be in the same order, since the structure should be unchanged.
       currentStatements.forEach((stmt, index) => {
         stmt.isProven = newStatements[index]?.isProven;
+        stmt.nodeState = newStatements[index]?.isProven ? "verified" : "failed";
       });
       if (
         (currentFormula as LocalCBCFormula).statement &&
@@ -68,6 +69,7 @@ export class VerificationService {
         (formula.statement as IRootStatement).statement?.isProven
       ) {
         (currentFormula as LocalCBCFormula).statement!.isProven = true;
+        (currentFormula as LocalCBCFormula).statement!.nodeState = "verified";
       }
       this.projectService.syncLocalFileContent(urn, currentFormula);
     }
@@ -184,7 +186,6 @@ export class VerificationService {
       group.status = "FAIL";
     }
   }
-
   /**
    * Collect statements from a node and its subtree in order
    * @param node The root node
