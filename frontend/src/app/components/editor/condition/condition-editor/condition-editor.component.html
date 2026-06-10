@@ -39,6 +39,7 @@
                             icon="pi pi-pencil"
                             variant="text"
                             severity="secondary"
+                            [disabled]="!editable"
                     >
                     </p-button>
                 </div>
@@ -62,29 +63,22 @@
                     pTextarea
                     class="condition-textarea-dialog"
                     spellcheck="false"
-                    [rows]="inline ? 1 : 10"
-                    [ngModel]="(condition | async)?.condition"
-                    (ngModelChange)="onConditionChange($event)"
+                    [rows]="10"
+                    [ngModel]="dialogConditionText"
+                    (ngModelChange)="dialogConditionText = $event"
                     variant="filled"
-                    [disabled]="!editable"
-                    [dt]="{
-              root: {
-                borderColor: redConditions.includes((condition | async)!)
-                  ? '#ff7e7e'
-                  : greenConditions.includes((condition | async)!)
-                    ? '#6ab77a'
-                    : $dt('textarea.border.color').value,
-              },
-            }"
             >
           </textarea>
-            <div class="flex flex-row justify-end gap-1 pt-1">
+            <div class="condition-dialog-buttons">
                 <p-button
                     severity="secondary"
+                    (click)="onDialogDiscardClick()"
                 >
                     Discard
                 </p-button>
-                <p-button>
+                <p-button
+                    (click)="onDialogSaveClick()"
+                >
                     Save
                 </p-button>
             </div>

@@ -49,6 +49,7 @@ export class ConditionEditorComponent {
     @Output() public conditionEditingFinished: EventEmitter<void> =
         new EventEmitter<void>();
     @Output() public textChanged: EventEmitter<void> = new EventEmitter<void>();
+    protected dialogConditionText: string = "";
 
     public constructor(
         private _aiChatService: AiChatService,
@@ -98,6 +99,16 @@ export class ConditionEditorComponent {
     protected isDialogVisible: boolean = false;
 
     protected onEditConditionClick() {
+        this.dialogConditionText = this.condition.getValue().condition;
         this.isDialogVisible = true;
+    }
+
+    protected onDialogDiscardClick() {
+        this.isDialogVisible = false;
+    }
+
+    protected onDialogSaveClick() {
+        this.onConditionChange(this.dialogConditionText)
+        this.isDialogVisible = false;
     }
 }

@@ -41,3 +41,11 @@
     resize: none;
     border-radius: 0;
 }
+
+.condition-dialog-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding-top: 1rem;
+}
