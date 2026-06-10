@@ -30,3 +30,14 @@
     justify-content: center;
     height: 100%;
 }
+
+.condition-dialog {
+
+}
+
+.condition-textarea-dialog {
+    width: 100%;
+    height: 100%;
+    resize: none;
+    border-radius: 0;
+}
