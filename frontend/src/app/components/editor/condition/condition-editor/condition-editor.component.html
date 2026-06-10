@@ -56,14 +56,13 @@
             [contentStyle]="{ overflow: 'hidden'}"
             closable="false"
     >
-        <div class="flex flex-col">
+        <div class="flex flex-col h-full">
             <textarea
                     [ngModelOptions]="{ standalone: true }"
                     id="field"
                     pTextarea
                     class="condition-textarea-dialog"
                     spellcheck="false"
-                    [rows]="10"
                     [ngModel]="dialogConditionText"
                     (ngModelChange)="dialogConditionText = $event"
                     variant="filled"

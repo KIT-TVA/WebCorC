@@ -37,7 +37,7 @@
 
 .condition-textarea-dialog {
     width: 100%;
-    height: 100%;
+    height: 50vh;
     resize: none;
     border-radius: 0;
 }
