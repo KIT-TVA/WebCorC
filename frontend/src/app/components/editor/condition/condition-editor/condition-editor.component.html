@@ -48,12 +48,14 @@
     </div>
     <p-dialog
             [(visible)]="isDialogVisible"
-            modal="false"
+            [modal]="false"
             appendTo="body"
             [header]="placeholder"
-            [style]="{ width: '40vw', height:'60vh'}"
+            [style]="{ width: '40vw', height:'50vh'}"
             [contentStyle]="{ overflow: 'hidden'}"
+            closable="false"
     >
+        <div class="flex flex-col">
             <textarea
                     [ngModelOptions]="{ standalone: true }"
                     id="field"
@@ -76,5 +78,16 @@
             }"
             >
           </textarea>
+            <div class="flex flex-row justify-end gap-1 pt-1">
+                <p-button
+                    severity="secondary"
+                >
+                    Discard
+                </p-button>
+                <p-button>
+                    Save
+                </p-button>
+            </div>
+        </div>
     </p-dialog>
 </div>
