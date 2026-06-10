@@ -20,3 +20,13 @@
   box-sizing: border-box;
   padding-right: 2rem;
 }
+
+.condition-button-stack {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    right: 2%;
+    margin: 2px;
+    justify-content: center;
+    height: 100%;
+}
