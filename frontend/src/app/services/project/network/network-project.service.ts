@@ -154,15 +154,26 @@ export class NetworkProjectService {
    * @param urn
    */
   public async getFileContent(urn: string): Promise<string | LocalCBCFormula> {
-    const response = await fetch(this.buildFileURL(urn));
-    const blob = await response.blob();
+    try {
+      const response = await firstValueFrom(
+        this.http.get(this.buildFileURL(urn), { responseType: 'blob' }),
+      );
 
-    if (blob.type === "application/json") {
-      const text = await blob.text();
-      const file = JSON.parse(text);
-      return this.mapper.importFormula(file);
-    } else {
-      return await blob.text();
+      const blob = response as Blob;
+
+      if (blob.type === "application/json") {
+        const text = await blob.text();
+        const file = JSON.parse(text);
+        return this.mapper.importFormula(file);
+      } else {
+        return await blob.text();
+      }
+    } catch (error) {
+      this.consoleService.addErrorResponse(
+        error as HttpErrorResponse,
+        "Getting file content " + urn,
+      );
+      throw error;
     }
   }
 
