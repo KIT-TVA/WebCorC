@@ -409,9 +409,11 @@ export class ProjectService {
       const savedFinished = firstValueFrom(this._savedFinished);
       this._saveNotify.next();
       this.editorNotify.next();
+      //FIXME Not triggered if no editor open, should fix
       await savedFinished;
       console.log("After preparing upload", this._rootDir);
       await this.uploadFolder(this._rootDir);
+      await this.downloadWorkspace();
     } catch (error) {
       console.error("Failed to upload workspace:", error);
       // In a real scenario, we would trigger a notification to the user here
@@ -642,7 +644,10 @@ export class ProjectService {
     }
     const parentPath = element.parentPath;
     const oldUrn = element.urn;
-    const newUrn = parentPath + "/" + name;
+    let newUrn = parentPath + "/" + name;
+    if (newUrn.startsWith("/")) {
+      newUrn = newUrn.substring(1);
+    }
     element.urn = newUrn;
 
     console.log("server side urn:", element.serverSideUrn);
@@ -677,6 +682,7 @@ export class ProjectService {
     }
 
     this.storage.saveProject(this._rootDir, this._projectName);
+    console.log(this.storage.getProjectTree());
     this._dataChange.next(this._rootDir.contents);
   }
 
