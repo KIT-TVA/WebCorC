@@ -34,8 +34,10 @@ public class VerificationWebSocket {
             session.close();
             return;
         }
+        System.out.print("TEST:");
         for (String line : orchestrator.getJobLog(jobId)) {
             if (!line.isEmpty()) {
+                System.out.println("TEST: " + line);
                 session.sendSync(line);
             }
         }

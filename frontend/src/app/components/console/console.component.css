@@ -35,5 +35,19 @@
         resize: none;
         flex-grow: 1;
     }
+    .successBackground {
+        background-color: #ffffff;
+        opacity: 1;
+        background-image:
+                repeating-radial-gradient(circle at 0 0, transparent 0, #ffffff 20px),
+                repeating-linear-gradient(#1b976055, #1b9760);
+    }
+    .failBackground {
+        background-color: #ffffff;
+        opacity: 1;
+        background-image:
+                repeating-radial-gradient(circle at 0 0, transparent 0, #ffffff 20px),
+                repeating-linear-gradient(#720719, #c42944);
+    }
 }
 

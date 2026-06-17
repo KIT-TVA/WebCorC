@@ -1,9 +1,16 @@
 import { HttpErrorResponse } from "@angular/common/http";
 
-export type LogType = "ERROR" | "INFO" | "DEBUG" | "WARN";
+export type LogType = "ERROR" | "INFO" | "DEBUG" | "WARN" | "GROUP";
+export type LogStatus = "RUNNING" | "FAIL" | "SUCCESS" | "INFO";
 
 export abstract class ConsoleLogLine {
   public abstract readonly type: LogType;
+}
+
+export class ConsoleLogGroup {
+  public readonly type = "GROUP";
+  lines: ConsoleLogLine[] = [];
+  status?: LogStatus;
 }
 
 export class ConsoleErrorLine extends ConsoleLogLine {
@@ -36,4 +43,10 @@ export function isError(line: ConsoleLogLine): line is ConsoleErrorLine {
 
 export function isInfo(line: ConsoleLogLine): line is ConsoleInfoLine {
   return line.type === "INFO";
+}
+
+export function isGroup(
+  line: ConsoleLogLine | ConsoleLogGroup,
+): line is ConsoleLogGroup {
+  return line.type === "GROUP";
 }
