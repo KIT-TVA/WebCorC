@@ -501,53 +501,6 @@ export class ProjectService {
         continue;
       }
 
-      if (item.urn.startsWith(".rubbishBin")) {
-        // If it's in the rubbish bin, we need to ensure it's deleted from the server.
-        // We use serverSideUrn if present, otherwise we fall back to the urn it had
-        // before being moved to the bin. Since moveElement preserves urn for rubbish bin
-        // moves, we can derive the original path.
-
-        const urnToDelete = item.serverSideUrn;
-        if (!urnToDelete) {
-          // Derive original path by removing the .rubbishBin prefix
-          // This assumes the element was moved from root or a known structure.
-          // A more robust way is to check how it was added to the bin.
-          const parts = item.urn.split("/");
-          const binIndex = parts.findIndex((p) => p === ".rubbishBin");
-          if (binIndex !== -1) {
-            // This is a bit simplistic; in a real app we'd store the 'originalUrn'
-            // on the element when moving to bin. For now, let's see if we can
-            // find a way to identify the original path.
-          }
-        }
-
-        if (urnToDelete) {
-          const remoteRoot = this.storage.getRemoteProjectTree();
-          if (remoteRoot) {
-            const remoteElement = this.findByUrn(urnToDelete, remoteRoot);
-            if (remoteElement) {
-              const inodeType =
-                remoteElement.type === "DIRECTORY" ? "directory" : "file";
-              const inode: Inode = {
-                urn: item.serverSideUrn ?? item.urn,
-                inodeType: inodeType,
-              };
-              await this.network.deleteFile(inode);
-              const parent = this.getParentDirectory(remoteElement, remoteRoot);
-              if (parent) {
-                parent.removeElement(remoteElement.name);
-              }
-            }
-          }
-          item.serverSideUrn = undefined;
-        }
-        // If it's a directory in the rubbish bin, recursively check its children
-        if (item.type === "DIRECTORY") {
-          await this.uploadFolder(item as ProjectDirectory);
-        }
-        continue;
-      }
-
       if (item.serverSideUrn && item.serverSideUrn !== item.urn) {
         const inodeType = item.type === "DIRECTORY" ? "directory" : "file";
         const inode: Inode = {
@@ -569,7 +522,6 @@ export class ProjectService {
           }
           this.storage.saveRemoteProject(remoteRoot, this.projectName);
         }
-
         item.serverSideUrn = undefined;
       }
 
@@ -642,15 +594,7 @@ export class ProjectService {
 
     const newUrn = newParentPath + "/" + (name ? name : file.name);
 
-    // Store the original URN before changing it, especially for rubbish bin moves
-    file.serverSideUrn = oldUrn;
     file.urn = newUrn;
-
-    if (!target.urn.startsWith(".rubbishBin")) {
-      if (file.serverSideUrn) {
-        file.serverSideUrn = newUrn;
-      }
-    }
 
     // If we're moving a directory, recursively update all children URNs
     if (file.type === "DIRECTORY") {
@@ -701,9 +645,11 @@ export class ProjectService {
     const newUrn = parentPath + "/" + name;
     element.urn = newUrn;
 
-    if (element.serverSideUrn) {
-      element.serverSideUrn = newUrn;
+    console.log("server side urn:", element.serverSideUrn);
+    if (!element.serverSideUrn) {
+      element.serverSideUrn = oldUrn;
     }
+    console.log(element.serverSideUrn);
 
     // If we're renaming a directory, recursively update all children URNs
     if (element.type === "DIRECTORY") {

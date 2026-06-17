@@ -1,5 +1,4 @@
 import { Injectable } from "@angular/core";
-import { LocalCBCFormula } from "../../../types/CBCFormula";
 import { IProjectElement, ProjectDirectory } from "../types/project-elements";
 import { CbcFormulaMapperService } from "../mapper/cbc-formula-mapper.service";
 import { ProjectPredicate } from "../../../types/ProjectPredicate";
