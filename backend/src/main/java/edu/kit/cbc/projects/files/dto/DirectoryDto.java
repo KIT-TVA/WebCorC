@@ -79,7 +79,7 @@ public class DirectoryDto extends FileDirectoryDto {
         List<Path> pathElements = new ArrayList<>();
         path.iterator().forEachRemaining(pathElements::add);
         removeFilePath(
-            pathElements.stream().map(Path::toString).toList(),
+            pathElements.stream().map(Path::toString).collect(Collectors.toList()),
             path.getName(path.getNameCount() - 1).toFile().isDirectory() ? DirectoryDto.inodeType : FileDto.inodeType
         );
     }
