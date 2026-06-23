@@ -128,11 +128,40 @@ export class ProjectExplorerComponent {
     });
   }
 
+  private isRubbishBin(
+    element: ProjectElement,
+    parentContent: ProjectElement[],
+  ): boolean {
+    return (
+      element.name === ".rubbishBin" &&
+      parentContent === this.projectService.root.content
+    );
+  }
+
+  protected isInRubbishBin(element: ProjectElement): boolean {
+    // The rubbish bin is the special hidden directory at the root named ".rubbishBin".
+    // Any element whose path is nested under that directory should be treated as
+    // read-only from the explorer's point of view.
+    const rubbishBinPrefix = ".rubbishBin/";
+    return (
+      element.path === ".rubbishBin" ||
+      element.path.startsWith(rubbishBinPrefix)
+    );
+  }
+
   private getTreeNodes(content: ProjectElement[]): TreeNode<ProjectElement>[] {
     // Build nodes and inject a synthetic RenameProjectElement next to the element being renamed
     const nodes: TreeNode<ProjectElement>[] = [];
 
-    for (const element of content.filter((e) => !e.name.startsWith("."))) {
+    for (const element of content) {
+      // Hide most hidden elements from the root, but always show the rubbish bin
+      if (
+        element.name.startsWith(".") &&
+        !this.isRubbishBin(element, content)
+      ) {
+        continue;
+      }
+
       let icon = "pi pi-file";
       let children: TreeNode<ProjectElement>[] = [];
       const pseudoElement: ProjectElement = element;
@@ -142,7 +171,13 @@ export class ProjectExplorerComponent {
         type = "rename";
       }
       if (pseudoElement instanceof ProjectDirectory) {
-        icon = expanded ? "pi pi-folder-open" : "pi pi-folder";
+        // Use a trash icon for the rubbish bin directory at the root
+        if (this.isRubbishBin(element, content)) {
+          icon = "pi pi-trash";
+        } else {
+          icon = expanded ? "pi pi-folder-open" : "pi pi-folder";
+        }
+
         if (type != "rename") {
           type = "directory";
         }
@@ -150,19 +185,21 @@ export class ProjectExplorerComponent {
         children = this.getTreeNodes(pseudoElement.content);
         if (this.directoryForNewFile?.path === element.path) {
           this.directoryForNewFile = null;
-          // Inject a synthetic "new file" node
-          children.push({
-            key: element.urn + "/new-file",
-            label: "new-file",
-            data: element,
-            droppable: false,
-            draggable: false,
-            expanded: false,
-            icon: "pi pi-file-edit",
-            type: "fake",
-            children: [],
-            leaf: true,
-          } as TreeNode<ProjectElement>);
+          // Inject a synthetic "new file" node, but never inside the rubbish bin
+          if (!this.isInRubbishBin(element)) {
+            children.push({
+              key: element.urn + "/new-file",
+              label: "new-file",
+              data: element,
+              droppable: false,
+              draggable: false,
+              expanded: false,
+              icon: "pi pi-file-edit",
+              type: "fake",
+              children: [],
+              leaf: true,
+            } as TreeNode<ProjectElement>);
+          }
         }
       }
       if (pseudoElement instanceof ProjectFile) {
@@ -177,12 +214,16 @@ export class ProjectExplorerComponent {
         }
       }
 
+      const inRubbishBin = this.isInRubbishBin(element);
+
       nodes.push({
         key: element.urn,
         label: element.name,
         data: element,
-        droppable: type == "directory",
-        draggable: true,
+        // Disallow dropping into the rubbish bin or its descendants
+        droppable: type == "directory" && !inRubbishBin,
+        // Elements in or under the rubbish bin should not be draggable (read-only)
+        draggable: !inRubbishBin,
         expanded: expanded,
         icon: icon,
         type: type,
@@ -190,7 +231,6 @@ export class ProjectExplorerComponent {
         leaf: type != "directory",
       });
     }
-
     if (content === this.projectService.root.content && this.addingToRoot) {
       this.addingToRoot = false;
       nodes.push({
@@ -423,14 +463,25 @@ export class ProjectExplorerComponent {
 
   setExpanded(node: TreeNode) {
     this.expandedNodes.push(node.data.path);
-    node.icon = "pi pi-folder-open";
+
+    // Preserve trash icon for the root-level rubbish bin, otherwise use folder-open
+    const isRootRubbishBin =
+      node.data.name === ".rubbishBin" &&
+      this.projectService.root.content.includes(node.data);
+
+    node.icon = isRootRubbishBin ? "pi pi-trash" : "pi pi-folder-open";
   }
 
   setCollapsed(event: TreeNodeCollapseEvent) {
     this.expandedNodes = this.expandedNodes.filter(
       (node) => node != event.node.data.path,
     );
-    event.node.icon = "pi pi-folder";
+
+    const isRootRubbishBin =
+      event.node.data.name === ".rubbishBin" &&
+      this.projectService.root.content.includes(event.node.data);
+
+    event.node.icon = isRootRubbishBin ? "pi pi-trash" : "pi pi-folder";
   }
 
   protected addElementToDirectory(directory: ProjectElement, node: TreeNode) {
