@@ -197,24 +197,24 @@
              />
            }
          </span>
-         <span class="self-end">
-           @if (!isInRubbishBin(node.data)) {
-             <p-button
-               icon="pi pi-file-edit"
-               text
-               severity="contrast"
-               (click)="toggleRename(node.data)"
-             >
-             </p-button>
-           }
-           <p-button
-             icon="pi pi-trash"
-             text
-             severity="danger"
-             (click)="deleteElement(node.data)"
-           >
-           </p-button>
-         </span>
+          <span class="self-end file-actions">
+            @if (!isInRubbishBin(node.data)) {
+              <p-button
+                icon="pi pi-file-edit"
+                text
+                severity="contrast"
+                (click)="toggleRename(node.data)"
+              >
+              </p-button>
+            }
+            <p-button
+              icon="pi pi-trash"
+              text
+              severity="danger"
+              (click)="deleteElement(node.data)"
+            >
+            </p-button>
+          </span>
        </div>
      </ng-template>
 </p-tree>
