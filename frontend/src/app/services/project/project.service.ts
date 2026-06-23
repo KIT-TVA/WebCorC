@@ -31,6 +31,7 @@ export class ProjectService {
   private _saveNotify = new Subject<void>();
   private _savedFinished = new Subject<void>();
   private _projectName: string = "";
+  private rubbishBinName = ".rubbishBin";
   constructor(
     private network: NetworkProjectService,
     private mapper: ProjectElementsMapperService,
@@ -218,30 +219,40 @@ export class ProjectService {
    * @param element
    */
   public deleteElement(element: ProjectElement) {
-    const rubbishBinName = ".rubbishBin";
-    let rubbishBin = this.findByUrn(rubbishBinName) as ProjectDirectory;
+    const rubbishBin = this.getRubbishBin();
 
-    if (!rubbishBin) {
-      this.addDirectory("", rubbishBinName);
-      rubbishBin = this.findByUrn(rubbishBinName) as ProjectDirectory;
-    }
-
-    // If the element is already in the rubbish bin, permanently delete it
-    if (element.urn.startsWith(rubbishBinName)) {
-      const parent = this.getParentDirectory(element);
-
-      if (parent) {
-        parent.contents = parent.contents.filter(
-          (child) => child.urn !== element.urn,
-        );
-      }
+    if (this.elementIsInRubbishBin(element)) {
+      this.permanentlyDeleteElement(element);
+      console.log(`Element ${element.urn} deleted permanently`);
     } else {
-      // Move to rubbish bin
       this.moveElement(element, rubbishBin);
+      console.log(`Element ${element.urn} moved to rubbish bin`);
     }
-
     this.storage.saveProject(this._rootDir, this._projectName);
     this._dataChange.next(this._rootDir.contents);
+  }
+
+  private getRubbishBin() {
+    let rubbishBin = this.findByUrn(this.rubbishBinName) as ProjectDirectory;
+    if (!rubbishBin) {
+      this.addDirectory("", this.rubbishBinName);
+      rubbishBin = this.findByUrn(this.rubbishBinName) as ProjectDirectory;
+    }
+    return rubbishBin;
+  }
+
+  private elementIsInRubbishBin(element: ProjectElement) {
+    return element.urn.startsWith(this.rubbishBinName);
+  }
+
+  private permanentlyDeleteElement(element: ProjectElement) {
+    const parent = this.getParentDirectory(element);
+
+    if (parent) {
+      parent.contents = parent.contents.filter(
+        (child) => child.urn !== element.urn,
+      );
+    }
   }
 
   public async clearRubbishBin() {
@@ -406,11 +417,30 @@ export class ProjectService {
   public async uploadWorkspace() {
     try {
       console.log("Before preparing upload", this._rootDir);
-      const savedFinished = firstValueFrom(this._savedFinished);
+
+      // Log current listeners to help debug deadlocks
+      console.log("Preparing to wait for _savedFinished emission");
+
+      // Start listening for the next save completion BEFORE notifying editors
+      const savedFinishedPromise = firstValueFrom(this._savedFinished);
+
+      // Tell editors (and other listeners) to flush their state
       this._saveNotify.next();
       this.editorNotify.next();
-      //FIXME Not triggered if no editor open, should fix
-      await savedFinished;
+
+      // If no editor is open (or no one responds), avoid deadlock by timing out
+      const timeoutMs = 300;
+      const timeoutPromise = new Promise<void>((resolve) => {
+        setTimeout(() => {
+          console.warn(
+            `uploadWorkspace: save-finished event did not fire within ${timeoutMs}ms; continuing with last known state`,
+          );
+          resolve();
+        }, timeoutMs);
+      });
+
+      await Promise.race([savedFinishedPromise, timeoutPromise]);
+
       console.log("After preparing upload", this._rootDir);
       await this.uploadFolder(this._rootDir);
       await this.downloadWorkspace();
