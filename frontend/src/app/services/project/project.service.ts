@@ -666,15 +666,45 @@ export class ProjectService {
    * Rename the element
    */
   public renameElement(element: ProjectElement, name: string) {
-    if (name.includes("/")) {
+    const trimmedName = name.trim();
+
+    if (trimmedName.includes("/")) {
       throw new Error("Element name contains forbidden character '/'");
     }
-    if (name.trim() === "") {
+    if (trimmedName === "") {
       throw new Error("Element name cannot be empty");
     }
+
     const parentPath = element.parentPath;
     const oldUrn = element.urn;
-    let newUrn = parentPath + "/" + name;
+
+    let newUrn: string;
+
+    if (element.type === "DIRECTORY") {
+      newUrn = parentPath ? parentPath + "/" + trimmedName : trimmedName;
+    } else {
+      // Files must always keep their canonical extension based on fileType.
+      const dotIndex = trimmedName.lastIndexOf(".");
+      const oldDotIndex = element.name.lastIndexOf(".");
+      const baseName =
+        dotIndex === -1 ? trimmedName : trimmedName.substring(0, dotIndex);
+      if (oldDotIndex < 0) {
+        throw new Error("Cannot rename file without a known fileType");
+      }
+      const fileType: string | undefined = element.name.substring(oldDotIndex);
+      const canonicalExtension = fileType; // Creation uses `name + "." + type`, keep same convention.
+
+      if (baseName === "") {
+        throw new Error("Element name cannot be empty");
+      }
+      if (baseName.includes("/")) {
+        throw new Error("Element name contains forbidden character '/'");
+      }
+
+      const newFileName = baseName + canonicalExtension;
+      newUrn = parentPath ? parentPath + "/" + newFileName : newFileName;
+    }
+
     if (newUrn.startsWith("/")) {
       newUrn = newUrn.substring(1);
     }
