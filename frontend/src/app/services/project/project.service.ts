@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { BehaviorSubject, firstValueFrom, Subject } from "rxjs";
 import { LocalCBCFormula } from "../../types/CBCFormula";
 import { NetworkProjectService } from "./network/network-project.service";
@@ -23,6 +23,11 @@ import { GlobalSettingsService } from "../global-settings.service";
   providedIn: "root",
 })
 export class ProjectService {
+  private network = inject(NetworkProjectService);
+  private mapper = inject(ProjectElementsMapperService);
+  private storage = inject(ProjectStorageService);
+  private settings = inject(GlobalSettingsService);
+
   // Use empty string as the project root urn - this aligns with ApiDirectory roots like '/'
   private _rootDir = new ProjectDirectory("", [], true);
   private _dataChange = new BehaviorSubject<ProjectElement[]>(
@@ -32,12 +37,12 @@ export class ProjectService {
   private _savedFinished = new Subject<void>();
   private _projectName: string = "";
   private rubbishBinName = ".rubbishBin";
-  constructor(
-    private network: NetworkProjectService,
-    private mapper: ProjectElementsMapperService,
-    private storage: ProjectStorageService,
-    private settings: GlobalSettingsService,
-  ) {
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+  constructor() {
+    const storage = this.storage;
+
     const projectIdFromStorage = storage.getProjectId();
     if (projectIdFromStorage) {
       this.network.projectId = projectIdFromStorage;

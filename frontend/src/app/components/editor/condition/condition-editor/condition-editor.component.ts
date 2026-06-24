@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Inject, Input, Output } from "@angular/core";
+import { Component, EventEmitter, Input, Output, inject } from "@angular/core";
 import { Condition, ICondition } from "../../../../types/condition/condition";
 import { AiChatService } from "../../../../services/ai-chat/ai-chat.service";
 import { Textarea } from "primeng/textarea";
@@ -27,6 +27,10 @@ import { Dialog } from "primeng/dialog";
   styleUrl: "./condition-editor.component.css",
 })
 export class ConditionEditorComponent {
+  private _aiChatService = inject(AiChatService);
+  protected greenConditions = inject(GREEN_COLOURED_CONDITIONS);
+  protected redConditions = inject(RED_COLOURED_CONDITIONS);
+
   /**
    * Condition to edit
    */
@@ -48,11 +52,10 @@ export class ConditionEditorComponent {
   @Output() public textChanged: EventEmitter<void> = new EventEmitter<void>();
   protected dialogConditionText: string = "";
 
-  public constructor(
-    private _aiChatService: AiChatService,
-    @Inject(GREEN_COLOURED_CONDITIONS) protected greenConditions: ICondition[],
-    @Inject(RED_COLOURED_CONDITIONS) protected redConditions: ICondition[],
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  public constructor() {}
 
   /**
    * Function for sending the condition content to the ai chat

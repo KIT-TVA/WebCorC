@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { IProjectElement, ProjectDirectory } from "../types/project-elements";
 import { CbcFormulaMapperService } from "../mapper/cbc-formula-mapper.service";
 import { ProjectPredicate } from "../../../types/ProjectPredicate";
@@ -11,6 +11,9 @@ import { ProjectElementsMapperService } from "../types/project-elements-mapper.s
   providedIn: "root",
 })
 export class ProjectStorageService {
+  private mapper = inject(CbcFormulaMapperService);
+  private projectElementsMapperService = inject(ProjectElementsMapperService);
+
   private static readonly projectIdKey = "projectId";
   private static readonly projectNameKey = "projectName";
   private static readonly projectFileTreeKey = "fileTree";
@@ -18,10 +21,10 @@ export class ProjectStorageService {
   private static readonly projectFileUrnPrefix = "_webCorc_";
   private static readonly projectPredicatesKey = "predicates";
 
-  constructor(
-    private mapper: CbcFormulaMapperService,
-    private projectElementsMapperService: ProjectElementsMapperService,
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   /**
    * Set the project id in the session storage

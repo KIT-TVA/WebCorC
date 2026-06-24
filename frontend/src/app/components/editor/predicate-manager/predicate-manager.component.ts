@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { Fluid } from "primeng/fluid";
 import { Select } from "primeng/select";
 import { Button } from "primeng/button";
@@ -28,9 +28,14 @@ import { Message } from "primeng/message";
   styleUrl: "./predicate-manager.component.css",
 })
 export class PredicateManagerComponent implements OnInit {
+  private predicateService = inject(PredicateService);
+
   protected predicates: ProjectPredicate[] = [];
 
-  constructor(private predicateService: PredicateService) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit() {
     this.predicateService.retrievePredicates();

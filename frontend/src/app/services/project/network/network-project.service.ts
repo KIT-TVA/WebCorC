@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { environment } from "../../../../environments/environment";
 import { firstValueFrom, Subject } from "rxjs";
 import { ConsoleService } from "../../console/console.service";
@@ -23,16 +23,19 @@ import { ProjectDirectory } from "../types/project-elements";
   providedIn: "root",
 })
 export class NetworkProjectService {
+  private http = inject(HttpClient);
+  private mapper = inject(CbcFormulaMapperService);
+  private projectMapper = inject(ProjectElementsMapperService);
+  private consoleService = inject(ConsoleService);
+
   private static projects = "/projects";
   private _projectname: string | undefined;
   private _finishedRequest = new Subject<void>();
 
-  constructor(
-    private http: HttpClient,
-    private mapper: CbcFormulaMapperService,
-    private projectMapper: ProjectElementsMapperService,
-    private consoleService: ConsoleService,
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   private _projectId: string | undefined;
 
@@ -156,7 +159,7 @@ export class NetworkProjectService {
   public async getFileContent(urn: string): Promise<string | LocalCBCFormula> {
     try {
       const response = await firstValueFrom(
-        this.http.get(this.buildFileURL(urn), { responseType: 'blob' }),
+        this.http.get(this.buildFileURL(urn), { responseType: "blob" }),
       );
 
       const blob = response as Blob;
