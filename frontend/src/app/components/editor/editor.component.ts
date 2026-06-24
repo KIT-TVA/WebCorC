@@ -25,13 +25,13 @@ import { AbstractStatementNode } from "../../types/statements/nodes/abstract-sta
 import {
   Connection,
   ConnectionControllerDirective,
-  DynamicNode,
   Edge,
   EdgeLabel,
   EdgeLabelHtmlTemplateDirective,
   EdgeSelectChange,
-  HtmlTemplateDynamicNode,
+  HtmlTemplateNode,
   MiniMapComponent,
+  Node,
   NodeHtmlTemplateDirective,
   NodePositionChange,
   VflowComponent,
@@ -73,11 +73,11 @@ export const GREEN_COLOURED_CONDITIONS = new InjectionToken<ICondition>(
     MiniMapComponent,
     EditorSidemenuComponent,
     EditorBottommenuComponent,
-    ConnectionControllerDirective,
     EdgeLabelHtmlTemplateDirective,
     Button,
     Popover,
     ConditionSelectorComponent,
+    ConnectionControllerDirective,
   ],
   providers: [
     { provide: GREEN_COLOURED_CONDITIONS, useValue: [] },
@@ -111,7 +111,9 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     protected globalSettingsService: GlobalSettingsService,
   ) {
     this.setupVFlowSync();
-    this.subscriptions.add(this.treeService.exportNotifier.subscribe(() => this.export()));
+    this.subscriptions.add(
+      this.treeService.exportNotifier.subscribe(() => this.export()),
+    );
   }
 
   private _urn: string = "";
@@ -148,17 +150,23 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     console.log("Editor view initialized");
     this._viewInit = true;
     this.loadFileContent();
-    this.subscriptions.add(this.projectService.editorNotify.subscribe(() => {
-      this.saveContentToFile();
-    }));
-    this.subscriptions.add(this.editorService.reload.subscribe(() => {
-      this.loadFileContent();
-    }));
-    this.subscriptions.add(fromEvent(document, "keydown").subscribe((e) => {
-      if ((e as KeyboardEvent).key === "Delete") {
-        this.deleteEdge();
-      }
-    }));
+    this.subscriptions.add(
+      this.projectService.editorNotify.subscribe(() => {
+        this.saveContentToFile();
+      }),
+    );
+    this.subscriptions.add(
+      this.editorService.reload.subscribe(() => {
+        this.loadFileContent();
+      }),
+    );
+    this.subscriptions.add(
+      fromEvent(document, "keydown").subscribe((e) => {
+        if ((e as KeyboardEvent).key === "Delete") {
+          this.deleteEdge();
+        }
+      }),
+    );
   }
 
   public ngOnDestroy(): void {
@@ -218,25 +226,25 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
    * VFlow doesn't support using computed signals as inputs for the graph, so we manually set the values here.
    *
    */
-  protected nodes: DynamicNode<AbstractStatementNode>[] = [];
+  protected nodes: Node<AbstractStatementNode>[] = [];
   protected edges: Edge[] = [];
 
   private nodeCache = new Map<
     string,
-    HtmlTemplateDynamicNode<AbstractStatementNode>
+    HtmlTemplateNode<AbstractStatementNode>
   >();
   private lastStructureHash: string = "";
   private lastNodeIds: string = "";
-  private lastNodesArray: DynamicNode<AbstractStatementNode>[] = [];
+  private lastNodesArray: Node<AbstractStatementNode>[] = [];
 
   private updateNodes(
     statements: AbstractStatementNode[],
-  ): DynamicNode<AbstractStatementNode>[] {
+  ): Node<AbstractStatementNode>[] {
     const currentIdsString = statements.map((s) => s.statement.id).join(",");
     let nodesArray = this.lastNodesArray;
 
     if (currentIdsString !== this.lastNodeIds) {
-      const newNodes: DynamicNode<AbstractStatementNode>[] = [];
+      const newNodes: Node<AbstractStatementNode>[] = [];
       const currentIds = new Set<string>();
 
       for (const statement of statements) {
@@ -273,9 +281,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     // Update signals for all nodes
     for (let i = 0; i < statements.length; i++) {
       const statement = statements[i];
-      const node = nodesArray[
-        i
-      ] as HtmlTemplateDynamicNode<AbstractStatementNode>;
+      const node = nodesArray[i] as HtmlTemplateNode<AbstractStatementNode>;
 
       if (node.id !== statement.statement.id) {
         // Fallback if order mismatch
@@ -346,15 +352,15 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
             source: parent.statement.id,
             target: child.statement.id,
             sourceHandle: String(index),
-            curve: "smooth-step",
-            markers: {
+            curve: signal("smooth-step"),
+            markers: signal({
               end: {
                 type: "arrow",
               },
-            },
-            edgeLabels: {
+            }),
+            edgeLabels: signal({
               center: calculateEdgeLabel(parent, child),
-            },
+            }),
           });
         }
       });
@@ -403,10 +409,10 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   createEdge(change: Connection) {
     const parent = this.nodes.find(
       (node) => node.id == change.source,
-    ) as HtmlTemplateDynamicNode<AbstractStatementNode>;
+    ) as HtmlTemplateNode<AbstractStatementNode>;
     const child = this.nodes.find(
       (node) => node.id == change.target,
-    ) as HtmlTemplateDynamicNode<AbstractStatementNode>;
+    ) as HtmlTemplateNode<AbstractStatementNode>;
     parent.data!().addChild(child.data!(), Number(change.sourceHandle));
     this.edges = this.computeEdges(this.statements());
   }
@@ -418,10 +424,10 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     const childId = this.edges.find((edge) => edge.id == edgeChange.id)!.target;
     const parent = this.nodes.find(
       (node) => node.id == parentId,
-    )! as HtmlTemplateDynamicNode<AbstractStatementNode>;
+    )! as HtmlTemplateNode<AbstractStatementNode>;
     const child = this.nodes.find(
       (node) => node.id == childId,
-    )! as HtmlTemplateDynamicNode<AbstractStatementNode>;
+    )! as HtmlTemplateNode<AbstractStatementNode>;
     return { parent, child };
   }
 
