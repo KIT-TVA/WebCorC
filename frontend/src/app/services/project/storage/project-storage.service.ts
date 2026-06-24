@@ -93,7 +93,7 @@ export class ProjectStorageService {
     );
     if (!storageContent) return null;
     const iProjectElement: IProjectElement = JSON.parse(storageContent);
-    console.log(iProjectElement);
+    console.log("stored local project tree:", iProjectElement);
     return this.projectElementsMapperService.parseProjectTree(iProjectElement);
   }
 
@@ -103,7 +103,7 @@ export class ProjectStorageService {
     );
     if (!storageContent) return null;
     const iProjectElement: IProjectElement = JSON.parse(storageContent);
-    console.log(iProjectElement);
+    console.log("stored remote project tree:", iProjectElement);
     return this.projectElementsMapperService.parseProjectTree(iProjectElement);
   }
 
