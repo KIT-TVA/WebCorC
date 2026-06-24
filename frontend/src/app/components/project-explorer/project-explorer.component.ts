@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
@@ -69,6 +69,13 @@ import { Tooltip } from "primeng/tooltip";
   styleUrl: "./project-explorer.component.css",
 })
 export class ProjectExplorerComponent {
+  projectService = inject(ProjectService);
+  private router = inject(Router);
+  private dialogService = inject(DialogService);
+  private treeService = inject(TreeService);
+  private predicateService = inject(PredicateService);
+  private messageService = inject(MessageService);
+
   menuItems: MenuItem[] = [
     {
       label: "Save",
@@ -112,14 +119,10 @@ export class ProjectExplorerComponent {
   private directoryForNewFile: ProjectElement | null = null;
   private addingToRoot = false;
 
-  public constructor(
-    public projectService: ProjectService,
-    private router: Router,
-    private dialogService: DialogService,
-    private treeService: TreeService,
-    private predicateService: PredicateService,
-    private messageService: MessageService,
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  public constructor() {
     this.projectService.dataChange.subscribe((data) => {
       this.treeNodes = this.getTreeNodes(data);
       //console.trace();

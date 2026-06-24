@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import {
   LocalDiagramFile,
   LocalDirectory,
@@ -28,17 +28,20 @@ import { SkipStatement } from "../../../types/statements/strong-weak-statement";
   standalone: true,
 })
 export class LoadExampleDialogComponent {
+  ref = inject(DynamicDialogRef);
+  config = inject(DynamicDialogConfig);
+  projectService = inject(ProjectService);
+
   selectedExample: {
     name: string;
     icon: string;
     project: LocalDirectory;
   } | null = null;
 
-  constructor(
-    public ref: DynamicDialogRef,
-    public config: DynamicDialogConfig,
-    public projectService: ProjectService,
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   public readonly EXAMPLE_PROGRAMS: {
     name: string;
@@ -410,7 +413,9 @@ export class LoadExampleDialogComponent {
                     "3",
                     new Condition("partSort(A,i) && i < A.length"),
                     new Condition("partSort(A,i)"),
-                    new Condition("partSort(A,i) && i < A.length && j == A.length-2"),
+                    new Condition(
+                      "partSort(A,i) && i < A.length && j == A.length-2",
+                    ),
                     new Statement(
                       "4",
                       new Condition("partSort(A,i) && i < A.length"),
@@ -422,7 +427,9 @@ export class LoadExampleDialogComponent {
                     ),
                     new CompositionStatement(
                       "5",
-                      new Condition("partSort(A,i) && i < A.length && j == A.length-2"),
+                      new Condition(
+                        "partSort(A,i) && i < A.length && j == A.length-2",
+                      ),
                       new Condition("partSort(A,i)"),
                       new Condition("partSort(A,i+1)"),
                       new RepetitionStatement(
@@ -536,7 +543,9 @@ export class LoadExampleDialogComponent {
             ],
             [
               new Condition("A!=null"),
-              new Condition("(\\forall int m; (0 <= m && m < A.length ==> (\\forall int n; (0 <= n && n < A.length ==> (m != n ==> A[m] != A[n])))))"),
+              new Condition(
+                "(\\forall int m; (0 <= m && m < A.length ==> (\\forall int n; (0 <= n && n < A.length ==> (m != n ==> A[m] != A[n])))))",
+              ),
               new Condition("j <= A.length-2 && j >= i"),
               new Condition("i >= 0 && i <= A.length"),
             ],
@@ -583,6 +592,6 @@ export class LoadExampleDialogComponent {
           ),
         ]),
       ]),
-    },    
+    },
   ];
 }

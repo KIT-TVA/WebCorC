@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { LocalCBCFormula } from "../../../types/CBCFormula";
 import { ProjectService } from "../../project/project.service";
 import { TreeService } from "../tree.service";
@@ -17,12 +17,15 @@ import { ConsoleInfoLine, ConsoleLogGroup } from "../../console/log";
   providedIn: "root",
 })
 export class VerificationService {
-  constructor(
-    private projectService: ProjectService,
-    private treeService: TreeService,
-    private consoleService: ConsoleService,
-    private globalSettingsService: GlobalSettingsService,
-  ) {}
+  private projectService = inject(ProjectService);
+  private treeService = inject(TreeService);
+  private consoleService = inject(ConsoleService);
+  private globalSettingsService = inject(GlobalSettingsService);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   public beginVerificationLog() {
     const group = this.consoleService.addGroup();

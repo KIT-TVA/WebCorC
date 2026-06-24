@@ -1,8 +1,4 @@
-import {
-  Component,
-  Input,
-  OnInit,
-} from "@angular/core";
+import { Component, Input, OnInit, inject } from "@angular/core";
 
 import { StatementComponent } from "../statement/statement.component";
 import { Refinement } from "../../../../types/refinement";
@@ -40,12 +36,16 @@ import { StatementType } from "../../../../types/statements/abstract-statement";
 export class RepetitionStatementComponent extends Refinement implements OnInit {
   @Input() _node!: RepetitionStatementNode;
 
-  public constructor(treeService: TreeService) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  public constructor() {
+    const treeService = inject(TreeService);
+
     super(treeService);
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   public onEditableContentChanged(): void {
     this.treeService.markSubtreeUnverified(this._node);

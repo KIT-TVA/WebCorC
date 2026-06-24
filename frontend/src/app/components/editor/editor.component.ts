@@ -8,6 +8,7 @@ import {
   signal,
   Signal,
   ViewChild,
+  inject,
 } from "@angular/core";
 import { ResetVariant } from "../../types/ResetVariant";
 import { MatButtonModule } from "@angular/material/button";
@@ -49,7 +50,7 @@ import { disconnectNodes } from "../../types/statements/nodes/statement-node-uti
 export const RED_COLOURED_CONDITIONS = new InjectionToken<ICondition[]>(
   "RedColouredConditions",
 );
-export const GREEN_COLOURED_CONDITIONS = new InjectionToken<ICondition>(
+export const GREEN_COLOURED_CONDITIONS = new InjectionToken<ICondition[]>(
   "GreenColouredConditions",
 );
 
@@ -88,12 +89,21 @@ export const GREEN_COLOURED_CONDITIONS = new InjectionToken<ICondition>(
   styleUrl: "./editor.component.css",
 })
 export class EditorComponent implements AfterViewInit, OnDestroy {
+  private treeService = inject(TreeService);
+  private projectService = inject(ProjectService);
+  private editorService = inject(EditorService);
+  private router = inject(Router);
+  protected globalSettingsService = inject(GlobalSettingsService);
+
   public showResetButton: boolean = true;
   protected statements: Signal<AbstractStatementNode[]> =
     this.treeService.generateStatementNodes();
   @ViewChild("sidemenu") private sidemenu!: EditorSidemenuComponent;
   private _viewInit: boolean = false;
   private subscriptions: Subscription = new Subscription();
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
 
   /**
    * Constructor for dependency injection of the services
@@ -103,13 +113,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
    * @param router
    * @param globalSettingsService
    */
-  public constructor(
-    private treeService: TreeService,
-    private projectService: ProjectService,
-    private editorService: EditorService,
-    private router: Router,
-    protected globalSettingsService: GlobalSettingsService,
-  ) {
+  public constructor() {
     this.setupVFlowSync();
     this.subscriptions.add(
       this.treeService.exportNotifier.subscribe(() => this.export()),

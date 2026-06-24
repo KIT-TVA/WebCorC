@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
 import { ToggleSwitch } from "primeng/toggleswitch";
 import { Fieldset } from "primeng/fieldset";
@@ -15,19 +15,30 @@ import { MatRadioButton, MatRadioGroup } from "@angular/material/radio";
 
 @Component({
   selector: "app-settings",
-  imports: [ToggleSwitch, Fieldset, Button, FormsModule, Dialog, MatRadioGroup, MatRadioButton],
+  imports: [
+    ToggleSwitch,
+    Fieldset,
+    Button,
+    FormsModule,
+    Dialog,
+    MatRadioGroup,
+    MatRadioButton,
+  ],
   templateUrl: "./settings.component.html",
   styleUrl: "./settings.component.css",
 })
 export class SettingsComponent {
-  constructor(
-    public ref: DynamicDialogRef,
-    public config: DynamicDialogConfig,
-    public globalSettingsService: GlobalSettingsService,
-    public networkService: NetworkProjectService,
-    protected projectService: ProjectService,
-    protected treeService: TreeService,
-  ) {}
+  ref = inject(DynamicDialogRef);
+  config = inject(DynamicDialogConfig);
+  globalSettingsService = inject(GlobalSettingsService);
+  networkService = inject(NetworkProjectService);
+  protected projectService = inject(ProjectService);
+  protected treeService = inject(TreeService);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   //Note: this is not the current dialog, but used to display json dumps
   protected dialogVisible: boolean = false;

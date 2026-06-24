@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { ProjectService } from "../../../services/project/project.service";
 import { FormsModule } from "@angular/forms";
 import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
@@ -17,12 +17,15 @@ import { FloatLabel } from "primeng/floatlabel";
   styleUrl: "./create-project-dialog.component.css",
 })
 export class CreateProjectDialogComponent {
+  private projectService = inject(ProjectService);
+  ref = inject<DynamicDialogRef<boolean>>(DynamicDialogRef);
+  config = inject(DynamicDialogConfig);
+
   protected loading = false;
-  public constructor(
-    private projectService: ProjectService,
-    public ref: DynamicDialogRef<boolean>,
-    public config: DynamicDialogConfig,
-  ) {}
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+  public constructor() {}
 
   public confirm() {
     this.loading = true;

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, inject } from "@angular/core";
 
 import { StatementComponent } from "../statement/statement.component";
 import { Refinement } from "../../../../types/refinement";
@@ -43,21 +43,24 @@ import { HandleComponent } from "ngx-vflow";
   standalone: true,
 })
 export class SelectionStatementComponent extends Refinement implements OnInit {
+  private dialog = inject(MatDialog);
+
   @Input() _node!: SelectionStatementNode;
 
   override export(): AbstractStatement | undefined {
     return undefined;
   }
 
-  public constructor(
-    treeService: TreeService,
-    private dialog: MatDialog,
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  public constructor() {
+    const treeService = inject(TreeService);
+
     super(treeService);
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   public onEditableContentChanged(): void {
     this.treeService.markSubtreeUnverified(this._node);
