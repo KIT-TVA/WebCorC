@@ -24,7 +24,7 @@ import {Dialog} from "primeng/dialog";
  */
 @Component({
     selector: 'app-condition-editor',
-    imports: [Textarea, IconField, InputIcon, FloatLabelModule, FormsModule, AsyncPipe, Button, ButtonGroup, Dialog],
+    imports: [Textarea, FloatLabelModule, FormsModule, AsyncPipe, Button, Dialog],
     templateUrl: './condition-editor.component.html',
     standalone: true,
     styleUrl: './condition-editor.component.css',
