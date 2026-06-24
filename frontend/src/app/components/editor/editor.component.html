@@ -18,21 +18,21 @@
   >
     <div id="editorContainer" #editorContainer>
       <!-- Render container for the trees root -->
-      <vflow
-        view="auto"
-        [nodes]="nodes"
-        [edges]="edges"
-        [connection]="{ curve: 'smooth-step' }"
-        (onConnect)="createEdge($event)"
-        (onNodesChange.position)="handlePositionChange($event)"
-        [background]="{ backgroundColor: 'var(--p-background)', type: 'dots' }"
-        [snapGrid]="[25, 25]"
-        (onEdgesChange.select)="handleEdgeSelect($event)"
-      >
-        <ng-template let-ctx nodeHtml style="width: fit-content">
-          <app-statement-delegator [statement]="ctx.node.data()">
-          </app-statement-delegator>
-        </ng-template>
+        <vflow
+          view="auto"
+          [nodes]="nodes"
+          [edges]="edges"
+          [connection]="{ curve: 'smooth-step' }"
+          (connect)="createEdge($event)"
+          (nodesChanges.position)="handlePositionChange($event)"
+          [background]="{ backgroundColor: 'var(--p-background)', type: 'dots' }"
+          [snapGrid]="[25, 25]"
+          (edgesChanges.select)="handleEdgeSelect($event)"
+        >
+          <ng-template let-ctx nodeHtml style="width: fit-content">
+            <app-statement-delegator [statement]="ctx.node.data?.()">
+            </app-statement-delegator>
+          </ng-template>
         <ng-template let-ctx edgeLabelHtml>
           <p-button
             label="condition conflict"
