@@ -123,8 +123,8 @@ export class ProjectExplorerComponent {
     this.projectService.dataChange.subscribe((data) => {
       this.treeNodes = this.getTreeNodes(data);
       //console.trace();
-      console.log(data);
-      console.log(this.treeNodes);
+      //console.log(data);
+      //console.log(this.treeNodes);
     });
   }
 
@@ -411,6 +411,8 @@ export class ProjectExplorerComponent {
   public dropNode(event: TreeNodeDropEvent) {
     const node = event.dragNode?.data;
     let target = event.dropNode?.data;
+    console.log(event);
+    console.log(target);
     if (!target) {
       target = this.projectService.root;
     }

@@ -603,6 +603,7 @@ export class ProjectService {
     target: ProjectElement,
     name?: string,
   ) {
+    console.log("Move action requested (file, target):", file, target);
     const newParentPath = target.urn;
     const oldUrn = file.urn;
 
