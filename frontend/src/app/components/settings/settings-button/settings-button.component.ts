@@ -21,6 +21,7 @@ export class SettingsButtonComponent {
     this.dialogService.open(SettingsComponent, {
       header: "Settings",
       modal: true,
+      closable: true,
     });
   }
 }
