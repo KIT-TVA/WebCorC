@@ -133,6 +133,7 @@ export class AppComponent implements OnInit {
     return this.dialogService.open(CreateProjectDialogComponent, {
       header: "Select Project",
       modal: true,
+      closable: true,
     });
   }
 

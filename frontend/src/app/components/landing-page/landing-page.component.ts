@@ -79,6 +79,7 @@ export class LandingPageComponent {
     this.dialogService.open(OpenProjectDialogComponent, {
       header: "Open Project",
       modal: true,
+      closable: true,
     });
   }
 
@@ -86,6 +87,7 @@ export class LandingPageComponent {
     this.dialogService.open(ImportProjectDialogComponent, {
       header: "Import Project",
       modal: true,
+      closable: true,
     });
   }
 
@@ -94,6 +96,7 @@ export class LandingPageComponent {
       data: { parentURN: "/" },
       header: "Import File",
       modal: true,
+      closable: true,
     });
   }
 
@@ -101,6 +104,7 @@ export class LandingPageComponent {
     const dialogRef = this.dialogService.open(LoadExampleDialogComponent, {
       header: "Load Example",
       modal: true,
+      closable: true,
     });
 
     dialogRef?.onClose.subscribe((selectedExample) => {

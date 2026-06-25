@@ -324,6 +324,7 @@ export class ProjectExplorerComponent {
     return this.dialogService.open(CreateProjectDialogComponent, {
       header: "Select Project",
       modal: true,
+      closable: true,
     });
   }
 
@@ -341,6 +342,7 @@ export class ProjectExplorerComponent {
       data: { parentURN: path },
       header: "Import File",
       modal: true,
+      closable: true,
     });
   }
   /**
@@ -386,6 +388,7 @@ export class ProjectExplorerComponent {
       data: { parentURN: "/" },
       header: "Import File",
       modal: true,
+      closable: true,
     });
   }
 
@@ -463,6 +466,7 @@ export class ProjectExplorerComponent {
       data: { parentURN: "/" },
       header: "Import Project",
       modal: true,
+      closable: true,
     });
   }
 
