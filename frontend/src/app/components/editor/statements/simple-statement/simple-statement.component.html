@@ -4,10 +4,9 @@
                 [condition]="_node.programStatement"
                 [editable]="true"
                 placeholder="Statement"
-                [showAiButton]="false">
+                [showAiButton]="true"
                 (textChanged)="onEditableContentChanged()"
-                placeholder="Statement">
+                (synthesizeRequested)="synthesizeWithAi()">
         </app-condition-editor>
     </div>
-
 </app-statement-base>

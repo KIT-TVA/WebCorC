@@ -32,17 +32,21 @@ export class ConditionEditorComponent {
   protected redConditions = inject(RED_COLOURED_CONDITIONS);
 
   /**
-   * Condition to edit
-   */
-  @Input() public condition!: BehaviorSubject<ICondition>;
+     * Flag to allow editing the condition content
+     */
+    @Input() public placeholder: string = 'Type here';
+    @Input() public editable: boolean | null = true;
+    @Input() public inline = false;
+    @Input() public showAiButton = false;
 
-  /**
-   * Flag to allow editing the condition content
-   */
-  @Input() public placeholder: string = "Type here";
-  @Input() public editable: boolean | null = true;
-  @Input() public inline = false;
-  @Input() public showAiButton = true;
+    /**
+     * Emitter to emit the condition
+     */
+    @Output() public conditionEditingFinished: EventEmitter<void> =
+        new EventEmitter<void>();
+    @Output() public textChanged: EventEmitter<void> = new EventEmitter<void>();
+    @Output() public synthesizeRequested: EventEmitter<void> = new EventEmitter<void>();
+    protected dialogConditionText: string = "";
 
   /**
    * Emitter to emit the condition
@@ -57,15 +61,14 @@ export class ConditionEditorComponent {
 
   public constructor() {}
 
-  /**
-   * Function for sending the condition content to the ai chat
-   * @see AiChatService
-   */
-  public askAi(): void {
-    const currentCondition = this.condition.getValue();
-    if (!currentCondition?.condition) return;
-    this._aiChatService.addCondition(currentCondition);
-  }
+
+    public synthesizeWithAi(): void {
+        this.synthesizeRequested.emit();
+    }
+
+    public get aiButtonClass(): string {
+        return 'cursor-pointer pi pi-sparkles';
+    }
 
   public onAiButtonClick(): void {
     this.askAi();

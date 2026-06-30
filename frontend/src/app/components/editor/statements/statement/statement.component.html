@@ -74,6 +74,7 @@
                                     [condition]="_node.precondition"
                                     [editable]="_node.preconditionEditable | async"
                                     (textChanged)="onEditableContentChanged()"
+                                    (synthesizeRequested)="synthesizeWithAi()"
                             ></app-condition-editor>
                         </div>
                     </mat-drawer>
@@ -109,16 +110,6 @@
 
         <div class="flex items-center statementCenter">
             <ng-content></ng-content>
-            @if (showSynthesisButton) {
-                <p-button
-                        text
-                        icon="pi pi-microchip-ai"
-                        severity="secondary"
-                        class="cursor-pointer synthesisCenterButton"
-                        (click)="synthesizeWithAi()"
-                        title="Synthesize statement with AI"
-                />
-            }
         </div>
         @if (!globalSettingsService.conditionsAlwaysOpen) {
             <div appGtBorder #postconditionDiv class="w-12">
@@ -161,6 +152,7 @@
                         [condition]="_node.postcondition"
                         [editable]="_node.postconditionEditable | async"
                         (textChanged)="onEditableContentChanged()"
+                        (synthesizeRequested)="synthesizeWithAi()"
                 ></app-condition-editor>
             </div>
         }
