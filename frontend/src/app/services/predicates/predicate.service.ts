@@ -1,4 +1,4 @@
-import { Injectable, inject } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { ProjectPredicate } from "../../types/ProjectPredicate";
 import { ProjectService } from "../project/project.service";
 
@@ -6,15 +6,8 @@ import { ProjectService } from "../project/project.service";
   providedIn: "root",
 })
 export class PredicateService {
-  private projectService = inject(ProjectService);
-
   private predicates: ProjectPredicate[] = [];
-
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-  constructor() {
-    const projectService = this.projectService;
-
+  constructor(private projectService: ProjectService) {
     this.predicates = projectService.getPredicates();
     this.idCounter =
       this.predicates
