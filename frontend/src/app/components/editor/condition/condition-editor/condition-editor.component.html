@@ -25,21 +25,30 @@
           >
           </textarea>
                 <label for="field">{{ placeholder }}</label>
-                <div class="condition-button-stack">
-                    <p-button
-                            (click)="onAiButtonClick()"
-                            icon="pi pi-sparkles"
-                            variant="text"
-                            severity="secondary"
-
-                    >
-                    </p-button>
+                <div class="condition-button-stack" [class.condition-button-stack--with-ai]="showAiButton">
                     <p-button
                             (click)="onEditConditionClick()"
                             icon="pi pi-pencil"
                             variant="text"
                             severity="secondary"
                             [disabled]="!editable"
+                    >
+                    </p-button>
+                    @if (showAiButton) {
+                        <p-button
+                                (click)="synthesizeWithAi()"
+                                icon="pi pi-microchip-ai"
+                                variant="text"
+                                severity="secondary"
+                                title="Synthesize statement with AI"
+                        >
+                        </p-button>
+                    }
+                    <p-button
+                            (click)="onAiButtonClick()"
+                            icon="pi pi-sparkles"
+                            variant="text"
+                            severity="secondary"
                     >
                     </p-button>
                 </div>
