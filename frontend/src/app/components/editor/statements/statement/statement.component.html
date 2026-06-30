@@ -74,6 +74,7 @@
                                     [condition]="_node.precondition"
                                     [editable]="_node.preconditionEditable | async"
                                     (textChanged)="onEditableContentChanged()"
+                                    (synthesizeRequested)="synthesizeWithAi()"
                             ></app-condition-editor>
                         </div>
                     </mat-drawer>
@@ -151,6 +152,7 @@
                         [condition]="_node.postcondition"
                         [editable]="_node.postconditionEditable | async"
                         (textChanged)="onEditableContentChanged()"
+                        (synthesizeRequested)="synthesizeWithAi()"
                 ></app-condition-editor>
             </div>
         }

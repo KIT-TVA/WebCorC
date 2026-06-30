@@ -41,7 +41,7 @@ export class ConditionEditorComponent {
     @Input() public placeholder: string = 'Type here';
     @Input() public editable: boolean | null = true;
     @Input() public inline = false;
-    @Input() public showAiButton = true;
+    @Input() public showAiButton = false;
 
     /**
      * Emitter to emit the condition
@@ -49,6 +49,7 @@ export class ConditionEditorComponent {
     @Output() public conditionEditingFinished: EventEmitter<void> =
         new EventEmitter<void>();
     @Output() public textChanged: EventEmitter<void> = new EventEmitter<void>();
+    @Output() public synthesizeRequested: EventEmitter<void> = new EventEmitter<void>();
     protected dialogConditionText: string = "";
 
     public constructor(
@@ -70,6 +71,10 @@ export class ConditionEditorComponent {
 
     public onAiButtonClick(): void {
         this.askAi();
+    }
+
+    public synthesizeWithAi(): void {
+        this.synthesizeRequested.emit();
     }
 
     public get aiButtonClass(): string {
