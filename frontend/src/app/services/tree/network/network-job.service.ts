@@ -3,7 +3,7 @@ import {
   HttpErrorResponse,
   HttpParams,
 } from "@angular/common/http";
-import { Injectable, inject } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { ICBCFormula, LocalCBCFormula } from "../../../types/CBCFormula";
 import { environment } from "../../../../environments/environment";
 import { catchError, map, Observable, of } from "rxjs";
@@ -25,22 +25,19 @@ import { TreeService } from "../tree.service";
   providedIn: "root",
 })
 export class NetworkJobService {
-  private readonly http = inject(HttpClient);
-  private readonly mapper = inject(CbcFormulaMapperService);
-  private readonly verificationService = inject(VerificationService);
-  private readonly consoleService = inject(ConsoleService);
-  private readonly projectService = inject(ProjectService);
-  private readonly treeService = inject(TreeService);
-
   private static readonly verifyPath = "/editor/verify";
   private static readonly verifyWebSocketPath = "/ws/verify/";
   private static readonly verifyResultPath = "/editor/jobs/";
   private static readonly generatePath = "/editor/javaGen";
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
-  constructor() {}
+  constructor(
+    private readonly http: HttpClient,
+    private readonly mapper: CbcFormulaMapperService,
+    private readonly verificationService: VerificationService,
+    private readonly consoleService: ConsoleService,
+    private readonly projectService: ProjectService,
+    private readonly treeService: TreeService,
+  ) {}
 
   /**
    * Verify the given arguments via the backend with key
@@ -145,7 +142,7 @@ export class NetworkJobService {
           if (error.status === 500 || error.status >= 400) {
             // Mark statement as unverified
             statementNode.statement.isProven = false;
-            statementNode.statement.nodeState = "failed";
+            statementNode.statement.nodeState = 'failed';
             console.log("Check for root fail " + statementNode.statement.name);
             this.treeService.refreshNodes();
             this.consoleService.addErrorResponse(

@@ -1,10 +1,10 @@
 import {
   AfterViewInit,
   Component,
+  Inject,
   Input,
   OnInit,
   output,
-  inject,
 } from "@angular/core";
 import { ConditionEditorComponent } from "../condition-editor/condition-editor.component";
 import { AbstractStatementNode } from "../../../../types/statements/nodes/abstract-statement-node";
@@ -23,9 +23,6 @@ import { BehaviorSubject } from "rxjs";
   styleUrl: "./condition-selector.component.css",
 })
 export class ConditionSelectorComponent implements AfterViewInit, OnInit {
-  protected greenConditions = inject(GREEN_COLOURED_CONDITIONS);
-  protected redConditions = inject(RED_COLOURED_CONDITIONS);
-
   @Input()
   set parent(value: AbstractStatementNode) {
     this._parent = value;
@@ -54,10 +51,10 @@ export class ConditionSelectorComponent implements AfterViewInit, OnInit {
     type: "PRECONDITION" | "POSTCONDITION";
   }[] = [];
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
-  constructor() {}
+  constructor(
+    @Inject(GREEN_COLOURED_CONDITIONS) protected greenConditions: ICondition[],
+    @Inject(RED_COLOURED_CONDITIONS) protected redConditions: ICondition[],
+  ) {}
 
   ngOnInit(): void {
     // Initialization is handled by the input setters

@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, inject } from "@angular/core";
+import { Component, ElementRef, Input } from "@angular/core";
 
 import { StatementComponent } from "../statement/statement.component";
 import { Refinement } from "../../../../types/refinement";
@@ -31,8 +31,6 @@ import { SkipStatementNode } from "../../../../types/statements/nodes/skip-state
   styleUrl: "./strong-weak-statement.component.css",
 })
 export class StrongWeakStatementComponent extends Refinement {
-  private dialog = inject(MatDialog);
-
   private _weakPreCondition: Condition;
   private _strongPostCondition: Condition;
 
@@ -40,12 +38,10 @@ export class StrongWeakStatementComponent extends Refinement {
   @Input({ required: true }) _node!: SkipStatementNode;
   private _statementRef: ElementRef | undefined;
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
-  public constructor() {
-    const treeService = inject(TreeService);
-
+  public constructor(
+    treeService: TreeService,
+    private dialog: MatDialog,
+  ) {
     super(treeService);
     this._weakPreCondition = new Condition("Weak precondition");
     this._strongPostCondition = new Condition("Strong postcondition");

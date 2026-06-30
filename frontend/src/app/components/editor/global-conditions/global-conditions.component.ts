@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { Component } from "@angular/core";
 
 import { TreeService } from "../../../services/tree/tree.service";
 import { MatInputModule } from "@angular/material/input";
@@ -44,10 +44,6 @@ import { AiChatService } from "../../../services/ai-chat/ai-chat.service";
   styleUrl: "./global-conditions.component.css",
 })
 export class GlobalConditionsComponent {
-  private _fb = inject(FormBuilder);
-  treeService = inject(TreeService);
-  private aiChatService = inject(AiChatService);
-
   /**
    * Form template
    */
@@ -56,10 +52,11 @@ export class GlobalConditionsComponent {
     items: this._fb.array([]),
   });
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
-  public constructor() {}
+  public constructor(
+    private _fb: FormBuilder,
+    public treeService: TreeService,
+    private aiChatService: AiChatService,
+  ) {}
 
   /**
    * Saves the content of the input with the id newCondition to the @see TreeService
@@ -95,7 +92,7 @@ export class GlobalConditionsComponent {
    */
   public onDelete(event: Event, index: number) {
     event.preventDefault();
-    this.removeCondition(index);
+      this.removeCondition(index);
   }
 
   /**
@@ -113,8 +110,8 @@ export class GlobalConditionsComponent {
    */
   public removeCondition(index: number): void {
     this.treeService.removeGlobalCondition(this.items.at(index).value.name);
-    this.treeService.markWholeTreeUnverified();
-    this.items.removeAt(index);
+      this.treeService.markWholeTreeUnverified();
+      this.items.removeAt(index);
   }
 
   /**

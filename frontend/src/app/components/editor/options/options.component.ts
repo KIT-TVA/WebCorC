@@ -1,4 +1,4 @@
-import { Component, OnDestroy, inject } from "@angular/core";
+import { Component, OnDestroy } from "@angular/core";
 
 import { MatButtonModule } from "@angular/material/button";
 import { TreeService } from "../../../services/tree/tree.service";
@@ -19,16 +19,13 @@ import { MatIconModule } from "@angular/material/icon";
   styleUrl: "./options.component.css",
 })
 export class OptionsComponent implements OnDestroy {
-  private treeService = inject(TreeService);
-  private projectService = inject(ProjectService);
-  private editorService = inject(EditorService);
-
   private subscriptions: Subscription = new Subscription();
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
-  constructor() {}
+  constructor(
+    private treeService: TreeService,
+    private projectService: ProjectService,
+    private editorService: EditorService,
+  ) {}
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
@@ -39,11 +36,9 @@ export class OptionsComponent implements OnDestroy {
    */
   public resetPositions() {
     //TODO: Reimplement
-    this.subscriptions.add(
-      this.projectService.explorerNotify.pipe(first()).subscribe(() => {
-        this.editorService.reload.next();
-      }),
-    );
+    this.subscriptions.add(this.projectService.explorerNotify.pipe(first()).subscribe(() => {
+      this.editorService.reload.next();
+    }));
 
     this.projectService.editorNotify.next();
   }

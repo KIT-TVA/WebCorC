@@ -6,7 +6,6 @@ import {
   Output,
   signal,
   ViewChild,
-  inject,
 } from "@angular/core";
 
 import { MatGridListModule } from "@angular/material/grid-list";
@@ -47,38 +46,32 @@ import { SimpleStatementNode } from "../../../../types/statements/nodes/simple-s
  */
 @Component({
   selector: "app-statement-base",
-  imports: [
-    MatGridListModule,
-    MatFormFieldModule,
-    MatInputModule,
-    FormsModule,
-    ConditionEditorComponent,
-    MatIconModule,
-    MatSidenavModule,
-    MatButtonModule,
-    MatExpansionModule,
-    MatListModule,
-    HandleComponent,
-    GridTileBorderDirective,
-    Card,
-    Button,
-    Toolbar,
-    ButtonDirective,
-    ButtonIcon,
-    ButtonLabel,
-    AsyncPipe,
-  ],
+    imports: [
+        MatGridListModule,
+        MatFormFieldModule,
+        MatInputModule,
+        FormsModule,
+        ConditionEditorComponent,
+        MatIconModule,
+        MatSidenavModule,
+        MatButtonModule,
+        MatExpansionModule,
+        MatListModule,
+        HandleComponent,
+        GridTileBorderDirective,
+        Card,
+        Button,
+        Toolbar,
+        ButtonDirective,
+        ButtonIcon,
+        ButtonLabel,
+        AsyncPipe,
+    ],
   templateUrl: "./statement.component.html",
   styleUrl: "./statement.component.css",
   standalone: true,
 })
 export class StatementComponent {
-  private treeService = inject(TreeService);
-  private aiChatService = inject(AiChatService);
-  globalSettingsService = inject(GlobalSettingsService);
-  private networkTreeService = inject(NetworkJobService);
-  private projectService = inject(ProjectService);
-
   private static readonly EDITOR_CONTAINER_EXPANSION_TRIGGER = 150;
   private static readonly EDITOR_CONTAINER_EXPANSION = 200;
 
@@ -97,10 +90,13 @@ export class StatementComponent {
 
   public isVerifying = signal(false);
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
-  constructor() {}
+  constructor(
+    private treeService: TreeService,
+    private aiChatService: AiChatService,
+    public globalSettingsService: GlobalSettingsService,
+    private networkTreeService: NetworkJobService,
+    private projectService: ProjectService,
+  ) {}
 
   public deleteRefinement(): void {
     this.treeService.deleteStatementNode(this._node);
@@ -128,17 +124,12 @@ export class StatementComponent {
     }
   }
 
-  public getStatementSeverity(
-    node: AbstractStatementNode,
-  ): "success" | "secondary" | "warn" {
-    switch (node.statement.nodeState) {
-      case "verified":
-        return "success";
-      case "failed":
-        return "warn";
-      case "unverified":
-        return "secondary";
-    }
+  public getStatementSeverity(node: AbstractStatementNode): 'success' | 'secondary' | 'warn'  {
+      switch (node.statement.nodeState) {
+          case 'verified': return 'success';
+          case 'failed': return 'warn';
+          case 'unverified': return 'secondary'
+      }
   }
 
   public verifyStatement(): void {

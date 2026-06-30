@@ -1,10 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  Input,
-  OnDestroy,
-  inject,
-} from "@angular/core";
+import { AfterViewInit, Component, Input, OnDestroy } from "@angular/core";
 
 import { NuMonacoEditorModule } from "@ng-util/monaco-editor";
 import { FormsModule } from "@angular/forms";
@@ -24,20 +18,17 @@ import { Subscription } from "rxjs";
   styleUrl: "./file-editor.component.css",
 })
 export class FileEditorComponent implements AfterViewInit, OnDestroy {
-  private projectService = inject(ProjectService);
-  private editorService = inject(EditorService);
-  private router = inject(Router);
-
   private _urn: string = "";
   private _viewInit: boolean = false;
   private subscription: Subscription | undefined;
 
   public code: string = "";
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
-  public constructor() {}
+  public constructor(
+    private projectService: ProjectService,
+    private editorService: EditorService,
+    private router: Router,
+  ) {}
 
   //Todo: make language configurable
   public editorOptions: any = {

@@ -1,4 +1,4 @@
-import { Injectable, inject } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { BehaviorSubject, firstValueFrom, Subject } from "rxjs";
 import { LocalCBCFormula } from "../../types/CBCFormula";
 import { NetworkProjectService } from "./network/network-project.service";
@@ -23,11 +23,6 @@ import { GlobalSettingsService } from "../global-settings.service";
   providedIn: "root",
 })
 export class ProjectService {
-  private network = inject(NetworkProjectService);
-  private mapper = inject(ProjectElementsMapperService);
-  private storage = inject(ProjectStorageService);
-  private settings = inject(GlobalSettingsService);
-
   // Use empty string as the project root urn - this aligns with ApiDirectory roots like '/'
   private _rootDir = new ProjectDirectory("", [], true);
   private _dataChange = new BehaviorSubject<ProjectElement[]>(
@@ -36,13 +31,12 @@ export class ProjectService {
   private _saveNotify = new Subject<void>();
   private _savedFinished = new Subject<void>();
   private _projectName: string = "";
-  private rubbishBinName = ".rubbishBin";
-
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-  constructor() {
-    const storage = this.storage;
-
+  constructor(
+    private network: NetworkProjectService,
+    private mapper: ProjectElementsMapperService,
+    private storage: ProjectStorageService,
+    private settings: GlobalSettingsService,
+  ) {
     const projectIdFromStorage = storage.getProjectId();
     if (projectIdFromStorage) {
       this.network.projectId = projectIdFromStorage;
@@ -67,35 +61,31 @@ export class ProjectService {
     urn: string,
     directory: ProjectDirectory = this._rootDir,
   ): ProjectElement | null {
-    const normalizedUrn = urn.startsWith("/") ? urn.slice(1) : urn;
-    const normalizedDirUrn = directory.urn.startsWith("/")
-      ? directory.urn.slice(1)
-      : directory.urn;
-
-    if (normalizedUrn === normalizedDirUrn) {
+    if (urn === directory.urn) {
+      return directory;
+    }
+    const parts = urn.split("/").filter((e) => e.length > 0);
+    if (parts.length < 1 || directory.urn === urn) {
       return directory;
     }
 
-    const parts = normalizedUrn.split("/").filter((e) => e.length > 0);
-    if (parts.length < 1) {
-      return directory;
+    const bestMatch = parts.reduce(
+      (dir: ProjectElement | undefined, part: string) => {
+        if (!dir) return undefined;
+        if (dir.type === "DIRECTORY") {
+          return (dir as ProjectDirectory).contents.find(
+            (element) => element.urn.split("/").pop() === part,
+          ) as ProjectElement | undefined;
+        }
+        return dir as ProjectElement | undefined;
+      },
+      directory as ProjectElement | undefined,
+    );
+    if (bestMatch && bestMatch.urn === urn) {
+      return bestMatch;
     }
 
-    let current: ProjectElement = directory;
-    for (const part of parts) {
-      if (current.type !== "DIRECTORY") {
-        return null;
-      }
-      const found = (current as ProjectDirectory).contents.find(
-        (element) => element.urn.split("/").pop() === part,
-      );
-      if (!found) return null;
-      current = found;
-    }
-
-    return current.urn === urn || current.urn === normalizedUrn
-      ? current
-      : null;
+    return null;
   }
 
   /**
@@ -224,40 +214,30 @@ export class ProjectService {
    * @param element
    */
   public deleteElement(element: ProjectElement) {
-    const rubbishBin = this.getRubbishBin();
+    const rubbishBinName = ".rubbishBin";
+    let rubbishBin = this.findByUrn(rubbishBinName) as ProjectDirectory;
 
-    if (this.elementIsInRubbishBin(element)) {
-      this.permanentlyDeleteElement(element);
-      console.log(`Element ${element.urn} deleted permanently`);
-    } else {
-      this.moveElement(element, rubbishBin);
-      console.log(`Element ${element.urn} moved to rubbish bin`);
+    if (!rubbishBin) {
+      this.addDirectory("", rubbishBinName);
+      rubbishBin = this.findByUrn(rubbishBinName) as ProjectDirectory;
     }
+
+    // If the element is already in the rubbish bin, permanently delete it
+    if (element.urn.startsWith(rubbishBinName)) {
+      const parent = this.getParentDirectory(element);
+
+      if (parent) {
+        parent.contents = parent.contents.filter(
+          (child) => child.urn !== element.urn,
+        );
+      }
+    } else {
+      // Move to rubbish bin
+      this.moveElement(element, rubbishBin);
+    }
+
     this.storage.saveProject(this._rootDir, this._projectName);
     this._dataChange.next(this._rootDir.contents);
-  }
-
-  private getRubbishBin() {
-    let rubbishBin = this.findByUrn(this.rubbishBinName) as ProjectDirectory;
-    if (!rubbishBin) {
-      this.addDirectory("", this.rubbishBinName);
-      rubbishBin = this.findByUrn(this.rubbishBinName) as ProjectDirectory;
-    }
-    return rubbishBin;
-  }
-
-  private elementIsInRubbishBin(element: ProjectElement) {
-    return element.urn.startsWith(this.rubbishBinName);
-  }
-
-  private permanentlyDeleteElement(element: ProjectElement) {
-    const parent = this.getParentDirectory(element);
-
-    if (parent) {
-      parent.contents = parent.contents.filter(
-        (child) => child.urn !== element.urn,
-      );
-    }
   }
 
   public async clearRubbishBin() {
@@ -420,40 +400,13 @@ export class ProjectService {
    * Upload the current workspace (optionally waiting for network requests)
    */
   public async uploadWorkspace() {
-    try {
-      console.log("Before preparing upload", this._rootDir);
-
-      // Log current listeners to help debug deadlocks
-      console.log("Preparing to wait for _savedFinished emission");
-
-      // Start listening for the next save completion BEFORE notifying editors
-      const savedFinishedPromise = firstValueFrom(this._savedFinished);
-
-      // Tell editors (and other listeners) to flush their state
-      this._saveNotify.next();
-      this.editorNotify.next();
-
-      // If no editor is open (or no one responds), avoid deadlock by timing out
-      const timeoutMs = 300;
-      const timeoutPromise = new Promise<void>((resolve) => {
-        setTimeout(() => {
-          console.warn(
-            `uploadWorkspace: save-finished event did not fire within ${timeoutMs}ms; continuing with last known state`,
-          );
-          resolve();
-        }, timeoutMs);
-      });
-
-      await Promise.race([savedFinishedPromise, timeoutPromise]);
-
-      console.log("After preparing upload", this._rootDir);
-      await this.uploadFolder(this._rootDir);
-      await this.downloadWorkspace();
-    } catch (error) {
-      console.error("Failed to upload workspace:", error);
-      // In a real scenario, we would trigger a notification to the user here
-      throw error;
-    }
+    console.log("Before preparing upload", this._rootDir);
+    const savedFinished = firstValueFrom(this._savedFinished);
+    this._saveNotify.next();
+    this.editorNotify.next();
+    await savedFinished;
+    console.log("After preparing upload", this._rootDir);
+    await this.uploadFolder(this._rootDir);
     return;
   }
 
@@ -461,43 +414,38 @@ export class ProjectService {
    * Download project state from storage or network as needed
    */
   public async downloadWorkspace() {
-    try {
-      const localProjectTree = this.storage.getProjectTree();
-      const localProjectName = this.storage.getProjectName();
-      const localProjectId = this.storage.getProjectId();
+    const localProjectTree = this.storage.getProjectTree();
+    const localProjectName = this.storage.getProjectName();
+    const localProjectId = this.storage.getProjectId();
 
-      if (!this.projectId && localProjectId) {
-        this.projectId = localProjectId;
-      }
-
-      if (this.projectId) {
-        const {
-          project: remoteProject,
-          name,
-          id,
-        } = await this.network.readProject();
-        this.storage.saveRemoteProject(remoteProject, name);
-        this.storage.setProjectId(id);
-
-        if (!localProjectTree) {
-          this.storage.saveProject(remoteProject, name);
-          this._rootDir = remoteProject;
-          this._projectName = name;
-        } else {
-          this.mergeTrees(this._rootDir, remoteProject);
-          this.storage.saveProject(this._rootDir, this.projectName);
-        }
-      } else if (localProjectTree) {
-        this._rootDir = localProjectTree;
-        this._projectName = localProjectName ?? "";
-      }
-
-      this.loadPredicatesFromFile();
-      this._dataChange.next(this._rootDir.contents);
-    } catch (error) {
-      console.error("Failed to download workspace:", error);
-      throw error;
+    if (!this.projectId && localProjectId) {
+      this.projectId = localProjectId;
     }
+
+    if (this.projectId) {
+      const {
+        project: remoteProject,
+        name,
+        id,
+      } = await this.network.readProject();
+      this.storage.saveRemoteProject(remoteProject, name);
+      this.storage.setProjectId(id);
+
+      if (!localProjectTree) {
+        this.storage.saveProject(remoteProject, name);
+        this._rootDir = remoteProject;
+        this._projectName = name;
+      } else {
+        this.mergeTrees(this._rootDir, remoteProject);
+        this.storage.saveProject(this._rootDir, this.projectName);
+      }
+    } else if (localProjectTree) {
+      this._rootDir = localProjectTree;
+      this._projectName = localProjectName ?? "";
+    }
+
+    this.loadPredicatesFromFile();
+    this._dataChange.next(this._rootDir.contents);
   }
 
   private mergeTrees(local: ProjectDirectory, remote: ProjectDirectory) {
@@ -534,10 +482,6 @@ export class ProjectService {
   private async uploadFolder(folder: ProjectDirectory) {
     console.log("upload folder", folder);
     for (const item of folder.contents) {
-      if (item.urn.startsWith(".internal")) {
-        continue;
-      }
-
       if (item.serverSideUrn && item.serverSideUrn !== item.urn) {
         const inodeType = item.type === "DIRECTORY" ? "directory" : "file";
         const inode: Inode = {
@@ -559,6 +503,7 @@ export class ProjectService {
           }
           this.storage.saveRemoteProject(remoteRoot, this.projectName);
         }
+
         item.serverSideUrn = undefined;
       }
 
@@ -608,9 +553,8 @@ export class ProjectService {
     target: ProjectElement,
     name?: string,
   ) {
-    console.log("Move action requested (file, target):", file, target);
     const newParentPath = target.urn;
-    const oldUrn = file.urn;
+    const oldUrn = file.urn + "";
 
     if (!file.serverSideUrn) {
       const remoteTree = this.storage.getRemoteProjectTree();
@@ -622,45 +566,43 @@ export class ProjectService {
       }
     }
 
-    if (!(target instanceof ProjectDirectory)) {
-      return false;
-    }
+    if (
+      target instanceof ProjectDirectory &&
+      target &&
+      target.addElement(file)
+    ) {
+      const newUrn = newParentPath + "/" + (name ? name : file.name);
+      file.urn = newUrn;
+      // If we're moving a directory, recursively update all children URNs
+      if (file.type === "DIRECTORY") {
+        const dir = file as ProjectDirectory;
+        const oldPrefix = oldUrn.endsWith("/") ? oldUrn : oldUrn + "/";
+        const newPrefix = newUrn.endsWith("/") ? newUrn : newUrn + "/";
 
-    if (!target.addElement(file)) {
-      return false;
-    }
-
-    const newUrn = newParentPath + "/" + (name ? name : file.name);
-
-    file.urn = newUrn;
-
-    // If we're moving a directory, recursively update all children URNs
-    if (file.type === "DIRECTORY") {
-      const dir = file as ProjectDirectory;
-      const oldPrefix = oldUrn.endsWith("/") ? oldUrn : oldUrn + "/";
-      const newPrefix = newUrn.endsWith("/") ? newUrn : newUrn + "/";
-
-      const updateChild = (child: ProjectElement) => {
-        if (child.urn.startsWith(oldPrefix)) {
-          child.urn = newPrefix + child.urn.substring(oldPrefix.length);
-          if (
-            child.serverSideUrn &&
-            child.serverSideUrn.startsWith(oldPrefix)
-          ) {
-            child.serverSideUrn =
-              newPrefix + child.serverSideUrn.substring(oldPrefix.length);
+        const updateChild = (child: ProjectElement) => {
+          if (child.urn.startsWith(oldPrefix)) {
+            child.urn = newPrefix + child.urn.substring(oldPrefix.length);
           }
-        }
-        if (child.type === "DIRECTORY") {
-          (child as ProjectDirectory).contents.forEach(updateChild);
-        }
-      };
+          if (child.type === "DIRECTORY") {
+            (child as ProjectDirectory).contents.forEach(updateChild);
+          }
+        };
 
-      dir.contents.forEach(updateChild);
+        dir.contents.forEach(updateChild);
+      }
+    } else {
+      return false;
     }
-
+    console.log(oldUrn);
     const oldParent = this.getParentDirectory(oldUrn);
+    console.log(oldParent);
     if (oldParent) {
+      console.log(
+        "removing from old parent",
+        oldParent.urn,
+        file.name,
+        file.urn,
+      );
       oldParent.removeElement(file.name);
     }
     this.storage.saveProject(this._rootDir, this._projectName);
@@ -672,55 +614,16 @@ export class ProjectService {
    * Rename the element
    */
   public renameElement(element: ProjectElement, name: string) {
-    const trimmedName = name.trim();
-
-    if (trimmedName.includes("/")) {
+    if (name.includes("/")) {
       throw new Error("Element name contains forbidden character '/'");
     }
-    if (trimmedName === "") {
+    if (name.trim() === "") {
       throw new Error("Element name cannot be empty");
     }
-
     const parentPath = element.parentPath;
     const oldUrn = element.urn;
-
-    let newUrn: string;
-
-    if (element.type === "DIRECTORY") {
-      newUrn = parentPath ? parentPath + "/" + trimmedName : trimmedName;
-    } else {
-      // Files must always keep their canonical extension based on fileType.
-      const dotIndex = trimmedName.lastIndexOf(".");
-      const oldDotIndex = element.name.lastIndexOf(".");
-      const baseName =
-        dotIndex === -1 ? trimmedName : trimmedName.substring(0, dotIndex);
-      if (oldDotIndex < 0) {
-        throw new Error("Cannot rename file without a known fileType");
-      }
-      const fileType: string | undefined = element.name.substring(oldDotIndex);
-      const canonicalExtension = fileType; // Creation uses `name + "." + type`, keep same convention.
-
-      if (baseName === "") {
-        throw new Error("Element name cannot be empty");
-      }
-      if (baseName.includes("/")) {
-        throw new Error("Element name contains forbidden character '/'");
-      }
-
-      const newFileName = baseName + canonicalExtension;
-      newUrn = parentPath ? parentPath + "/" + newFileName : newFileName;
-    }
-
-    if (newUrn.startsWith("/")) {
-      newUrn = newUrn.substring(1);
-    }
+    const newUrn = parentPath + "/" + name;
     element.urn = newUrn;
-
-    console.log("server side urn:", element.serverSideUrn);
-    if (!element.serverSideUrn) {
-      element.serverSideUrn = oldUrn;
-    }
-    console.log(element.serverSideUrn);
 
     // If we're renaming a directory, recursively update all children URNs
     if (element.type === "DIRECTORY") {
@@ -731,13 +634,6 @@ export class ProjectService {
       const updateChild = (child: ProjectElement) => {
         if (child.urn.startsWith(oldPrefix)) {
           child.urn = newPrefix + child.urn.substring(oldPrefix.length);
-          if (
-            child.serverSideUrn &&
-            child.serverSideUrn.startsWith(oldPrefix)
-          ) {
-            child.serverSideUrn =
-              newPrefix + child.serverSideUrn.substring(oldPrefix.length);
-          }
         }
         if (child.type === "DIRECTORY") {
           (child as ProjectDirectory).contents.forEach(updateChild);
@@ -748,7 +644,6 @@ export class ProjectService {
     }
 
     this.storage.saveProject(this._rootDir, this._projectName);
-    console.log(this.storage.getProjectTree());
     this._dataChange.next(this._rootDir.contents);
   }
 
