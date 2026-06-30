@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { CbcFormulaMapperService } from "../../../services/project/mapper/cbc-formula-mapper.service";
 import { ICBCFormula, LocalCBCFormula } from "../../../types/CBCFormula";
 import { ProjectService } from "../../../services/project/project.service";
@@ -21,17 +21,20 @@ import { FileUpload } from "primeng/fileupload";
   styleUrl: "./import-file-dialog.component.css",
 })
 export class ImportFileDialogComponent {
+  private _mapper = inject(CbcFormulaMapperService);
+  private _projectService = inject(ProjectService);
+  private _consoleService = inject(ConsoleService);
+  ref = inject(DynamicDialogRef);
+  config = inject(DynamicDialogConfig);
+
   private _fileContent: LocalCBCFormula | string;
   private _fileName: string;
   private _fileType: ApiFileType;
 
-  public constructor(
-    private _mapper: CbcFormulaMapperService,
-    private _projectService: ProjectService,
-    private _consoleService: ConsoleService,
-    public ref: DynamicDialogRef,
-    public config: DynamicDialogConfig,
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  public constructor() {
     this._fileContent = "";
     this._fileName = "";
     this._fileType = "other";

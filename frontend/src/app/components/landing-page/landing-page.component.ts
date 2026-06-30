@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
@@ -35,17 +35,20 @@ import { LocalDirectory } from "../../services/project/types/api-elements";
   styleUrl: "./landing-page.component.css",
 })
 export class LandingPageComponent {
+  private route = inject(ActivatedRoute);
+  private projectService = inject(ProjectService);
+  private dialog = inject(MatDialog);
+  dialogService = inject(DialogService);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
   /**
    * Landingpage infront of the editors to prevent file not found errors,
    * this component is mounted at the root / of the url path and so the default page for users
    * to see.
    */
-  public constructor(
-    private route: ActivatedRoute,
-    private projectService: ProjectService,
-    private dialog: MatDialog,
-    public dialogService: DialogService,
-  ) {}
+  public constructor() {}
 
   dialogRef: DynamicDialogRef | undefined;
 
@@ -76,6 +79,7 @@ export class LandingPageComponent {
     this.dialogService.open(OpenProjectDialogComponent, {
       header: "Open Project",
       modal: true,
+      closable: true,
     });
   }
 
@@ -83,6 +87,7 @@ export class LandingPageComponent {
     this.dialogService.open(ImportProjectDialogComponent, {
       header: "Import Project",
       modal: true,
+      closable: true,
     });
   }
 
@@ -91,6 +96,7 @@ export class LandingPageComponent {
       data: { parentURN: "/" },
       header: "Import File",
       modal: true,
+      closable: true,
     });
   }
 
@@ -98,6 +104,7 @@ export class LandingPageComponent {
     const dialogRef = this.dialogService.open(LoadExampleDialogComponent, {
       header: "Load Example",
       modal: true,
+      closable: true,
     });
 
     dialogRef?.onClose.subscribe((selectedExample) => {

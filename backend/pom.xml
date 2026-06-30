@@ -253,6 +253,8 @@
                         <arg>-Amicronaut.processing.group=edu.kit.cbc</arg>
                         <arg>-Amicronaut.processing.module=webcorc-backend</arg>
                     </compilerArgs>
+                    <source>8</source>
+                    <target>8</target>
                 </configuration>
             </plugin>
             <plugin>

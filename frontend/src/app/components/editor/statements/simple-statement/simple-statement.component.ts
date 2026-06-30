@@ -1,8 +1,4 @@
-import {
-  Component,
-  Input,
-  OnInit,
-} from "@angular/core";
+import { Component, Input, OnInit, inject } from "@angular/core";
 
 import { StatementComponent } from "../statement/statement.component";
 import { Refinement } from "../../../../types/refinement";
@@ -44,12 +40,16 @@ export class SimpleStatementComponent extends Refinement implements OnInit {
     throw new Error("Method not implemented.");
   }
 
-  public constructor(treeService: TreeService, private aiChatService: AiChatService) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  public constructor() {
+    const treeService = inject(TreeService);
+
     super(treeService);
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   public onEditableContentChanged(): void {
     this.treeService.markSubtreeUnverified(this._node);

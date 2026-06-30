@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { Button } from "primeng/button";
 import { DialogService } from "primeng/dynamicdialog";
 import { SettingsComponent } from "../settings/settings.component";
@@ -11,11 +11,17 @@ import { SettingsComponent } from "../settings/settings.component";
   styleUrl: "./settings-button.component.css",
 })
 export class SettingsButtonComponent {
-  constructor(public dialogService: DialogService) {}
+  dialogService = inject(DialogService);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
   activateDialog() {
     this.dialogService.open(SettingsComponent, {
       header: "Settings",
       modal: true,
+      closable: true,
     });
   }
 }

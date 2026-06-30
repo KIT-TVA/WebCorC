@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ProjectService } from "../../../services/project/project.service";
 import {
@@ -22,16 +22,19 @@ import { Button } from "primeng/button";
   styleUrl: "./import-project-dialog.component.css",
 })
 export class ImportProjectDialogComponent {
+  private projectService = inject(ProjectService);
+  private consoleService = inject(ConsoleService);
+  ref = inject(DynamicDialogRef);
+  config = inject(DynamicDialogConfig);
+
   protected _accepted: boolean = false;
   private _projectname: string = "";
   private _rootDir: ApiDirectory = new ApiDirectory("", []);
 
-  public constructor(
-    private projectService: ProjectService,
-    private consoleService: ConsoleService,
-    public ref: DynamicDialogRef,
-    public config: DynamicDialogConfig,
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  public constructor() {}
 
   public async onFileSelected(event: FileSelectEvent) {
     this._accepted = false;

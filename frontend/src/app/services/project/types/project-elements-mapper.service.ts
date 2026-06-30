@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import {
   CodeFile,
   DiagramFile,
@@ -27,7 +27,12 @@ import { LocalCBCFormula } from "../../../types/CBCFormula";
   providedIn: "root",
 })
 export class ProjectElementsMapperService {
-  constructor(private cbcformulaMapper: CbcFormulaMapperService) {}
+  private cbcformulaMapper = inject(CbcFormulaMapperService);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   /**
    * Import the directory

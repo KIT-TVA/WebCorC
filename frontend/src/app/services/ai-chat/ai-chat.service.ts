@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { AiMessage, LLMProviderType } from "./ai-message";
 import { ICondition } from "../../types/condition/condition";
 import { AiChatStorageService } from "./storage/ai-chat-storage.service";
@@ -13,10 +13,10 @@ export interface LLMProviderOption {
 }
 
 export const LLM_PROVIDERS: LLMProviderOption[] = [
-  { label: "GPT",    provider: "OPENAI",    model: "gpt-5.5" },
-  { label: "Claude",   provider: "ANTHROPIC",  model: "claude-opus-4-7" },
-  { label: "Grok",     provider: "XAI",        model: "grok-4.3" },
-  { label: "Gemini",   provider: "GOOGLE",     model: "gemini-3.1-pro-preview" },
+  { label: "GPT", provider: "OPENAI", model: "gpt-5.5" },
+  { label: "Claude", provider: "ANTHROPIC", model: "claude-opus-4-7" },
+  { label: "Grok", provider: "XAI", model: "grok-4.3" },
+  { label: "Gemini", provider: "GOOGLE", model: "gemini-3.1-pro-preview" },
 ];
 
 /**
@@ -26,6 +26,9 @@ export const LLM_PROVIDERS: LLMProviderOption[] = [
   providedIn: "root",
 })
 export class AiChatService {
+  private storage = inject(AiChatStorageService);
+  private network = inject(AiChatNetworkService);
+
   private static readonly APPROX_MAX_TOKENS: number = 3800;
   private static readonly EXPLAIN_CONDITION_CONTENT_PROMPT =
     "In one sentence explain the following formal specification: ";
@@ -42,17 +45,19 @@ export class AiChatService {
   private _synthesisProviderByMessageId = new Map<number, string>();
   private _synthesisStatementByMessageId = new Map<number, string>();
 
-  constructor(
-    private storage: AiChatStorageService,
-    private network: AiChatNetworkService,
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     this._messages = this.storage.readHistory();
     this._freeId = this._messages.length;
     this.network.answer.subscribe((answer) => {
       if (this._awaitingSynthesisResponse) {
         this._awaitingSynthesisResponse = false;
         this._synthesisInProgress = false;
-        const javaOnly = this.ensureTrailingSemicolon(this.extractJavaOnly(answer));
+        const javaOnly = this.ensureTrailingSemicolon(
+          this.extractJavaOnly(answer),
+        );
         if (javaOnly && javaOnly.trim()) {
           const message = this.pushMessage(javaOnly, false);
           if (message) {
@@ -74,7 +79,10 @@ export class AiChatService {
       }
       const message = this.pushMessage(answer, false);
       if (message) {
-        this._synthesisProviderByMessageId.set(message.id, this._selectedProvider.label);
+        this._synthesisProviderByMessageId.set(
+          message.id,
+          this._selectedProvider.label,
+        );
       }
     });
     this.network.error.subscribe((errorText) => {
@@ -84,7 +92,10 @@ export class AiChatService {
       }
       const message = this.pushMessage(`Model error: ${errorText}`, false);
       if (message) {
-        this._synthesisProviderByMessageId.set(message.id, this._selectedProvider.label);
+        this._synthesisProviderByMessageId.set(
+          message.id,
+          this._selectedProvider.label,
+        );
       }
     });
   }
@@ -96,7 +107,11 @@ export class AiChatService {
    * @param label optional label for the message (e.g., "User", "System").
    * @returns success
    */
- public addMessage(content: string, getAnswer: boolean = true, label?: string): boolean {
+  public addMessage(
+    content: string,
+    getAnswer: boolean = true,
+    label?: string,
+  ): boolean {
     const message = this.pushMessage(content, getAnswer);
     if (message && getAnswer) {
       // Mark messages with provided label or default to "User"
@@ -151,7 +166,7 @@ export class AiChatService {
     this.addMessage(
       AiChatService.EXPLAIN_CONDITION_CONTENT_PROMPT + condition.condition,
       true,
-      "System"
+      "System",
     );
   }
 
@@ -210,7 +225,9 @@ Now solve this synthesis task JSON:`;
       false,
     );
 
-    if (this.approximateTokens(synthesisMessage) > AiChatService.APPROX_MAX_TOKENS) {
+    if (
+      this.approximateTokens(synthesisMessage) > AiChatService.APPROX_MAX_TOKENS
+    ) {
       return false;
     }
 
@@ -220,7 +237,7 @@ Now solve this synthesis task JSON:`;
     // Add system message for synthesis task
     const systemMessage = this.pushMessage(
       `Synthesis for statement ${this._synthesisStatementName || "unknown"}`,
-      false
+      false,
     );
     if (systemMessage) {
       this._synthesisProviderByMessageId.set(systemMessage.id, "System");
