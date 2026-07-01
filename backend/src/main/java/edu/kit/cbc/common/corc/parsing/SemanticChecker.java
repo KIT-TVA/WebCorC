@@ -129,7 +129,6 @@ public class SemanticChecker {
             checkTree(bin.lhs(), scope);
             checkTree(bin.rhs(), scope);
         } else if (node instanceof CallTree call) {
-            checkTree(call.name(), scope);
             if (call.params() != null) {
                 for (Tree param : call.params()) {
                     checkTree(param, scope);
