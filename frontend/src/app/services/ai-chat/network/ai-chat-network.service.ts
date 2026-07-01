@@ -1,5 +1,5 @@
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { ConsoleService } from "../../console/console.service";
 import { catchError, Observable, of, Subject } from "rxjs";
 import {
@@ -19,14 +19,17 @@ import { environment } from "../../../../environments/environment";
   providedIn: "root",
 })
 export class AiChatNetworkService {
+  private http = inject(HttpClient);
+  private consoleService = inject(ConsoleService);
+
   private static readonly path = "/editor/askquestion";
   private _answer = new Subject<string>();
   private _error = new Subject<string>();
 
-  public constructor(
-    private http: HttpClient,
-    private consoleService: ConsoleService,
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  public constructor() {}
 
   /**
    * Send the history to the backend to get a response from the selected LLM.
@@ -34,7 +37,11 @@ export class AiChatNetworkService {
    * @param provider The LLM provider to use.
    * @param model The specific model name.
    */
-  public sendHistory(messages: AiMessage[], provider: LLMProviderType, model: string): void {
+  public sendHistory(
+    messages: AiMessage[],
+    provider: LLMProviderType,
+    model: string,
+  ): void {
     const context: LLMMessage[] = [];
 
     for (const message of messages) {

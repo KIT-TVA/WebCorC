@@ -1,8 +1,4 @@
-import {
-  Component,
-  Input,
-  OnInit,
-} from "@angular/core";
+import { Component, Input, OnInit, inject } from "@angular/core";
 
 import { StatementComponent } from "../statement/statement.component";
 import { Refinement } from "../../../../types/refinement";
@@ -48,8 +44,7 @@ export class SimpleStatementComponent extends Refinement implements OnInit {
     super(treeService);
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   public onEditableContentChanged(): void {
     this.treeService.markSubtreeUnverified(this._node);

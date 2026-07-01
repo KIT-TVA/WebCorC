@@ -1,53 +1,51 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, inject } from "@angular/core";
 
-import { ProjectService } from '../../services/project/project.service';
-import { Router } from '@angular/router';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
+import { ProjectService } from "../../services/project/project.service";
+import { Router } from "@angular/router";
+import { MatCardModule } from "@angular/material/card";
+import { MatIconModule } from "@angular/material/icon";
 
 @Component({
-    selector: 'app-not-found-error-page',
-    imports: [MatCardModule, MatIconModule],
-    templateUrl: './not-found-error-page.component.html',
-    styleUrl: './not-found-error-page.component.css'
+  selector: "app-not-found-error-page",
+  imports: [MatCardModule, MatIconModule],
+  templateUrl: "./not-found-error-page.component.html",
+  styleUrl: "./not-found-error-page.component.css",
 })
 export class NotFoundErrorPageComponent implements AfterViewInit {
+  private router = inject(Router);
+  private projectService = inject(ProjectService);
 
+  private _message: string = "Not found";
 
-  private _message : string = "Not found"
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
 
-  public constructor(private router : Router ,private projectService : ProjectService) {}
-  
-  
+  public constructor() {}
+
   public ngAfterViewInit(): void {
-    
-    const urlTree = this.router.parseUrl(this.router.url)
+    const urlTree = this.router.parseUrl(this.router.url);
 
-    const projectId = urlTree.queryParamMap.get("projectId")
-    
+    const projectId = urlTree.queryParamMap.get("projectId");
+
     if (!projectId) {
-
       // Display Not defined Project
-      this._message = "Project not defined"
+      this._message = "Project not defined";
 
-      return
+      return;
     }
 
-    this._message = "Project defined, loading..."
+    this._message = "Project defined, loading...";
 
-    this.projectService.projectId = projectId
+    this.projectService.projectId = projectId;
 
     this.projectService.dataChange.subscribe(() => {
-      this.router.navigateByUrl(urlTree)
-    })
+      this.router.navigateByUrl(urlTree);
+    });
 
-    this.projectService.downloadWorkspace()
-
-
+    this.projectService.downloadWorkspace();
   }
 
   public get message() {
-    return this._message
+    return this._message;
   }
-
 }

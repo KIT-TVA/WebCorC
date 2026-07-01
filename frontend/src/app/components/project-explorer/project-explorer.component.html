@@ -6,8 +6,8 @@
   </p-menubar>
   <p-tree
     [value]="treeNodes"
-    [draggableNodes]="false"
-    [droppableNodes]="false"
+    [draggableNodes]="true"
+    [droppableNodes]="true"
     draggableScope="self"
     droppableScope="self"
     (onNodeExpand)="setExpanded($event.node)"
@@ -29,54 +29,61 @@
     <ng-template #emptymessage>
       <span> No files yet </span>
     </ng-template>
-    <ng-template
-      let-node
-      pTemplate="directory"
-      class="w-full box-content"
-    >
-      <div
-        class="w-full flex items-center justify-between"
+     <ng-template
+        let-node
+        pTemplate="directory"
+        class="w-full box-content"
       >
-        <span>
-          {{ node.label }}
-        </span>
-
-        <span class="self-end">
-          <p-button
-            icon="pi pi-upload"
-            severity="contrast"
-            text
-            (click)="importElement(node.data)"
-          >
-          </p-button>
-<!-- TODO: Put back in when supported
-          <p-button
-            icon="pi pi-file-edit"
-            severity="contrast"
-            text
-            (click)="toggleRename(node.data)"
-          >
-          </p-button>-->
-          <p-button
-            icon="pi pi-plus"
-            text
-            severity="success"
-            (click)="addElementToDirectory(node.data, node)"
-          >
-          </p-button>
-<!-- TODO: Put back in when supported
-          <p-button
-            icon="pi pi-trash"
-            text
-            severity="danger"
-            (click)="deleteElement(node.data)"
-          >
-          </p-button>
--->
-        </span>
-      </div>
-    </ng-template>
-    <ng-template
+        <div
+          class="w-full flex items-center justify-between"
+        >
+          <span class="flex items-center gap-2">
+            {{ node.label }}
+            @if (isInRubbishBin(node.data)) {
+              <p-tag
+                severity="secondary"
+                icon="pi pi-info-circle"
+                value="read only"
+                class="whitespace-nowrap"
+              />
+            }
+          </span>
+ 
+          <span class="self-end">
+            @if (!isInRubbishBin(node.data)) {
+              <p-button
+                icon="pi pi-upload"
+                severity="contrast"
+                text
+                (click)="importElement(node.data)"
+              >
+              </p-button>
+              <p-button
+                icon="pi pi-file-edit"
+                severity="contrast"
+                text
+                (click)="toggleRename(node.data)"
+              >
+              </p-button>
+              <p-button
+                icon="pi pi-plus"
+                text
+                severity="success"
+                (click)="addElementToDirectory(node.data, node)"
+              >
+              </p-button>
+            }
+            <p-button
+              icon="pi pi-trash"
+              text
+              severity="danger"
+              (click)="deleteElement(node.data)"
+            >
+            </p-button>
+          </span>
+        </div>
+      </ng-template>
+<ng-template
       let-node
       pTemplate="fake"
       class="w-full box-content"
@@ -156,44 +163,59 @@
         </span>
       </div>
     </ng-template>
-    <ng-template
-      let-node
-      pTemplate="file"
-      class="w-full box-content"
-    >
-      <div
-        class="w-full flex items-center justify-between"
-      >
-        <p-button
-          class="w-full"
-          (click)="navigate(node.data)"
-          text
-          severity="contrast"
-          [label]="node.label"
-        >
-        </p-button>
-          @if ((node.data.urn) === "include/generatedPredicates.key") {
-              <p-tag severity="secondary" icon="pi pi-info-circle" value="read only" class="whitespace-nowrap"/>
-          }
-        <span class="self-end">
-          <!-- TODO: Put back in when supported
-          <p-button
-            icon="pi pi-file-edit"
-            text
-            severity="contrast"
-            (click)="toggleRename(node.data)"
-          >
-          </p-button>
-          <p-button
-            icon="pi pi-trash"
-            text
-            severity="danger"
-            (click)="deleteElement(node.data)"
-          >
-          </p-button>
--->
-        </span>
-      </div>
-    </ng-template>
-  </p-tree>
+     <ng-template
+       let-node
+       pTemplate="file"
+       class="w-full box-content"
+     >
+       <div
+         class="w-full flex items-center justify-between"
+       >
+         <span class="flex items-center gap-2 w-full">
+           <p-button
+             class="w-full"
+             (click)="navigate(node.data)"
+             text
+             severity="contrast"
+             [label]="node.label"
+           >
+           </p-button>
+           @if ((node.data.urn) === "include/generatedPredicates.key") {
+             <p-tag
+               severity="secondary"
+               icon="pi pi-info-circle"
+               value="read only"
+               class="whitespace-nowrap"
+             />
+           }
+           @if (isInRubbishBin(node.data)) {
+             <p-tag
+               severity="secondary"
+               icon="pi pi-info-circle"
+               value="read only"
+               class="whitespace-nowrap"
+             />
+           }
+         </span>
+          <span class="self-end file-actions">
+            @if (!isInRubbishBin(node.data)) {
+              <p-button
+                icon="pi pi-file-edit"
+                text
+                severity="contrast"
+                (click)="toggleRename(node.data)"
+              >
+              </p-button>
+            }
+            <p-button
+              icon="pi pi-trash"
+              text
+              severity="danger"
+              (click)="deleteElement(node.data)"
+            >
+            </p-button>
+          </span>
+       </div>
+     </ng-template>
+</p-tree>
 </div>

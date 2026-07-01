@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 
 import { ActivatedRoute, Router, RouterOutlet } from "@angular/router";
 import { MatSidenavModule } from "@angular/material/sidenav";
@@ -51,18 +51,21 @@ import { ConfirmDialog } from "primeng/confirmdialog";
   styleUrl: "./app.component.css",
 })
 export class AppComponent implements OnInit {
-  constructor(
-    public treeService: TreeService,
-    private networkTreeService: NetworkJobService,
-    public dialogService: DialogService,
-    protected router: Router,
-    private route: ActivatedRoute,
-    public projectService: ProjectService,
-    private snackBar: MatSnackBar,
-    protected globalSettingsService: GlobalSettingsService,
-    private confirmationService: ConfirmationService,
-    private messageService: MessageService,
-  ) {}
+  treeService = inject(TreeService);
+  private networkTreeService = inject(NetworkJobService);
+  dialogService = inject(DialogService);
+  protected router = inject(Router);
+  private route = inject(ActivatedRoute);
+  projectService = inject(ProjectService);
+  private snackBar = inject(MatSnackBar);
+  protected globalSettingsService = inject(GlobalSettingsService);
+  private confirmationService = inject(ConfirmationService);
+  private messageService = inject(MessageService);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   public ngOnInit(): void {
     // Download workspace if project id is set
@@ -130,6 +133,7 @@ export class AppComponent implements OnInit {
     return this.dialogService.open(CreateProjectDialogComponent, {
       header: "Select Project",
       modal: true,
+      closable: true,
     });
   }
 

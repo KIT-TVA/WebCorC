@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 import { ProjectService } from "../../../services/project/project.service";
@@ -19,14 +19,17 @@ import { InputText } from "primeng/inputtext";
   styleUrl: "./open-project-dialog.component.css",
 })
 export class OpenProjectDialogComponent {
+  private router = inject(Router);
+  private projectService = inject(ProjectService);
+  ref = inject(DynamicDialogRef);
+  config = inject(DynamicDialogConfig);
+
   private _projectId: string = "";
 
-  public constructor(
-    private router: Router,
-    private projectService: ProjectService,
-    public ref: DynamicDialogRef,
-    public config: DynamicDialogConfig,
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  public constructor() {}
 
   public confirm() {
     this.projectService.projectId = this._projectId;
