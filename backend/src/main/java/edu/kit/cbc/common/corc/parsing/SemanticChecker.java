@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 
 public class SemanticChecker {
 
-    private static final java.util.List<String> IGNORED_VARIABLES = java.util.List.of("true", "false");
+    private static final java.util.List<String> IGNORED_VARIABLES = java.util.List.of("true", "false", "null");
 
     public static void checkVariables(CbCFormula formula) throws SemanticException {
         if (formula == null) {
