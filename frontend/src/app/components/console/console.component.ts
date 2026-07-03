@@ -1,13 +1,19 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { ConsoleService } from "../../services/console/console.service";
 import { MatListModule } from "@angular/material/list";
-import { ConsoleErrorLine, isError, isInfo } from "../../services/console/log";
+import {
+  ConsoleErrorLine,
+  isError,
+  isGroup,
+  isInfo,
+} from "../../services/console/log";
 import { HttpErrorResponse } from "@angular/common/http";
 import { Button } from "primeng/button";
 import { ProgressSpinner } from "primeng/progressspinner";
+import { ProgressBar } from "primeng/progressbar";
 
 /**
  * Visual representation of the errors in the application
@@ -21,13 +27,19 @@ import { ProgressSpinner } from "primeng/progressspinner";
     MatListModule,
     Button,
     ProgressSpinner,
+    ProgressBar,
   ],
   templateUrl: "./console.component.html",
   standalone: true,
   styleUrl: "./console.component.css",
 })
 export class ConsoleComponent {
-  public constructor(protected service: ConsoleService) {}
+  protected service = inject(ConsoleService);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  public constructor() {}
 
   /**
    * Remove the errors from the console
@@ -46,10 +58,11 @@ export class ConsoleComponent {
       // #region agent log
       const base = "(" + line.error.status + ") " + line.error.statusText;
       if (line.error.error) {
-        const body = typeof line.error.error === 'string'
-          ? line.error.error
-          : JSON.stringify(line.error.error);
-        return base + ': ' + body;
+        const body =
+          typeof line.error.error === "string"
+            ? line.error.error
+            : JSON.stringify(line.error.error);
+        return base + ": " + body;
       }
       return base;
       // #endregion
@@ -64,4 +77,5 @@ export class ConsoleComponent {
 
   protected readonly isError = isError;
   protected readonly isInfo = isInfo;
+  protected readonly isGroup = isGroup;
 }

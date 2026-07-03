@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, inject } from "@angular/core";
 
 import { StatementComponent } from "../statement/statement.component";
 import { Refinement } from "../../../../types/refinement";
@@ -42,9 +42,14 @@ import { RootStatementNode } from "../../../../types/statements/nodes/root-state
 export class RootStatementComponent extends Refinement {
   @Input({ required: true }) _node!: RootStatementNode;
 
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
   // Element used to spawn the child statements in
 
-  public constructor(treeService: TreeService) {
+  public constructor() {
+    const treeService = inject(TreeService);
+
     super(treeService);
   }
 

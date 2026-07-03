@@ -1,20 +1,19 @@
 <div class="condition-editor-root" (mousedown)="$event.stopImmediatePropagation()">
-  <div (focusout)="conditionEditingFinished.emit()">
-    <form>
-      <p-icon-field class="condition-icon-field">
-        <p-float-label variant="on">
+    <div (focusout)="conditionEditingFinished.emit()">
+        <form>
+            <p-float-label variant="on" class="flex flex-row">
           <textarea
-            [ngModelOptions]="{ standalone: true }"
-            id="field"
-            pTextarea
-            class="textarea condition-textarea"
-            spellcheck="false"
-            [rows]="inline ? 1 : 5"
-            [ngModel]="(condition | async)?.condition"
-            (ngModelChange)="onConditionChange($event)"
-            variant="filled"
-            [disabled]="!editable"
-            [dt]="{
+                  [ngModelOptions]="{ standalone: true }"
+                  id="field"
+                  pTextarea
+                  class="textarea condition-textarea"
+                  spellcheck="false"
+                  [rows]="inline ? 1 : 5"
+                  [ngModel]="(condition | async)?.condition"
+                  (ngModelChange)="onConditionChange($event)"
+                  variant="filled"
+                  [disabled]="!editable"
+                  [dt]="{
               root: {
                 borderColor: redConditions.includes((condition | async)!)
                   ? '#ff7e7e'
@@ -25,15 +24,74 @@
             }"
           >
           </textarea>
-          <label for="field">{{ placeholder }}</label>
-        </p-float-label>
-        @if (showAiButton) {
-          <p-inputicon
-            (click)="onAiButtonClick()"
-            [class]="aiButtonClass"
-          ></p-inputicon>
-        }
-      </p-icon-field>
-    </form>
-  </div>
+                <label for="field">{{ placeholder }}</label>
+                <div class="condition-button-stack" [class.condition-button-stack--with-ai]="showAiButton">
+                    <p-button
+                            (click)="onEditConditionClick()"
+                            icon="pi pi-pencil"
+                            variant="text"
+                            severity="secondary"
+                            [disabled]="!editable"
+                    >
+                    </p-button>
+                    @if (showAiButton) {
+                        <p-button
+                                (click)="synthesizeWithAi()"
+                                icon="pi pi-microchip-ai"
+                                variant="text"
+                                severity="secondary"
+                                title="Synthesize statement with AI"
+                        >
+                        </p-button>
+                    }
+                    <p-button
+                            (click)="onAiButtonClick()"
+                            icon="pi pi-sparkles"
+                            variant="text"
+                            severity="secondary"
+                    >
+                    </p-button>
+                </div>
+            </p-float-label>
+
+        </form>
+    </div>
+    <p-dialog
+            [(visible)]="isDialogVisible"
+            [modal]="true"
+            appendTo="body"
+            [header]="placeholder"
+            [style]="{ width: '40vw', height:'50vh'}"
+            [contentStyle]="{ overflow: 'hidden'}"
+            closable="true"
+            [closeOnEscape]="true"
+            (onHide)="onDialogSaveClick()"
+    >
+        <div class="flex flex-col h-full">
+            <textarea
+                    [ngModelOptions]="{ standalone: true }"
+                    id="field"
+                    pTextarea
+                    class="condition-textarea-dialog"
+                    spellcheck="false"
+                    [ngModel]="dialogConditionText"
+                    (ngModelChange)="dialogConditionText = $event"
+                    variant="filled"
+            >
+          </textarea>
+            <div class="condition-dialog-buttons">
+                <p-button
+                    severity="secondary"
+                    (click)="onDialogDiscardClick()"
+                >
+                    Discard
+                </p-button>
+                <p-button
+                    (click)="onDialogSaveClick()"
+                >
+                    Save
+                </p-button>
+            </div>
+        </div>
+    </p-dialog>
 </div>

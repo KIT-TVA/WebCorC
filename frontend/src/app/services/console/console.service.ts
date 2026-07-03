@@ -1,6 +1,11 @@
 import { HttpErrorResponse } from "@angular/common/http";
 import { Injectable, signal } from "@angular/core";
-import { ConsoleErrorLine, ConsoleInfoLine, ConsoleLogLine } from "./log";
+import {
+  ConsoleErrorLine,
+  ConsoleInfoLine,
+  ConsoleLogGroup,
+  ConsoleLogLine,
+} from "./log";
 
 /**
  * Service to allow interaction with the console
@@ -10,7 +15,7 @@ import { ConsoleErrorLine, ConsoleInfoLine, ConsoleLogLine } from "./log";
   providedIn: "root",
 })
 export class ConsoleService {
-  private _logs: ConsoleLogLine[] = [];
+  private _logs: (ConsoleLogLine | ConsoleLogGroup)[] = [];
   public loading = signal(false);
   public loadingMessage = signal("");
 
@@ -34,6 +39,12 @@ export class ConsoleService {
 
   public addStringInfo(info: string, icon?: string) {
     this._logs.push(new ConsoleInfoLine(info, icon));
+  }
+
+  public addGroup() {
+    const group = new ConsoleLogGroup();
+    this._logs.push(group);
+    return group;
   }
 
   public clear() {

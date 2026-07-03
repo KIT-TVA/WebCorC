@@ -38,6 +38,7 @@ export interface IAbstractStatement {
   preCondition: ICondition;
   postCondition: ICondition;
   isProven: boolean;
+  nodeState: 'verified' | 'unverified' | 'failed';
   position?: IPosition;
 }
 
@@ -48,7 +49,8 @@ export interface IAbstractStatement {
 export class AbstractStatement implements IAbstractStatement {
   public readonly id: string;
   public isProven = false;
-  constructor(
+  public nodeState: 'verified' | 'unverified' | 'failed';
+    constructor(
     public name: string,
     public type:
       | "STATEMENT"
@@ -63,5 +65,6 @@ export class AbstractStatement implements IAbstractStatement {
     public position: IPosition = new Position(0, 0),
   ) {
     this.id = String(Date.now() * Math.random());
+    this.nodeState = 'unverified'
   }
 }

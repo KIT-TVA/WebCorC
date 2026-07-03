@@ -6,6 +6,7 @@ import {
   Output,
   signal,
   ViewChild,
+  inject,
 } from "@angular/core";
 
 import { MatGridListModule } from "@angular/material/grid-list";
@@ -72,6 +73,12 @@ import { SimpleStatementNode } from "../../../../types/statements/nodes/simple-s
   standalone: true,
 })
 export class StatementComponent {
+  private treeService = inject(TreeService);
+  private aiChatService = inject(AiChatService);
+  globalSettingsService = inject(GlobalSettingsService);
+  private networkTreeService = inject(NetworkJobService);
+  private projectService = inject(ProjectService);
+
   private static readonly EDITOR_CONTAINER_EXPANSION_TRIGGER = 150;
   private static readonly EDITOR_CONTAINER_EXPANSION = 200;
 
@@ -90,17 +97,18 @@ export class StatementComponent {
 
   public isVerifying = signal(false);
 
-  constructor(
-    private treeService: TreeService,
-    private aiChatService: AiChatService,
-    public globalSettingsService: GlobalSettingsService,
-    private networkTreeService: NetworkJobService,
-    private projectService: ProjectService,
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   public deleteRefinement(): void {
     this.treeService.deleteStatementNode(this._node);
     this.delete.emit();
+  }
+
+  public onEditableContentChanged(): void {
+    this.treeService.markSubtreeUnverified(this._node);
   }
 
   public toggleConditionEditorView(postcondition: boolean): void {
@@ -117,6 +125,19 @@ export class StatementComponent {
     } else {
       editorRef.nativeElement.style.width = "";
       drawer.toggle();
+    }
+  }
+
+  public getStatementSeverity(
+    node: AbstractStatementNode,
+  ): "success" | "secondary" | "warn" {
+    switch (node.statement.nodeState) {
+      case "verified":
+        return "success";
+      case "failed":
+        return "warn";
+      case "unverified":
+        return "secondary";
     }
   }
 

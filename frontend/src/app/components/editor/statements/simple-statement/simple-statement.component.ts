@@ -1,8 +1,4 @@
-import {
-  Component,
-  Input,
-  OnInit,
-} from "@angular/core";
+import { Component, Input, OnInit, inject } from "@angular/core";
 
 import { StatementComponent } from "../statement/statement.component";
 import { Refinement } from "../../../../types/refinement";
@@ -16,6 +12,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { Position } from "../../../../types/position";
 import { AbstractStatement } from "../../../../types/statements/abstract-statement";
 import { SimpleStatementNode } from "../../../../types/statements/nodes/simple-statement-node";
+import { AiChatService } from "../../../../services/ai-chat/ai-chat.service";
 
 /**
  * Component representing an instande of {@link SimpleStatement} in the grahical editor.
@@ -43,11 +40,26 @@ export class SimpleStatementComponent extends Refinement implements OnInit {
     throw new Error("Method not implemented.");
   }
 
-  public constructor(treeService: TreeService) {
+  public constructor(treeService: TreeService, private aiChatService: AiChatService) {
     super(treeService);
   }
 
-  ngOnInit() {
+  ngOnInit() {}
+
+  public onEditableContentChanged(): void {
+    this.treeService.markSubtreeUnverified(this._node);
+  }
+
+  public synthesizeWithAi(): void {
+    const pre = this._node.precondition.getValue().condition;
+    const post = this._node.postcondition.getValue().condition;
+    const variables = this.treeService.rootFormula?.javaVariables ?? [];
+    const isLoopUpdate = this._node.statement.type === "REPETITION";
+    const synthesisTarget = this._node.programStatement;
+
+    this.aiChatService.setSynthesisTarget(synthesisTarget);
+    this.aiChatService.setSynthesisStatementName(this._node.statement.name);
+    this.aiChatService.addSynthesisPrompt(variables, pre, post, isLoopUpdate);
   }
 
   public override getTitle(): string {

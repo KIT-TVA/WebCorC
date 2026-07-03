@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy } from "@angular/core";
+import { AfterViewInit, Component, OnDestroy, inject } from "@angular/core";
 
 import { TreeService } from "../../../services/tree/tree.service";
 import { MatInputModule } from "@angular/material/input";
@@ -53,6 +53,9 @@ import { Subscription } from "rxjs";
   styleUrl: "./variables.component.css",
 })
 export class VariablesComponent implements AfterViewInit, OnDestroy {
+  private _fb = inject(FormBuilder);
+  treeService = inject(TreeService);
+
   private isEmpty = true;
   private subscriptions: Subscription = new Subscription();
   /**
@@ -63,17 +66,19 @@ export class VariablesComponent implements AfterViewInit, OnDestroy {
     items: this._fb.array([]),
   });
 
-  public constructor(
-    private _fb: FormBuilder,
-    public treeService: TreeService,
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  public constructor() {}
   ngAfterViewInit(): void {
     this.importDiagramVariables();
-    this.subscriptions.add(this.treeService.finalizeNotifier.subscribe(() => {
-      if (this.treeService.rootFormula) {
-        this.treeService.rootFormula.javaVariables = this.javaVariables;
-      }
-    }));
+    this.subscriptions.add(
+      this.treeService.finalizeNotifier.subscribe(() => {
+        if (this.treeService.rootFormula) {
+          this.treeService.rootFormula.javaVariables = this.javaVariables;
+        }
+      }),
+    );
   }
 
   ngOnDestroy(): void {
@@ -142,6 +147,7 @@ export class VariablesComponent implements AfterViewInit, OnDestroy {
   public removeVariable(index: number): void {
     this.treeService.removeVariables([this.items.at(index).value.name]);
     this.items.removeAt(index);
+    this.treeService.markWholeTreeUnverified();
   }
 
   /**
@@ -151,6 +157,7 @@ export class VariablesComponent implements AfterViewInit, OnDestroy {
     this.treeService.removeAllVariables();
     this.items.clear();
     this.variables.controls["newVariable"].reset();
+    this.treeService.markWholeTreeUnverified();
   }
 
   /**
