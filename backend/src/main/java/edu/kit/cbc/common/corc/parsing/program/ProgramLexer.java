@@ -38,7 +38,9 @@ public final class ProgramLexer extends Lexer {
 
         if (token instanceof Operator(Operator.OperatorType type, var ignored)
             && (FORBIDDEN_OPERATORS.contains(type))) {
-            throw new ParseException(String.format(PARSING_ERROR, token, token.position()));
+            throw new ParseException(
+                String.format(PARSING_ERROR, token, token.position()),
+                token.position(), this.source, null, token.toString());
         }
 
         return Optional.of(token);

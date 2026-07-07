@@ -16,6 +16,10 @@ public abstract class Lexer {
         this.source = source;
     }
 
+    public String getSource() {
+        return this.source;
+    }
+
     public Optional<Token> nextToken() {
 
         skipWhiteSpace();
@@ -65,7 +69,8 @@ public abstract class Lexer {
                         case "\\exists" -> new Operator(Operator.OperatorType.EXISTS, pos);
                         case "\\old" -> new Operator(Operator.OperatorType.OLD, pos);
                         default -> throw new ParseException(
-                            "The token '" + peek() + "' at position " + this.pos + " is not a valid token! Identifier" + identName);
+                            "The token '" + peek() + "' at position " + this.pos + " is not a valid token! Identifier" + identName,
+                            this.pos, this.source, null, identName);
                     };
             }
             case '<' -> {
@@ -115,7 +120,8 @@ public abstract class Lexer {
                 }
 
                 throw new ParseException(
-                    "The token '" + peek() + "' at position " + this.pos + " is not a valid token!");
+                    "The token '" + peek() + "' at position " + this.pos + " is not a valid token!",
+                    this.pos, this.source, null, String.valueOf(peek()));
             }
         };
 
@@ -202,7 +208,7 @@ public abstract class Lexer {
             }
         }
 
-        throw new ParseException("Expected double operator " + token + token);
+        throw new ParseException("Expected double operator " + token + token, this.pos, this.source, null, String.valueOf(peek()));
     }
 
     protected void advance(int steps) {

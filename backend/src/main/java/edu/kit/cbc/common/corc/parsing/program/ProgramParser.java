@@ -5,6 +5,7 @@ import edu.kit.cbc.common.corc.parsing.TokenSource;
 import edu.kit.cbc.common.corc.parsing.lexer.Identifier;
 import edu.kit.cbc.common.corc.parsing.lexer.Operator;
 import edu.kit.cbc.common.corc.parsing.lexer.Separator;
+import edu.kit.cbc.common.corc.parsing.lexer.Token;
 import edu.kit.cbc.common.corc.parsing.parser.Parser;
 import edu.kit.cbc.common.corc.parsing.parser.ast.IdentTree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.Tree;
@@ -87,7 +88,9 @@ public final class ProgramParser extends Parser {
             return new AssignTree(lvalue, expr);
         }
 
-        throw new ParseException("Token " + tokenSource.peek()
-            + " is not a program statement token. Allowed statements are assign statements and method calls!");
+        Token unexpected = tokenSource.peek();
+        throw new ParseException(
+            "Token " + unexpected + " is not a program statement token. Allowed statements are assign statements and method calls!",
+            unexpected.position(), tokenSource.getSource(), "identifier (assign or method call)", unexpected.toString());
     }
 }

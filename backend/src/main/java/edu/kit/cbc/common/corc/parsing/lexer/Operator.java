@@ -10,6 +10,11 @@ public record Operator(OperatorType type, int pos) implements Token {
         return pos();
     }
 
+    @Override
+    public String toString() {
+        return type().toString();
+    }
+
     public enum OperatorType {
 
         /*LOGICAL Operators*/

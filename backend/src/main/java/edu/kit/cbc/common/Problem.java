@@ -27,7 +27,7 @@ public record Problem(String type, String title, int status, String detail, Stri
         return new Problem(
                 "about:blank",
                 "Parsing error",
-                501,
+                400,
                 detailedError,
                 "about:blank"
         );

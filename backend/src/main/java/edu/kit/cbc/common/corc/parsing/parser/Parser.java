@@ -10,6 +10,7 @@ import edu.kit.cbc.common.corc.parsing.lexer.Keyword;
 import edu.kit.cbc.common.corc.parsing.lexer.NumberLiteral;
 import edu.kit.cbc.common.corc.parsing.lexer.Operator;
 import edu.kit.cbc.common.corc.parsing.lexer.Separator;
+import edu.kit.cbc.common.corc.parsing.lexer.Token;
 import edu.kit.cbc.common.corc.parsing.parser.ast.ArrayAcessTree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.BinaryOperationTree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.CallTree;
@@ -170,7 +171,12 @@ public abstract class Parser {
                 this.tokenSource.consume();
                 yield new IntLiteralTree(Integer.parseInt(value));
             }
-            default -> throw new ParseException("Unexpected factor: " + this.tokenSource.peek());
+            default -> {
+                Token unexpected = this.tokenSource.peek();
+                throw new ParseException(
+                    "Unexpected factor: " + unexpected,
+                    unexpected.position(), this.tokenSource.getSource(), null, unexpected.toString());
+            }
         };
     }
 }

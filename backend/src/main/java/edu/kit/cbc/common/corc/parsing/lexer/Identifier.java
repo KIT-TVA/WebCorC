@@ -5,4 +5,9 @@ public record Identifier(String identifier, int pos) implements Token {
     public int position() {
         return pos();
     }
+
+    @Override
+    public String toString() {
+        return identifier();
+    }
 }

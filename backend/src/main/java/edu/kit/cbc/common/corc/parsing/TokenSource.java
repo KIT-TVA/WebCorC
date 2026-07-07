@@ -12,14 +12,18 @@ import java.util.stream.Stream;
 
 public class TokenSource {
     private final List<Token> tokens;
+    private final String source;
     private int idx;
 
     public TokenSource(Lexer lexer) {
+        this.source = lexer.getSource();
         this.tokens = Stream.generate(lexer::nextToken)
             .takeWhile(Optional::isPresent)
             .map(Optional::orElseThrow)
             .toList();
     }
+
+    public String getSource() { return this.source; }
 
     public Token peek() {
         expectHasMore(0);
@@ -34,7 +38,11 @@ public class TokenSource {
     public Keyword expectKeyword(Keyword.KeywordType type) {
         Token token = peek();
         if (!(token instanceof Keyword kw) || kw.type() != type) {
-            throw new ParseException("expected keyword '" + type + "' but got " + token);
+            String expected = "keyword '" + type + "'";
+            String found = token.toString();
+            throw new ParseException(
+                "expected " + expected + " but got " + found,
+                token.position(), this.source, expected, found);
         }
         this.idx++;
         return kw;
@@ -43,7 +51,11 @@ public class TokenSource {
     public Separator expectSeparator(Separator.SeparatorType type) {
         Token token = peek();
         if (!(token instanceof Separator sep) || sep.type() != type) {
-            throw new ParseException("expected separator '" + type + "' but got " + token);
+            String expected = "separator '" + type + "'";
+            String found = token.toString();
+            throw new ParseException(
+                "expected " + expected + " but got " + found,
+                token.position(), this.source, expected, found);
         }
         this.idx++;
         return sep;
@@ -52,7 +64,11 @@ public class TokenSource {
     public Operator expectOperator(Operator.OperatorType type) {
         Token token = peek();
         if (!(token instanceof Operator op) || op.type() != type) {
-            throw new ParseException("expected operator '" + type + "' but got " + token);
+            String expected = "operator '" + type + "'";
+            String found = token.toString();
+            throw new ParseException(
+                "expected " + expected + " but got " + found,
+                token.position(), this.source, expected, found);
         }
         this.idx++;
         return op;
@@ -61,7 +77,10 @@ public class TokenSource {
     public Identifier expectIdentifier() {
         Token token = peek();
         if (!(token instanceof Identifier ident)) {
-            throw new ParseException("expected identifier but got " + token);
+            String found = token.toString();
+            throw new ParseException(
+                "expected identifier but got " + found,
+                token.position(), this.source, "identifier", found);
         }
         this.idx++;
         return ident;
@@ -83,7 +102,7 @@ public class TokenSource {
 
     private void expectHasMore(int amount) {
         if (this.idx + amount >= this.tokens.size()) {
-            throw new ParseException("reached end of tokens");
+            throw new ParseException("reached end of tokens", -1, this.source, "more tokens", "end of input");
         }
     }
 }

@@ -116,11 +116,11 @@ public class SemanticChecker {
         } else if (node instanceof IdentTree id) {
             String name = id.name();
             if (!scope.contains(name) && IGNORED_VARIABLES.stream().noneMatch(name::equalsIgnoreCase)) {
-                throw new SemanticException("Variable '" + name + "' is used but not defined.");
+                throw new SemanticException("Variable '" + name + "' is used but not defined.", name);
             }
         } else if (node instanceof LengthTree len) {
             if (!scope.contains(len.variable())) {
-                throw new SemanticException("Variable '" + len.variable() + "' is used but not defined.");
+                throw new SemanticException("Variable '" + len.variable() + "' is used but not defined.", len.variable());
             }
         } else if (node instanceof ArrayAcessTree arr) {
             checkTree(arr.name(), scope);

@@ -21,4 +21,9 @@ public record Keyword(KeywordType type, int pos) implements Token {
     public int position() {
         return pos();
     }
+
+    @Override
+    public String toString() {
+        return type().toString();
+    }
 }

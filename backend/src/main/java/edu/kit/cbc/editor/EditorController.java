@@ -3,6 +3,7 @@ package edu.kit.cbc.editor;
 
 import edu.kit.cbc.common.Problem;
 import edu.kit.cbc.common.corc.cbcmodel.CbCFormula;
+import edu.kit.cbc.common.error.PreExecutionError;
 import edu.kit.cbc.common.corc.codegeneration.CodeGenerator;
 import edu.kit.cbc.editor.llm.LLMClientRegistry;
 import edu.kit.cbc.editor.llm.LLMQueryDto;
@@ -23,11 +24,7 @@ import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import jakarta.validation.Valid;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.Optional;
-import java.util.UUID;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -70,9 +67,9 @@ public class EditorController {
         try {
             edu.kit.cbc.common.corc.parsing.SemanticChecker.checkVariables(formula);
         } catch (edu.kit.cbc.common.corc.parsing.SemanticException e) {
-
             return HttpResponse
-                .badRequest(Map.of("_embedded", Map.of("errors", List.of(Map.of("message", e.getMessage())))));
+                .badRequest(PreExecutionError.fromSemanticException(e, "/editor/verify"))
+                .contentType("application/problem+json");
         }
 
         UUID jobId = orchestrator.addJob(projectId, formula, filesController);
