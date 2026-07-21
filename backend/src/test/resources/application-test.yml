@@ -5,3 +5,6 @@ micronaut:
   test:
     resources:
       enabled: false
+
+rate-limit:
+  enabled: false

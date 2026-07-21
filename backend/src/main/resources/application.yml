@@ -48,3 +48,9 @@ xai.accessToken: '${XAI_ACCESS_TOKEN:changeme}'
 google.accessToken: '${GOOGLE_ACCESS_TOKEN:changeme}'
 
 development: '${DEVELOPMENT:false}'
+
+rate-limit:
+  enabled: true
+  requests-per-minute: 10
+  requests-per-hour: 50
+  trust-forwarded-headers: true
