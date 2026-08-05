@@ -22,7 +22,7 @@
     "@angular/platform-browser-dynamic": "^21.2.17",
     "@angular/router": "^21.2.17",
     "@ng-util/monaco-editor": "^18.0.0",
-    "@primeuix/themes": "^1.2.3",
+    "@openng/optimus-ui": "^1.0.1",
     "@tailwindcss/language-server": "^0.14.26",
     "@tailwindcss/postcss": "^4.1.18",
     "d3": "^7.9.0",
@@ -31,13 +31,13 @@
     "ngx-vflow": "^2.6.0",
     "postcss": "^8.5.6",
     "pretty-print-json": "^3.0.6",
-    "primeicons": "^7.0.0",
-    "primeng": "^21.1.9",
     "rxjs": "~7.8.0",
     "tailwindcss": "^4.1.18",
-    "tailwindcss-primeui": "^0.6.1",
     "tslib": "^2.3.0",
-    "zone.js": "~0.15.0"
+    "zone.js": "~0.15.0",
+    "@openng/icons": "^1.0.0",
+    "@openng/optimus-ui-themes": "^1.0.1",
+    "@openng/optimus-ui-tailwindcss": "^1.0.1"
   },
   "devDependencies": {
     "@angular-eslint/builder": "^21.4.0",

@@ -1,8 +1,8 @@
 import { Component, Input, output } from "@angular/core";
 
 import { MatIconModule } from "@angular/material/icon";
-import { SpeedDial } from "primeng/speeddial";
-import { MenuItem } from "primeng/api";
+import { SpeedDial } from "@openng/optimus-ui/speeddial";
+import { MenuItem } from "@openng/optimus-ui/api";
 import { StatementType } from "../../types/statements/abstract-statement";
 
 /**

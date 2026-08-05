@@ -1,6 +1,6 @@
 import { Component, inject } from "@angular/core";
-import { Button } from "primeng/button";
-import { DialogService } from "primeng/dynamicdialog";
+import { Button } from "@openng/optimus-ui/button";
+import { DialogService } from "@openng/optimus-ui/dynamicdialog";
 import { SettingsComponent } from "../settings/settings.component";
 
 @Component({

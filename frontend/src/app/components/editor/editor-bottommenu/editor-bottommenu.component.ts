@@ -1,8 +1,14 @@
-import {Component, signal} from '@angular/core';
-import {Tab, TabList, TabPanel, TabPanels, Tabs} from "primeng/tabs";
-import {Button} from "primeng/button";
-import {ConsoleComponent} from "../../console/console.component";
-import {AiChatComponent} from "../../ai-chat/ai-chat.component";
+import { Component, signal } from "@angular/core";
+import {
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+} from "@openng/optimus-ui/tabs";
+import { Button } from "@openng/optimus-ui/button";
+import { ConsoleComponent } from "../../console/console.component";
+import { AiChatComponent } from "../../ai-chat/ai-chat.component";
 import { PredicateManagerComponent } from "../predicate-manager/predicate-manager.component";
 
 @Component({

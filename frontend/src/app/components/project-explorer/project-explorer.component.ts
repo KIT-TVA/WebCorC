@@ -19,25 +19,29 @@ import {
 import { ImportFileDialogComponent } from "./import-file-dialog/import-file-dialog";
 import { MatMenuModule } from "@angular/material/menu";
 import { ImportProjectDialogComponent } from "../landing-page/import-project-dialog/import-project-dialog.component";
-import { Menubar } from "primeng/menubar";
+import { Menubar } from "@openng/optimus-ui/menubar";
 import {
   MenuItem,
   MessageService,
   PrimeTemplate,
   TreeDragDropService,
   TreeNode,
-} from "primeng/api";
-import { Tree, TreeNodeCollapseEvent, TreeNodeDropEvent } from "primeng/tree";
-import { Button } from "primeng/button";
-import { InputText } from "primeng/inputtext";
-import { FloatLabel } from "primeng/floatlabel";
-import { IconField } from "primeng/iconfield";
-import { InputIcon } from "primeng/inputicon";
-import { DialogService } from "primeng/dynamicdialog";
+} from "@openng/optimus-ui/api";
+import {
+  Tree,
+  TreeNodeCollapseEvent,
+  TreeNodeDropEvent,
+} from "@openng/optimus-ui/tree";
+import { Button } from "@openng/optimus-ui/button";
+import { InputText } from "@openng/optimus-ui/inputtext";
+import { FloatLabel } from "@openng/optimus-ui/floatlabel";
+import { IconField } from "@openng/optimus-ui/iconfield";
+import { InputIcon } from "@openng/optimus-ui/inputicon";
+import { DialogService } from "@openng/optimus-ui/dynamicdialog";
 import { TreeService } from "../../services/tree/tree.service";
 import { PredicateService } from "../../services/predicates/predicate.service";
-import { Tag } from "primeng/tag";
-import { Tooltip } from "primeng/tooltip";
+import { Tag } from "@openng/optimus-ui/tag";
+import { Tooltip } from "@openng/optimus-ui/tooltip";
 
 /**
  * Component for the file management and navigating between the files,

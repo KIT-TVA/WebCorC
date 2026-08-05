@@ -4,9 +4,12 @@ import {
   LocalDirectory,
   LocalTextFile,
 } from "../../../services/project/types/api-elements";
-import { Listbox } from "primeng/listbox";
-import { Button } from "primeng/button";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Listbox } from "@openng/optimus-ui/listbox";
+import { Button } from "@openng/optimus-ui/button";
+import {
+  DynamicDialogConfig,
+  DynamicDialogRef,
+} from "@openng/optimus-ui/dynamicdialog";
 import { Condition } from "../../../types/condition/condition";
 import { LocalCBCFormula } from "../../../types/CBCFormula";
 import { Position } from "../../../types/position";

@@ -1,18 +1,18 @@
 import { Component, EventEmitter, Input, Output, inject } from "@angular/core";
 import { Condition, ICondition } from "../../../../types/condition/condition";
 import { AiChatService } from "../../../../services/ai-chat/ai-chat.service";
-import { Textarea } from "primeng/textarea";
-import { FloatLabelModule } from "primeng/floatlabel";
+import { Textarea } from "@openng/optimus-ui/textarea";
+import { FloatLabelModule } from "@openng/optimus-ui/floatlabel";
 import {
   GREEN_COLOURED_CONDITIONS,
   RED_COLOURED_CONDITIONS,
 } from "../../editor.component";
-import { $dt } from "@primeuix/themes";
+import { $dt } from "@openng/optimus-ui-themes";
 import { FormsModule } from "@angular/forms";
 import { BehaviorSubject } from "rxjs";
 import { AsyncPipe } from "@angular/common";
-import { Button } from "primeng/button";
-import { Dialog } from "primeng/dialog";
+import { Button } from "@openng/optimus-ui/button";
+import { Dialog } from "@openng/optimus-ui/dialog";
 
 /**
  * Editor in the statements for the {@link Condition}
@@ -20,11 +20,11 @@ import { Dialog } from "primeng/dialog";
  * @link https://angular.dev/guide/forms/reactive-forms
  */
 @Component({
-    selector: 'app-condition-editor',
-    imports: [Textarea, FloatLabelModule, FormsModule, AsyncPipe, Button, Dialog],
-    templateUrl: './condition-editor.component.html',
-    standalone: true,
-    styleUrl: './condition-editor.component.css',
+  selector: "app-condition-editor",
+  imports: [Textarea, FloatLabelModule, FormsModule, AsyncPipe, Button, Dialog],
+  templateUrl: "./condition-editor.component.html",
+  standalone: true,
+  styleUrl: "./condition-editor.component.css",
 })
 export class ConditionEditorComponent {
   private _aiChatService = inject(AiChatService);
@@ -36,22 +36,23 @@ export class ConditionEditorComponent {
    */
   @Input() public condition!: BehaviorSubject<ICondition>;
 
-    /**
-     * Flag to allow editing the condition content
-     */
-    @Input() public placeholder: string = 'Type here';
-    @Input() public editable: boolean | null = true;
-    @Input() public inline = false;
-    @Input() public showAiButton = false;
+  /**
+   * Flag to allow editing the condition content
+   */
+  @Input() public placeholder: string = "Type here";
+  @Input() public editable: boolean | null = true;
+  @Input() public inline = false;
+  @Input() public showAiButton = false;
 
-    /**
-     * Emitter to emit the condition
-     */
-    @Output() public conditionEditingFinished: EventEmitter<void> =
-        new EventEmitter<void>();
-    @Output() public textChanged: EventEmitter<void> = new EventEmitter<void>();
-    @Output() public synthesizeRequested: EventEmitter<void> = new EventEmitter<void>();
-    protected dialogConditionText: string = "";
+  /**
+   * Emitter to emit the condition
+   */
+  @Output() public conditionEditingFinished: EventEmitter<void> =
+    new EventEmitter<void>();
+  @Output() public textChanged: EventEmitter<void> = new EventEmitter<void>();
+  @Output() public synthesizeRequested: EventEmitter<void> =
+    new EventEmitter<void>();
+  protected dialogConditionText: string = "";
 
   /** Inserted by Angular inject() migration for backwards compatibility */
   constructor(...args: unknown[]);
@@ -72,13 +73,13 @@ export class ConditionEditorComponent {
     this.askAi();
   }
 
-    public synthesizeWithAi(): void {
-        this.synthesizeRequested.emit();
-    }
+  public synthesizeWithAi(): void {
+    this.synthesizeRequested.emit();
+  }
 
-    public get aiButtonClass(): string {
-        return 'cursor-pointer pi pi-sparkles';
-    }
+  public get aiButtonClass(): string {
+    return "cursor-pointer pi pi-sparkles";
+  }
 
   public onConditionChange(newConditionString: string): void {
     const currentCondition = this.condition.getValue();

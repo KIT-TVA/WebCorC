@@ -1,13 +1,16 @@
 import { Component, inject } from "@angular/core";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
-import { ToggleSwitch } from "primeng/toggleswitch";
-import { Fieldset } from "primeng/fieldset";
-import { Button } from "primeng/button";
+import {
+  DynamicDialogConfig,
+  DynamicDialogRef,
+} from "@openng/optimus-ui/dynamicdialog";
+import { ToggleSwitch } from "@openng/optimus-ui/toggleswitch";
+import { Fieldset } from "@openng/optimus-ui/fieldset";
+import { Button } from "@openng/optimus-ui/button";
 import { FormsModule } from "@angular/forms";
 import { GlobalSettingsService } from "../../../services/global-settings.service";
 import { NetworkProjectService } from "../../../services/project/network/network-project.service";
 import { ProjectService } from "../../../services/project/project.service";
-import { Dialog } from "primeng/dialog";
+import { Dialog } from "@openng/optimus-ui/dialog";
 import { prettyPrintJson } from "pretty-print-json";
 import { TreeService } from "../../../services/tree/tree.service";
 import { ResetVariant } from "../../../types/ResetVariant";
