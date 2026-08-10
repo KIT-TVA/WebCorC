@@ -4,6 +4,7 @@ import de.uka.ilkd.key.control.KeYEnvironment;
 import de.uka.ilkd.key.proof.Proof;
 import de.uka.ilkd.key.proof.io.ProblemLoaderException;
 import de.uka.ilkd.key.settings.ChoiceSettings;
+import de.uka.ilkd.key.proof.io.ProofSaver;
 import de.uka.ilkd.key.settings.ProofSettings;
 import de.uka.ilkd.key.strategy.StrategyProperties;
 import de.uka.ilkd.key.util.MiscTools;
@@ -16,7 +17,7 @@ import java.util.Map;
 
 /**
  * Information: This class is taken from <a href="https://github.com/KeYProject/key-java-example">here</a>.
- * We know that it is ugly but there is no documentation of how to interact with KeY other than this.
+ * As far as we know, there is no documentation of how to interact with KeY other than this.
  * It is best if you leave this class unchanged. However, if you have to make changes here, make sure
  * to test them even more thoroughly than normal.
  */
@@ -32,7 +33,7 @@ public class KeYInteraction {
         try {
             printFile(location.getPath());
             if (!ProofSettings.isChoiceSettingInitialised()) {
-                KeYEnvironment<?> env = KeYEnvironment.load(location);
+                KeYEnvironment<?> env = KeYEnvironment.load(location.toPath());
                 env.dispose();
             }
 
@@ -44,7 +45,7 @@ public class KeYInteraction {
             newSettings.put("runtimeExceptions", "runtimeExceptions:ban");
             choiceSettings.setDefaultChoices(newSettings);
 
-            KeYEnvironment<?> env = KeYEnvironment.load(location);
+            KeYEnvironment<?> env = KeYEnvironment.load(location.toPath());
             Proof proof = env.getLoadedProof();
 
             /*Set STRATEGY options*/
@@ -68,10 +69,9 @@ public class KeYInteraction {
 
             // Show proof result
             try {
-
                 Path parentDir = location.getParentFile().toPath();
                 Path proofLocation = parentDir.resolve(location.getName().split("\\.")[0] + ".proof");
-                proof.saveToFile(proofLocation.toFile());
+                ProofSaver.saveToFile(proofLocation, proof);
             } catch (IOException e) {
                 e.printStackTrace();
             }
