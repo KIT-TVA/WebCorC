@@ -127,7 +127,7 @@
         <dependency>
             <groupId>org.key-project</groupId>
             <artifactId>key.core</artifactId>
-            <version>2.12.2</version>
+            <version>3.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
