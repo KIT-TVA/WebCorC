@@ -7,6 +7,7 @@
                   id="field"
                   pTextarea
                   class="textarea condition-textarea"
+                  [class.condition-textarea--inline]="inline"
                   spellcheck="false"
                   [rows]="inline ? 1 : 5"
                   [ngModel]="(condition | async)?.condition"
@@ -25,7 +26,9 @@
           >
           </textarea>
                 <label for="field">{{ placeholder }}</label>
-                <div class="condition-button-stack" [class.condition-button-stack--with-ai]="showAiButton">
+                <div class="condition-button-stack"
+                     [class.condition-button-stack--with-ai]="showAiButton"
+                     [class.condition-button-stack--inline]="inline">
                     <p-button
                             (click)="onEditConditionClick()"
                             icon="pi pi-pencil"

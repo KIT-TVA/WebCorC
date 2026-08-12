@@ -4,41 +4,35 @@
   [refinement]="this"
   [hideSourceHandle]="true"
 >
-  <div class="statements">
-    <div class="first-row">
-      <div>
-        <button type="button" mat-icon-button (click)="addSelection()">
-          <mat-icon>add</mat-icon>
-        </button>
-        <button type="button" mat-icon-button (click)="removeSelection()">
-          <mat-icon>remove</mat-icon>
-        </button>
-      </div>
-    </div>
-
+  <div class="w-100 flex flex-col gap-8">
     @for (guard of _node.guards; track guard; let i = $index) {
       <div class="statement-container">
-        <div class="guard">
-          <app-condition-editor
-            class="inline-block self-center w-full justify-self-stretch"
+        <div class="flex gap-1">
+          <app-condition-editor class="flex-1"
             [condition]="guard"
             [inline]="true"
             placeholder="Guard"
             (textChanged)="onEditableContentChanged()"
           ></app-condition-editor>
+            <p-button class="inline-block" variant="text" severity="secondary" icon="pi pi-trash" (click)="removeSelection(i)">
+            </p-button>
+            <div class="-mt-4">
+                @if (!_node.children[i]) {
+                    <app-refinement-widget
+                            text="Statement"
+                            icon="add"
+                            (select)="chooseRefinement(i, $event)"
+                    >
+                    </app-refinement-widget>
+                }
+            </div>
         </div>
         <div class="statement">
-          @if (!_node.children[i]) {
-            <app-refinement-widget
-              text="Statement"
-              icon="add"
-              (select)="chooseRefinement(i, $event)"
-            >
-            </app-refinement-widget>
-          }
         </div>
       </div>
     }
+      <p-button icon="pi pi-plus" label="New Guard" severity="secondary" type="plain" (click)="addSelection()">
+      </p-button>
   </div>
   <div class="flex flex-col w-0">
     <div class="h-12 w-0"></div>

@@ -1,6 +1,7 @@
 :host {
   display: block;
   width: 100%;
+  flex: 1;
 }
 
 .condition-editor-root {
@@ -39,6 +40,23 @@
     bottom: 0.25rem;
     transform: none;
     justify-content: space-between;
+}
+
+.condition-textarea--inline {
+    padding-right: 4.5rem;
+}
+
+.condition-button-stack--inline {
+    flex-direction: row !important;
+    top: 50% !important;
+    bottom: auto !important;
+    transform: translateY(-50%) !important;
+}
+
+.condition-button-stack--inline ::ng-deep .p-button {
+    width: 1.75rem !important;
+    height: 1.75rem !important;
+    padding: 0 !important;
 }
 
 .condition-dialog {

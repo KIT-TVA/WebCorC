@@ -188,16 +188,15 @@ export class SelectionStatementNode extends AbstractStatementNode {
     return statementNode;
   }
 
-  removeSelection() {
-    const index = this.guards.length - 1;
+  removeSelectionAtIndex(index: number) {
     if (this.childSubscriptions[index]) {
       this.childSubscriptions[index].unsubscribe();
-      this.childSubscriptions.pop();
+      this.childSubscriptions.splice(index, 1);
     }
-    this.guards.pop();
-    this.children.pop();
-    this.statement.guards.pop();
-    this.statement.commands.pop();
+    this.guards.splice(index, 1);
+    this.children.splice(index, 1);
+    this.statement.guards.splice(index, 1);
+    this.statement.commands.splice(index, 1);
   }
 
   override addChild(statement: AbstractStatementNode, index: number) {
