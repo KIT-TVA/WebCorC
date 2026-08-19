@@ -9,7 +9,7 @@
         <p-tabpanels style="display: contents">
           <p-tabpanel [value]="1">
             <p-accordion [multiple]="true">
-              <p-accordion-panel value="0">
+              <p-accordion-panel value="0" class="w-sm">
                 <p-accordion-header>Actions</p-accordion-header>
                 <p-accordion-content>
                   <app-options></app-options>
@@ -36,16 +36,17 @@
             </p-accordion>
           </p-tabpanel>
           <p-tabpanel [value]="2">
-            <app-ai-chat />
+            <app-ai-chat class="w-sm"/>
           </p-tabpanel>
           <p-tabpanel [value]="3" style="display: contents">
-            <div style="overflow-y: scroll; height: 100%">
+            <div class="w-sm" style="overflow-y: scroll; height: 100%">
               <app-console style="display: inline-block; width: 20rem" />
             </div>
           </p-tabpanel>
           <p-tabpanel [value]="4" style="display: contents">
             <app-predicate-manager
-              style="display: inline-block; width: 20rem"
+                    class="w-sm"
+              style="display: inline-block"
             />
           </p-tabpanel>
         </p-tabpanels>

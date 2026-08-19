@@ -19,6 +19,7 @@ import {
 import { Position } from "../../../../types/position";
 import { SelectionStatementNode } from "../../../../types/statements/nodes/selection-statement-node";
 import { HandleComponent } from "ngx-vflow";
+import {Button} from "primeng/button";
 
 /**
  * Component in the graphical editor to represent the {@link SelectionStatement}
@@ -37,6 +38,7 @@ import { HandleComponent } from "ngx-vflow";
     MatButtonModule,
     ConditionEditorComponent,
     HandleComponent,
+    Button,
   ],
   templateUrl: "./selection-statement.component.html",
   styleUrl: "./selection-statement.component.css",
@@ -74,12 +76,11 @@ export class SelectionStatementComponent extends Refinement implements OnInit {
     this._node.addSelection();
   }
 
-  public removeSelection() {
-    const length = this._node.children.length;
-    if (this._node.children[length - 1]) {
-      this.treeService.deleteStatementNode(this._node.children[length - 1]!);
+  public removeSelection(index: number) {
+    if (this._node.children[index]) {
+      this.treeService.deleteStatementNode(this._node.children[index]!);
     }
-    this._node.removeSelection();
+    this._node.removeSelectionAtIndex(index);
   }
 
   public override resetPosition(position: Position, offset: Position): void {
