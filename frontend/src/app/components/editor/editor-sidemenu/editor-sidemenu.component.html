@@ -1,58 +1,63 @@
 <div class="sideMenuContainer">
-  <p-tabs
-    [(value)]="tabValue"
-    style="width: fit-content"
-    [style.height]="'100%'"
-  >
-    <div style="display: flex; width: fit-content; height: 100%">
-      <div style="align-self: stretch">
-        <p-tabpanels style="display: contents">
-          <p-tabpanel [value]="1">
-            <p-accordion [multiple]="true">
-              <p-accordion-panel value="0" class="w-sm">
-                <p-accordion-header>Actions</p-accordion-header>
-                <p-accordion-content>
-                  <app-options></app-options>
-                </p-accordion-content>
-              </p-accordion-panel>
-              <p-accordion-panel value="1">
-                <p-accordion-header>Renaming</p-accordion-header>
-                <p-accordion-content>
-                  <app-renaming #renaming></app-renaming>
-                </p-accordion-content>
-              </p-accordion-panel>
-              <p-accordion-panel value="2">
-                <p-accordion-header>Global Conditions</p-accordion-header>
-                <p-accordion-content>
-                  <app-global-conditions #conditions></app-global-conditions>
-                </p-accordion-content>
-              </p-accordion-panel>
-              <p-accordion-panel value="3">
-                <p-accordion-header>Java Variables</p-accordion-header>
-                <p-accordion-content>
-                  <app-variables #variables></app-variables>
-                </p-accordion-content>
-              </p-accordion-panel>
-            </p-accordion>
-          </p-tabpanel>
-          <p-tabpanel [value]="2">
-            <app-ai-chat class="w-sm"/>
-          </p-tabpanel>
-          <p-tabpanel [value]="3" style="display: contents">
-            <div class="w-sm" style="overflow-y: scroll; height: 100%">
-              <app-console style="display: inline-block; width: 20rem" />
+    <p-tabs
+            [(value)]="tabValue"
+            style="width: fit-content"
+            [style.height]="'100%'"
+    >
+        <div style="display: flex; width: fit-content; height: 100%">
+            <div style="align-self: stretch">
+                <p-tabpanels style="display: contents">
+                    <p-tabpanel [value]="1">
+                        <div class="w-sm sideMenuScroll">
+
+                            <p-accordion [multiple]="true">
+                                <p-accordion-panel value="0" class="w-sm">
+                                    <p-accordion-header>Actions</p-accordion-header>
+                                    <p-accordion-content>
+                                        <app-options></app-options>
+                                    </p-accordion-content>
+                                </p-accordion-panel>
+                                <p-accordion-panel value="1">
+                                    <p-accordion-header>Renaming</p-accordion-header>
+                                    <p-accordion-content>
+                                        <app-renaming #renaming></app-renaming>
+                                    </p-accordion-content>
+                                </p-accordion-panel>
+                                <p-accordion-panel value="2">
+                                    <p-accordion-header>Global Conditions</p-accordion-header>
+                                    <p-accordion-content>
+                                        <app-global-conditions #conditions></app-global-conditions>
+                                    </p-accordion-content>
+                                </p-accordion-panel>
+                                <p-accordion-panel value="3">
+                                    <p-accordion-header>Java Variables</p-accordion-header>
+                                    <p-accordion-content>
+                                        <app-variables #variables></app-variables>
+                                    </p-accordion-content>
+
+                                </p-accordion-panel>
+
+                            </p-accordion>
+                        </div>
+                    </p-tabpanel>
+                    <p-tabpanel [value]="2">
+                        <app-ai-chat class="w-sm"/>
+                    </p-tabpanel>
+                    <p-tabpanel [value]="3" style="display: contents">
+                        <div class="w-sm" style="overflow-y: scroll; height: 100%">
+                            <app-console style="display: inline-block; width: 20rem"/>
+                        </div>
+                    </p-tabpanel>
+                    <p-tabpanel [value]="4" style="display: contents">
+                        <app-predicate-manager
+                                class="w-sm"
+                                style="display: inline-block"
+                        />
+                    </p-tabpanel>
+                </p-tabpanels>
             </div>
-          </p-tabpanel>
-          <p-tabpanel [value]="4" style="display: contents">
-            <app-predicate-manager
-                    class="w-sm"
-              style="display: inline-block"
-            />
-          </p-tabpanel>
-        </p-tabpanels>
-      </div>
-      <div
-        style="
+            <div
+                    style="
           justify-self: end;
           width: 2rem;
           height: 100%;
@@ -60,61 +65,61 @@
           flex-direction: column;
           background-color: var(--p-tabs-tablist-background);
         "
-      >
-        <div style="height: 1rem"><!--- spacer ---></div>
-        <p-button
-          [dt]="compactButton"
-          [style.writing-mode]="'sideways-lr'"
-          [style.text-orientation]="'mixed'"
-          size="small"
-          [severity]="tabValue() == 1 ? 'primary' : 'secondary'"
-          text
-          [style.border-radius]="0"
-          (click)="setTab(1)"
-        >
-          <i class="pi pi-globe"></i>
-          Global
-        </p-button>
-        <p-button
-          [dt]="compactButton"
-          [style.writing-mode]="'sideways-lr'"
-          [style.text-orientation]="'mixed'"
-          size="small"
-          text
-          [severity]="tabValue() == 2 ? 'primary' : 'secondary'"
-          [style.border-radius]="0"
-          (click)="setTab(2)"
-        >
-          <i class="pi pi-sparkles"></i>
-          Ai Chat
-        </p-button>
-        <p-button
-          [dt]="compactButton"
-          [style.writing-mode]="'sideways-lr'"
-          [style.text-orientation]="'mixed'"
-          size="small"
-          text
-          [severity]="tabValue() == 3 ? 'primary' : 'secondary'"
-          [style.border-radius]="0"
-          (click)="setTab(3)"
-        >
-          <i class="pi pi-code"></i>
-          Console
-        </p-button>
-        <p-button
-          [dt]="compactButton"
-          [style.writing-mode]="'sideways-lr'"
-          [style.text-orientation]="'mixed'"
-          size="small"
-          text
-          [severity]="tabValue() == 4 ? 'primary' : 'secondary'"
-          [style.border-radius]="0"
-          (click)="setTab(4)"
-        >
-          <i class="pi pi-tags"></i>
-          Predicates
-        </p-button>
-      </div>
-    </div>
-  </p-tabs>
+            >
+                <div style="height: 1rem"><!--- spacer ---></div>
+                <p-button
+                        [dt]="compactButton"
+                        [style.writing-mode]="'sideways-lr'"
+                        [style.text-orientation]="'mixed'"
+                        size="small"
+                        [severity]="tabValue() == 1 ? 'primary' : 'secondary'"
+                        text
+                        [style.border-radius]="0"
+                        (click)="setTab(1)"
+                >
+                    <i class="pi pi-globe"></i>
+                    Global
+                </p-button>
+                <p-button
+                        [dt]="compactButton"
+                        [style.writing-mode]="'sideways-lr'"
+                        [style.text-orientation]="'mixed'"
+                        size="small"
+                        text
+                        [severity]="tabValue() == 2 ? 'primary' : 'secondary'"
+                        [style.border-radius]="0"
+                        (click)="setTab(2)"
+                >
+                    <i class="pi pi-sparkles"></i>
+                    Ai Chat
+                </p-button>
+                <p-button
+                        [dt]="compactButton"
+                        [style.writing-mode]="'sideways-lr'"
+                        [style.text-orientation]="'mixed'"
+                        size="small"
+                        text
+                        [severity]="tabValue() == 3 ? 'primary' : 'secondary'"
+                        [style.border-radius]="0"
+                        (click)="setTab(3)"
+                >
+                    <i class="pi pi-code"></i>
+                    Console
+                </p-button>
+                <p-button
+                        [dt]="compactButton"
+                        [style.writing-mode]="'sideways-lr'"
+                        [style.text-orientation]="'mixed'"
+                        size="small"
+                        text
+                        [severity]="tabValue() == 4 ? 'primary' : 'secondary'"
+                        [style.border-radius]="0"
+                        (click)="setTab(4)"
+                >
+                    <i class="pi pi-tags"></i>
+                    Predicates
+                </p-button>
+            </div>
+        </div>
+    </p-tabs>
 </div>
