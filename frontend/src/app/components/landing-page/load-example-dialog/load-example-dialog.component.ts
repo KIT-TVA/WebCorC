@@ -290,7 +290,7 @@ export class LoadExampleDialogComponent {
               "        \\schemaVar \\variable int q;\n" +
               "        \\find (maxe(A, begin, end, m))\n" +
               "        \\varcond (\\notFreeIn(q,A), \\notFreeIn(q,begin), \\notFreeIn(q,end), \\notFreeIn(q,m))\n" +
-              "        \\replacewith (\\forall int q; ((q >= begin & q < end) -> A[m]>=A[q]))\n" +
+              "        \\replacewith (\\forall int q; ((q >= begin & q < end) -> A[m] >= A[q]))\n" +
               "        \\heuristics(simplify)\n" +
               "    };\n" +
               "}\n",
