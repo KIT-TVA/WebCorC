@@ -1,5 +1,6 @@
 import {
   Component,
+  DoCheck,
   EventEmitter,
   Input,
   OnChanges,
@@ -20,7 +21,7 @@ import {
 } from "../../editor.component";
 import { $dt } from "@primeuix/themes";
 import { FormsModule } from "@angular/forms";
-import { BehaviorSubject, Subject, Subscription, filter, skip } from "rxjs";
+import { BehaviorSubject, Subject, filter } from "rxjs";
 import { AsyncPipe } from "@angular/common";
 import { Button } from "primeng/button";
 import { Dialog } from "primeng/dialog";
@@ -83,15 +84,13 @@ class ConditionSyntaxCheck {
     standalone: true,
     styleUrl: './condition-editor.component.css',
 })
-export class ConditionEditorComponent implements OnChanges, OnDestroy {
+export class ConditionEditorComponent implements OnChanges, DoCheck, OnDestroy {
   private static nextId = 0;
   /**
    * Requests an immediate syntax check in all editors showing the emitted condition,
    * as a condition can be shared between statements (e.g. intermediate condition and postcondition)
    */
-  private static readonly checkNowRequests = new Subject<
-    BehaviorSubject<ICondition>
-  >();
+  private static readonly checkNowRequests = new Subject<ICondition>();
 
   private _aiChatService = inject(AiChatService);
   protected greenConditions = inject(GREEN_COLOURED_CONDITIONS);
@@ -131,12 +130,11 @@ export class ConditionEditorComponent implements OnChanges, OnDestroy {
     () => this.validateJml,
   );
   protected readonly syntaxErrorId = `condition-syntax-error-${ConditionEditorComponent.nextId++}`;
-  private conditionSubscription?: Subscription;
+  /** Text of the condition the shown syntax check belongs to */
+  private checkedText?: string;
   private readonly checkNowSubscription = ConditionEditorComponent.checkNowRequests
-    .pipe(filter((condition) => condition === this.condition))
-    .subscribe(() =>
-      this.syntaxCheck.checkNow(this.condition.getValue()?.condition),
-    );
+    .pipe(filter((condition) => condition === this.condition?.getValue()))
+    .subscribe(() => this.checkSyntaxNow());
 
   /** Inserted by Angular inject() migration for backwards compatibility */
   constructor(...args: unknown[]);
@@ -145,28 +143,35 @@ export class ConditionEditorComponent implements OnChanges, OnDestroy {
 
   public ngOnChanges(changes: SimpleChanges): void {
     if (changes["condition"] || changes["validateJml"]) {
-      this.conditionSubscription?.unsubscribe();
       // the current condition (e.g. of a loaded project) is checked immediately
-      this.syntaxCheck.checkNow(this.condition?.getValue()?.condition);
-      // changes are checked delayed in every editor showing the condition,
-      // so that editors sharing the condition show the error at the same time
-      this.conditionSubscription = this.condition
-        ?.pipe(skip(1))
-        .subscribe((condition) =>
-          this.syntaxCheck.checkDelayed(condition?.condition),
-        );
+      this.checkSyntaxNow();
+    }
+  }
+
+  public ngDoCheck(): void {
+    // The text is compared instead of listening to the condition, as statements can share
+    // the condition object without sharing the subject. So every editor showing a changed
+    // condition checks it after the same pause and shows the error at the same time.
+    const text = this.condition?.getValue()?.condition;
+    if (text !== this.checkedText) {
+      this.checkedText = text;
+      this.syntaxCheck.checkDelayed(text);
     }
   }
 
   public ngOnDestroy(): void {
-    this.conditionSubscription?.unsubscribe();
     this.checkNowSubscription.unsubscribe();
     this.syntaxCheck.cancel();
     this.dialogSyntaxCheck.cancel();
   }
 
+  private checkSyntaxNow(): void {
+    this.checkedText = this.condition?.getValue()?.condition;
+    this.syntaxCheck.checkNow(this.checkedText);
+  }
+
   protected onEditingFinished(): void {
-    ConditionEditorComponent.checkNowRequests.next(this.condition);
+    ConditionEditorComponent.checkNowRequests.next(this.condition.getValue());
     this.conditionEditingFinished.emit();
   }
 
@@ -231,7 +236,7 @@ export class ConditionEditorComponent implements OnChanges, OnDestroy {
 
   protected onDialogSaveClick() {
     this.onConditionChange(this.dialogConditionText);
-    ConditionEditorComponent.checkNowRequests.next(this.condition);
+    ConditionEditorComponent.checkNowRequests.next(this.condition.getValue());
     this.dialogSyntaxCheck.cancel();
     this.isDialogVisible = false;
   }

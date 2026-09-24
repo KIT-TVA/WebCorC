@@ -18,14 +18,17 @@ import {
   RED_COLOURED_CONDITIONS,
 } from "../../editor.component";
 
-describe("ConditionEditorComponent", () => {
-  let component: ConditionEditorComponent;
-  let fixture: ComponentFixture<ConditionEditorComponent>;
+type Editor = ComponentFixture<ConditionEditorComponent>;
 
-  const createEditor = (condition: BehaviorSubject<ICondition>) => {
+describe("ConditionEditorComponent", () => {
+  let fixture: Editor;
+  let allEditors: Editor[];
+
+  const createEditor = (condition: BehaviorSubject<ICondition>): Editor => {
     const editor = TestBed.createComponent(ConditionEditorComponent);
     editor.componentRef.setInput("condition", condition);
     editor.detectChanges();
+    allEditors.push(editor);
     return editor;
   };
 
@@ -36,9 +39,13 @@ describe("ConditionEditorComponent", () => {
     return condition;
   };
 
-  const shownError = (
-    editor: ComponentFixture<ConditionEditorComponent> = fixture,
-  ): string | null => {
+  /** Types into the editor, followed by the change detection of the application */
+  const type = (editor: Editor, text: string) => {
+    editor.componentInstance.onConditionChange(text);
+    allEditors.forEach((e) => e.detectChanges());
+  };
+
+  const shownError = (editor: Editor = fixture): string | null => {
     editor.detectChanges();
     return (
       editor.nativeElement
@@ -52,7 +59,7 @@ describe("ConditionEditorComponent", () => {
       .querySelector("textarea")
       .classList.contains("p-invalid");
 
-  const leaveField = (editor: ComponentFixture<ConditionEditorComponent>) =>
+  const leaveField = (editor: Editor) =>
     editor.nativeElement
       .querySelector("textarea")
       .dispatchEvent(new FocusEvent("focusout", { bubbles: true }));
@@ -69,12 +76,12 @@ describe("ConditionEditorComponent", () => {
     }).compileComponents();
 
     fixture = TestBed.createComponent(ConditionEditorComponent);
-    component = fixture.componentInstance;
+    allEditors = [fixture];
   });
 
   it("should create", () => {
     setCondition("");
-    expect(component).toBeTruthy();
+    expect(fixture.componentInstance).toBeTruthy();
   });
 
   it("shows no error for an empty condition", () => {
@@ -111,7 +118,7 @@ describe("ConditionEditorComponent", () => {
 
   it("shows the error of typed text after a pause", fakeAsync(() => {
     setCondition("");
-    component.onConditionChange("a >");
+    type(fixture, "a >");
     expect(shownError()).toBeNull();
 
     tick(SYNTAX_CHECK_DELAY_MS - 1);
@@ -125,9 +132,9 @@ describe("ConditionEditorComponent", () => {
 
   it("restarts the delay on each typed character", fakeAsync(() => {
     setCondition("");
-    component.onConditionChange("a >");
+    type(fixture, "a >");
     tick(SYNTAX_CHECK_DELAY_MS - 100);
-    component.onConditionChange("a > (");
+    type(fixture, "a > (");
     tick(SYNTAX_CHECK_DELAY_MS - 100);
     expect(shownError()).toBeNull();
 
@@ -139,14 +146,14 @@ describe("ConditionEditorComponent", () => {
     setCondition("a >");
     expect(shownError()).not.toBeNull();
 
-    component.onConditionChange("a > b");
+    type(fixture, "a > b");
     expect(shownError()).toBeNull();
     expect(textareaIsInvalid()).toBeFalse();
   }));
 
   it("shows the error immediately when leaving the field", fakeAsync(() => {
     setCondition("");
-    component.onConditionChange("a >");
+    type(fixture, "a >");
     leaveField(fixture);
     expect(shownError()).toContain("expected an expression");
     tick(SYNTAX_CHECK_DELAY_MS);
@@ -154,59 +161,65 @@ describe("ConditionEditorComponent", () => {
 
   it("updates the condition when typing", () => {
     const condition = setCondition("");
-    component.onConditionChange("a > b");
+    type(fixture, "a > b");
     expect(condition.getValue().condition).toBe("a > b");
   });
 
-  describe("with a condition shared between editors", () => {
-    // e.g. intermediate condition of a composition and postcondition of its first statement
-    let condition: BehaviorSubject<ICondition>;
-    let typingEditor: ComponentFixture<ConditionEditorComponent>;
-    let otherEditor: ComponentFixture<ConditionEditorComponent>;
+  // e.g. intermediate condition of a composition and postcondition of its first statement
+  for (const sharing of ["subject", "condition object"]) {
+    describe(`with a condition shared between editors by the ${sharing}`, () => {
+      let typingEditor: Editor;
+      let otherEditor: Editor;
 
-    beforeEach(() => {
-      condition = new BehaviorSubject<ICondition>(new Condition("i == 0"));
-      typingEditor = createEditor(condition);
-      otherEditor = createEditor(condition);
+      beforeEach(() => {
+        const condition = new Condition("i == 0");
+        const subject = new BehaviorSubject<ICondition>(condition);
+        typingEditor = createEditor(subject);
+        otherEditor = createEditor(
+          sharing === "subject"
+            ? subject
+            : new BehaviorSubject<ICondition>(condition),
+        );
+      });
+
+      it("shows the error of typed text in all editors after the same pause", fakeAsync(() => {
+        type(typingEditor, "i = 0");
+        tick(SYNTAX_CHECK_DELAY_MS - 1);
+        expect(shownError(typingEditor)).toBeNull();
+        expect(shownError(otherEditor)).toBeNull();
+
+        tick(1);
+        expect(shownError(typingEditor)).toContain("Assignment '='");
+        expect(shownError(otherEditor)).toContain("Assignment '='");
+      }));
+
+      it("removes the error in all editors immediately when fixed", fakeAsync(() => {
+        type(typingEditor, "i = 0");
+        tick(SYNTAX_CHECK_DELAY_MS);
+        type(typingEditor, "i == 0");
+        expect(shownError(typingEditor)).toBeNull();
+        expect(shownError(otherEditor)).toBeNull();
+      }));
+
+      it("shows the error in all editors immediately when leaving the field", fakeAsync(() => {
+        type(typingEditor, "i = 0");
+        leaveField(typingEditor);
+        expect(shownError(typingEditor)).toContain("Assignment '='");
+        expect(shownError(otherEditor)).toContain("Assignment '='");
+        tick(SYNTAX_CHECK_DELAY_MS);
+      }));
+
+      it("does not affect editors of other conditions when leaving the field", fakeAsync(() => {
+        const unrelatedEditor = createEditor(
+          new BehaviorSubject<ICondition>(new Condition("a > b")),
+        );
+        type(unrelatedEditor, "a >");
+        type(typingEditor, "i = 0");
+        leaveField(typingEditor);
+        expect(shownError(unrelatedEditor)).toBeNull();
+        tick(SYNTAX_CHECK_DELAY_MS);
+        expect(shownError(unrelatedEditor)).not.toBeNull();
+      }));
     });
-
-    it("shows the error of typed text in all editors after the same pause", fakeAsync(() => {
-      typingEditor.componentInstance.onConditionChange("i = 0");
-      tick(SYNTAX_CHECK_DELAY_MS - 1);
-      expect(shownError(typingEditor)).toBeNull();
-      expect(shownError(otherEditor)).toBeNull();
-
-      tick(1);
-      expect(shownError(typingEditor)).toContain("Assignment '='");
-      expect(shownError(otherEditor)).toContain("Assignment '='");
-    }));
-
-    it("removes the error in all editors immediately when fixed", fakeAsync(() => {
-      typingEditor.componentInstance.onConditionChange("i = 0");
-      tick(SYNTAX_CHECK_DELAY_MS);
-      typingEditor.componentInstance.onConditionChange("i == 0");
-      expect(shownError(typingEditor)).toBeNull();
-      expect(shownError(otherEditor)).toBeNull();
-    }));
-
-    it("shows the error in all editors immediately when leaving the field", fakeAsync(() => {
-      typingEditor.componentInstance.onConditionChange("i = 0");
-      leaveField(typingEditor);
-      expect(shownError(typingEditor)).toContain("Assignment '='");
-      expect(shownError(otherEditor)).toContain("Assignment '='");
-      tick(SYNTAX_CHECK_DELAY_MS);
-    }));
-
-    it("does not affect editors of other conditions when leaving the field", fakeAsync(() => {
-      const unrelatedEditor = createEditor(
-        new BehaviorSubject<ICondition>(new Condition("a > b")),
-      );
-      unrelatedEditor.componentInstance.onConditionChange("a >");
-      typingEditor.componentInstance.onConditionChange("i = 0");
-      leaveField(typingEditor);
-      expect(shownError(unrelatedEditor)).toBeNull();
-      tick(SYNTAX_CHECK_DELAY_MS);
-      expect(shownError(unrelatedEditor)).not.toBeNull();
-    }));
-  });
+  }
 });
