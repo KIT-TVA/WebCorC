@@ -19,7 +19,7 @@ import {
 import { Position } from "../../../../types/position";
 import { SelectionStatementNode } from "../../../../types/statements/nodes/selection-statement-node";
 import { HandleComponent } from "ngx-vflow";
-import {Button} from "primeng/button";
+import { Button } from "@openng/optimus-ui/button";
 
 /**
  * Component in the graphical editor to represent the {@link SelectionStatement}
