@@ -20,6 +20,9 @@ export class RepetitionStatementNode extends AbstractStatementNode {
   private childConditionSubscription?: Subscription;
   private editableSubscription: Subscription;
 
+  private loopStatementPrecondition: BehaviorSubject<ICondition> = new BehaviorSubject({condition: ''});
+  private loopStatementPostcondition: BehaviorSubject<ICondition> = new BehaviorSubject({condition: ''});
+
   constructor(
     statement: IRepetitionStatement,
     parent: AbstractStatementNode | undefined,
@@ -40,15 +43,17 @@ export class RepetitionStatementNode extends AbstractStatementNode {
       const conditions = [invariant.condition, guard.condition].filter(
         (c) => c && c.trim() !== "",
       );
-      const newPrecondition = new Condition(conditions.join(" && "));
-      this.precondition.next(newPrecondition);
-      this.postcondition.next(invariant);
+      const newLoopStatementPrecondition = new Condition(conditions.join(" && "));
+      this.loopStatementPrecondition.next(newLoopStatementPrecondition);
+      this.loopStatementPostcondition.next(invariant);
     });
     if (statement.loopStatement) {
       this.loopStatementNode = statementNodeUtils(
         statement.loopStatement,
         this,
       );
+      this.loopStatementPrecondition.next(statement.loopStatement.preCondition)
+      this.loopStatementPostcondition.next(statement.loopStatement.postCondition)
     }
   }
 
@@ -57,10 +62,6 @@ export class RepetitionStatementNode extends AbstractStatementNode {
   public get loopStatementNode() {
     return this._loopStatementNode;
   }
-
-  override overridePrecondition(condition: BehaviorSubject<ICondition>) {}
-
-  override overridePostcondition(condition: BehaviorSubject<ICondition>) {}
 
   override get preconditionEditable() {
     return this.dummyEditable;
@@ -76,8 +77,8 @@ export class RepetitionStatementNode extends AbstractStatementNode {
     this.children = loopStatementNode ? [loopStatementNode] : [];
 
     if (loopStatementNode) {
-      loopStatementNode.overridePrecondition(this.precondition);
-      loopStatementNode.overridePostcondition(this.postcondition);
+      loopStatementNode.overridePrecondition(this.loopStatementPrecondition);
+      loopStatementNode.overridePostcondition(this.loopStatementPostcondition);
       loopStatementNode.postconditionEditable.next(false);
       loopStatementNode.preconditionEditable.next(false);
     }
