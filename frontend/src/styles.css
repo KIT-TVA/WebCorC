@@ -1,6 +1,6 @@
 @import "tailwindcss";
-@import "tailwindcss-primeui";
-@import "primeicons/primeicons.css";
+@import "@openng/optimus-ui-tailwindcss";
+@import "@openng/icons/openng-icons.css";
 
 h1 {
   font-family:

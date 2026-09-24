@@ -1,15 +1,15 @@
 import { Component, OnInit, inject } from "@angular/core";
-import { Fluid } from "primeng/fluid";
-import { Select } from "primeng/select";
-import { Button } from "primeng/button";
-import { InputGroup } from "primeng/inputgroup";
-import { FloatLabel } from "primeng/floatlabel";
-import { InputText } from "primeng/inputtext";
-import { Textarea } from "primeng/textarea";
+import { Fluid } from "@openng/optimus-ui/fluid";
+import { Select } from "@openng/optimus-ui/select";
+import { Button } from "@openng/optimus-ui/button";
+import { InputGroup } from "@openng/optimus-ui/inputgroup";
+import { FloatLabel } from "@openng/optimus-ui/floatlabel";
+import { InputText } from "@openng/optimus-ui/inputtext";
+import { Textarea } from "@openng/optimus-ui/textarea";
 import { PredicateService } from "../../../services/predicates/predicate.service";
 import { FormsModule } from "@angular/forms";
 import { ProjectPredicate } from "../../../types/ProjectPredicate";
-import { Message } from "primeng/message";
+import { Message } from "@openng/optimus-ui/message";
 
 @Component({
   selector: "app-predicate-manager",
