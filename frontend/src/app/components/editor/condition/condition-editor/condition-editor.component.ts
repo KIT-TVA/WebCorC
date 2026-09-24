@@ -1,5 +1,16 @@
-import { Component, EventEmitter, Input, Output, inject } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  Output,
+  SimpleChanges,
+  inject,
+  signal,
+} from "@angular/core";
 import { Condition, ICondition } from "../../../../types/condition/condition";
+import { checkJmlSyntax } from "../../../../types/condition/jml-syntax-checker";
 import { AiChatService } from "../../../../services/ai-chat/ai-chat.service";
 import { Textarea } from "primeng/textarea";
 import { FloatLabelModule } from "primeng/floatlabel";
@@ -9,10 +20,56 @@ import {
 } from "../../editor.component";
 import { $dt } from "@primeuix/themes";
 import { FormsModule } from "@angular/forms";
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, Subject, Subscription, filter, skip } from "rxjs";
 import { AsyncPipe } from "@angular/common";
 import { Button } from "primeng/button";
 import { Dialog } from "primeng/dialog";
+
+/**
+ * Time without typing after which a syntax error is shown,
+ * so that incomplete input is not reported on every keystroke
+ */
+export const SYNTAX_CHECK_DELAY_MS = 2000;
+
+/**
+ * Checks the JML syntax of a condition text and holds the error message.
+ * Errors of typed text are shown delayed, a fixed error is removed immediately.
+ */
+class ConditionSyntaxCheck {
+  public readonly error = signal<string | null>(null);
+  private timeout?: ReturnType<typeof setTimeout>;
+
+  constructor(private readonly isEnabled: () => boolean) {}
+
+  public checkNow(text: string | undefined): void {
+    this.cancel();
+    this.error.set(this.findError(text));
+  }
+
+  public checkDelayed(text: string | undefined): void {
+    this.cancel();
+    const error = this.findError(text);
+    if (error === null) {
+      this.error.set(null);
+    } else {
+      this.timeout = setTimeout(
+        () => this.error.set(error),
+        SYNTAX_CHECK_DELAY_MS,
+      );
+    }
+  }
+
+  public cancel(): void {
+    clearTimeout(this.timeout);
+  }
+
+  private findError(text: string | undefined): string | null {
+    if (!this.isEnabled() || !text) {
+      return null;
+    }
+    return checkJmlSyntax(text)?.message ?? null;
+  }
+}
 
 /**
  * Editor in the statements for the {@link Condition}
@@ -26,7 +83,16 @@ import { Dialog } from "primeng/dialog";
     standalone: true,
     styleUrl: './condition-editor.component.css',
 })
-export class ConditionEditorComponent {
+export class ConditionEditorComponent implements OnChanges, OnDestroy {
+  private static nextId = 0;
+  /**
+   * Requests an immediate syntax check in all editors showing the emitted condition,
+   * as a condition can be shared between statements (e.g. intermediate condition and postcondition)
+   */
+  private static readonly checkNowRequests = new Subject<
+    BehaviorSubject<ICondition>
+  >();
+
   private _aiChatService = inject(AiChatService);
   protected greenConditions = inject(GREEN_COLOURED_CONDITIONS);
   protected redConditions = inject(RED_COLOURED_CONDITIONS);
@@ -43,6 +109,11 @@ export class ConditionEditorComponent {
     @Input() public editable: boolean | null = true;
     @Input() public inline = false;
     @Input() public showAiButton = false;
+    /**
+     * Flag to check the content for valid JML syntax,
+     * disable it for content that is not a JML condition (e.g. program statements)
+     */
+    @Input() public validateJml = true;
 
     /**
      * Emitter to emit the condition
@@ -53,10 +124,51 @@ export class ConditionEditorComponent {
     @Output() public synthesizeRequested: EventEmitter<void> = new EventEmitter<void>();
     protected dialogConditionText: string = "";
 
+  protected readonly syntaxCheck = new ConditionSyntaxCheck(
+    () => this.validateJml,
+  );
+  protected readonly dialogSyntaxCheck = new ConditionSyntaxCheck(
+    () => this.validateJml,
+  );
+  protected readonly syntaxErrorId = `condition-syntax-error-${ConditionEditorComponent.nextId++}`;
+  private conditionSubscription?: Subscription;
+  private readonly checkNowSubscription = ConditionEditorComponent.checkNowRequests
+    .pipe(filter((condition) => condition === this.condition))
+    .subscribe(() =>
+      this.syntaxCheck.checkNow(this.condition.getValue()?.condition),
+    );
+
   /** Inserted by Angular inject() migration for backwards compatibility */
   constructor(...args: unknown[]);
 
   public constructor() {}
+
+  public ngOnChanges(changes: SimpleChanges): void {
+    if (changes["condition"] || changes["validateJml"]) {
+      this.conditionSubscription?.unsubscribe();
+      // the current condition (e.g. of a loaded project) is checked immediately
+      this.syntaxCheck.checkNow(this.condition?.getValue()?.condition);
+      // changes are checked delayed in every editor showing the condition,
+      // so that editors sharing the condition show the error at the same time
+      this.conditionSubscription = this.condition
+        ?.pipe(skip(1))
+        .subscribe((condition) =>
+          this.syntaxCheck.checkDelayed(condition?.condition),
+        );
+    }
+  }
+
+  public ngOnDestroy(): void {
+    this.conditionSubscription?.unsubscribe();
+    this.checkNowSubscription.unsubscribe();
+    this.syntaxCheck.cancel();
+    this.dialogSyntaxCheck.cancel();
+  }
+
+  protected onEditingFinished(): void {
+    ConditionEditorComponent.checkNowRequests.next(this.condition);
+    this.conditionEditingFinished.emit();
+  }
 
   /**
    * Function for sending the condition content to the ai chat
@@ -104,7 +216,13 @@ export class ConditionEditorComponent {
 
   protected onEditConditionClick() {
     this.dialogConditionText = this.condition.getValue().condition;
+    this.dialogSyntaxCheck.checkNow(this.dialogConditionText);
     this.isDialogVisible = true;
+  }
+
+  protected onDialogConditionChange(text: string) {
+    this.dialogConditionText = text;
+    this.dialogSyntaxCheck.checkDelayed(text);
   }
 
   protected onDialogDiscardClick() {
@@ -113,6 +231,8 @@ export class ConditionEditorComponent {
 
   protected onDialogSaveClick() {
     this.onConditionChange(this.dialogConditionText);
+    ConditionEditorComponent.checkNowRequests.next(this.condition);
+    this.dialogSyntaxCheck.cancel();
     this.isDialogVisible = false;
   }
 }

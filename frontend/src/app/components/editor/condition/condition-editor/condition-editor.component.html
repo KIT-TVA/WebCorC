@@ -1,5 +1,5 @@
 <div class="condition-editor-root" (mousedown)="$event.stopImmediatePropagation()">
-    <div (focusout)="conditionEditingFinished.emit()">
+    <div (focusout)="onEditingFinished()">
         <form>
             <p-float-label variant="on" class="flex flex-row">
           <textarea
@@ -14,6 +14,9 @@
                   (ngModelChange)="onConditionChange($event)"
                   variant="filled"
                   [disabled]="!editable"
+                  [invalid]="!!syntaxCheck.error()"
+                  [attr.aria-invalid]="!!syntaxCheck.error()"
+                  [attr.aria-describedby]="syntaxCheck.error() ? syntaxErrorId : null"
                   [dt]="{
               root: {
                 borderColor: redConditions.includes((condition | async)!)
@@ -56,7 +59,12 @@
                     </p-button>
                 </div>
             </p-float-label>
-
+            @if (syntaxCheck.error(); as error) {
+                <small class="condition-syntax-error" [id]="syntaxErrorId" aria-live="polite">
+                    <i class="pi pi-exclamation-circle"></i>
+                    <span>{{ error }}</span>
+                </small>
+            }
         </form>
     </div>
     <p-dialog
@@ -78,10 +86,19 @@
                     class="condition-textarea-dialog"
                     spellcheck="false"
                     [ngModel]="dialogConditionText"
-                    (ngModelChange)="dialogConditionText = $event"
+                    (ngModelChange)="onDialogConditionChange($event)"
+                    (focusout)="dialogSyntaxCheck.checkNow(dialogConditionText)"
                     variant="filled"
+                    [invalid]="!!dialogSyntaxCheck.error()"
+                    [attr.aria-invalid]="!!dialogSyntaxCheck.error()"
             >
           </textarea>
+            @if (dialogSyntaxCheck.error(); as error) {
+                <small class="condition-syntax-error" aria-live="polite">
+                    <i class="pi pi-exclamation-circle"></i>
+                    <span>{{ error }}</span>
+                </small>
+            }
             <div class="condition-dialog-buttons">
                 <p-button
                     severity="secondary"

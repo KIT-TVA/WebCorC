@@ -59,6 +59,24 @@
     padding: 0 !important;
 }
 
+.condition-syntax-error {
+    display: flex;
+    flex-shrink: 0;
+    align-items: flex-start;
+    gap: 0.25rem;
+    margin-top: 0.25rem;
+    font-size: 0.75rem;
+    line-height: 1.2;
+    text-align: left;
+    overflow-wrap: anywhere;
+    color: var(--p-red-500, #ef4444);
+}
+
+.condition-syntax-error .pi {
+    font-size: 0.75rem;
+    line-height: 1.2;
+}
+
 .condition-dialog {
 
 }
