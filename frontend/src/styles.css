@@ -44,6 +44,14 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/*
+ * Statement nodes have an invisible space below the statement (see STATEMENT_BOTTOM_SPACE_PX),
+ * clicks there belong to the diagram behind it. The statement enables clicks again.
+ */
+.vflow-node > foreignObject {
+  pointer-events: none;
+}
+
 .conditionTileWidth {
   width: 270px;
 }

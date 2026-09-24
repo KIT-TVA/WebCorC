@@ -165,6 +165,15 @@ describe("ConditionEditorComponent", () => {
     expect(condition.getValue().condition).toBe("a > b");
   });
 
+  it("does not react to clicks on the error message", () => {
+    setCondition("a >");
+    fixture.detectChanges();
+    const message = fixture.nativeElement.querySelector(
+      ".condition-syntax-error",
+    );
+    expect(getComputedStyle(message).pointerEvents).toBe("none");
+  });
+
   // e.g. intermediate condition of a composition and postcondition of its first statement
   for (const sharing of ["subject", "condition object"]) {
     describe(`with a condition shared between editors by the ${sharing}`, () => {

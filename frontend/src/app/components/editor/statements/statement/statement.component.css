@@ -43,6 +43,24 @@
   border-right-width: 0;
   overflow: hidden;
 }
+/* clicks are disabled for the node around the statement, see styles.css */
+:host > p-card {
+  pointer-events: auto;
+}
+
+/*
+ * The syntax error message of a condition floats below its field (see ConditionEditorComponent).
+ * Let it overflow an opened drawer, closed drawers still have to be clipped.
+ * The inner container is never clipped, so that showing the message does not shift the field.
+ */
+:host ::ng-deep .mat-drawer-inner-container {
+  overflow: visible;
+}
+:host ::ng-deep .example-container:has(.mat-drawer-opened .condition-syntax-error--floating),
+:host ::ng-deep .example-container:has(.mat-drawer-opened .condition-syntax-error--floating) .mat-drawer-opened {
+  overflow: visible;
+}
+
 .example-sidenav-content {
   display: flex;
   height: 100%;

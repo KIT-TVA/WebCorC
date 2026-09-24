@@ -40,6 +40,14 @@ import { AiChatService } from "../../../../services/ai-chat/ai-chat.service";
 import { SimpleStatementNode } from "../../../../types/statements/nodes/simple-statement-node";
 
 /**
+ * Invisible space below each statement, which still belongs to its node.
+ * It holds the syntax error message shown below a condition field (see ConditionEditorComponent),
+ * as content outside of a node is not reliably repainted by the browser.
+ * Handles at the bottom of a statement have to be moved up by this offset.
+ */
+export const STATEMENT_BOTTOM_SPACE_PX = 56;
+
+/**
  * Component to present the statements.
  * This component is only to show the statement given.
  * It is used as the template for the statements.
@@ -47,6 +55,7 @@ import { SimpleStatementNode } from "../../../../types/statements/nodes/simple-s
  */
 @Component({
   selector: "app-statement-base",
+  host: { "[style.padding-bottom.px]": "bottomSpace" },
   imports: [
     MatGridListModule,
     MatFormFieldModule,
@@ -96,6 +105,7 @@ export class StatementComponent {
   @ViewChild("postconditionDiv") private postconditionDivRef!: ElementRef;
 
   public isVerifying = signal(false);
+  protected readonly bottomSpace = STATEMENT_BOTTOM_SPACE_PX;
 
   /** Inserted by Angular inject() migration for backwards compatibility */
   constructor(...args: unknown[]);

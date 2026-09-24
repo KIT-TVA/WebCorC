@@ -77,6 +77,43 @@
     line-height: 1.2;
 }
 
+/*
+ * Anchor for the floating error message, which is placed below the field
+ * without taking space, so that the surrounding statement layout does not shift.
+ * It may overlap the border of the statement into the space reserved below it,
+ * see STATEMENT_BOTTOM_SPACE_PX.
+ */
+.condition-form {
+    position: relative;
+}
+
+.condition-syntax-error--floating {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    /* only shows information, clicks belong to the diagram behind it */
+    pointer-events: none;
+    padding: 0.125rem 0.375rem;
+    background: var(--p-card-background, #ffffff);
+    border: 1px solid var(--p-textarea-invalid-border-color, #f87171);
+    border-radius: 0.375rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+/*
+ * Safeguard to stay within the space reserved below the statement. The messages are short enough
+ * to fit into four lines of the narrowest field, as quoted input is shortened by the syntax checker.
+ */
+.condition-syntax-error--floating span {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+    overflow: hidden;
+}
+
 .condition-dialog {
 
 }
