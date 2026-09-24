@@ -318,5 +318,20 @@ describe("checkJmlSyntax", () => {
         expect(checkJmlSyntax(condition)).toEqual({ message, start, end });
       });
     }
+
+    it("shortens long input in the message", () => {
+      expect(checkJmlSyntax("a > b abcdefghijklmnopqrstuvwxyz")).toEqual({
+        message:
+          "Unexpected 'abcdefghijklmnopqrst…', expected an operator or the end of the condition",
+        start: 6,
+        end: 32,
+      });
+    });
+
+    it("does not shorten input of the maximum length", () => {
+      expect(checkJmlSyntax("a > b abcdefghijklmnopqrst")!.message).toBe(
+        "Unexpected 'abcdefghijklmnopqrst', expected an operator or the end of the condition",
+      );
+    });
   });
 });

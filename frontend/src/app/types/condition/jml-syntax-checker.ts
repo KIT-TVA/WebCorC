@@ -95,6 +95,16 @@ const WHITESPACE: readonly string[] = [" ", "\t", "\r", "\n"];
 /** Largest value of a Java int, the backend parses literals with Integer.parseInt */
 const MAX_INT_LITERAL = 2147483647;
 
+/** Longer input is shortened in messages, so that they fit below a condition field */
+const MAX_QUOTED_LENGTH = 20;
+
+/** Quotes input of the user for a message, shortened if it is too long */
+function quote(input: string): string {
+  return input.length > MAX_QUOTED_LENGTH
+    ? `'${input.substring(0, MAX_QUOTED_LENGTH)}…'`
+    : `'${input}'`;
+}
+
 class JmlSyntaxException extends Error {
   constructor(
     message: string,
@@ -147,7 +157,7 @@ function tokenize(source: string): Token[] {
       const name = "\\" + readWhile(pos + 1, isIdentifierChar);
       if (!JML_KEYWORDS.includes(name)) {
         throw new JmlSyntaxException(
-          `Unknown JML keyword '${name}', expected one of ${JML_KEYWORDS.join(", ")}`,
+          `Unknown JML keyword ${quote(name)}, expected one of ${JML_KEYWORDS.join(", ")}`,
           pos,
           pos + name.length,
         );
@@ -195,7 +205,7 @@ class ConditionSyntaxParser {
       const token = this.peek();
       throw this.errorAt(
         token,
-        `Unexpected '${token.value}', expected an operator or the end of the condition`,
+        `Unexpected ${quote(token.value)}, expected an operator or the end of the condition`,
       );
     }
   }
@@ -285,7 +295,7 @@ class ConditionSyntaxParser {
       if (Number(token.value) > MAX_INT_LITERAL) {
         throw this.errorAt(
           token,
-          `Number '${token.value}' is too large, the maximum is ${MAX_INT_LITERAL}`,
+          `Number ${quote(token.value)} is too large, the maximum is ${MAX_INT_LITERAL}`,
         );
       }
       this.idx++;
@@ -294,7 +304,7 @@ class ConditionSyntaxParser {
 
     throw this.errorAt(
       token,
-      `Unexpected '${token.value}', expected an expression`,
+      `Unexpected ${quote(token.value)}, expected an expression`,
     );
   }
 
@@ -314,7 +324,7 @@ class ConditionSyntaxParser {
       if (!this.is(token, "separator", ",")) {
         throw this.errorAt(
           token,
-          `Expected ',' or ')' but found '${token.value}'`,
+          `Expected ',' or ')' but found ${quote(token.value)}`,
         );
       }
       this.idx++;
@@ -332,7 +342,7 @@ class ConditionSyntaxParser {
     if (!this.is(token, kind, value)) {
       throw this.errorAt(
         token,
-        `Expected '${value}' but found '${token.value}'`,
+        `Expected '${value}' but found ${quote(token.value)}`,
       );
     }
     this.idx++;
@@ -343,7 +353,7 @@ class ConditionSyntaxParser {
     if (token.kind !== "identifier") {
       throw this.errorAt(
         token,
-        `Expected an identifier but found '${token.value}'`,
+        `Expected an identifier but found ${quote(token.value)}`,
       );
     }
     this.idx++;
