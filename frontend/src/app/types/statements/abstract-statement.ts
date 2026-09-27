@@ -38,6 +38,8 @@ export interface IAbstractStatement {
   preCondition: ICondition;
   postCondition: ICondition;
   isProven: boolean;
+  isConfidential: boolean;
+  isIntegral: boolean;
   position?: IPosition;
 }
 
@@ -48,6 +50,8 @@ export interface IAbstractStatement {
 export class AbstractStatement implements IAbstractStatement {
   public readonly id: string;
   public isProven = false;
+  public isConfidential = false;
+  public isIntegral = false;
   constructor(
     public name: string,
     public type:

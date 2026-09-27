@@ -12,7 +12,7 @@ import { MatGridListModule } from "@angular/material/grid-list";
 import { Refinement } from "../../../../types/refinement";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
-import { FormsModule } from "@angular/forms";
+import { FormBuilder, FormsModule } from "@angular/forms";
 import { ConditionEditorComponent } from "../../condition/condition-editor/condition-editor.component";
 import { TreeService } from "../../../../services/tree/tree.service";
 import { MatIconModule } from "@angular/material/icon";
@@ -30,6 +30,9 @@ import {
   ButtonIcon,
   ButtonLabel,
 } from "primeng/button";
+import { SplitButtonModule } from "primeng/splitbutton"
+import { ToggleButtonModule } from "primeng/togglebutton"
+import { Popover, PopoverModule } from "primeng/popover"
 import { Toolbar } from "primeng/toolbar";
 import { GlobalSettingsService } from "../../../../services/global-settings.service";
 import { NetworkJobService } from "../../../../services/tree/network/network-job.service";
@@ -37,6 +40,15 @@ import { ProjectService } from "../../../../services/project/project.service";
 import { AsyncPipe } from "@angular/common";
 import { AiChatService } from "../../../../services/ai-chat/ai-chat.service";
 import { SimpleStatementNode } from "../../../../types/statements/nodes/simple-statement-node";
+import { ConfidentialityLattice, defaultConfidentialityLattice, defaultIntegrityLattice, ILattice, IntegrityLattice } from "../../../../types/ifbc/lattice";
+import { VariableIFbCState } from "../../../../types/ifbc/variableState";
+import { ConfidentialityEditorComponent } from "../../confidentiality/confidentiality-editor/confidentiality-editor.component";
+import { MenuItem } from "primeng/api";
+import { LevelEditorComponent } from "../../confidentiality/level-editor/level-editor.component";
+import { Tag } from "primeng/tag"
+import { Fieldset } from "primeng/fieldset";
+import { Divider } from "primeng/divider";
+import { IFbCService } from "../../../../services/ifbc/ifbc.service";
 
 /**
  * Component to present the statements.
@@ -52,6 +64,7 @@ import { SimpleStatementNode } from "../../../../types/statements/nodes/simple-s
     MatInputModule,
     FormsModule,
     ConditionEditorComponent,
+    ConfidentialityEditorComponent,
     MatIconModule,
     MatSidenavModule,
     MatButtonModule,
@@ -66,7 +79,14 @@ import { SimpleStatementNode } from "../../../../types/statements/nodes/simple-s
     ButtonIcon,
     ButtonLabel,
     AsyncPipe,
-  ],
+    SplitButtonModule,
+    ToggleButtonModule,
+    PopoverModule,
+    LevelEditorComponent,
+    Tag,
+    Fieldset,
+    Divider
+],
   templateUrl: "./statement.component.html",
   styleUrl: "./statement.component.css",
   standalone: true,
@@ -78,6 +98,7 @@ export class StatementComponent {
   @Input() public refinement!: Refinement;
   @Input() public hideSourceHandle = false;
   @Input() public hideTargetHandle = false;
+  @Input() public isRoot = false;
   @Input({ required: true }) _node!: AbstractStatementNode;
   @Input() public icon = "pi pi-circle";
 
@@ -87,8 +108,20 @@ export class StatementComponent {
   @ViewChild("postconditionDrawer") private postconditionDrawer!: MatDrawer;
   @ViewChild("preconditionDiv") private preconditionDivRef!: ElementRef;
   @ViewChild("postconditionDiv") private postconditionDivRef!: ElementRef;
+  @ViewChild("ifbcPopover") public ifbcPopover?: Popover;
 
   public isVerifying = signal(false);
+  public statementInfoVisible = false;
+
+    /**
+   * Forms Template
+   */
+  private _variables: string[] = []
+  public preVariables: VariableIFbCState = { confidentiality: {}, integrity: {} }
+  public postVariables: VariableIFbCState = { confidentiality: {}, integrity: {} }
+  private _confidentialityLattice: ConfidentialityLattice = defaultConfidentialityLattice;
+  private _integrityLattice: IntegrityLattice = defaultIntegrityLattice;
+  ifbcButtonOptions: MenuItem[] = []
 
   constructor(
     private treeService: TreeService,
@@ -96,7 +129,83 @@ export class StatementComponent {
     public globalSettingsService: GlobalSettingsService,
     private networkTreeService: NetworkJobService,
     private projectService: ProjectService,
-  ) {}
+    private latticeService: IFbCService,
+  ) {
+
+    this.ifbcButtonOptions = [
+      {
+        label: "Check confidentiality only",
+        command: () => {
+          this.latticeService.verifyConfidentiality(true, false);
+        }
+      },
+      {
+        label: "Check integrity only",
+        command: () => {
+          this.latticeService.verifyConfidentiality(false, true);
+        }
+      }
+    ]
+  }
+
+  ngOnInit(): void {
+    this._variables = this.treeService.variables
+    this.treeService.variableUpdateNotifier.subscribe(() => {
+      this._variables = this.treeService.variables
+    })
+
+    if (this.isRoot) {
+      this.latticeService.confidentialityLattice.subscribe((lattice) => {
+        this._confidentialityLattice = lattice;
+      })
+      this.latticeService.integrityLattice.subscribe((lattice) => {
+        this._integrityLattice = lattice;
+      })
+      this.latticeService.preVariableState.subscribe((state) => {
+        this.preVariables = state
+      });
+      this.latticeService.postVariableState.subscribe((state) => {
+        this.postVariables = state
+      });
+    }
+  }
+
+  public get variables(): unknown[] {
+    return this._variables;
+  }
+
+  public get confidentialityLattice(): ILattice {
+    return this._confidentialityLattice
+  }
+
+  public get integrityLattice(): ILattice {
+    return this._integrityLattice
+  }
+
+  public get statementInfo(): AbstractStatementNode['statementInfo'] {
+    return this._node.statementInfo
+  }
+
+  public get isCheckingConfidentiality(): boolean {
+    return this.latticeService.isCheckingConfidentiality()
+  }
+
+  public get isCompatibleWithFinalPostState(): boolean {
+    return (this._node.statementInfo.confidentiality?.compatibleWithPostState ?? true) 
+      && (this._node.statementInfo.integrity?.compatibleWithPostState ?? true) 
+  }
+
+  public verifyConfidentiality(
+        checkConfidentiality: boolean,
+        checkIntegrity: boolean,
+  ): void {
+    this.latticeService.verifyConfidentiality(checkConfidentiality, checkIntegrity);
+  }
+
+  public updateVariableState() {
+    this.latticeService.storePreVariableState(this.preVariables);
+    this.latticeService.storePostVariableState(this.postVariables);
+  }
 
   public deleteRefinement(): void {
     this.treeService.deleteStatementNode(this._node);

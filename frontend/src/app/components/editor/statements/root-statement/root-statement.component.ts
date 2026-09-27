@@ -15,8 +15,8 @@ import {
   StatementType,
 } from "../../../../types/statements/abstract-statement";
 import { Position } from "../../../../types/position";
-import { createEmptyStatementNode } from "../../../../types/statements/nodes/statement-node-utils";
 import { RootStatementNode } from "../../../../types/statements/nodes/root-statement-node";
+import { IFbCService } from "../../../../services/ifbc/ifbc.service";
 
 /**
  * Composition statement in {@link EditorComponent}.
@@ -44,8 +44,16 @@ export class RootStatementComponent extends Refinement {
 
   // Element used to spawn the child statements in
 
-  public constructor(treeService: TreeService) {
+  public constructor(
+    treeService: TreeService,
+    private ifbcService: IFbCService,
+  
+  ) {
     super(treeService);
+  }
+
+  ngOnInit(): void {
+    this.ifbcService.registerRootStatement(this);
   }
 
   public override getTitle(): string {

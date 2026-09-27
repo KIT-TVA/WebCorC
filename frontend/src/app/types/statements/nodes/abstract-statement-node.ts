@@ -2,6 +2,7 @@ import { BehaviorSubject } from "rxjs";
 import { ICondition } from "../../condition/condition";
 import { IAbstractStatement, StatementType } from "../abstract-statement";
 import { IPosition } from "../../position";
+import { NodeResultContext } from "./node-result-context";
 
 export class AbstractStatementNode {
   public statement: IAbstractStatement;
@@ -9,6 +10,7 @@ export class AbstractStatementNode {
   public children: (AbstractStatementNode | undefined)[] = [];
   public precondition: BehaviorSubject<ICondition>;
   public postcondition: BehaviorSubject<ICondition>;
+  public statementInfo: NodeResultContext = new NodeResultContext();
   private _preconditionEditable = new BehaviorSubject<boolean>(true);
   public get preconditionEditable() {
     return this._preconditionEditable;
