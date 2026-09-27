@@ -19,7 +19,6 @@ export class LatticeLevel implements ILatticeLevel {
   constructor(id: number, name: string, parents: number[]) {
     this.id = id;
     this.name = name;
-    console.log("lattice level", parents)
     this.parentIDs = parents ?? []
   }
 

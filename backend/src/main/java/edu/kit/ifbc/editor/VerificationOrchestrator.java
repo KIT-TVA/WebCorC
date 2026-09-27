@@ -33,7 +33,7 @@ public class VerificationOrchestrator {
         if (!jobs.containsKey(jobId)) {
             return null;
         }
-        if (!jobs.get(jobId).isHasResult()) {
+        if (!jobs.get(jobId).isFinished()) {
             return null;
         }
         Logger.getGlobal().info(jobs.toString());

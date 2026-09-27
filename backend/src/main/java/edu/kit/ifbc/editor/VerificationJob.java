@@ -26,7 +26,7 @@ public class VerificationJob extends Thread {
     private static final String LOGGER_FORMAT = "%s %s\n";
 
     @Getter private String log;
-    @Getter private boolean hasResult = false;
+    @Getter private boolean finished = false;
     private HashSet<Function<String, Boolean>> listeners;
 
     @Getter private IFbCFormula formula;
@@ -46,7 +46,7 @@ public class VerificationJob extends Thread {
     public void run() {
         log("ifbc check started");
         IFbCContext context = formula.prove();
-        hasResult = true;
+        finished = true;
 
         LatticeResultContext confidentialityResult = context.getConfidentiality();
         LatticeResultContext integrityResult = context.getIntegrity();
@@ -105,7 +105,6 @@ public class VerificationJob extends Thread {
 
     private void log(String message) {
         log += String.format(LOGGER_FORMAT, this.getCurrentTimestamp(), message);
-
         //Call all listeners. The listener returns true if it detects that its WebSocket connection was closed,
         //so it will be removed from the listener pool
         listeners.removeIf(l -> l.apply(message));
