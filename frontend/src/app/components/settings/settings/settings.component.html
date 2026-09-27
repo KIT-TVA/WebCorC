@@ -67,6 +67,16 @@
           <mat-radio-button [value]="ResetVariant.Stacked">Stacked</mat-radio-button>
         </mat-radio-group>
       </li>
+      <li class="flex items-center gap-8">
+        <span>Enable Information Flow-Control-By-Construction</span>
+        <span>
+          <p-toggle-switch
+            size="large"
+            [(ngModel)]="globalSettingsService.ifbcEnabled"
+          >
+          </p-toggle-switch>
+        </span>
+      </li>
     </ul>
   </p-fieldset>
   <p-fieldset legend="Debugging">
