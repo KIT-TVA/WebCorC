@@ -20,7 +20,9 @@ services:
     build:
       context: backend
     env_file:
-      - docker-compose.env
+      - docker-compose.env    
+    environment: 
+      - GLIBC_TUNABLES=glibc.pthread.rseq=1
     depends_on:
       rustfs:
         condition: service_started
