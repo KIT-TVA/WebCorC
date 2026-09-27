@@ -1,0 +1,55 @@
+package edu.kit.ifbc.editor;
+
+import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
+import io.micronaut.websocket.WebSocketSession;
+import io.micronaut.websocket.annotation.OnClose;
+import io.micronaut.websocket.annotation.OnMessage;
+import io.micronaut.websocket.annotation.OnOpen;
+import io.micronaut.websocket.annotation.ServerWebSocket;
+import java.util.UUID;
+
+@ServerWebSocket("/ifbc/ws/verify/{jobId}")
+@ExecuteOn(TaskExecutors.BLOCKING)
+public class VerificationWebSocket {
+    private final VerificationOrchestrator orchestrator;
+
+    public VerificationWebSocket(VerificationOrchestrator orchestrator) {
+        this.orchestrator = orchestrator;
+    }
+
+    @OnOpen
+    public void onOpen(UUID jobId, WebSocketSession session) {
+        boolean success = orchestrator.addListener(jobId, (msg) -> {
+            if (!session.isOpen()) {
+                return true;
+            }
+            System.out.println("[WEBSOCKET] " + msg);
+            session.sendSync(msg);
+            return false;
+        });
+
+        if (!success) {
+            session.sendSync(String.format("job not found %s", jobId));
+            session.close();
+            return;
+        }
+        for (String line : orchestrator.getJobLog(jobId)) {
+            if (!line.isEmpty()) {
+                session.sendSync(line);
+            }
+        }
+    }
+
+    @OnMessage
+    public void onMessage(UUID jobId, String message, WebSocketSession session) {
+        /*unused*/
+    }
+
+    @OnClose
+    public void onClose(UUID jobId, WebSocketSession session) {
+        if (session.isOpen()) {
+            session.close();
+        }
+    }
+}
