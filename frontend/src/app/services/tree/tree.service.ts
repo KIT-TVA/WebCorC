@@ -1,4 +1,4 @@
-import { Injectable, signal, Signal, WritableSignal } from "@angular/core";
+import { Injectable, Injector, signal, Signal, WritableSignal } from "@angular/core";
 import { Subject } from "rxjs";
 import {
   AbstractStatement,
@@ -20,6 +20,8 @@ import {
 } from "../../types/statements/root-statement";
 import { RootStatementNode } from "../../types/statements/nodes/root-statement-node";
 import { RepetitionStatementNode } from "../../types/statements/nodes/repetition-statement-node";
+import { IFbCService } from "../ifbc/ifbc.service";
+import { LocalIFBCFormula } from "../../types/IFBCFormula";
 
 /**
  * Service for the context of the tree in the graphical editor.
@@ -33,18 +35,22 @@ export class TreeService {
   private readonly _resetVerifyNotifier: Subject<void>;
   private readonly _verificationResultNotifier: Subject<AbstractStatement>;
   private readonly _finalizeNotifier: Subject<void>;
+  private readonly _variableNotifier: Subject<void>;
   private _globalConditions: string[] = [];
   private _renames: Renaming[] = [];
   private _statementNodes: WritableSignal<AbstractStatementNode[]> = signal([]);
   private rootStatementNode: RootStatementNode | undefined;
   private _urn = "";
 
-  public constructor() {
+  public constructor(
+    private injector: Injector,
+  ) {
     this._verificationResultNotifier = new Subject<AbstractStatement>();
     this._verifyNotifier = new Subject<void>();
     this._exportNotifier = new Subject<void>();
     this._resetVerifyNotifier = new Subject<void>();
     this._finalizeNotifier = new Subject<void>();
+    this._variableNotifier = new Subject<void>();
   }
 
   setFormula(newFormula: LocalCBCFormula, urn: string) {
@@ -64,6 +70,19 @@ export class TreeService {
     newFormula.globalConditions.forEach((condition) => {
       this.addGlobalCondition(condition.condition);
     });
+
+    if ((newFormula as LocalIFBCFormula).preVariables !== undefined) {
+      const _formula = newFormula as LocalIFBCFormula;
+      // The formula is a ifbc-formula, load the state accordingly.
+      const ifbcService = this.injector.get(IFbCService);
+
+      ifbcService.initData(
+        _formula.confidentialityLattice,
+        _formula.integrityLattice,
+        _formula.preVariables,
+        _formula.postVariables
+      );
+    }
 
     try {
       this.generateStatementNodes();
@@ -89,6 +108,10 @@ export class TreeService {
       variablesArray.push(javaVariable.toString()),
     );
     return variablesArray;
+  }
+
+  public get variableUpdateNotifier(): Subject<void> {
+    return this._variableNotifier
   }
 
   public get exportNotifier(): Subject<void> {
@@ -152,9 +175,22 @@ export class TreeService {
 
     if (!isDuplicate) {
       this._variables.push(newVariable);
+      this.variableUpdateNotifier.next();
     }
 
     return this._variables.length != sizeBeforeAdd;
+  }
+
+  public updateVariable(old: JavaVariable, _new: JavaVariable): boolean {
+    const entries = this._variables
+      .map((v, i) => ({ variable: v, index: i}))
+      .filter(({ variable }) => variable.equalName(old) && variable.kind === old.kind);
+    if (entries.length !== 1) {
+      return false;
+    }
+    this._variables[entries[0].index] = _new;
+    this.variableUpdateNotifier.next();
+    return true;
   }
 
   public removeVariables(names: string[]): void {
@@ -168,10 +204,13 @@ export class TreeService {
     this._variables = this._variables.filter(
       (val) => !variablesToBeRemoved.includes(val.name),
     );
+    this.variableUpdateNotifier.next();
+
   }
 
   public removeAllVariables(): void {
     this._variables = [];
+    this.variableUpdateNotifier.next();
   }
 
   public addGlobalCondition(name: string): boolean {

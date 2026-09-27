@@ -11,6 +11,8 @@
               pInputText
               spellcheck="false"
               variant="filled"
+              (focus)="updatePreviousValue(i)"
+              (blur)="updateVariable(i, $event.target.value)"
             />
             <label [for]="'variable_' + i">Variable</label>
           </p-float-label>

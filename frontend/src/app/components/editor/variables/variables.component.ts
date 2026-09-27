@@ -62,6 +62,7 @@ export class VariablesComponent implements AfterViewInit, OnDestroy {
     newVariable: new FormControl("", []),
     items: this._fb.array([]),
   });
+  private _previousValue: string | undefined = undefined;
 
   public constructor(
     private _fb: FormBuilder,
@@ -91,6 +92,10 @@ export class VariablesComponent implements AfterViewInit, OnDestroy {
       });
       this.items.push(newVariable);
     });
+  }
+
+  public updatePreviousValue(index: number) {
+    this._previousValue = this.items.at(index).value.name;
   }
 
   /**
@@ -142,6 +147,14 @@ export class VariablesComponent implements AfterViewInit, OnDestroy {
   public removeVariable(index: number): void {
     this.treeService.removeVariables([this.items.at(index).value.name]);
     this.items.removeAt(index);
+  }
+
+  public updateVariable(index: number, variable: string): void {
+    if (this._previousValue === undefined) {
+      return;
+    } 
+    this.treeService.updateVariable(new JavaVariable(this._previousValue, "LOCAL"), new JavaVariable(variable, "LOCAL"));
+    this.items.at(index).value.name = variable;
   }
 
   /**
