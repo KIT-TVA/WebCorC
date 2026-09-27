@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -37,7 +38,12 @@ public class Lattice {
     private HashMap<Integer, Integer> orderMap;
 
     public Lattice(List<Level> levels) {
-        if (levels.stream().filter(l -> l.parentIDs().isEmpty()).count() != 1) {
+        if (levels.stream().filter(
+            l -> Optional
+                .ofNullable(l.parentIDs())
+                .orElse(List.of())
+                .isEmpty()
+            ).count() != 1) {
             throw new LatticeException("Exactly one level may have no parents and be the maximal level");
         }
 
