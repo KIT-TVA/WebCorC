@@ -19,6 +19,8 @@ import { CompositionStatement } from "../../../types/statements/composition-stat
 import { SelectionStatement } from "../../../types/statements/selection-statement";
 import { JavaVariable } from "../../../types/JavaVariable";
 import { SkipStatement } from "../../../types/statements/strong-weak-statement";
+import { LocalIFBCFormula } from "../../../types/IFBCFormula";
+import { defaultConfidentialityLattice, defaultIntegrityLattice } from "../../../types/ifbc/lattice";
 
 @Component({
   selector: "app-load-example-dialog",
@@ -301,7 +303,7 @@ export class LoadExampleDialogComponent {
       project: new LocalDirectory("", [
         new LocalDiagramFile(
           "transaction.diagram",
-          new LocalCBCFormula(
+          new LocalIFBCFormula(
             "Transaction",
             new RootStatement(
               "Root",
@@ -333,8 +335,8 @@ export class LoadExampleDialogComponent {
                       "(\\old(balance) + x < limit ==> balance == \\old(balance))",
                   ),
                   [
-                    new Condition("newBalance >= limit"),
-                    new Condition("newBalance < limit"),
+                    new Condition("declassify(newBalance) >= limit"),
+                    new Condition("declassify(newBalance) < limit"),
                   ],
                   [
                     new Statement(
@@ -346,7 +348,7 @@ export class LoadExampleDialogComponent {
                         "(\\old(balance) + x >= limit ==> balance == \\old(balance) + x) && " +
                           "(\\old(balance) + x < limit ==> balance == \\old(balance))",
                       ),
-                      "balance = newBalance;",
+                      "balance = declassify(newBalance);",
                       new Position(350, 1400),
                     ),
                     new SkipStatement(
@@ -374,6 +376,34 @@ export class LoadExampleDialogComponent {
               new JavaVariable("int x", "LOCAL"),
               new JavaVariable("int balance", "LOCAL"),
             ],
+            { 
+              confidentiality: { 
+                "int limit": defaultConfidentialityLattice.levelById(1),
+                "int newBalance": defaultConfidentialityLattice.minimalLevel,
+                "int x": defaultConfidentialityLattice.minimalLevel,
+                "int balance": defaultConfidentialityLattice.levelById(2)
+              },
+              integrity: { 
+                "int limit": defaultIntegrityLattice.levelById(0),
+                "int newBalance": defaultIntegrityLattice.levelById(1),
+                "int x": defaultIntegrityLattice.levelById(1),
+                "int balance": defaultIntegrityLattice.levelById(0)
+              },
+            },
+            { 
+              confidentiality: { 
+                "int limit": defaultConfidentialityLattice.levelById(1),
+                "int newBalance": defaultConfidentialityLattice.levelById(2),
+                "int x": defaultConfidentialityLattice.minimalLevel,
+                "int balance": defaultConfidentialityLattice.levelById(2)
+              },
+              integrity: { 
+                "int limit": defaultIntegrityLattice.levelById(0),
+                "int newBalance": defaultIntegrityLattice.levelById(1),
+                "int x": defaultIntegrityLattice.levelById(1),
+                "int balance": defaultIntegrityLattice.levelById(0)
+              },
+            },
           ),
         ),
       ]),
