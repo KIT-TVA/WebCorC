@@ -1,0 +1,8 @@
+<div class="condition-levels">
+    @for (item of items; track item.variable) {
+      <div class="flex gap-2 justify-between w-full">
+        <span class="font-medium">{{ item.variable }}:</span>
+        <span class="font-medium">{{ item.level.name }}</span>
+      </div>  
+    }
+</div>

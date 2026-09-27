@@ -1,0 +1,22 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.condition-editor-root {
+  width: 100%;
+  text-align: center;
+}
+
+.condition-icon-field {
+  display: block;
+  width: 100%;
+}
+
+.condition-textarea {
+  width: 100%;
+  max-width: 100%;
+  resize: none;
+  box-sizing: border-box;
+  padding-right: 2rem;
+}
