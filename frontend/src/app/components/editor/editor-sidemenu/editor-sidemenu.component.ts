@@ -5,6 +5,7 @@ import {OptionsComponent} from "../options/options.component";
 import {RenamingComponent} from "../renaming/renaming.component";
 import {GlobalConditionsComponent} from "../global-conditions/global-conditions.component";
 import {VariablesComponent} from "../variables/variables.component";
+import {LatticeComponent} from "../lattice/lattice.component";
 import {
     Accordion,
     AccordionContent,
@@ -14,6 +15,7 @@ import {
 import {AiChatComponent} from "../../ai-chat/ai-chat.component";
 import {ConsoleComponent} from "../../console/console.component";
 import {PredicateManagerComponent} from "../predicate-manager/predicate-manager.component";
+import { GlobalSettingsService } from "../../../services/global-settings.service";
 @Component({
     selector: "app-editor-sidemenu",
     imports: [
@@ -32,6 +34,7 @@ import {PredicateManagerComponent} from "../predicate-manager/predicate-manager.
         AiChatComponent,
         ConsoleComponent,
         PredicateManagerComponent,
+        LatticeComponent
     ],
     templateUrl: "./editor-sidemenu.component.html",
     standalone: true,
@@ -42,6 +45,10 @@ export class EditorSidemenuComponent {
     @ViewChild("conditions") public conditions!: GlobalConditionsComponent;
     @ViewChild("renaming") public renaming!: RenamingComponent;
     @Output() tabOpened = new EventEmitter<boolean>();
+
+    constructor(
+        public readonly globalSettingsService: GlobalSettingsService
+    ) {}
 
     tabValue = signal(0);
 

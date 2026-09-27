@@ -33,6 +33,14 @@
                   <app-variables #variables></app-variables>
                 </p-accordion-content>
               </p-accordion-panel>
+              @if (globalSettingsService.ifbcEnabled) {
+                <p-accordion-panel value="4">
+                  <p-accordion-header>Confidentiality Lattice</p-accordion-header>
+                  <p-accordion-content>
+                    <lattice #variables></lattice>
+                  </p-accordion-content>
+                </p-accordion-panel>
+              }
             </p-accordion>
           </p-tabpanel>
           <p-tabpanel [value]="2">

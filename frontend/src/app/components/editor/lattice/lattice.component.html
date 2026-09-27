@@ -1,0 +1,61 @@
+
+<form [formGroup]="variables" class="flex flex-col gap-2">
+  @for (variableForm of items.controls; track variableForm; let i = $index) {
+    <ng-container formArrayName="items">
+      <ng-container [formGroupName]="i">
+        <p-icon-field>
+          <p-float-label variant="on">
+            <input
+              [id]="'level_' + i"
+              fluid
+              formControlName="name"
+              pInputText
+              spellcheck="false"
+              variant="filled"
+            />
+            <label [for]="'level_' + i">Name</label>
+          </p-float-label>
+          <p-inputicon
+            (keydown.enter)="$event.preventDefault()"
+            (click)="deleteLevel(i)"
+            class="cursor-pointer pi pi-minus"
+          ></p-inputicon>
+        </p-icon-field>
+        <p-multiSelect
+          [options]="levelsWithout(i)"
+          formControlName="parents"
+          optionLabel="name"
+          optionValue="id"
+          placeholder="Select parents"
+          fluid
+        />
+      </ng-container>
+      <p-divider />
+    </ng-container>
+  }
+  <p-icon-field>
+    <p-float-label variant="on">
+      <input
+        [id]="'New_Level'"
+        (keydown.enter)="onEnter($event)"
+        fluid
+        formControlName="newLevel"
+        pInputText
+        spellcheck="false"
+        variant="filled"
+      />
+      <label [for]="'New_Level'">Add Level</label>
+    </p-float-label>
+    <p-inputicon
+      (keydown.enter)="$event.preventDefault()"
+      (click)="addLevel()"
+      class="cursor-pointer pi pi-plus"
+    ></p-inputicon>
+  </p-icon-field>
+  @if (latticeSaveDisabledReason !== "") {
+    <p-message severity="error">{{ latticeSaveDisabledReason }}</p-message>
+  }
+  <p-button (onClick)="saveLattice()" [disabled]="!latticeSaveEnabled">
+    Save Lattice
+  </p-button>
+</form>
