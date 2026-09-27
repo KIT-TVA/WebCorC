@@ -513,6 +513,12 @@ export class ProjectService {
           continue;
         case "CODE_FILE":
         case "DIAGRAM_FILE": {
+          // Skip uploading of lattice files for now
+          // The contents are saved separately and would only override other changes.
+          // This should be improved upon to allow modification of the program by lattice files.
+          if (item.urn.split(".").slice(-1)[0] === "lattice") {
+            break;
+          }
           const success = await this.network.uploadFile(
             this.mapper.exportFile(item),
           );
