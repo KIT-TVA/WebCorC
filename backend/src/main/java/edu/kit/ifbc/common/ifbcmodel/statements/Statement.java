@@ -20,6 +20,7 @@ import lombok.Data;
 @Data
 @Serdeable
 public class Statement extends AbstractIFbCStatement {
+    private final static Logger LOGGER = Logger.getGlobal();
 
     private String variable;
     private String programStatement;
@@ -35,9 +36,10 @@ public class Statement extends AbstractIFbCStatement {
         VariableState preVariableState,
         LatticeResultContext context
     ) throws VariableParsingException {
-        Logger.getGlobal().info("Condition: \t" + this.getPreCondition().getParsedCondition());
-        Logger.getGlobal().info(programStatement);
+        LOGGER.fine("Condition: \t" + this.getPreCondition().getParsedCondition());
+        LOGGER.fine(programStatement);
 
+        // parse the statement to obtain the statement trees
         Lexer lexer = ProgramLexer.forString(this.programStatement);
         TokenSource source = new TokenSource(lexer);
         ProgramParser parser = new ProgramParser(source);
@@ -46,8 +48,11 @@ public class Statement extends AbstractIFbCStatement {
             return preVariableState;
         }
         VariableState postVariableState = new VariableState(preVariableState);
+
+        // handle each statement tree individually.
+        // determine gradually each lub of the rhs and update the lhs accordingly.
         for (StatementTree tree : programm.statements()) {
-            Logger.getGlobal().info("Statement-Tree: \t" + tree);
+            LOGGER.fine("Statement-Tree: \t" + tree);
             
             String[] usedVariables = getRelevantVariablesInStatement(programStatement, preVariableState);
             if (usedVariables == null) {
@@ -61,11 +66,12 @@ public class Statement extends AbstractIFbCStatement {
             // Logger.getGlobal().warning("used variables: \t" + String.join(",", usedVariables) + " \t variable: " + this.variable);
             Logger.getGlobal().warning("used confstates: \t" + Arrays.toString(preVariableState.levelOf(lattice.getMinimalLevel(), usedVariables)));
             Lattice.Level lub = lattice.leastUpperBound(preVariableState.levelOf(lattice.getMinimalLevel(), usedVariables));
-            Logger.getGlobal().info("lub of preVariableStates: " + lub.name());
+            
+            LOGGER.fine("lub of preVariableStates: " + lub.name());
             lub = lattice.leastUpperBound(lub, preVariableState.levelOf(variable, lattice.getMinimalLevel()), level);
 
-            Logger.getGlobal().info("level: " + level.name());
-            Logger.getGlobal().info("lub afterwards: " + lub.name());
+            LOGGER.fine("level: " + level.name());
+            LOGGER.fine("lub afterwards: " + lub.name());
             postVariableState = postVariableState.with(variable, lub);
         }
 

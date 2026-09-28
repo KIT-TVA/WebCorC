@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -19,6 +20,7 @@ import lombok.Setter;
 @Setter
 @Serdeable
 public class SelectionStatement extends AbstractIFbCStatement {
+    private final static Logger LOGGER = Logger.getGlobal();
     private List<Condition> guards;
     private List<AbstractIFbCStatement> commands;
     private boolean isPreProven;

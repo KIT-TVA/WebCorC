@@ -9,7 +9,6 @@ import edu.kit.ifbc.common.ifbcmodel.parsing.parser.VariableParsingException;
 import edu.kit.ifbc.common.ifbcmodel.statements.AbstractIFbCStatement;
 import io.micronaut.serde.annotation.Serdeable;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import lombok.AllArgsConstructor;
@@ -23,13 +22,14 @@ import lombok.Setter;
 @Setter
 @Serdeable
 public class IFbCFormula {
+    private final static Logger LOGGER = Logger.getGlobal();
     private String name;
     private AbstractIFbCStatement statement;
     private List<JavaVariable> javaVariables;
     private List<Renaming> renamings;
 
-    private ConfidentialityLattice confidentialityLattice = ConfidentialityLattice.defaultConfidentialityLattice();
-    private IntegrityLattice integrityLattice = new IntegrityLattice();
+    private ConfidentialityLattice confidentialityLattice;
+    private IntegrityLattice integrityLattice;
 
     private Integer level;
 
@@ -46,25 +46,19 @@ public class IFbCFormula {
     public IFbCContext prove() {
         this.context = new IFbCContext();
         if (this.checkConfidentiality) {
-        Logger.getGlobal().info("Checking confidentiality");
+        LOGGER.info("Checking confidentiality");
             context.setConfidentiality(this.proveConfidentiality());
         }
         if (this.checkIntegrity) {
-        Logger.getGlobal().info("Checking integrity");
+        LOGGER.info("Checking integrity");
             context.setIntegrity(this.proveIntegrity());
         }
         return this.context;
     }
 
     private LatticeResultContext proveConfidentiality() {
-        // Add this defensive check as somehow due to Jackson lattice is null if not provided in the request
-        if (confidentialityLattice == null) {
-            confidentialityLattice = ConfidentialityLattice.defaultConfidentialityLattice();
-        }
-        
-        Logger.getGlobal().info("lattice: \n" + confidentialityLattice.toString());
-
-        Logger.getGlobal().info("variableState: \t" + this.preVariableState.confidentiality() + "\t" + this.postVariableState);
+        LOGGER.fine("lattice: \n" + confidentialityLattice.toString());
+        LOGGER.fine("variableState: \t" + this.preVariableState.confidentiality() + "\t" + this.postVariableState);
         VariableState calculatedState;
         LatticeResultContext confidentialityContext = new LatticeResultContext(statement.getId());
         try {
@@ -75,26 +69,20 @@ public class IFbCFormula {
                 confidentialityContext
             );
         } catch (VariableParsingException e) {
-            Logger.getGlobal().log(Level.SEVERE, e.toString());
+            LOGGER.severe(e.toString());
             return confidentialityContext;
         }
 
-        Logger.getGlobal().severe(context.toString());
+        LOGGER.fine(context.toString());
         confidentialityContext.setSuccessfull(calculatedState.equals(VariableState.fromIDs(this.postVariableState.confidentiality(), confidentialityLattice)));
 
-        Logger.getGlobal().info("calculated: \t" + calculatedState + "\n post: \t" + VariableState.fromIDs(this.postVariableState.confidentiality(), confidentialityLattice) + "\n equal: \t" + calculatedState.equals(VariableState.fromIDs(this.postVariableState.confidentiality(), confidentialityLattice)));
+        LOGGER.fine("calculated: \t" + calculatedState + "\n post: \t" + VariableState.fromIDs(this.postVariableState.confidentiality(), confidentialityLattice) + "\n equal: \t" + calculatedState.equals(VariableState.fromIDs(this.postVariableState.confidentiality(), confidentialityLattice)));
         return confidentialityContext;
     }
 
     private LatticeResultContext proveIntegrity() {
-        // Add this defensive check as somehow due to Jackson lattice is null if not provided in the request
-        if (integrityLattice == null) {
-            integrityLattice = new IntegrityLattice();
-        }
-        
-        Logger.getGlobal().info("lattice: \n" + integrityLattice.toString());
-
-        Logger.getGlobal().info("variableState: \t" + this.preVariableState.integrity() + "\t" + this.postVariableState);
+        LOGGER.info("lattice: \n" + integrityLattice.toString());
+        LOGGER.info("variableState: \t" + this.preVariableState.integrity() + "\t" + this.postVariableState);
         VariableState calculatedState;
         LatticeResultContext integrityContext = new LatticeResultContext(statement.getId());
         try {
@@ -105,14 +93,14 @@ public class IFbCFormula {
                 integrityContext
             );
         } catch (VariableParsingException e) {
-            Logger.getGlobal().log(Level.SEVERE, e.toString());
+            LOGGER.severe(e.toString());
             return integrityContext;
         }
 
-        Logger.getGlobal().severe(context.toString());
+        LOGGER.fine(context.toString());
         integrityContext.setSuccessfull(calculatedState.equals(VariableState.fromIDs(this.postVariableState.integrity(), integrityLattice)));
 
-        Logger.getGlobal().info("calculated: \t" + calculatedState + "\n post: \t" + VariableState.fromIDs(this.postVariableState.integrity(), integrityLattice) + "\n equal: \t" + calculatedState.equals(VariableState.fromIDs(this.postVariableState.integrity(), confidentialityLattice)));
+        LOGGER.fine("calculated: \t" + calculatedState + "\n post: \t" + VariableState.fromIDs(this.postVariableState.integrity(), integrityLattice) + "\n equal: \t" + calculatedState.equals(VariableState.fromIDs(this.postVariableState.integrity(), confidentialityLattice)));
         return integrityContext;
     }
 }

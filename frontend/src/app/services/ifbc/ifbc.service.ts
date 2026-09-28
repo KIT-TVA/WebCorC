@@ -513,7 +513,6 @@ export class IFbCService {
           postCondition: formula.postCondition,
           preCondition: formula.preCondition,
           statement: (formula.statement as RootStatement).statement,
-          respectsConfidentiality: false,
           confidentialityLattice,
           integrityLattice,
           checkConfidentiality,

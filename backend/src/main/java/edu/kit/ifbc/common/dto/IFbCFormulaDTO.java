@@ -20,6 +20,4 @@ public class IFbCFormulaDTO {
     private AbstractIFbCStatement statement;
     private List<JavaVariable> javaVariables;
     private List<Renaming> renamings;
-
-    private boolean respectsConfidentiality;
 }

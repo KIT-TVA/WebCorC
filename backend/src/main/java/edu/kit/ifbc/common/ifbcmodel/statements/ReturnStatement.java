@@ -48,8 +48,7 @@ public class ReturnStatement extends AbstractIFbCStatement {
         if (usedVariables == null) {
             usedVariables = new String[0];
         }
-        // LOGGER.warning("used variables: \t" + String.join(",", usedVariables) + " \t variable: " + this.variable);
-        LOGGER.warning("used confstates: \t" + Arrays.toString(preVariableState.levelOf(lattice.getMinimalLevel(), usedVariables)));
+        LOGGER.fine("used prevariable states: \t" + Arrays.toString(preVariableState.levelOf(lattice.getMinimalLevel(), usedVariables)));
         Lattice.Level lub = lattice.leastUpperBound(preVariableState.levelOf(lattice.getMinimalLevel(), usedVariables));
         LOGGER.fine("lub of preVariableStates: " + lub.name());
         lub = lattice.leastUpperBound(lub, preVariableState.levelOf(RET_VARIABLE, lattice.getMinimalLevel()), level);

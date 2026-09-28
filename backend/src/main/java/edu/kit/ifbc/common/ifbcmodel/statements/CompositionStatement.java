@@ -18,6 +18,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Serdeable
 public class CompositionStatement extends AbstractIFbCStatement {
+    private final static Logger LOGGER = Logger.getGlobal();
 
     private AbstractIFbCStatement firstStatement;
     private AbstractIFbCStatement secondStatement;
@@ -29,7 +30,7 @@ public class CompositionStatement extends AbstractIFbCStatement {
         VariableState preVariableState,
         LatticeResultContext context
     ) throws VariableParsingException {
-        Logger.getGlobal().info("Condition: \t" + this.getPreCondition().getParsedCondition());
+        LOGGER.fine("Condition: \t" + this.getPreCondition().getParsedCondition());
         context.handleChild(firstStatement.getId());
         VariableState postVariableStateS1 = firstStatement.calculatePostVariableState(lattice, level, preVariableState, context);
         context.finishChild();

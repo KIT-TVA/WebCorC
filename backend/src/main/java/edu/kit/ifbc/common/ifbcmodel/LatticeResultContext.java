@@ -16,7 +16,12 @@ import lombok.Setter;
 
 @Data
 @Serdeable
+/**
+ * LatticeResultContext is used to recursively gather relevant info during the calculation of the post variable states.
+ * This is useful to e.g. inspect where something went wrong, where a mismatch in the security levels happened or just to determine the security context parameter.
+ */
 public class LatticeResultContext {
+    private final static Logger LOGGER = Logger.getGlobal();
     private Map<String, IFbCStatementInfo> data = new HashMap<>();
     @Setter
     @Getter
@@ -33,7 +38,7 @@ public class LatticeResultContext {
     public void handleChild(String id) {
         this.idStack.push(id);
         this.data.put(id, new IFbCStatementInfo());
-        Logger.getGlobal().severe("log: " + id + " \t " + this.data.keySet().toString());
+        LOGGER.fine("log: " + id + " \t " + this.data.keySet().toString());
     }
 
     public void setInfo(
@@ -48,7 +53,7 @@ public class LatticeResultContext {
 
     public void finishChild() {
         String child = this.idStack.pop();
-        Logger.getGlobal().info("log: " + child + " \t " + this.data.keySet().toString());
+        LOGGER.fine("log: " + child + " \t " + this.data.keySet().toString());
         if (this.idStack.size() > 0) {
             this.data.get(this.idStack.peek()).children.add(this.data.get(child));
         }

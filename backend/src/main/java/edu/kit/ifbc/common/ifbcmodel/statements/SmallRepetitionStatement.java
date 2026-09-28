@@ -16,6 +16,7 @@ import lombok.Setter;
 @Setter
 @Serdeable
 public class SmallRepetitionStatement extends AbstractIFbCStatement {
+    private final static Logger LOGGER = Logger.getGlobal();
 
     private AbstractIFbCStatement loopStatement;
     private Condition guard;
@@ -31,7 +32,7 @@ public class SmallRepetitionStatement extends AbstractIFbCStatement {
         Lattice.Level lub = lattice.leastUpperBound(preVariableState.levelOf(lattice.getMinimalLevel(), usedVariables));
         Lattice.Level contextLevel = lattice.leastUpperBound(lub, level);
         
-        Logger.getGlobal().info("Condition: \t" + this.getPreCondition().getParsedCondition());
+        LOGGER.fine("Condition: \t" + this.getPreCondition().getParsedCondition());
         VariableState postVariableState = loopStatement.calculatePostVariableState(lattice, contextLevel, preVariableState, context);
         context.setInfo(postVariableState, contextLevel);
         return postVariableState;

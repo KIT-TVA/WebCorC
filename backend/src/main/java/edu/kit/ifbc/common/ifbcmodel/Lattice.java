@@ -23,7 +23,7 @@ import lombok.Getter;
 @Introspected
 @Serdeable
 public class Lattice {
-
+    private final static Logger LOGGER = Logger.getGlobal();
     @Getter
     private Level minimalLevel;
     @Getter
@@ -158,11 +158,11 @@ public class Lattice {
 
     public Level leastUpperBound(Level... levels) {
         Level lub = levels[0];
-        Logger.getGlobal().info("lub: " + lub.name() + ", " + lub.id());
+        LOGGER.fine("lub: " + lub.name() + ", " + lub.id());
         for (int i = 1; i < levels.length; i++) {
-            Logger.getGlobal().info("i: " + i + " prev lub: " + lub.name() + ", " + lub.id() + " level: " + levels[i].name() + ", " + levels[i].id());
+            LOGGER.fine("i: " + i + " prev lub: " + lub.name() + ", " + lub.id() + " level: " + levels[i].name() + ", " + levels[i].id());
             lub = leastUpperBound(lub, levels[i]);
-            Logger.getGlobal().info("i: " + i + " lub: " + lub.name() + ", " + lub.id());
+            LOGGER.fine("i: " + i + " lub: " + lub.name() + ", " + lub.id());
         }
         return lub;
     }

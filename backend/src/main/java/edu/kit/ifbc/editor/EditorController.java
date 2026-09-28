@@ -9,9 +9,7 @@ import edu.kit.ifbc.editor.lattice.LatticeDTO;
 import edu.kit.ifbc.editor.lattice.PartialLatticeDTO;
 import edu.kit.cbc.projects.ProjectService;
 import edu.kit.cbc.projects.files.controller.FilesController;
-import io.micronaut.core.convert.ArgumentConversionContext;
 import io.micronaut.core.type.Argument;
-import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
@@ -21,13 +19,11 @@ import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Produces;
 import io.micronaut.http.annotation.QueryValue;
-import io.micronaut.http.bind.binders.TypedRequestArgumentBinder;
 import io.micronaut.http.server.types.files.StreamedFile;
 import io.micronaut.json.JsonMapper;
 import io.micronaut.objectstorage.ObjectStorageException;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
-import jakarta.inject.Singleton;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -62,6 +58,15 @@ public class EditorController {
         this.projectService = projectService;
     }
 
+    /**
+     * helper method to retrieve a lattice from the given resource file.
+     * If no project is given, it just returns the default lattice.
+     * @param urn resource specifier
+     * @param projectId 
+     * @param defaultLattice supplier creating a default lattice.
+     * @return HTTP response with a {@link PartialLatticeDTO} as body
+     * @throws IOException
+     */
     private HttpResponse<?> retrieveLattice(String urn, Optional<String> projectId, Supplier<Lattice> defaultLattice) throws IOException {
         if (projectId.isEmpty()) {
             return HttpResponse.ok(new PartialLatticeDTO(null, null, defaultLattice.get()));
@@ -171,20 +176,6 @@ public class EditorController {
             return HttpResponse.serverError(Problem.JOB_NOT_FINISHED);
         } else {
             return HttpResponse.ok(result);
-        }
-    }
-
-    @Singleton
-    public static class ConfidentialityLatticeBinder implements TypedRequestArgumentBinder<ConfidentialityLattice> {
-        @Override
-        public Argument<ConfidentialityLattice> argumentType() {
-            return Argument.of(ConfidentialityLattice.class);
-        }
-
-        @Override
-        public BindingResult<ConfidentialityLattice> bind(ArgumentConversionContext<ConfidentialityLattice> context, HttpRequest<?> source) {
-            Optional<ConfidentialityLattice> attribute = source.getAttribute(ConfidentialityLattice.class.getName(), ConfidentialityLattice.class);
-            return () -> attribute;
         }
     }
 }
