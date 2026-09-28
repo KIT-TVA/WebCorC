@@ -7,7 +7,6 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import edu.kit.ifbc.common.ifbcmodel.Lattice;
-import edu.kit.ifbc.common.ifbcmodel.Lattice.Level;
 import edu.kit.ifbc.common.ifbcmodel.confidentiality.ConfidentialityLattice;
 
 public class ConfidentialityLatticeTest {
@@ -56,7 +55,7 @@ public class ConfidentialityLatticeTest {
         assertEquals(c, lattice.leastUpperBound(a, c));
     }
 
-        @Test
+    @Test
     public void complicated_lattice() {
         //    __f
         //   / /|\
@@ -85,5 +84,30 @@ public class ConfidentialityLatticeTest {
         assertEquals(d, lattice.leastUpperBound(b, c));
         assertEquals(d, lattice.leastUpperBound(b, c, d));
         assertEquals(f, lattice.leastUpperBound(b, e));
+    }
+
+    @Test
+    public void tricky_lub() {
+        //    f
+        //   / \
+        //  d   e
+        //  |\ /|
+        //  |/ \|
+        //  b   c
+        //   \ /
+        //    a
+        ConfidentialityLattice lattice = new ConfidentialityLattice(List.of(
+            new Lattice.Level(0, "a", List.of(1, 2)),
+            new Lattice.Level(1, "b", List.of(3, 4)),
+            new Lattice.Level(2, "c", List.of(3, 4)),
+            new Lattice.Level(3, "d", List.of(5)),
+            new Lattice.Level(4, "e", List.of(5)),
+            new Lattice.Level(5, "f")
+        ));
+
+        Lattice.Level b = lattice.levelById(1);
+        Lattice.Level c = lattice.levelById(2);
+        Lattice.Level f = lattice.levelById(5);
+        assertEquals(f, lattice.leastUpperBound(b, c));
     }
 }

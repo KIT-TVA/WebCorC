@@ -136,6 +136,7 @@ public class Lattice {
         Queue<Integer> queue = new LinkedList<>();
         queue.add(idxSmaller);
         Set<Integer> parentsSmaller = new HashSet<>();
+        List<Integer> possibleLUBs = new LinkedList<>();
 
         while(!queue.isEmpty()) {
             int index = queue.remove();
@@ -148,12 +149,37 @@ public class Lattice {
         while(!queue.isEmpty()) {
             int index = queue.remove();
             if (parentsSmaller.contains(index)) {
-                return this.topologicalOrder.get(index);
+                possibleLUBs.add(index);
             }
             queue.addAll(this.topologicalOrder.get(index).parentIDs().stream().map((c) -> this.orderMap.get(c)).toList());
         }
-        // This will never happen as maximalLevel will eventually be reached.
-        return null;
+
+        if (possibleLUBs.size() == 1) {
+        }
+        // There are multiple candidates for a lub.
+        // We have to determine the correct one by pairwise calculating there lubs and handle the result accordingly.
+        // Note: The base case is possibleLUBs == 1.
+        // It is not possible to have an empty list here, as the global maximum will always be present. 
+        while(possibleLUBs.size() > 1) {
+            int idxFirst = possibleLUBs.removeFirst();
+            int idxSecond = possibleLUBs.removeFirst();
+
+            Level first = this.topologicalOrder.get(idxFirst);
+            Level second = this.topologicalOrder.get(idxSecond);
+
+            Level lub = this.leastUpperBound(first, second);
+
+            if (first.equals(lub)) {
+                // the second one eventually leads to the first
+                // -> first cannot be lub
+                possibleLUBs.add(idxSecond);
+            } else if (second.equals(lub)) {
+                // the first one eventually leads to the second
+                // -> second cannot be lub
+                possibleLUBs.add(idxFirst);
+            }
+        }
+        return this.topologicalOrder.get(possibleLUBs.getFirst());
     }
 
     public Level leastUpperBound(Level... levels) {
