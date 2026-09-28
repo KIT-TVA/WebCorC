@@ -48,6 +48,9 @@ nav:
     - CbC:
       - Theory: theory/cbc/theory.md                  #done
       - Practical Example: theory/cbc/example.md      # todo need to throw out eclipse corc example
+    - IFbC:
+      - Theory: theory/ifbc/theory.md
+      - Practical Example: theory/ifbc/example.md
 #    - XbC:
 #      - Theory: theory/xbc/xbctheory.md
   - WebCorC:
