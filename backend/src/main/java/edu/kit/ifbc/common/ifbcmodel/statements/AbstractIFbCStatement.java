@@ -36,18 +36,18 @@ import lombok.Setter;
     @JsonSubTypes.Type(value = ReturnStatement.class, name = "RETURN"),
     @JsonSubTypes.Type(value = SelectionStatement.class, name = "SELECTION"),
     @JsonSubTypes.Type(value = SkipStatement.class, name = "SKIP"),
-    @JsonSubTypes.Type(value = SmallRepetitionStatement.class, name = "REPETITION")
+    @JsonSubTypes.Type(value = SmallRepetitionStatement.class, name = "REPETITION"),
+    @JsonSubTypes.Type(value = MethodCallStatement.class, name = "METHODCALL")
 })
 public abstract class AbstractIFbCStatement {
+
+    private final static Logger LOGGER = Logger.getGlobal();
 
     private String id;
     private String name;
     private StatementType type;
     private Condition preCondition;
     private Condition postCondition;
-
-    protected boolean respectsConfidentiality;
-    // protected boolean respectsIntegrity;
 
     public abstract VariableState calculatePostVariableState(
         Lattice lattice, 
@@ -64,16 +64,16 @@ public abstract class AbstractIFbCStatement {
         Lexer lexer = ProgramLexer.forString(programm);
         TokenSource source = new TokenSource(lexer);
         ProgramParser parser = new ProgramParser(source);
-        Logger.getGlobal().warning("Variables: \t" + variables.getVariableSet() + " program: " + programm);
+        LOGGER.fine("Variables: \t" + variables.getVariableSet() + " program: " + programm);
         String[] value = VariableParsing.getRelevantVariables(parser.parse(), variables.getVariableSet());
-        Logger.getGlobal().warning("arstarstarstarstarst" + Arrays.toString(value));
+        LOGGER.fine("relevant variables: " + Arrays.toString(value));
         return value;
     }
 
     public String[] getRelevantVariablesInStatement(Tree programm, VariableState variables) throws VariableParsingException {
-        Logger.getGlobal().warning("Variables: \t" + variables.getVariableSet() + " program: " + programm);
+        LOGGER.fine("Variables: \t" + variables.getVariableSet() + " program: " + programm);
         String[] value = VariableParsing.getRelevantVariables(programm, variables.getVariableSet());
-        Logger.getGlobal().warning("arstarstarstarstarst" + Arrays.toString(value));
+        LOGGER.fine("relevant variables: " + Arrays.toString(value));
         return value;
     }
 
