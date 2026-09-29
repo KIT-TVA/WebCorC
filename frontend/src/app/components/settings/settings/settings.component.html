@@ -68,11 +68,21 @@
         </mat-radio-group>
       </li>
       <li class="flex items-center gap-8">
-        <span>Enable Information Flow-Control-By-Construction</span>
+        <span>Enable Information Flow-Control-By-Construction Confidentialiy Check</span>
         <span>
           <p-toggle-switch
             size="large"
-            [(ngModel)]="globalSettingsService.ifbcEnabled"
+            [(ngModel)]="globalSettingsService.ifbcConfidentialityEnabled"
+          >
+          </p-toggle-switch>
+        </span>
+      </li>
+        <li class="flex items-center gap-8">
+        <span>Enable Information Flow-Control-By-Construction Integrity Check</span>
+        <span>
+          <p-toggle-switch
+            size="large"
+            [(ngModel)]="globalSettingsService.ifbcIntegrityEnabled"
           >
           </p-toggle-switch>
         </span>

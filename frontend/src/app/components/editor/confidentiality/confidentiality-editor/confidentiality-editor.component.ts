@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { ILattice, ILatticeLevel } from '../../../../types/ifbc/lattice';
 import { Select } from 'primeng/select';
 import { VariableIFbCState } from '../../../../types/ifbc/variableState';
+import { GlobalSettingsService } from '../../../../services/global-settings.service';
 
 /**
  * Editor in the statements for the {@link Condition}
@@ -26,7 +27,9 @@ export class ConfidentialityEditorComponent {
 
   @Output() public variablesChange = new EventEmitter<void>();
 
-  public constructor() {}
+  public constructor(
+    public globalSettingsService: GlobalSettingsService,
+  ) {}
 
   public get conffidentialityLevels(): ILatticeLevel[] {
     return this.confidentialityLattice.levels

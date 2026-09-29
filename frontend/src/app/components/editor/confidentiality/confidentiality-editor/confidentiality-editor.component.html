@@ -2,22 +2,26 @@
     @for (item of items; track item.variable) {
       <div class="flex gap-2 justify-between">
         <div class="w-45 self-center">{{ item.variable }}</div>
-        <p-select 
-          [options]="conffidentialityLevels"
-          [ngModel]="item.confidentiality"
-          (ngModelChange)="onVariableConfidentialityChanged(item.variable, $event)"
-          filter
-          optionLabel="name"
-          appendTo="body"
-        />
-        <p-select 
-          [options]="integrityLevels"
-          [ngModel]="item.integrity"
-          (ngModelChange)="onVariableIntegrityChanged(item.variable, $event)"
-          filter
-          optionLabel="name"
-          appendTo="body"
-        />
+        @if (globalSettingsService.ifbcConfidentialityEnabled) {
+          <p-select 
+            [options]="conffidentialityLevels"
+            [ngModel]="item.confidentiality"
+            (ngModelChange)="onVariableConfidentialityChanged(item.variable, $event)"
+            filter
+            optionLabel="name"
+            appendTo="body"
+          />
+        }
+        @if (globalSettingsService.ifbcIntegrityEnabled) {
+          <p-select 
+            [options]="integrityLevels"
+            [ngModel]="item.integrity"
+            (ngModelChange)="onVariableIntegrityChanged(item.variable, $event)"
+            filter
+            optionLabel="name"
+            appendTo="body"
+          />
+        }
       </div>  
     }
 </div>

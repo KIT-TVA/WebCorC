@@ -9,7 +9,8 @@ export class GlobalSettingsService {
   public showMiniMap: boolean = false;
   public isVerifying: boolean = false;
   public autosave: boolean = false;
-  public ifbcEnabled: boolean = false;
+  public ifbcConfidentialityEnabled: boolean = false;
+  public ifbcIntegrityEnabled: boolean = false;
 
   private _resetVariant = signal<ResetVariant>(ResetVariant.ReingoldTilford);
   readonly resetVariant = this._resetVariant.asReadonly();

@@ -186,7 +186,7 @@ export class StatementComponent {
     return this._node.statementInfo
   }
 
-  public get isCheckingConfidentiality(): boolean {
+  public get isCheckingIFbC(): boolean {
     return this.latticeService.isCheckingConfidentiality()
   }
 

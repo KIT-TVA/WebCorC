@@ -22,23 +22,55 @@
         </p>
       </ng-template>
       <ng-template #end>
-        @if (globalSettingsService.ifbcEnabled && isRoot) {
-          <p-splitbutton
-            outlined
-            [label]="_node.statement.isConfidential && _node.statement.isIntegral ? 'confidential' : 'check confidentiality'"
-            [icon]="isCheckingConfidentiality ? 'pi pi-spin pi-spinner' : 'pi pi-check-circle'"
-            [model]="ifbcButtonOptions"
-            [severity]="_node.statement.isConfidential && _node.statement.isIntegral ? 'success' : 'secondary'"
-            [disabled]="isCheckingConfidentiality"
-            [class.cursor-wait]="isCheckingConfidentiality"
-            [class.cursor-pointer]="!isCheckingConfidentiality"
-            [style.height]="'1.5rem'"
-            (onClick)="verifyConfidentiality(true ,true)"
-            size="small"
-            [title]="isCheckingConfidentiality ? 'checking confidentiality...' : 'Check confidentiality'"
-            appendTo="body"
-          >
-          </p-splitbutton>
+        @if (isRoot) {
+          @if (globalSettingsService.ifbcConfidentialityEnabled && globalSettingsService.ifbcIntegrityEnabled) {
+            <p-splitbutton
+              outlined
+              [label]="_node.statement.isConfidential && _node.statement.isIntegral ? 'confidential' : 'check confidentiality'"
+              [icon]="isCheckingIFbC ? 'pi pi-spin pi-spinner' : 'pi pi-check-circle'"
+              [model]="ifbcButtonOptions"
+              [severity]="_node.statement.isConfidential && _node.statement.isIntegral ? 'success' : 'secondary'"
+              [disabled]="isCheckingIFbC"
+              [class.cursor-wait]="isCheckingIFbC"
+              [class.cursor-pointer]="!isCheckingIFbC"
+              [style.height]="'1.5rem'"
+              (onClick)="verifyConfidentiality(true ,true)"
+              size="small"
+              [title]="isCheckingIFbC ? 'checking ifbc...' : 'Check ifbc'"
+              appendTo="body"
+            >
+            </p-splitbutton>
+          } @else if (globalSettingsService.ifbcConfidentialityEnabled) {
+            <button
+              pButton
+              outlined
+              [label]="_node.statement.isConfidential ? 'confidential' : 'check confidentiality'"
+              [icon]="isCheckingIFbC ? 'pi pi-spin pi-spinner' : 'pi pi-check-circle'"
+              [severity]="_node.statement.isConfidential ? 'success' : 'secondary'"
+              [disabled]="isCheckingIFbC"
+              [class.cursor-wait]="isCheckingIFbC"
+              [class.cursor-pointer]="!isCheckingIFbC"
+              [style.height]="'1.5rem'"
+              (click)="verifyConfidentiality(true ,false)"
+              [title]="isCheckingIFbC ? 'checking confidentiality...' : 'Check confidentiality'"
+            >
+            </button>
+          } @else if (globalSettingsService.ifbcIntegrityEnabled) {
+            <button
+              pButton
+              outlined
+              [label]="_node.statement.isIntegral ? 'is integral' : 'check integrity'"
+              [icon]="isCheckingIFbC ? 'pi pi-spin pi-spinner' : 'pi pi-check-circle'"
+              [severity]="_node.statement.isIntegral ? 'success' : 'secondary'"
+              [disabled]="isCheckingIFbC"
+              [class.cursor-wait]="isCheckingIFbC"
+              [class.cursor-pointer]="!isCheckingIFbC"
+              [style.height]="'1.5rem'"
+              (click)="verifyConfidentiality(false,true)"
+              [title]="isCheckingIFbC ? 'checking integrity...' : 'Check integrity'"
+            >
+            </button>
+          }
         }
         <button
           pButton
@@ -73,7 +105,7 @@
           >
           </p-button>
         }
-        @if (!isRoot && globalSettingsService.ifbcEnabled) {
+        @if (!isRoot && (globalSettingsService.ifbcConfidentialityEnabled || globalSettingsService.ifbcIntegrityEnabled)) {
           <p-button
             text
             icon="pi pi-info-circle"
@@ -88,83 +120,87 @@
     </p-toolbar>
   </ng-template>
   <p-popover #ifbcPopover>
-      @if (globalSettingsService.ifbcEnabled) {
+      @if (globalSettingsService.ifbcConfidentialityEnabled || globalSettingsService.ifbcIntegrityEnabled) {
       <div class="flex flex-column gap-3">
-        @if ("confidentiality" in statementInfo && statementInfo.confidentiality !== undefined) {
-          <p-fieldset legend="Calculated Confidentiality Levels" class="flex flex-column">
-            <div class="flex align-items-center gap-2">
-              <span class="font-medium">Context:</span>
-
-              <p-tag
-                class="ml-auto"
-                [value]="statementInfo.confidentiality!.context.name"
-                severity="info">
-              </p-tag>
-            </div>
-            <p-divider />
-
-            <div class="flex flex-column gap-2">
-              <level-editor
-                [variables]="statementInfo.confidentiality!.postVariableState"
-                [lattice]="confidentialityLattice"
-                [readonly]="true"
-              />
-            </div>
-          </p-fieldset>
-        } @else {
-          <button
-            pButton
-            outlined
-            [style.height]="'1.5rem'"
-            (click)="verifyConfidentiality(true, false)"
-            size="small"
-            [dt]="compactButton"
-          >
-            <i
-              pButtonIcon
-            ></i>
-            <span pButtonLabel class="font-normal">
-              Check Confidentiality
-            </span>
-          </button>
+        @if (globalSettingsService.ifbcConfidentialityEnabled) {
+          @if ("confidentiality" in statementInfo && statementInfo.confidentiality !== undefined) {
+            <p-fieldset legend="Calculated Confidentiality Levels" class="flex flex-column">
+              <div class="flex align-items-center gap-2">
+                <span class="font-medium">Context:</span>
+  
+                <p-tag
+                  class="ml-auto"
+                  [value]="statementInfo.confidentiality!.context.name"
+                  severity="info">
+                </p-tag>
+              </div>
+              <p-divider />
+  
+              <div class="flex flex-column gap-2">
+                <level-editor
+                  [variables]="statementInfo.confidentiality!.postVariableState"
+                  [lattice]="confidentialityLattice"
+                  [readonly]="true"
+                />
+              </div>
+            </p-fieldset>
+          } @else {
+            <button
+              pButton
+              outlined
+              [style.height]="'1.5rem'"
+              (click)="verifyConfidentiality(true, false)"
+              size="small"
+              [dt]="compactButton"
+            >
+              <i
+                pButtonIcon
+              ></i>
+              <span pButtonLabel class="font-normal">
+                Check Confidentiality
+              </span>
+            </button>
+          }
         }
-        @if ("integrity" in statementInfo && statementInfo.integrity !== undefined) {
-          <p-fieldset legend="Calculated Integrity Levels" class="flex flex-column">
-            <div class="flex align-items-center gap-2">
-              <span class="font-medium">Context:</span>
-
-              <p-tag
-                class="ml-auto"
-                [value]="statementInfo.integrity!.context.name"
-                severity="info">
-              </p-tag>
-            </div>
-            <p-divider />
-
-            <div class="flex flex-column gap-2">
-              <level-editor
-                [variables]="statementInfo.integrity!.postVariableState"
-                [lattice]="integrityLattice"
-                [readonly]="true"
-              />
-            </div>
-          </p-fieldset>
-        } @else {
-          <button
-            pButton
-            outlined
-            [style.height]="'1.5rem'"
-            (click)="verifyConfidentiality(false, true)"
-            size="small"
-            [dt]="compactButton"
-          >
-            <i
-              pButtonIcon
-            ></i>
-            <span pButtonLabel class="font-normal">
-              Check Integrity
-            </span>
-          </button>
+        @if (globalSettingsService.ifbcIntegrityEnabled) {
+          @if ("integrity" in statementInfo && statementInfo.integrity !== undefined) {
+            <p-fieldset legend="Calculated Integrity Levels" class="flex flex-column">
+              <div class="flex align-items-center gap-2">
+                <span class="font-medium">Context:</span>
+  
+                <p-tag
+                  class="ml-auto"
+                  [value]="statementInfo.integrity!.context.name"
+                  severity="info">
+                </p-tag>
+              </div>
+              <p-divider />
+  
+              <div class="flex flex-column gap-2">
+                <level-editor
+                  [variables]="statementInfo.integrity!.postVariableState"
+                  [lattice]="integrityLattice"
+                  [readonly]="true"
+                />
+              </div>
+            </p-fieldset>
+          } @else {
+            <button
+              pButton
+              outlined
+              [style.height]="'1.5rem'"
+              (click)="verifyConfidentiality(false, true)"
+              size="small"
+              [dt]="compactButton"
+            >
+              <i
+                pButtonIcon
+              ></i>
+              <span pButtonLabel class="font-normal">
+                Check Integrity
+              </span>
+            </button>
+          }
         }
       </div>
     }
@@ -203,7 +239,7 @@
         </mat-drawer-container>
       </div>
     } @else {
-      @if (globalSettingsService.ifbcEnabled && isRoot) {
+      @if ((globalSettingsService.ifbcConfidentialityEnabled || globalSettingsService.ifbcIntegrityEnabled) && isRoot) {
         <div class="w-84">
           <app-confidentiality-editor
             [variables]="preVariables"
@@ -276,7 +312,7 @@
           [editable]="_node.postconditionEditable | async"
         ></app-condition-editor>
       </div>
-        @if (globalSettingsService.ifbcEnabled && isRoot) {
+        @if ((globalSettingsService.ifbcConfidentialityEnabled || globalSettingsService.ifbcIntegrityEnabled) && isRoot) {
           <div class="w-84">
             <app-confidentiality-editor
               [variables]="postVariables"
