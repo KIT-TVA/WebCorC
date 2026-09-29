@@ -33,6 +33,8 @@ public class ReturnStatement extends AbstractIFbCStatement {
     ) throws VariableParsingException {
         LOGGER.fine("Condition: \t" + this.getPreCondition().getParsedCondition());
         LOGGER.fine(returnStatement);
+
+        // parse the return statement and get the statement
         Lexer lexer = ProgramLexer.forString(this.returnStatement);
         TokenSource source = new TokenSource(lexer);
         ProgramParser parser = new ProgramParser(source);
@@ -44,6 +46,7 @@ public class ReturnStatement extends AbstractIFbCStatement {
         StatementTree tree = programm.statements().getFirst();
         LOGGER.fine("Statement-Tree: \t" + tree);
         
+        // get used variables and build the lub according to the assignment rule
         String[] usedVariables = getRelevantVariablesInStatement(this.returnStatement, preVariableState);
         if (usedVariables == null) {
             usedVariables = new String[0];

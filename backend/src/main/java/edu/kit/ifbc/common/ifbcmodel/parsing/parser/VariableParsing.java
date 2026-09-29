@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 
 // Original: webcorc/dev @ backend/src/main/java/edu/kit/cbc/common/corc/parsing/SemanticChecker.java
 public class VariableParsing {
+    private final static Logger LOGGER = Logger.getGlobal();
 
     private static final String DECLASSIFY_OPERATOR = "declassify";
 
@@ -35,7 +36,7 @@ public class VariableParsing {
 
 
     public static String[] getAssignmentLHSVariables(Tree program, Set<String> variables) throws VariableParsingException {
-        Logger.getGlobal().severe("programm: " + program + " instance of AssignTree: " + (program instanceof AssignTree));
+        LOGGER.fine("programm: " + program + " instance of AssignTree: " + (program instanceof AssignTree));
         
         if (program == null || !(program instanceof AssignTree)) {
             return null;
@@ -82,8 +83,13 @@ public class VariableParsing {
             variables.addAll(checkTree(bin.rhs(), scope));
         } else if (node instanceof CallTree call) {
             // ignore any variables occuring inside a declassify function
+            // This will a) correctly implement the declassify statement and
+            // b) also implement a declassify operator usables as expression 
+            // to lower the security level.
+            // If this is undesirable, one needs to adapt this checkTree method
+            // to only return here if inside a statement, e.g. via a boolean parameter.
             if (call.name().name().equals(DECLASSIFY_OPERATOR)) {
-            Logger.getGlobal().severe("Call: " + call.name().name() + " " + call.name().name().equals(DECLASSIFY_OPERATOR));
+                LOGGER.fine("Call: " + call.name().name() + " " + call.name().name().equals(DECLASSIFY_OPERATOR));
                 return variables;
             }
             variables.addAll(checkTree(call.name(), scope));

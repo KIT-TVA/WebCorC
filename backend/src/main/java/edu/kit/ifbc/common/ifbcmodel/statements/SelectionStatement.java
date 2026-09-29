@@ -34,6 +34,7 @@ public class SelectionStatement extends AbstractIFbCStatement {
     ) throws VariableParsingException {
         List<String[]> usedVariables = new LinkedList<>();
 
+        // gather all used variables in any guard
         for (Condition guard : guards) {
             usedVariables.add(getRelevantVariablesInCondition(guard, preVariableState));
         }
@@ -44,16 +45,19 @@ public class SelectionStatement extends AbstractIFbCStatement {
                 usedVariablesSet.add(variable);
             }
         } 
+
+        // build the lub over all used variables and infer context level
         Lattice.Level lub = lattice.leastUpperBound(preVariableState.levelOf(lattice.getMinimalLevel(), usedVariablesSet.toArray(new String[usedVariablesSet.size()])));
         Lattice.Level contextLevel = lattice.leastUpperBound(lub, level);
 
-
+        // calculate the post variable state of every possible branch
         List<VariableState> states = new LinkedList<>();
         for (AbstractIFbCStatement statement : commands) {
             context.handleChild(statement.getId());
             states.add(statement.calculatePostVariableState(lattice, contextLevel, preVariableState, context));
             context.finishChild();
         }
+        // then lub together all post variable states into a global one
         VariableState finalPostState = states.stream().reduce((a,b) -> a.withEachLub(lattice, b)).get();
         context.setInfo(finalPostState, contextLevel);
         return finalPostState;
