@@ -56,7 +56,8 @@ type LatticeGetResponse = {
 };
 
 /**
- * Service to distribute the verification result from the http response to the tree service.
+ * Service to manage (so collect, provide, update, validate) lattices and pre/post variable states for ifbc.
+ * Also handles the actual verification request and its response.
  * @see TreeService
  */
 @Injectable({
@@ -71,10 +72,11 @@ export class IFbCService {
     private readonly http: HttpClient,
     private projectService: ProjectService,
     private treeService: TreeService,
-    private readonly confidentialityService: IFbCVerificationResultHandlerService,
+    private readonly verificationResultHandlerService: IFbCVerificationResultHandlerService,
     private readonly mapper: CbcFormulaMapperService,
     private readonly consoleService: ConsoleService,
   ) {
+    // adjust the pre and post variable states if the variables change somehow
     this.treeService.variableUpdateNotifier.subscribe(() => {
       this.variables = this.treeService.variables;
       this.preVariableState$.next({
@@ -103,6 +105,7 @@ export class IFbCService {
       });
     });
 
+    // react to save events and send the data to the server
     this.projectService.editorNotify.subscribe(() => {
       const confidentialityLattice = this.confidentialityLattice$.getValue();
       if (confidentialityLattice) {
@@ -478,8 +481,12 @@ export class IFbCService {
   /**
    * Check the confidentiality of a single statement and its subtree via the backend
    * @param formula The temporary formula containing the statement to verify
+   * @param confidentialityLattice The confidentiallity lattice to be used
+   * @param integrityLattice The integrity lattice to be used
    * @param statementNode The statement node being verified
    * @param projectId The id of the project
+   * @param checkConfidentiality Wether to check confidentiality at all
+   * @param checkIntegrity Wether to check integrity at all
    * @param urn urn of the file being verified
    * @param onComplete Callback to execute when verification completes (success or error)
    */
@@ -568,7 +575,7 @@ export class IFbCService {
                 })),
               )
               .subscribe(({ formula, response }) => {
-                this.confidentialityService.nextStatement(
+                this.verificationResultHandlerService.nextStatement(
                   formula,
                   response.context,
                   statementNode,
@@ -593,7 +600,7 @@ export class IFbCService {
           } else if (msg.includes("ifbc check complete")) {
             ws.disconnect();
           }
-          this.confidentialityService.verifyInfo(msg);
+          this.verificationResultHandlerService.verifyInfo(msg);
         });
       });
   }
