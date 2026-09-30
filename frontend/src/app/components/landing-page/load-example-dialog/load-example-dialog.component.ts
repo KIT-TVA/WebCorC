@@ -105,8 +105,8 @@ export class LoadExampleDialogComponent {
                 ),
                 new RepetitionStatement(
                   "Repetition",
-                  new Condition("!appears(A,x,i+1,A.length) && (A[i] != x)"),
-                  new Condition("A[i]==x"),
+                  new Condition("appears(A, x, 0, A.length) && i == A.length-1"),
+                  new Condition("!appears(A,x,i+1,A.length)"),
                   new Statement(
                     "Statement2",
                     new Condition("!appears(A,x,i+1,A.length) && (A[i] != x)"),
@@ -115,7 +115,7 @@ export class LoadExampleDialogComponent {
                     new Position(0, 1600),
                   ),
                   new Condition("i"),
-                  new Condition("!appears(A, x, i+1, A.length)"),
+                  new Condition("A[i] == x"),
                   new Condition("(A[i] != x)"),
                   false,
                   false,
@@ -176,7 +176,7 @@ export class LoadExampleDialogComponent {
             new RootStatement(
               "Root",
               new Condition("A.length > 0"),
-              new Condition("maxe(A, 0, A.length, i)"),
+              new Condition("maxe(A, 0, j, i)"),
               new CompositionStatement(
                 "Comp1",
                 new Condition("A.length > 0"),
@@ -205,7 +205,7 @@ export class LoadExampleDialogComponent {
                 ),
                 new RepetitionStatement(
                   "Repetition",
-                  new Condition("maxe(A,0,j,i) && (j!=A.length)"),
+                  new Condition("A.length > 0 && i == 0 && j == 1"),
                   new Condition("maxe(A,0,j,i)"),
                   new CompositionStatement(
                     "CompLoop",
@@ -252,7 +252,7 @@ export class LoadExampleDialogComponent {
                     new Position(1650, 1200),
                   ),
                   new Condition("A.length - j"),
-                  new Condition("maxe(A,0,j,i)"),
+                  new Condition("maxe(A, 0, A.length, i)"),
                   new Condition("j != A.length"),
                   false,
                   false,
