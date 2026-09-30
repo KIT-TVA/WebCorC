@@ -44,6 +44,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.vflow-node > foreignObject {
+  pointer-events: none;
+}
+
 .conditionTileWidth {
   width: 270px;
 }

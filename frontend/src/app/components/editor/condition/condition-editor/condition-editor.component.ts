@@ -1,5 +1,17 @@
-import { Component, EventEmitter, Input, Output, inject } from "@angular/core";
+import {
+  Component,
+  DoCheck,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  Output,
+  SimpleChanges,
+  inject,
+  signal,
+} from "@angular/core";
 import { Condition, ICondition } from "../../../../types/condition/condition";
+import { checkJmlSyntax } from "../../../../types/condition/jml-syntax-checker";
 import { AiChatService } from "../../../../services/ai-chat/ai-chat.service";
 import { Textarea } from "primeng/textarea";
 import { FloatLabelModule } from "primeng/floatlabel";
@@ -9,10 +21,48 @@ import {
 } from "../../editor.component";
 import { $dt } from "@primeuix/themes";
 import { FormsModule } from "@angular/forms";
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, Subject, filter } from "rxjs";
 import { AsyncPipe } from "@angular/common";
 import { Button } from "primeng/button";
 import { Dialog } from "primeng/dialog";
+
+export const SYNTAX_CHECK_DELAY_MS = 2000;
+
+class ConditionSyntaxCheck {
+  public readonly error = signal<string | null>(null);
+  private timeout?: ReturnType<typeof setTimeout>;
+
+  constructor(private readonly isEnabled: () => boolean) {}
+
+  public checkNow(text: string | undefined): void {
+    this.cancel();
+    this.error.set(this.findError(text));
+  }
+
+  public checkDelayed(text: string | undefined): void {
+    this.cancel();
+    const error = this.findError(text);
+    if (error === null) {
+      this.error.set(null);
+    } else {
+      this.timeout = setTimeout(
+        () => this.error.set(error),
+        SYNTAX_CHECK_DELAY_MS,
+      );
+    }
+  }
+
+  public cancel(): void {
+    clearTimeout(this.timeout);
+  }
+
+  private findError(text: string | undefined): string | null {
+    if (!this.isEnabled() || !text) {
+      return null;
+    }
+    return checkJmlSyntax(text)?.message ?? null;
+  }
+}
 
 /**
  * Editor in the statements for the {@link Condition}
@@ -26,7 +76,10 @@ import { Dialog } from "primeng/dialog";
     standalone: true,
     styleUrl: './condition-editor.component.css',
 })
-export class ConditionEditorComponent {
+export class ConditionEditorComponent implements OnChanges, DoCheck, OnDestroy {
+  private static nextId = 0;
+  private static readonly checkNowRequests = new Subject<ICondition>();
+
   private _aiChatService = inject(AiChatService);
   protected greenConditions = inject(GREEN_COLOURED_CONDITIONS);
   protected redConditions = inject(RED_COLOURED_CONDITIONS);
@@ -43,6 +96,7 @@ export class ConditionEditorComponent {
     @Input() public editable: boolean | null = true;
     @Input() public inline = false;
     @Input() public showAiButton = false;
+    @Input() public validateJml = true;
 
     /**
      * Emitter to emit the condition
@@ -53,10 +107,52 @@ export class ConditionEditorComponent {
     @Output() public synthesizeRequested: EventEmitter<void> = new EventEmitter<void>();
     protected dialogConditionText: string = "";
 
+  protected readonly syntaxCheck = new ConditionSyntaxCheck(
+    () => this.validateJml,
+  );
+  protected readonly dialogSyntaxCheck = new ConditionSyntaxCheck(
+    () => this.validateJml,
+  );
+  protected readonly syntaxErrorId = `condition-syntax-error-${ConditionEditorComponent.nextId++}`;
+  private checkedText?: string;
+  private readonly checkNowSubscription = ConditionEditorComponent.checkNowRequests
+    .pipe(filter((condition) => condition === this.condition?.getValue()))
+    .subscribe(() => this.checkSyntaxNow());
+
   /** Inserted by Angular inject() migration for backwards compatibility */
   constructor(...args: unknown[]);
 
   public constructor() {}
+
+  public ngOnChanges(changes: SimpleChanges): void {
+    if (changes["condition"] || changes["validateJml"]) {
+      this.checkSyntaxNow();
+    }
+  }
+
+  public ngDoCheck(): void {
+    const text = this.condition?.getValue()?.condition;
+    if (text !== this.checkedText) {
+      this.checkedText = text;
+      this.syntaxCheck.checkDelayed(text);
+    }
+  }
+
+  public ngOnDestroy(): void {
+    this.checkNowSubscription.unsubscribe();
+    this.syntaxCheck.cancel();
+    this.dialogSyntaxCheck.cancel();
+  }
+
+  private checkSyntaxNow(): void {
+    this.checkedText = this.condition?.getValue()?.condition;
+    this.syntaxCheck.checkNow(this.checkedText);
+  }
+
+  protected onEditingFinished(): void {
+    ConditionEditorComponent.checkNowRequests.next(this.condition.getValue());
+    this.conditionEditingFinished.emit();
+  }
 
   /**
    * Function for sending the condition content to the ai chat
@@ -104,7 +200,13 @@ export class ConditionEditorComponent {
 
   protected onEditConditionClick() {
     this.dialogConditionText = this.condition.getValue().condition;
+    this.dialogSyntaxCheck.checkNow(this.dialogConditionText);
     this.isDialogVisible = true;
+  }
+
+  protected onDialogConditionChange(text: string) {
+    this.dialogConditionText = text;
+    this.dialogSyntaxCheck.checkDelayed(text);
   }
 
   protected onDialogDiscardClick() {
@@ -113,6 +215,8 @@ export class ConditionEditorComponent {
 
   protected onDialogSaveClick() {
     this.onConditionChange(this.dialogConditionText);
+    ConditionEditorComponent.checkNowRequests.next(this.condition.getValue());
+    this.dialogSyntaxCheck.cancel();
     this.isDialogVisible = false;
   }
 }
