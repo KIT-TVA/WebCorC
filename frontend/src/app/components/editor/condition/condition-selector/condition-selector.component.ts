@@ -9,7 +9,7 @@ import {
 import { ConditionEditorComponent } from "../condition-editor/condition-editor.component";
 import { AbstractStatementNode } from "../../../../types/statements/nodes/abstract-statement-node";
 import { ICondition } from "../../../../types/condition/condition";
-import { Button } from "primeng/button";
+import { Button } from "@openng/optimus-ui/button";
 import {
   GREEN_COLOURED_CONDITIONS,
   RED_COLOURED_CONDITIONS,

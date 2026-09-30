@@ -24,14 +24,14 @@ import { MatListModule } from "@angular/material/list";
 import { AbstractStatementNode } from "../../../../types/statements/nodes/abstract-statement-node";
 import { HandleComponent } from "ngx-vflow";
 import { GridTileBorderDirective } from "../../../../directives/grid-tile-border.directive";
-import { Card } from "primeng/card";
+import { Card } from "@openng/optimus-ui/card";
 import {
   Button,
   ButtonDirective,
   ButtonIcon,
   ButtonLabel,
-} from "primeng/button";
-import { Toolbar } from "primeng/toolbar";
+} from "@openng/optimus-ui/button";
+import { Toolbar } from "@openng/optimus-ui/toolbar";
 import { GlobalSettingsService } from "../../../../services/global-settings.service";
 import { NetworkJobService } from "../../../../services/tree/network/network-job.service";
 import { ProjectService } from "../../../../services/project/project.service";

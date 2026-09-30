@@ -5,9 +5,12 @@ import { ProjectService } from "../../../services/project/project.service";
 import { ApiFileType } from "../../../services/project/types/api-elements";
 import { FormsModule } from "@angular/forms";
 import { ConsoleService } from "../../../services/console/console.service";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
-import { Button } from "primeng/button";
-import { FileUpload } from "primeng/fileupload";
+import {
+  DynamicDialogConfig,
+  DynamicDialogRef,
+} from "@openng/optimus-ui/dynamicdialog";
+import { Button } from "@openng/optimus-ui/button";
+import { FileUpload } from "@openng/optimus-ui/fileupload";
 
 /**
  * Dialog for importing files created with this editor or cbcmodels created with the corc editor
