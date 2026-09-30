@@ -1,10 +1,13 @@
 import { Component, inject } from "@angular/core";
 import { ProjectService } from "../../../services/project/project.service";
 import { FormsModule } from "@angular/forms";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
-import { Button } from "primeng/button";
-import { InputText } from "primeng/inputtext";
-import { FloatLabel } from "primeng/floatlabel";
+import {
+  DynamicDialogConfig,
+  DynamicDialogRef,
+} from "@openng/optimus-ui/dynamicdialog";
+import { Button } from "@openng/optimus-ui/button";
+import { InputText } from "@openng/optimus-ui/inputtext";
+import { FloatLabel } from "@openng/optimus-ui/floatlabel";
 
 /**
  * Dialog for creating a new project, when pressing the save button in the project explorer without a known projectId

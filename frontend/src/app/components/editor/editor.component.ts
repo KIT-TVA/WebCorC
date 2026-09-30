@@ -41,8 +41,8 @@ import { EditorSidemenuComponent } from "./editor-sidemenu/editor-sidemenu.compo
 import { EditorBottommenuComponent } from "./editor-bottommenu/editor-bottommenu.component";
 import { GlobalSettingsService } from "../../services/global-settings.service";
 import { fromEvent, Subscription } from "rxjs";
-import { Button } from "primeng/button";
-import { Popover } from "primeng/popover";
+import { Button } from "@openng/optimus-ui/button";
+import { Popover } from "@openng/optimus-ui/popover";
 import { ConditionSelectorComponent } from "./condition/condition-selector/condition-selector.component";
 import { ICondition } from "../../types/condition/condition";
 import { disconnectNodes } from "../../types/statements/nodes/statement-node-utils";

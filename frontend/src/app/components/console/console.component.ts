@@ -11,9 +11,9 @@ import {
   isInfo,
 } from "../../services/console/log";
 import { HttpErrorResponse } from "@angular/common/http";
-import { Button } from "primeng/button";
-import { ProgressSpinner } from "primeng/progressspinner";
-import { ProgressBar } from "primeng/progressbar";
+import { Button } from "@openng/optimus-ui/button";
+import { ProgressSpinner } from "@openng/optimus-ui/progressspinner";
+import { ProgressBar } from "@openng/optimus-ui/progressbar";
 
 /**
  * Visual representation of the errors in the application

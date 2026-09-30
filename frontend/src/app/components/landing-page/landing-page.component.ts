@@ -9,12 +9,19 @@ import { OpenProjectDialogComponent } from "./open-project-dialog/open-project-d
 import { ImportProjectDialogComponent } from "./import-project-dialog/import-project-dialog.component";
 import { LoadExampleDialogComponent } from "./load-example-dialog/load-example-dialog.component";
 import { ImportFileDialogComponent } from "../project-explorer/import-file-dialog/import-file-dialog";
-import { Card } from "primeng/card";
-import { MenuItem } from "primeng/api";
-import { Divider } from "primeng/divider";
-import { ButtonDirective, ButtonIcon, ButtonLabel } from "primeng/button";
-import { Menubar } from "primeng/menubar";
-import { DialogService, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Card } from "@openng/optimus-ui/card";
+import { MenuItem } from "@openng/optimus-ui/api";
+import { Divider } from "@openng/optimus-ui/divider";
+import {
+  ButtonDirective,
+  ButtonIcon,
+  ButtonLabel,
+} from "@openng/optimus-ui/button";
+import { Menubar } from "@openng/optimus-ui/menubar";
+import {
+  DialogService,
+  DynamicDialogRef,
+} from "@openng/optimus-ui/dynamicdialog";
 import { LocalDirectory } from "../../services/project/types/api-elements";
 
 @Component({

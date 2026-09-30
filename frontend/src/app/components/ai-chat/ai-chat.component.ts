@@ -27,12 +27,12 @@ import {
   ReactiveFormsModule,
 } from "@angular/forms";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { Message } from "primeng/message";
-import { Toolbar } from "primeng/toolbar";
-import { Button } from "primeng/button";
-import { Textarea } from "primeng/textarea";
-import { Menu } from "primeng/menu";
-import { MenuItem } from "primeng/api";
+import { Message } from "@openng/optimus-ui/message";
+import { Toolbar } from "@openng/optimus-ui/toolbar";
+import { Button } from "@openng/optimus-ui/button";
+import { Textarea } from "@openng/optimus-ui/textarea";
+import { Menu } from "@openng/optimus-ui/menu";
+import { MenuItem } from "@openng/optimus-ui/api";
 
 /**
  * Component for showing a dialog between user and the llm chat defined in the backend.
