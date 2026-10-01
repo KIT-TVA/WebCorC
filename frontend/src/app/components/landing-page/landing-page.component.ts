@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from "@angular/core";
 
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { ProjectService } from "../../services/project/project.service";
 import { MatDialog } from "@angular/material/dialog";
 import { OpenProjectDialogComponent } from "./open-project-dialog/open-project-dialog.component";
@@ -23,6 +23,10 @@ import {
   DynamicDialogRef,
 } from "@openng/optimus-ui/dynamicdialog";
 import { LocalDirectory } from "../../services/project/types/api-elements";
+import {
+  DiagramFile,
+  ProjectDirectory,
+} from "../../services/project/types/project-elements";
 
 @Component({
   selector: "app-landing-page",
@@ -43,6 +47,7 @@ import { LocalDirectory } from "../../services/project/types/api-elements";
 })
 export class LandingPageComponent {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private projectService = inject(ProjectService);
   private dialog = inject(MatDialog);
   dialogService = inject(DialogService);
@@ -120,7 +125,36 @@ export class LandingPageComponent {
           selectedExample.project,
           selectedExample.name,
         );
+        this.openFirstDiagram(this.projectService.root);
       }
     });
+  }
+
+  private openFirstDiagram(directory: ProjectDirectory) {
+    const diagram = this.findFirstDiagram(directory);
+    if (diagram) {
+      this.router.navigate(["editor/diagram/", diagram.path], {
+        queryParamsHandling: "preserve",
+      });
+    }
+  }
+
+  private findFirstDiagram(
+    directory: ProjectDirectory,
+  ): DiagramFile | undefined {
+    for (const element of directory.contents) {
+      if (element instanceof DiagramFile) {
+        return element;
+      }
+    }
+    for (const element of directory.contents) {
+      if (element instanceof ProjectDirectory) {
+        const diagram = this.findFirstDiagram(element);
+        if (diagram) {
+          return diagram;
+        }
+      }
+    }
+    return undefined;
   }
 }
