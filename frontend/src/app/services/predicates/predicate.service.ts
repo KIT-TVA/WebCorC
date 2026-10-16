@@ -95,7 +95,7 @@ export class PredicateService {
       }
       //Replace .length with length() and
       result += `\\replacewith (${predicate.definition
-        .replace(/(?:^|\s|;|\()(\w+)\.length(?=\s|;|\+|-|\)|$)/g, "length($1)")
+        .replace(/(^|\s|;|\()(\w+)\.length(?=\s|;|\+|-|\)|$)/g, "$1length($2)")
         .replace(/==>/g, "->")
         .replace(/&&/g, "&")
         .replace(/\|\|/g, "|")

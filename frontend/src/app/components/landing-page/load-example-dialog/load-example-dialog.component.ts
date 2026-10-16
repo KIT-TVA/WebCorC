@@ -2,7 +2,6 @@ import { Component, inject } from "@angular/core";
 import {
   LocalDiagramFile,
   LocalDirectory,
-  LocalTextFile,
 } from "../../../services/project/types/api-elements";
 import { Listbox } from "@openng/optimus-ui/listbox";
 import { Button } from "@openng/optimus-ui/button";
@@ -22,6 +21,15 @@ import { CompositionStatement } from "../../../types/statements/composition-stat
 import { SelectionStatement } from "../../../types/statements/selection-statement";
 import { JavaVariable } from "../../../types/JavaVariable";
 import { SkipStatement } from "../../../types/statements/strong-weak-statement";
+import { ProjectPredicate } from "../../../types/ProjectPredicate";
+
+export interface ExampleProgram {
+  name: string;
+  icon: string;
+  project: LocalDirectory;
+  /** Predicates loaded into the predicate manager together with the example */
+  predicates?: ProjectPredicate[];
+}
 
 @Component({
   selector: "app-load-example-dialog",
@@ -35,22 +43,14 @@ export class LoadExampleDialogComponent {
   config = inject(DynamicDialogConfig);
   projectService = inject(ProjectService);
 
-  selectedExample: {
-    name: string;
-    icon: string;
-    project: LocalDirectory;
-  } | null = null;
+  selectedExample: ExampleProgram | null = null;
 
   /** Inserted by Angular inject() migration for backwards compatibility */
   constructor(...args: unknown[]);
 
   constructor() {}
 
-  public readonly EXAMPLE_PROGRAMS: {
-    name: string;
-    icon: string;
-    project: LocalDirectory;
-  }[] = [
+  public readonly EXAMPLE_PROGRAMS: ExampleProgram[] = [
     {
       name: "SimpleAddition",
       icon: "exposure_plus_1",
@@ -141,29 +141,15 @@ export class LoadExampleDialogComponent {
           ),
           "file",
         ),
-        new LocalDirectory("include", [
-          new LocalTextFile(
-            "include/predicates.key",
-            "\\predicates {\n" +
-              "    appears(int[], int, int, int);\n" +
-              "}\n" +
-              "\n" +
-              "\\rules {\n" +
-              "    appears {\n" +
-              "        \\schemaVar \\term int[] A;\n" +
-              "        \\schemaVar \\term int x;\n" +
-              "        \\schemaVar \\term int start;\n" +
-              "        \\schemaVar \\term int end;\n" +
-              "        \\schemaVar \\variable int q;\n" +
-              "        \\find (appears(A, x, start, end))\n" +
-              "        \\varcond (\\notFreeIn(q,A), \\notFreeIn(q,x), \\notFreeIn(q,start), \\notFreeIn(q,end))\n" +
-              "        \\replacewith (\\exists int q; (q >= start & q < end & A[q]=x))\n" +
-              "        \\heuristics(simplify)\n" +
-              "    };\n" +
-              "}\n",
-          ),
-        ]),
       ]),
+      predicates: [
+        {
+          id: "0",
+          name: "appears",
+          signature: "appears(int[] A, int x, int start, int end)",
+          definition: "\\exists int q; (q >= start && q < end && A[q] == x)",
+        },
+      ],
     },
     {
       name: "MaxElement",
@@ -277,29 +263,16 @@ export class LoadExampleDialogComponent {
             ],
           ),
         ),
-        new LocalDirectory("include", [
-          new LocalTextFile(
-            "include/predicates.key",
-            "\\predicates {\n" +
-              "    maxe(int[], int, int, int);\n" +
-              "}\n" +
-              "\n" +
-              "\\rules {\n" +
-              "    maxe {\n" +
-              "        \\schemaVar \\term int[] A;\n" +
-              "        \\schemaVar \\term int begin;\n" +
-              "        \\schemaVar \\term int end;\n" +
-              "        \\schemaVar \\term int m;\n" +
-              "        \\schemaVar \\variable int q;\n" +
-              "        \\find (maxe(A, begin, end, m))\n" +
-              "        \\varcond (\\notFreeIn(q,A), \\notFreeIn(q,begin), \\notFreeIn(q,end), \\notFreeIn(q,m))\n" +
-              "        \\replacewith (\\forall int q; ((q >= begin & q < end) -> A[m] >= A[q]))\n" +
-              "        \\heuristics(simplify)\n" +
-              "    };\n" +
-              "}\n",
-          ),
-        ]),
       ]),
+      predicates: [
+        {
+          id: "0",
+          name: "maxe",
+          signature: "maxe(int[] A, int begin, int end, int m)",
+          definition:
+            "\\forall int q; ((q >= begin && q < end) ==> A[m] >= A[q])",
+        },
+      ],
     },
     {
       name: "Transaction",
@@ -554,47 +527,30 @@ export class LoadExampleDialogComponent {
             ],
           ),
         ),
-        new LocalDirectory("include", [
-          new LocalTextFile(
-            "include/bubblesort.key",
-            "\\predicates {\n" +
-              "partSort(int[], int);\n" +
-              "sort(int[]);\n" +
-              "containsOldElements(int[], int[]);\n" +
-              "}\n" +
-              "\\rules {\n" +
-              "partSort {\n" +
-              "\\schemaVar \\term int[] list;\n" +
-              "\\schemaVar \\term int index;\n" +
-              "\\schemaVar \\variable  int k;\n" +
-              "\\schemaVar \\variable  int m;\n" +
-              "\\find(partSort(list, index))\n" +
-              "\\varcond (\\notFreeIn(k, list), \\notFreeIn(k, index), \\notFreeIn(m, list), \\notFreeIn(m, index))\n" +
-              "\\replacewith ((\\forall int k; (0 <= k & k < index -> (\\forall int m; (k < m & m <length(list) -> list[k] <= list[m])))))\n" +
-              "\\heuristics(simplify)\n" +
-              "};\n" +
-              "sort {\n" +
-              "\\schemaVar \\term int[] list;\n" +
-              "\\schemaVar \\variable  int k;\n" +
-              "\\find(sort(list))\n" +
-              "\\varcond (\\notFreeIn(k, list))\n" +
-              "\\replacewith (\\forall int k; (0 <= k & k <length(list)-1 -> (list[k] <= list[k+1])))\n" +
-              "\\heuristics(simplify)\n" +
-              "};\n" +
-              "containsOldElements {\n" +
-              "\\schemaVar \\term int[] list;\n" +
-              "\\schemaVar \\term int[] oldList;\n" +
-              "\\schemaVar \\variable  int k;\n" +
-              "\\schemaVar \\variable  int z;\n" +
-              "\\find(containsOldElements(list, oldList))\n" +
-              "\\varcond (\\notFreeIn(k, list), \\notFreeIn(k, oldList), \\notFreeIn(z, list), \\notFreeIn(z, oldList))\n" +
-              "\\replacewith (\\forall int k; (0 <= k & k <length(oldList) -> (\\exists int z; (0 <= z & z <length(list) & list[z] = oldList[k]))))\n" +
-              "\\heuristics(simplify)\n" +
-              "};\n" +
-              "}\n",
-          ),
-        ]),
       ]),
+      predicates: [
+        {
+          id: "0",
+          name: "partSort",
+          signature: "partSort(int[] list, int index)",
+          definition:
+            "\\forall int k; (0 <= k && k < index ==> (\\forall int m; (k < m && m < list.length ==> list[k] <= list[m])))",
+        },
+        {
+          id: "1",
+          name: "sort",
+          signature: "sort(int[] list)",
+          definition:
+            "\\forall int k; (0 <= k && k < list.length-1 ==> list[k] <= list[k+1])",
+        },
+        {
+          id: "2",
+          name: "containsOldElements",
+          signature: "containsOldElements(int[] list, int[] oldList)",
+          definition:
+            "\\forall int k; (0 <= k && k < oldList.length ==> (\\exists int z; (0 <= z && z < list.length && list[z] == oldList[k])))",
+        },
+      ],
     },
   ];
 }
