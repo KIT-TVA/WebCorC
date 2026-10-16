@@ -7,7 +7,11 @@ import { ProjectService } from "../../services/project/project.service";
 import { MatDialog } from "@angular/material/dialog";
 import { OpenProjectDialogComponent } from "./open-project-dialog/open-project-dialog.component";
 import { ImportProjectDialogComponent } from "./import-project-dialog/import-project-dialog.component";
-import { LoadExampleDialogComponent } from "./load-example-dialog/load-example-dialog.component";
+import {
+  ExampleProgram,
+  LoadExampleDialogComponent,
+} from "./load-example-dialog/load-example-dialog.component";
+import { PredicateService } from "../../services/predicates/predicate.service";
 import { ImportFileDialogComponent } from "../project-explorer/import-file-dialog/import-file-dialog";
 import { Card } from "@openng/optimus-ui/card";
 import { MenuItem } from "@openng/optimus-ui/api";
@@ -49,6 +53,7 @@ export class LandingPageComponent {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private projectService = inject(ProjectService);
+  private predicateService = inject(PredicateService);
   private dialog = inject(MatDialog);
   dialogService = inject(DialogService);
 
@@ -119,15 +124,34 @@ export class LandingPageComponent {
       closable: true,
     });
 
-    dialogRef?.onClose.subscribe((selectedExample) => {
-      if (selectedExample) {
-        this.projectService.importProject(
-          selectedExample.project,
-          selectedExample.name,
-        );
-        this.openFirstDiagram(this.projectService.root);
-      }
-    });
+    dialogRef?.onClose.subscribe(
+      async (selectedExample: ExampleProgram | undefined) => {
+        if (selectedExample) {
+          await this.projectService.importProject(
+            selectedExample.project,
+            selectedExample.name,
+          );
+          this.loadExamplePredicates(selectedExample);
+          this.openFirstDiagram(this.projectService.root);
+        }
+      },
+    );
+  }
+
+  /**
+   * Store the example's predicates for the predicate manager and generate
+   * include/generatedPredicates.key from them, so they are available for verification
+   */
+  private loadExamplePredicates(example: ExampleProgram) {
+    const hasPredicates = !!example.predicates?.length;
+    if (hasPredicates) {
+      this.projectService.savePredicates(example.predicates!);
+    }
+    // Refresh the cached list, otherwise the previous project's predicates would be exported on save
+    this.predicateService.retrievePredicates();
+    if (hasPredicates) {
+      this.predicateService.exportPredicates();
+    }
   }
 
   private openFirstDiagram(directory: ProjectDirectory) {

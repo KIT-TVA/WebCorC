@@ -407,12 +407,12 @@ export class ProjectService {
     return this.mapper.exportDirectory(this._rootDir);
   }
 
-  public importProject(rootDir: LocalDirectory, projectname: string) {
+  public async importProject(rootDir: LocalDirectory, projectname: string) {
     const imported = this.mapper.importProject(rootDir as LocalDirectory);
     this._rootDir = imported;
     this._projectName = projectname;
     this.storage.saveProject(imported, projectname);
-    this.loadPredicatesFromFile();
+    await this.loadPredicatesFromFile();
     this._dataChange.next(this._rootDir.contents);
   }
 
