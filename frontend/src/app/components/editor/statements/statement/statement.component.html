@@ -7,7 +7,7 @@
         <handle type="target" position="top"/>
     }
     @if (!hideSourceHandle) {
-        <handle type="source" position="bottom" id="0"/>
+        <handle type="source" position="bottom" id="0" [offsetY]="bottomSpace"/>
     }
     <ng-template #header>
         <p-toolbar

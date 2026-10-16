@@ -43,6 +43,18 @@
   border-right-width: 0;
   overflow: hidden;
 }
+:host > p-card {
+  pointer-events: auto;
+}
+
+:host ::ng-deep .mat-drawer-inner-container {
+  overflow: visible;
+}
+:host ::ng-deep .example-container:has(.mat-drawer-opened .condition-syntax-error--floating),
+:host ::ng-deep .example-container:has(.mat-drawer-opened .condition-syntax-error--floating) .mat-drawer-opened {
+  overflow: visible;
+}
+
 .example-sidenav-content {
   display: flex;
   height: 100%;

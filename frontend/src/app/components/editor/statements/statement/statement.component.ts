@@ -39,6 +39,8 @@ import { AsyncPipe } from "@angular/common";
 import { AiChatService } from "../../../../services/ai-chat/ai-chat.service";
 import { SimpleStatementNode } from "../../../../types/statements/nodes/simple-statement-node";
 
+export const STATEMENT_BOTTOM_SPACE_PX = 56;
+
 /**
  * Component to present the statements.
  * This component is only to show the statement given.
@@ -47,6 +49,7 @@ import { SimpleStatementNode } from "../../../../types/statements/nodes/simple-s
  */
 @Component({
   selector: "app-statement-base",
+  host: { "[style.padding-bottom.px]": "bottomSpace" },
   imports: [
     MatGridListModule,
     MatFormFieldModule,
@@ -96,6 +99,7 @@ export class StatementComponent {
   @ViewChild("postconditionDiv") private postconditionDivRef!: ElementRef;
 
   public isVerifying = signal(false);
+  protected readonly bottomSpace = STATEMENT_BOTTOM_SPACE_PX;
 
   /** Inserted by Angular inject() migration for backwards compatibility */
   constructor(...args: unknown[]);
