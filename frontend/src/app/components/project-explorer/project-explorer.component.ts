@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { Component, HostListener, inject } from "@angular/core";
 
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
@@ -381,6 +381,28 @@ export class ProjectExplorerComponent {
           severity: "success",
         }),
       );
+    }
+  }
+
+  /**
+   * Save the project with Ctrl+S (Cmd+S on macOS) while an editor is open,
+   * instead of the browser's "Save page" dialog
+   * @param event the keyboard event
+   */
+  @HostListener("document:keydown", ["$event"])
+  public onSaveShortcut(event: KeyboardEvent) {
+    if (
+      !(event.ctrlKey || event.metaKey) ||
+      event.altKey ||
+      event.shiftKey ||
+      event.key.toLowerCase() !== "s" ||
+      !this.router.url.startsWith("/editor")
+    ) {
+      return;
+    }
+    event.preventDefault();
+    if (!event.repeat) {
+      this.save();
     }
   }
 
