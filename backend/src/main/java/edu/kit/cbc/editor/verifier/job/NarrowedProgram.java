@@ -238,7 +238,16 @@ public final class NarrowedProgram {
             settingsStamps.put(verifier.id(), verifier.settingsUpdatedAt());
             markRootAndEveryStatement(verifier.id(), false, null, null);
         }
-        for (String id : disabledVerifierIds) {
+        markDisabled(disabledVerifierIds);
+    }
+
+    /**
+     * Marks each id's entry on every statement and on the Root {@code proven: false},
+     * {@code disabled: true} with no {@code status} or stamp, keeping any authored conditions —
+     * a Verifier that does not run this time, whether not enabled or gated by a functional failure.
+     */
+    public synchronized void markDisabled(Collection<String> verifierIds) {
+        for (String id : verifierIds) {
             settingsStamps.remove(id);
             markRootAndEveryStatement(id, false, null, true);
         }

@@ -256,11 +256,11 @@ class VerificationJobTest {
         Assertions.assertEquals(Boolean.FALSE, job.getFormula().getVerifiers().get(FUNC).proven());
 
         VerifierEntry mockEntry = job.getFormula().getStatement().getVerifiers().get("mock");
-        Assertions.assertEquals(Boolean.FALSE, mockEntry.proven(),
-            "The reset happened before the functional gate, so the enabled Verifier's entry is this run's although it never ran");
-        Assertions.assertNull(mockEntry.disabled(), "mock was enabled for this run; it just never got the chance");
+        Assertions.assertEquals(Boolean.FALSE, mockEntry.proven());
+        Assertions.assertEquals(Boolean.TRUE, mockEntry.disabled(), "mock was enabled, but the functional gate kept it from running");
         Assertions.assertNull(mockEntry.status());
-        Assertions.assertEquals(Boolean.FALSE, job.getFormula().getVerifiers().get("mock").proven(), "The Root too");
+        Assertions.assertNull(mockEntry.settingsUpdatedAt(), "A disabled entry carries no stamp");
+        Assertions.assertEquals(Boolean.TRUE, job.getFormula().getVerifiers().get("mock").disabled(), "The Root too");
         Assertions.assertEquals(Boolean.TRUE, job.getFormula().getVerifiers().get("off").disabled(),
             "And the Verifier that was not enabled is marked as not run");
         VerificationMessage funcDone = messages.stream()

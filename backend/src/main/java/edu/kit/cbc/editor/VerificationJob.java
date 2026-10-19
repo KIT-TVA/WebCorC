@@ -145,7 +145,7 @@ public class VerificationJob extends Thread {
         // Verifier's entry happens up front, in both modes, so that no verdict of an earlier run
         // can survive any outcome of this one.
         NarrowedProgram program = NarrowedProgram.of(formula);
-        resetVerifierEntries(program);
+        List<String> enabledIds = resetVerifierEntries(program);
 
         boolean proven = formula.getStatement().prove(context.build());
         formula.setProven(proven);
@@ -213,6 +213,9 @@ public class VerificationJob extends Thread {
                 LOGGER.log(Level.SEVERE, "Fan-out of job " + jobId + " failed unexpectedly", e);
                 orchestrationLog("calling the Verifiers failed unexpectedly: " + e.getMessage());
             }
+        } else if (!proven) {
+            // The functional gate keeps every enabled Verifier from running.
+            program.markDisabled(enabledIds);
         }
 
         hasResult = true;
@@ -234,22 +237,26 @@ public class VerificationJob extends Thread {
      * functional-only (for the ids to mark disabled). A failure here is a bug, not an expected
      * state — the Catalog the job joins is the one the frontend already fetched — so it is only
      * reported and the run continues functionally.
+     *
+     * @return the ids of the enabled Verifiers that were reset; empty if the reset failed
      */
-    private void resetVerifierEntries(NarrowedProgram program) {
+    private List<String> resetVerifierEntries(NarrowedProgram program) {
         try {
             VerifierCatalog resolvedCatalog = catalog.toCompletableFuture().join();
             List<ResolvedVerifier> enabled = enabledVerifiers(resolvedCatalog);
-            Set<String> enabledIds = enabled.stream().map(ResolvedVerifier::id).collect(Collectors.toSet());
+            List<String> enabledIds = enabled.stream().map(ResolvedVerifier::id).toList();
             List<String> disabledIds = resolvedCatalog.verifiers().stream()
                 .map(Verifier::id)
                 .filter(id -> !FUNC.equals(id))
                 .filter(id -> !enabledIds.contains(id))
                 .toList();
             program.resetForRun(enabled, disabledIds);
+            return enabledIds;
         } catch (RuntimeException e) {
             LOGGER.log(Level.SEVERE, "Resetting the Verifier entries of job " + jobId + " failed", e);
             orchestrationLog("resetting the Verifier entries failed; every Verifier entry keeps what the last run left it: "
                 + e.getMessage());
+            return List.of();
         }
     }
 
