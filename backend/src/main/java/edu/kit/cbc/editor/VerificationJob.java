@@ -145,7 +145,7 @@ public class VerificationJob extends Thread {
         // Verifier's entry happens up front, in both modes, so that no verdict of an earlier run
         // can survive any outcome of this one.
         NarrowedProgram program = NarrowedProgram.of(formula);
-        List<String> enabledIds = resetVerifierEntries(program);
+        final List<String> enabledIds = resetVerifierEntries(program);
 
         boolean proven = formula.getStatement().prove(context.build());
         formula.setProven(proven);
