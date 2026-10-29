@@ -14,6 +14,7 @@ import io.micronaut.serde.annotation.Serdeable;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.Data;
+import lombok.Getter;
 
 @Data
 @Serdeable
@@ -25,12 +26,13 @@ public class Condition {
     private static final String BOOLEAN_TYPE_NAME = "boolean";
     private static final String BOOLEAN_REPLACEMENT = "TRUE=";
 
-    private String condition;
+    @Getter
+    private String rawCondition;
     @JsonIgnore
     private Tree parsedCondition;
 
     public void setCondition(String condition) {
-        this.condition = condition;
+        this.rawCondition = condition;
         Lexer lexer = ConditionLexer.forString(condition);
         TokenSource source = new TokenSource(lexer);
         ConditionParser parser = new ConditionParser(source);
@@ -44,9 +46,9 @@ public class Condition {
     public Condition rename(List<Renaming> renamings) {
         renamings.forEach(renaming -> {
             if (renaming.getType().equalsIgnoreCase(BOOLEAN_TYPE_NAME)) {
-                this.condition = this.condition.replaceAll(renaming.getFunction(), BOOLEAN_REPLACEMENT + renaming.getNewName());
+                this.rawCondition = this.rawCondition.replaceAll(renaming.getFunction(), BOOLEAN_REPLACEMENT + renaming.getNewName());
             } else {
-                this.condition = this.condition.replaceAll(renaming.getFunction(), renaming.getNewName());
+                this.rawCondition = this.rawCondition.replaceAll(renaming.getFunction(), renaming.getNewName());
             }
         });
 

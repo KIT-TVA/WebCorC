@@ -203,6 +203,8 @@ export class NetworkJobService {
     root: LocalCBCFormula | undefined,
     projectId?: string | undefined,
   ) {
+    console.log("Hier")
+    console.log(root);
     let params = new HttpParams();
 
     if (projectId) {

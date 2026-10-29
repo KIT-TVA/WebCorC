@@ -58,8 +58,8 @@ public class EditorController {
     @Post(uri = "/generate")
     @Produces(MediaType.APPLICATION_ZIP)
     @Consumes(MediaType.APPLICATION_JSON)
-    public HttpResponse<String> generate(@Body @Valid CbCFormula formula) {
-        return HttpResponse.ok(CodeGenerator.generate(formula));
+    public HttpResponse<String> generate(@Body @Valid CbCFormula formula) throws IOException {
+        return HttpResponse.ok(CodeGenerator.generate(Optional.empty(), formula, filesController));
     }
 
     @Post(uri = "/verify")
@@ -82,8 +82,8 @@ public class EditorController {
     @Post(uri = "/javaGen")
     @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.APPLICATION_JSON)
-    public HttpResponse<?> javaGen(@QueryValue Optional<String> projectId, @Body CbCFormula cbcFormula) {
-        return HttpResponse.ok(CodeGenerator.generate(cbcFormula));
+    public HttpResponse<?> javaGen(@QueryValue Optional<String> projectId, @Body CbCFormula cbcFormula) throws IOException {
+        return HttpResponse.ok(CodeGenerator.generate(projectId, cbcFormula, filesController));
     }
 
     @Get(uri = "/jobs/{jobId}")
