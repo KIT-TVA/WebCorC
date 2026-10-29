@@ -1,11 +1,16 @@
 
 package edu.kit.cbc.common.corc.codegeneration;
 
-import java.util.*;
+import static edu.kit.cbc.common.corc.codegeneration.KeYPredicateParser.findMatching;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static edu.kit.cbc.common.corc.codegeneration.KeYPredicateParser.findMatching;
 
 public final class KeYPredicateExpander {
     /**

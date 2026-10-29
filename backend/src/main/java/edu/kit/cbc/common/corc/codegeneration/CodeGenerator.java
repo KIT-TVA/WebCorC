@@ -4,7 +4,6 @@ import edu.kit.cbc.common.corc.cbcmodel.CbCFormula;
 import edu.kit.cbc.common.corc.cbcmodel.JavaVariable;
 import edu.kit.cbc.common.corc.cbcmodel.JavaVariableKind;
 import edu.kit.cbc.projects.files.controller.FilesController;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -111,7 +110,7 @@ public final class CodeGenerator {
         return localVariables.toString();
     }
 
-    private static String generateJML(String requiresJML, String ensuresJML){
+    private static String generateJML(String requiresJML, String ensuresJML) {
         return String.format(JML_PATTERN, requiresJML, ensuresJML);
     }
 }
