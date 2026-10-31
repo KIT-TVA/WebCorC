@@ -6,7 +6,7 @@ import {
   createEmptyStatementNode,
   statementNodeUtils,
 } from "./statement-node-utils";
-import { StatementType } from "../abstract-statement";
+import { IVerifiers, sparseVerifierEntry, StatementType } from "../abstract-statement";
 
 export class CompositionStatementNode extends AbstractStatementNode {
   public intermediateCondition: BehaviorSubject<ICondition>;
@@ -54,6 +54,23 @@ export class CompositionStatementNode extends AbstractStatementNode {
     }
   }
 
+  /**
+   * The intermediate condition a specific verifier attaches to this composition.
+   * Bound to the intermediate condition slot, so it is shared with the first
+   * child's post- and the second child's precondition exactly like
+   * {@link intermediateCondition} itself.
+   * @param verifierId The id of the verifier owning the condition
+   */
+  public verifierIntermediateCondition(
+    verifierId: string,
+  ): BehaviorSubject<ICondition> {
+    return this.slotVerifierCondition(
+      this.intermediateCondition,
+      verifierId,
+      this.statement.verifiers?.[verifierId]?.intermediateCondition,
+    );
+  }
+
   override overridePrecondition(condition: BehaviorSubject<ICondition>) {
     super.overridePrecondition(condition);
     this.firstStatementNode?.overridePrecondition(condition);
@@ -73,6 +90,53 @@ export class CompositionStatementNode extends AbstractStatementNode {
     this.secondStatementNode?.finalize();
   }
 
+  /**
+   * Extends every verifier's entry by its intermediate condition, so a composition
+   * persists all of its verifier conditions in the single `verifiers` record. The
+   * intermediate condition is the third slot the sparse form applies to: present
+   * only when non-empty, and enough on its own to keep an entry alive.
+   */
+  protected override finalizeVerifierConditions(): IVerifiers {
+    const conditions = super.finalizeVerifierConditions();
+    const intermediateConditions =
+      CompositionStatementNode.finalizeSlotConditions(
+        this.intermediateCondition,
+        this.storedIntermediateConditions(),
+      );
+    const verifierIds = new Set([
+      ...Object.keys(conditions),
+      ...Object.keys(intermediateConditions),
+    ]);
+
+    const finalized: IVerifiers = {};
+    for (const verifierId of verifierIds) {
+      const sparse = sparseVerifierEntry({
+        ...conditions[verifierId],
+        intermediateCondition: intermediateConditions[verifierId],
+      });
+      if (sparse) {
+        finalized[verifierId] = sparse;
+      }
+    }
+    return finalized;
+  }
+
+  /**
+   * The persisted intermediate conditions of all verifiers, in the flat form
+   * {@link AbstractStatementNode.finalizeSlotConditions} expects.
+   */
+  private storedIntermediateConditions(): Record<string, ICondition> {
+    const stored: Record<string, ICondition> = {};
+    for (const [verifierId, conditionSet] of Object.entries(
+      this.statement.verifiers ?? {},
+    )) {
+      if (conditionSet.intermediateCondition) {
+        stored[verifierId] = conditionSet.intermediateCondition;
+      }
+    }
+    return stored;
+  }
+
   override deleteChild(node: AbstractStatementNode) {
     switch (node) {
       case this.firstStatementNode:
@@ -87,32 +151,34 @@ export class CompositionStatementNode extends AbstractStatementNode {
   }
 
   override checkConditionSync(child: AbstractStatementNode): boolean {
+    if (child.statement.type == "REPETITION") {
+      const first = child == this._firstStatementNode;
+      child.overridePrecondition(first ? this.precondition : this.intermediateCondition);
+      child.overridePostcondition(first ? this.intermediateCondition : this.postcondition);
+      return true;
+    }
     let inSync;
     if (child == this._firstStatementNode) {
       inSync =
-        (this.precondition.getValue() == child.precondition.getValue() &&
-          this.intermediateCondition.getValue() == child.postcondition.getValue()) ||
-        child.statement.type == "REPETITION";
+        this.precondition.getValue() == child.precondition.getValue() &&
+        this.intermediateCondition.getValue() == child.postcondition.getValue();
       if (!inSync) {
         this.getConditionConflicts(child);
       }
       inSync =
-        (this.precondition.getValue() == child.precondition.getValue() &&
-          this.intermediateCondition.getValue() == child.postcondition.getValue()) ||
-        child.statement.type == "REPETITION";
+        this.precondition.getValue() == child.precondition.getValue() &&
+        this.intermediateCondition.getValue() == child.postcondition.getValue();
       return inSync;
     }
     inSync =
-      (this.intermediateCondition.getValue() == child.precondition.getValue() &&
-        this.postcondition.getValue() == child.postcondition.getValue()) ||
-      child.statement.type == "REPETITION";
+      this.intermediateCondition.getValue() == child.precondition.getValue() &&
+      this.postcondition.getValue() == child.postcondition.getValue();
     if (!inSync) {
       this.getConditionConflicts(child);
     }
     inSync =
-      (this.intermediateCondition.getValue() == child.precondition.getValue() &&
-        this.postcondition.getValue() == child.postcondition.getValue()) ||
-      child.statement.type == "REPETITION";
+      this.intermediateCondition.getValue() == child.precondition.getValue() &&
+      this.postcondition.getValue() == child.postcondition.getValue();
     return inSync;
   }
 

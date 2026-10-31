@@ -49,6 +49,20 @@ google.accessToken: '${GOOGLE_ACCESS_TOKEN:changeme}'
 
 development: '${DEVELOPMENT:false}'
 
+# Verifier Registry: the Verifiers this deployment provides, in presentation order.
+# Empty by default; a deployment mounts its own list via MICRONAUT_CONFIG_FILES.
+verifiers: []
+
+# Startup fetch of the Verifiers' Self-Descriptions: an unreachable Verifier is asked again
+# `retries` times, `retry-delay` apart, before it is locked off in the Verifier Catalog until
+# the next restart. An invalid Self-Description is never retried. Each attempt uses the
+# `micronaut.http.client` timeouts above. The fetch runs beside the startup, not in it: the
+# HTTP server is up meanwhile and a request for the Catalog is held until the fetch is done.
+# Override any of these in the same file as the Registry.
+verifier-catalog:
+  retries: 3
+  retry-delay: 10s
+  
 rate-limit:
   enabled: true
   requests-per-minute: 10

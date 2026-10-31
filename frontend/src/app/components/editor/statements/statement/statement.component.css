@@ -5,15 +5,19 @@
     width: fit-content;
 }
 
-.refinementBox--unverified {
+.refinementBox--secondary {
     border-color: slategray;
 
 }
 
-.refinementBox--verified {
+.refinementBox--success {
   border-color: lightgreen;
 }
-.refinementBox--failed {
+.refinementBox--warn {
+  border-color: orange;
+}
+
+.refinementBox--danger {
     border-color: lightcoral;
 }
 
@@ -88,4 +92,77 @@
   left: calc(50% + 95px);
   transform: translate(-50%, -50%);
   z-index: 2;
+}
+
+.popup-flex-row {
+  display: flex;
+  /* Definite height so the fill-mode condition editors (height: 100% / flex chains)
+     have something to resolve against inside the auto-height accordion content. */
+  height: 45vh;
+  min-height: 18rem;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+
+.popup-column {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.popup-column.open {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.popup-column.closed {
+  flex: 0 0 3rem;
+  min-width: 3rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.popup-column-header {
+  display: flex;
+  justify-content: flex-end;
+  flex: 0 0 auto;
+}
+
+.popup-column-body {
+  flex: 1 1 auto;
+  overflow: auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  gap: 0.5rem;
+  padding: 0.5rem;
+}
+
+.popup-column-body > .popup-fill-target {
+  flex: 1 1 0;
+  min-height: 0;
+}
+
+.popup-collapsed-tab.verticalButton {
+  position: static;
+  white-space: nowrap;
+}
+
+/* PrimeNG mutes collapsed headers to the same grey as the status; keep the name distinct. */
+.verifier-label {
+  flex-shrink: 0;
+  white-space: nowrap;
+  color: var(--p-accordion-header-active-color);
+}
+
+.verifier-status {
+  margin-left: auto;
+  margin-right: 0.5rem;
+  min-width: 0;
+  color: var(--mat-sys-outline, #888);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

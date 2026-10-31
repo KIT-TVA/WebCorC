@@ -1,17 +1,10 @@
-type: object 
-description: Condition 
+type: object
+description: >-
+  A condition in the editor's condition language. Must not be empty; the
+  backend returns it re-printed in its own normalized form.
 properties:
-  content: 
-    type: string 
-
-  originID: 
-    type: integer
-    format: int64
-
-  title:
-    type: string 
+  condition:
+    type: string
 
 required:
-  - content
-  - originID
-  - title
+  - condition

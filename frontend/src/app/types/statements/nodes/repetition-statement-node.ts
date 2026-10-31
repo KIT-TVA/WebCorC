@@ -58,9 +58,17 @@ export class RepetitionStatementNode extends AbstractStatementNode {
     return this._loopStatementNode;
   }
 
-  override overridePrecondition(condition: BehaviorSubject<ICondition>) {}
+  /**
+   * The functional conditions stay derived from invariant and guard; verifiers have
+   * neither, so their conditions pass through from the parent to the loop body.
+   */
+  override overridePrecondition(condition: BehaviorSubject<ICondition>) {
+    AbstractStatementNode.shareSlotVerifierConditions(condition, this.precondition);
+  }
 
-  override overridePostcondition(condition: BehaviorSubject<ICondition>) {}
+  override overridePostcondition(condition: BehaviorSubject<ICondition>) {
+    AbstractStatementNode.shareSlotVerifierConditions(condition, this.postcondition);
+  }
 
   override get preconditionEditable() {
     return this.dummyEditable;

@@ -1,33 +1,47 @@
 <app-statement-base icon="pi pi-sync" [_node]="_node" [refinement]="this">
-  <div class="relative flex items-center h-full w-56">
-    <app-condition-editor
-      placeholder="Invariant"
-      [condition]="_node.invariant"
-      (textChanged)="onEditableContentChanged()"
-    ></app-condition-editor>
-  </div>
-  <div class="relative flex items-center h-full w-56">
-    <app-condition-editor
-      placeholder="Guard"
-      [condition]="_node.guard"
-      (textChanged)="onEditableContentChanged()"
-    ></app-condition-editor>
-  </div>
-  <div class="relative flex items-center h-full w-56">
-    <app-condition-editor
-      placeholder="Variant"
-      [condition]="_node.variant"
-      (textChanged)="onEditableContentChanged()"
-    ></app-condition-editor>
-  </div>
-  <div class="w-fit">
-    @if (!_node.loopStatementNode) {
-      <app-refinement-widget
-        text="Loop Statement"
-        icon="add"
-        (select)="chooseRefinement($event)"
-        >
-      </app-refinement-widget>
+  <ng-template #middleContent let-popup="popup">
+    <div class="relative flex items-center h-full"
+         [class.w-56]="!popup"
+         [class.w-full]="popup"
+         [class.popup-fill-target]="popup">
+      <app-condition-editor
+        placeholder="Invariant"
+        [condition]="_node.invariant"
+        [fill]="popup"
+        (textChanged)="onEditableContentChanged()"
+      ></app-condition-editor>
+    </div>
+    <div class="relative flex items-center h-full"
+         [class.w-56]="!popup"
+         [class.w-full]="popup"
+         [class.popup-fill-target]="popup">
+      <app-condition-editor
+        placeholder="Guard"
+        [condition]="_node.guard"
+        [fill]="popup"
+        (textChanged)="onEditableContentChanged()"
+      ></app-condition-editor>
+    </div>
+    <div class="relative flex items-center h-full"
+         [class.w-56]="!popup"
+         [class.w-full]="popup"
+         [class.popup-fill-target]="popup">
+      <app-condition-editor
+        placeholder="Variant"
+        [condition]="_node.variant"
+        [fill]="popup"
+        (textChanged)="onEditableContentChanged()"
+      ></app-condition-editor>
+    </div>
+    @if (!popup && !_node.loopStatementNode) {
+      <div class="w-fit">
+        <app-refinement-widget
+          text="Loop Statement"
+          icon="add"
+          (select)="chooseRefinement($event)"
+          >
+        </app-refinement-widget>
+      </div>
     }
-  </div>
+  </ng-template>
 </app-statement-base>

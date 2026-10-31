@@ -21,6 +21,8 @@ services:
       context: backend
     env_file:
       - docker-compose.env
+    volumes:
+      - ./verifiers.yml:/config/verifiers.yml:ro
     depends_on:
       rustfs:
         condition: service_started

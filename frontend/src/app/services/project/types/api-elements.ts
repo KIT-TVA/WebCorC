@@ -48,7 +48,7 @@ export class ApiDirectory implements Inode {
 /**
  * Possible types of files in the project directory
  */
-export type ApiFileType = "key" | "prove" | "java" | "diagram" | "other";
+export type ApiFileType = "key" | "prove" | "java" | "diagram" | "json" | "other";
 
 /**
  * See openapi/schema/file/diagramm.yml
@@ -97,6 +97,8 @@ export class ApiDiagramFile extends ApiFile {
     }
     formattedContent.preCondition = content.statement.preCondition;
     formattedContent.postCondition = content.statement.postCondition;
+    formattedContent.verifiers =
+      content.verifiers ?? content.statement.verifiers ?? {};
     if ("position" in content.statement)
       formattedContent.position =
         content.position ?? (content.statement.position as IPosition);
@@ -125,6 +127,7 @@ export class ApiDiagramFile extends ApiFile {
         local.content.renamings,
         local.content.isProven,
         local.content.statement?.position,
+        local.content.statement?.verifiers,
       ),
       local.inodeType,
     );
@@ -219,6 +222,7 @@ export class LocalFile implements LocalInode {
         case "java":
         case "key":
         case "prove":
+        case "json":
           return LocalTextFile.fromApi(api as ApiTextFile);
       }
     }
@@ -233,10 +237,14 @@ export class LocalFile implements LocalInode {
       case "java":
       case "key":
       case "proof":
+      case "json":
         return new LocalTextFile(api.urn, "", api.inodeType, false);
       default:
     }
-    throw Error("Unknown Api File type");
+    const reportedType = "type" in api ? (api as ApiFile).type : "<missing>";
+    throw Error(
+      `Unknown Api File type: urn="${api.urn}" type="${reportedType}"`,
+    );
   }
 }
 
@@ -323,7 +331,11 @@ export class LocalTextFile extends LocalFile {
         api.inodeType,
       );
     }
-    return new LocalTextFile(api.urn, "", api.inodeType);
+    const plainContent =
+      "content" in api && typeof (api as { content?: unknown }).content === "string"
+        ? ((api as { content: string }).content)
+        : "";
+    return new LocalTextFile(api.urn, plainContent, api.inodeType);
   }
 }
 

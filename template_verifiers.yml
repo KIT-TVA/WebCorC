@@ -1,0 +1,75 @@
+# Verifier Registry — field reference and worked example.
+#
+# This file is not read by anything. The backend reads verifiers.yml next to it, which
+# docker-compose.yml mounts read-only into the `webcorc-backend` container via
+# MICRONAUT_CONFIG_FILES (see docker-compose.env). Copy the entries you need from here into
+# that file's `verifiers:` list. A deployment whose verifiers.yml is absent or has an empty
+# `verifiers:` serves the Functional Verifier (`func`, built in, always present) only.
+#
+# Each entry:
+#   id           — required. Stable identifier the backend addresses the Verifier by; assigned
+#                  here, not by the Verifier itself, so the same Verifier image can be
+#                  registered under any id, or twice with different ids/defaults. Must not be
+#                  `func` (reserved for the built-in Functional Verifier). Users see it: the
+#                  verification console tags each line with it (`[energy] …`), so pick a short
+#                  name they recognise as this Verifier, not an opaque one like `v1`.
+#   url          — required. The Verifier's base URL; the Verifier API paths (e.g.
+#                  `/description`) are appended to it.
+#
+# Everything else is deployment *policy*, applied on top of the Verifier's own Self-Description
+# in the Verifier Catalog. Every field is optional; a field left out keeps the Verifier's own
+# value. Nothing about a Setting other than its default — not its id, type, label, description
+# or required flag — is overridable here.
+#   label                  — renames the Verifier in the Catalog.
+#   enabled                — pre-enables (true) or forces off (false) the Verifier by default.
+#   toggleable             — false locks the enabled toggle so a user cannot change it (the
+#                             Verifier stays exactly at its `enabled` value); true or omitted
+#                             leaves it freely toggleable.
+#   settings.<id>.default  — overrides one Setting's default value, addressed by the Setting's
+#                             own id (see the Verifier's Self-Description, e.g. `GET
+#                             <url>/description`, for the ids it declares). The value is checked
+#                             against the Setting at startup, by the same rules as the
+#                             Verifier's own default: a text (string or number) or select Setting
+#                             takes a string — quote it, `default: "75"`, since an unquoted `75`
+#                             is a number — and a boolean Setting takes `true`/`false`. The
+#                             override must also fit the Setting's range, step and options: a
+#                             number Setting's value is a plain decimal (`"0.5"`, not `".5"` or
+#                             `"5e-1"`) within its range and on its step grid, and a select
+#                             Setting's value is one of its option ids. `""` means no default,
+#                             which a required Setting does not accept. An override that does
+#                             not fit is logged as a warning and ignored, the Verifier's own
+#                             default staying in force; a fitting override also stands in, with
+#                             a warning, for a Verifier's own default that is missing or does not
+#                             fit, which would otherwise lock the Verifier off as invalid. No
+#                             override makes good a broken step, range or option list of the
+#                             Setting itself.
+#
+# A field the Registry does not recognise here (a typo in one of the names above) fails the
+# backend at startup rather than being silently ignored.
+
+verifiers:
+  # A Verifier registered with every policy field in use.
+  - id: energy
+    url: http://energy-verifier:8080
+    label: "Energy Efficiency"
+    enabled: true
+    toggleable: true
+    settings:
+      threshold:
+        default: "75"
+
+  # A Verifier registered without any policy: its Self-Description decides label, default
+  # enabled/toggleable state and every Setting's default.
+  - id: security
+    url: http://security-verifier:8080
+
+# Startup fetch of each Verifier's Self-Description: an unreachable Verifier (connect failure,
+# timeout, 5xx — a container start-order race) is retried `retries` times, `retry-delay` apart,
+# before being locked off in the Catalog until the next restart; an invalid Self-Description
+# (violates the Settings schema) is never retried. Each attempt uses the application's
+# `micronaut.http.client` timeouts (backend/src/main/resources/application.yml); override them
+# in this same file if a Verifier needs longer to answer, e.g.:
+#   micronaut.http.client.read-timeout: 30s
+verifier-catalog:
+  retries: 3
+  retry-delay: 10s

@@ -28,6 +28,12 @@ paths:
 
   /editor/verify:
      $ref: './paths/editor/verify.yml'
+
+  /editor/verifiers:
+    $ref: './paths/editor/verifiers.yml'
         
   /editor/jobs/{id}:
     $ref: './paths/editor/jobs.yml'
+
+  /ws/verify/{id}:
+    $ref: './paths/editor/verifyStatus.yml'

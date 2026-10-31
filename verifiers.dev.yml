@@ -1,0 +1,40 @@
+# Verifier Registry for the dev compose stack (docker-compose.dev.yml).
+# Mounted into the backend container and pointed to via MICRONAUT_CONFIG_FILES.
+#
+# `mock` is the mock-verifier/ container built by docker-compose.dev.yml (a small Node service
+# with scripted responses, see mock-verifier/README.md), reachable on the compose network under
+# its service name.
+#
+# Ids are what users see: the verification console shows the id, not the label, on every line,
+# so keep them short and recognisable.
+#
+# To see a locked-off Verifier in the panel, add an entry at a URL nobody listens on, e.g.
+#   - id: dead
+#     url: http://127.0.0.1:9
+# After a restart it appears greyed out and locked, and the console reports it.
+#
+# To try Registry policy against the mock (see template_verifiers.yml at the repo root for the
+# full field reference), uncomment and adjust:
+#   - id: mock
+#     url: http://mock-verifier:80
+#     label: "Renamed Mock"
+#     settings:
+#       boundedNumberSetting:
+#         default: "90"
+
+verifiers:
+  - id: mock
+    url: http://mock-verifier:80
+
+  # Intentionally unreachable: exercises the locked-off path (retries, then a greyed-out
+  # Verifier in the panel) on every dev start. Costs retries × retry-delay before the Catalog
+  # is served; the backend answers meanwhile and the panel says it is still fetching.
+  - id: dead
+    url: http://not-a-real-host:9
+
+# Startup retries for an unreachable Verifier (container start-order races); see the
+# `verifier-catalog` block in backend/src/main/resources/application.yml for the semantics
+# and defaults.
+verifier-catalog:
+  retries: 3
+  retry-delay: 5s

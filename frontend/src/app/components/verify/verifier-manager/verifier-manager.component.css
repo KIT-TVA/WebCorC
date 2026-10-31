@@ -1,0 +1,86 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+}
+
+.catalog-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 0.5rem;
+    opacity: 0.7;
+    font-size: 0.875rem;
+}
+
+p-accordion {
+    display: block;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+}
+
+.boolean-field {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0 1rem;
+}
+
+.boolean-label {
+    flex: 1 1 auto;
+}
+
+.boolean-field button .pi {
+    display: block;
+    line-height: 1;
+}
+
+/* Mirrors mat-error's styling for the boolean toggle, which has no mat-form-field of its own. */
+.boolean-field-error {
+    color: var(--mat-form-field-error-text-color, #f44336);
+    font-size: 0.75rem;
+    margin: -0.75rem 0 0.5rem;
+}
+
+.variables {
+    margin-top: 0.5rem;
+}
+
+.variables-header {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.variables-scope {
+    font-size: 0.75rem;
+    opacity: 0.75;
+    margin-bottom: 0.25rem;
+}
+
+.variables-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.variable {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.variable-name {
+    font-family: monospace;
+}
+
+.variable-type {
+    font-family: monospace;
+    opacity: 0.75;
+}
+
+.variable button .pi {
+    display: block;
+    line-height: 1;
+}

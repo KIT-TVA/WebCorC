@@ -1,0 +1,63 @@
+type: object
+description: >-
+  SelfDescription — what a Verifier declares about itself through the Verifier
+  API (`GET /description`): the Verifier schema minus `id` (the id is
+  Verifier Registry-assigned, not known to the Verifier itself). `enabled` and
+  `toggleable` here are the Verifier's defaults, subject to Verifier Registry
+  policy before they reach the Verifier Catalog. Carries no API version field;
+  this document's `info.version` is the contract version.
+properties:
+  label:
+    type: string
+    description: Human-readable name of the verifier.
+
+  enabled:
+    type: boolean
+    description: Default value of whether the verifier is selected to run.
+
+  toggleable:
+    type: boolean
+    description: >-
+      Default value of whether the user can move the enabled toggle. Defaults
+      to `true` (freely toggleable) when omitted. `false` locks the toggle at
+      whatever `enabled` is declared as.
+
+  statusPlaceholder:
+    type: string
+    description: >-
+      Text shown in place of a verification status until a live status for
+      this verifier arrives. Optional; a verifier without one renders no
+      status text.
+
+  settings:
+    type: array
+    description: Configurable settings of the verifier.
+    items:
+      $ref: './setting.yml'
+
+  variables:
+    type: array
+    description: >-
+      Domain variables the verifier operates on. The frontend does not
+      interpret them beyond rendering; the backend checks every Verifier
+      Condition written for this verifier against them, by `id` — a
+      condition referencing anything else fails the verifier without
+      calling it (see `allowFunctionalVariables`).
+    items:
+      $ref: './variable.yml'
+
+  allowFunctionalVariables:
+    type: boolean
+    description: >-
+      Whether the functional variables — the statement's own program
+      variables — may be referenced inside this verifier's non-functional
+      conditions, alongside its own `variables`. Only meaningful for a
+      verifier that declares `variables` at all; defaults to `false` (not
+      allowed) when omitted, so a verifier must opt in explicitly. A
+      condition referencing a program variable without this set — or any
+      other identifier outside `variables` and the program's own variables —
+      fails the verifier without calling it.
+
+required:
+  - label
+  - enabled

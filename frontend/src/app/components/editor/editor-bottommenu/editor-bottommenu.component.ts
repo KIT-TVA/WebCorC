@@ -4,20 +4,22 @@ import {Button} from "primeng/button";
 import {ConsoleComponent} from "../../console/console.component";
 import {AiChatComponent} from "../../ai-chat/ai-chat.component";
 import { PredicateManagerComponent } from "../predicate-manager/predicate-manager.component";
+import {VerifierManagerComponent} from "../../verify/verifier-manager/verifier-manager.component";
 
 @Component({
   selector: "app-editor-bottommenu",
-  imports: [
-    Tabs,
-    TabList,
-    TabPanels,
-    Tab,
-    Button,
-    TabPanel,
-    ConsoleComponent,
-    AiChatComponent,
-    PredicateManagerComponent,
-  ],
+    imports: [
+        Tabs,
+        TabList,
+        TabPanels,
+        Tab,
+        Button,
+        TabPanel,
+        ConsoleComponent,
+        AiChatComponent,
+        PredicateManagerComponent,
+        VerifierManagerComponent,
+    ],
   templateUrl: "./editor-bottommenu.component.html",
   standalone: true,
   styleUrl: "./editor-bottommenu.component.css",

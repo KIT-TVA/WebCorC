@@ -6,9 +6,11 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import edu.kit.cbc.common.corc.cbcmodel.CbCFormula;
 import edu.kit.cbc.common.corc.cbcmodel.Condition;
 import edu.kit.cbc.common.corc.cbcmodel.StatementType;
+import edu.kit.cbc.common.corc.cbcmodel.VerifierEntry;
 import edu.kit.cbc.common.corc.codegeneration.Generatable;
 import edu.kit.cbc.common.corc.proof.ProofContext;
 import io.micronaut.serde.annotation.Serdeable;
+import java.util.Map;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,6 +37,13 @@ public abstract class AbstractStatement implements Generatable {
     private StatementType type;
     private Condition preCondition;
     private Condition postCondition;
+
+    /**
+     * Per-Verifier conditions and results for this statement, keyed by Verifier id (see
+     * {@link VerifierEntry}). Sparse; {@code null} when absent from the wire rather than an empty
+     * map.
+     */
+    private Map<String, VerifierEntry> verifiers;
 
     /*
      * WARNING: Jackson will interpret this value as "proven" because the

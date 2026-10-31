@@ -23,6 +23,13 @@
       <i class="pi pi-tags"></i>
       Predicates
     </p-tab>
+    <p-tab
+      [value]="5"
+      class="flex justify-items-center gap-4 items-center"
+    >
+      <i class="pi pi-check-circle"></i>
+      Verifiers
+    </p-tab>
     <p-button
       icon="pi pi-minus"
       text
@@ -43,6 +50,11 @@
       </p-tabpanel>
       <p-tabpanel [value]="4">
         <app-predicate-manager />
+      </p-tabpanel>
+      <p-tabpanel [value]="5">
+        <div class="h-80">
+          <app-verifier-manager />
+        </div>
       </p-tabpanel>
     </p-tabpanels>
   }

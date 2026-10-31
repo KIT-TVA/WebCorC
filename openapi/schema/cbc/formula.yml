@@ -1,60 +1,40 @@
 type: object
-description: CBCFormula
+description: >-
+  A CbC program as the editor and the backend exchange it: the Root's
+  refinement tree plus the program's variables and global conditions.
+  The backend ignores properties it does not know, and omits null and empty
+  values (empty strings, lists and maps) from what it returns.
 properties:
-  type: 
-    type: string
-    enum:
-      - CBCFormula
-
   name:
-    type: string
-  
-  proven:
-    type: boolean
-
-  comment:
-    type: string 
-  
-  compostionTechnique:
-    type: string
-    enum:
-      - CONTRACT_OVERRIDING
-
-  className:
-    type: string 
-
-  methodeName: 
-    type: string 
-
-  javaVariables:
-    type: array
-    items:  
-      type: string
-
-  globalConditions:
-    type: array
-    items: 
-      $ref: './condition.yml'
-
-  preCondition:
-    type: string 
-
-  postCondition:
     type: string
 
   statement:
     $ref: './statement.yml'
 
+  javaVariables:
+    type: array
+    items:
+      $ref: './javaVariable.yml'
+
+  globalConditions:
+    type: array
+    items:
+      $ref: './condition.yml'
+
+  renamings:
+    type: array
+    items:
+      $ref: './renaming.yml'
+
+  verifiers:
+    description: The Root's own per-Verifier map.
+    allOf:
+      - $ref: './verifiers.yml'
+
+  isProven:
+    type: boolean
+    description: The Functional Verifier's verdict for the whole program.
+
 required:
-  - type
-  - name 
-  - proven
-  - comment
-  - compostionTechnique
-  - className
-  - methodeName
-  - javaVariables
-  - globalConditions
-  - preCondition
-  - postCondition
   - statement
+  - isProven

@@ -1,0 +1,15 @@
+description: A leaf statement carrying Java code.
+allOf:
+  - $ref: './abstract.yml'
+  - type: object
+    properties:
+      type:
+        type: string
+        enum:
+          - STATEMENT
+
+      programStatement:
+        type: string
+
+    required:
+      - programStatement

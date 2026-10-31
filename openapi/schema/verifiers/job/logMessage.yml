@@ -1,0 +1,17 @@
+type: object
+description: >-
+  A free-text log line, sent at any point during the run so the Verifier can
+  give the user live feedback without fitting a rigid schema.
+properties:
+  type:
+    type: string
+    enum:
+      - log
+
+  message:
+    type: string
+    description: Free text, forwarded to the user's console.
+
+required:
+  - type
+  - message

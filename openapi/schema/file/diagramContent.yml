@@ -1,0 +1,65 @@
+type: object
+description: >-
+  A saved `.diagram` file's content exactly as the editor writes and reads it
+  (`CBCFormula.toJSON`, `frontend/src/app/types/CBCFormula.ts`) — the backend stores it
+  as opaque bytes. Distinct from `cbc/formula.yml`, the frontend ↔ backend editor
+  format: the editor's synthetic Root wrapper is stripped before writing, but its
+  `preCondition`/`postCondition`/`position` (the Root's own) are kept at the top
+  level, and every statement below carries the editor-only `id`/`nodeState`/`position`
+  fields `cbc/**` does not.
+properties:
+  name:
+    type: string
+
+  statement:
+    $ref: './statement.yml'
+
+  preCondition:
+    $ref: '../cbc/condition.yml'
+
+  postCondition:
+    $ref: '../cbc/condition.yml'
+
+  verifiers:
+    description: The Root's own per-Verifier map.
+    allOf:
+      - $ref: '../cbc/verifiers.yml'
+
+  javaVariables:
+    type: array
+    items:
+      $ref: '../cbc/javaVariable.yml'
+
+  globalConditions:
+    type: array
+    items:
+      $ref: '../cbc/condition.yml'
+
+  renamings:
+    description: >-
+      Nullable, unlike `cbc/formula.yml`'s `renamings`: `LocalCBCFormula`/`CBCFormula`
+      default it to `null` rather than `[]`, and nothing normalizes it away before a
+      save.
+    type: array
+    nullable: true
+    items:
+      $ref: '../cbc/renaming.yml'
+
+  isProven:
+    type: boolean
+    description: The Functional Verifier's verdict for the whole program.
+
+  position:
+    $ref: './position.yml'
+
+required:
+  - name
+  - statement
+  - preCondition
+  - postCondition
+  - verifiers
+  - javaVariables
+  - globalConditions
+  - renamings
+  - isProven
+  - position

@@ -3,6 +3,7 @@ package edu.kit.cbc.common.corc.parsing;
 
 import edu.kit.cbc.common.corc.cbcmodel.CbCFormula;
 import edu.kit.cbc.common.corc.cbcmodel.Condition;
+import edu.kit.cbc.common.corc.cbcmodel.JavaVariable;
 import edu.kit.cbc.common.corc.cbcmodel.statements.AbstractStatement;
 import edu.kit.cbc.common.corc.cbcmodel.statements.CompositionStatement;
 import edu.kit.cbc.common.corc.cbcmodel.statements.SelectionStatement;
@@ -34,17 +35,7 @@ public class SemanticChecker {
             return;
         }
 
-        Set<String> declaredVariables = new HashSet<>();
-        if (formula.getJavaVariables() != null) {
-            declaredVariables = formula.getJavaVariables().stream()
-                    .map(v -> {
-                        String name = v.getName().trim();
-                        String[] parts = name.split("\\s+");
-                        String last = parts[parts.length - 1];
-                        return last.replace("[]", "");
-                    })
-                    .collect(Collectors.toSet());
-        }
+        Set<String> declaredVariables = javaVariableNames(formula);
 
         if (formula.getGlobalConditions() != null) {
             for (Condition condition : formula.getGlobalConditions()) {
@@ -96,7 +87,24 @@ public class SemanticChecker {
         checkTree(condition.getParsedCondition(), declaredVariables);
     }
 
-    private static void checkTree(Tree node, Set<String> scope) throws SemanticException {
+    /** The program's own Java variables' plain names, as referenced from a condition. */
+    public static Set<String> javaVariableNames(CbCFormula formula) {
+        if (formula == null || formula.getJavaVariables() == null) {
+            return Set.of();
+        }
+        return formula.getJavaVariables().stream()
+                .map(SemanticChecker::javaVariableName)
+                .collect(Collectors.toSet());
+    }
+
+    private static String javaVariableName(JavaVariable variable) {
+        String name = variable.getName().trim();
+        String[] parts = name.split("\\s+");
+        String last = parts[parts.length - 1];
+        return last.replace("[]", "");
+    }
+
+    public static void checkTree(Tree node, Set<String> scope) throws SemanticException {
         if (node == null) {
             return;
         }

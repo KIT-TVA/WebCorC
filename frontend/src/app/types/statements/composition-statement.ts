@@ -5,6 +5,10 @@ import {AbstractStatement, IAbstractStatement} from "./abstract-statement";
 /**
  * Data only representation of {@link CompositionStatementComponent}.
  * Compatible with the api calls.
+ *
+ * The verifier-specific intermediate conditions live in the inherited
+ * `verifiers` map alongside each verifier's pre- and postcondition (and, once
+ * reported, its result).
  */
 export interface ICompositionStatement extends IAbstractStatement {
     intermediateCondition: ICondition

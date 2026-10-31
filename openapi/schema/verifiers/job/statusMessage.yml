@@ -1,0 +1,12 @@
+description: >-
+  One message on the job status stream, discriminated by `type`. A typed
+  envelope only — free text always lives inside a `message` field, never
+  sent as a bare string.
+discriminator:
+  propertyName: type
+  mapping:
+    log: './logMessage.yml'
+    done: './doneMessage.yml'
+oneOf:
+  - $ref: './logMessage.yml'
+  - $ref: './doneMessage.yml'

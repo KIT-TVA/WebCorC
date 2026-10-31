@@ -1,0 +1,114 @@
+{
+  "label": "Mock Verifier",
+  "enabled": true,
+  "toggleable": true,
+  "statusPlaceholder": "Waiting for mock verification…",
+  "settings": [
+    {
+      "id": "textSetting",
+      "type": "text",
+      "valueType": "string",
+      "label": "Text setting",
+      "description": "A free-text setting whose default pre-fills it. Optional: it may be cleared; the Verifier then receives an empty string.",
+      "required": false,
+      "default": "Example text"
+    },
+    {
+      "id": "emptyTextSetting",
+      "type": "text",
+      "valueType": "string",
+      "label": "Text setting (no default, no desc.)"
+    },
+    {
+      "id": "boundedNumberSetting",
+      "type": "text",
+      "valueType": "number",
+      "label": "Number setting (bounded, decimal)",
+      "description": "A numeric setting with a lower and an upper bound (0 to 100) and a step of 0.5. Required: it must always hold a valid value.",
+      "step": 0.5,
+      "range": {
+        "min": 0,
+        "max": 100
+      },
+      "required": true,
+      "default": "50"
+    },
+    {
+      "id": "lowerBoundedNumberSetting",
+      "type": "text",
+      "valueType": "number",
+      "label": "Number setting (lower bound only, integer)",
+      "description": "A numeric setting bounded from below only (at least 0), with the default step of 1, so integers only. Required: it must always hold a valid value.",
+      "range": {
+        "min": 0
+      },
+      "required": true,
+      "default": "10"
+    },
+    {
+      "id": "selectSetting",
+      "type": "select",
+      "label": "Select setting",
+      "description": "A dropdown of predefined options; the Verifier receives the chosen option's id. Required: its default preselects an option.",
+      "options": [
+        {
+          "id": "optionA",
+          "label": "Option A"
+        },
+        {
+          "id": "optionB",
+          "label": "Option B"
+        },
+        {
+          "id": "optionC",
+          "label": "Option C"
+        }
+      ],
+      "required": true,
+      "default": "optionA"
+    },
+    {
+      "id": "optionalSelectSetting",
+      "type": "select",
+      "label": "Select setting (optional)",
+      "description": "A dropdown of predefined options that may be cleared back to no value. Optional: the Verifier then receives an empty string.",
+      "options": [
+        {
+          "id": "optionX",
+          "label": "Option X"
+        },
+        {
+          "id": "optionY",
+          "label": "Option Y"
+        }
+      ],
+      "required": false
+    },
+    {
+      "id": "booleanSetting",
+      "type": "boolean",
+      "label": "Boolean setting",
+      "description": "A toggle; the Verifier receives true or false. It always has a value, so it has no required flag and must declare a default.",
+      "default": false
+    },
+    {
+      "id": "shouldPass",
+      "type": "boolean",
+      "label": "Pass verification",
+      "description": "Whether the mock run passes. Off: the run and every statement are reported as not proven.",
+      "default": true
+    }
+  ],
+  "variables": [
+    {
+      "id": "doubleVariable",
+      "type": "double",
+      "description": "A Verifier variable: a name this Verifier's conditions may reference. Its type is passed through to the Verifier as-is."
+    },
+    {
+      "id": "intVariable",
+      "type": "int"
+    }
+  ],
+  "allowFunctionalVariables": true
+}

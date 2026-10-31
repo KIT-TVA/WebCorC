@@ -4,4 +4,4 @@ allOf:
   - type: object
     properties:
       content:
-        $ref: '../cbc/formula.yml'
+        $ref: './diagramContent.yml'

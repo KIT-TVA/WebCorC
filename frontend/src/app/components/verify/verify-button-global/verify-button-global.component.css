@@ -1,0 +1,20 @@
+::ng-deep .verify-splitbutton .p-splitbutton-button {
+  min-width: 180px;
+  justify-content: flex-start;
+}
+
+/* The split button's main button plus its icon-only dropdown trigger (content width + its 1px left/right borders), so the toolbar keeps its layout when the dropdown hides. */
+::ng-deep .verify-plain-button .p-button {
+  min-width: calc(180px + var(--p-button-icon-only-width) + 2px);
+  justify-content: flex-start;
+}
+
+::ng-deep .selected-verify-option .p-tieredmenu-item-content {
+  background: color-mix(in srgb, var(--p-primary-color) 15%, transparent);
+  color: var(--p-primary-color);
+  font-weight: 600;
+}
+
+::ng-deep .selected-verify-option .p-tieredmenu-item-content .p-tieredmenu-item-icon {
+  color: var(--p-primary-color);
+}

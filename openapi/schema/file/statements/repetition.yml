@@ -1,0 +1,42 @@
+description: >-
+  A repetition statement, `while (guard) loopStatement`. `isVariantProven`,
+  `isPreProven` and `isPostProven` record which of its own proof obligations are
+  already proven — the same fields as `cbc/statements/repetition.yml`'s
+  `variantProven`/`preProven`/`postProven`, under the names the editor itself uses.
+allOf:
+  - $ref: './abstract.yml'
+  - type: object
+    properties:
+      type:
+        type: string
+        enum:
+          - REPETITION
+
+      guard:
+        $ref: '../../cbc/condition.yml'
+
+      invariant:
+        $ref: '../../cbc/condition.yml'
+
+      variant:
+        $ref: '../../cbc/condition.yml'
+
+      loopStatement:
+        $ref: '../statement.yml'
+
+      isVariantProven:
+        type: boolean
+
+      isPreProven:
+        type: boolean
+
+      isPostProven:
+        type: boolean
+
+    required:
+      - guard
+      - invariant
+      - variant
+      - isVariantProven
+      - isPreProven
+      - isPostProven

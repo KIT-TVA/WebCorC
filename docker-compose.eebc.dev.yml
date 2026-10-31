@@ -1,0 +1,92 @@
+services:
+  rustfs:
+    image: rustfs/rustfs:latest
+
+    env_file:
+      - docker-compose.env
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      RUSTFS_VOLUMES: "/data/rustfs"
+      RUSTFS_ADDRESS: "0.0.0.0:9000"
+      RUSTFS_CONSOLE_ADDRESS: "0.0.0.0:9001"
+      RUSTFS_CONSOLE_ENABLE: "true"
+      RUSTFS_EXTERNAL_ADDRESS: ":9000"
+      RUSTFS_CORS_ALLOWED_ORIGINS: "*"
+      RUSTFS_CONSOLE_CORS_ALLOWED_ORIGINS: "*"
+      RUSTFS_ACCESS_KEY: "root"
+      RUSTFS_SECRET_KEY: "changeme"
+
+
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+
+  mock-verifier:
+    build:
+      context: mock-verifier
+    image: webcorc-mock-verifier
+    ports:
+      - "8081:80"
+
+  webcorc-backend:
+    build:
+      context: backend
+      dockerfile: dev.Dockerfile
+    env_file:
+      - docker-compose.env
+    environment:
+      DEVELOPMENT: true
+      MICRONAUT_CONFIG_FILES: ""
+    command: ["-Dmicronaut.config.files=/config/verifiers.eebc.dev.yml"]
+    volumes:
+      - ./verifiers.eebc.dev.yml:/config/verifiers.eebc.dev.yml:ro
+    ports:
+      - "8080:8080"
+    networks:
+      - default
+      - verifiers
+    develop:
+      watch:
+        - action: sync
+          path: "./backend/"
+          target: "/app/"
+          ignore:
+            - "./backend/target/"
+        - action: rebuild
+          path: "./backend/pom.xml"
+    depends_on:
+      rustfs:
+        condition: service_started
+      mongo:
+        condition: service_started
+      mock-verifier:
+        condition: service_started
+
+  webcorc-frontend:
+    build:
+      context: frontend
+      dockerfile: dev.Dockerfile
+    develop:
+      watch:
+        - action: sync
+          path: "./frontend/"
+          target: "/app/"
+          ignore:
+            - "./frontend/node_modules"
+        - action: rebuild
+          path: "./frontend/package.json"
+    ports:
+      - "4200:4200"
+
+networks:
+  # Verifiers that run outside this stack (e.g. EEbC) join this network so the backend can reach
+  # them by container name. Create it once before the first `up`:
+  #   docker network create verifiers
+  # and start the EEbC Verifier on it:
+  #   docker build -f verifier/Dockerfile -t eebc-verifier "https://github.com/madalime/EEbC.git#webcorc-eebc-verifier"
+  #   docker run -d --name eebc-verifier --network verifiers --restart unless-stopped eebc-verifier
+  verifiers:
+    external: true

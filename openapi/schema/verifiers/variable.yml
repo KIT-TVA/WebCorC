@@ -1,0 +1,25 @@
+type: object
+description: >-
+  A domain variable a verifier operates on. `type` is a free-form string that
+  names the variable's type (e.g. `int`, `boolean`, a class name) — passed
+  through to the verifier backend, not interpreted by the frontend.
+properties:
+  id:
+    type: string
+    pattern: '^[A-Za-z_][A-Za-z0-9_]*$'
+    description: >-
+      The variable's only name: what a Verifier Condition references it by and
+      what the frontend shows. Must be a valid identifier
+      (`[A-Za-z_][A-Za-z0-9_]*`).
+
+  type:
+    type: string
+    description: Type name of the variable (e.g. `int`, `boolean`, a class name).
+
+  description:
+    type: string
+    description: Optional longer description of what the variable represents.
+
+required:
+  - id
+  - type

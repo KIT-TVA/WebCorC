@@ -1,0 +1,52 @@
+type: object
+description: >-
+  The user's persisted modifications to the verifier catalog, keyed by verifier
+  id. This is the payload of the project's `.internal/verifiers.json` file.
+
+  Sparse in two directions: only verifiers the user has interacted with have an
+  entry, and an entry carries only the fields that were actually modified.
+  Anything absent falls back to the catalog value. Entries are never removed,
+  even if the user reverts to the catalog value.
+
+  Catalog-owned fields (`label`, `toggleable`, `variables`,
+  `allowFunctionalVariables`, and each setting's declaration) never appear here;
+  they are not user-overridable. An entry for a verifier id that is not in the
+  catalog, or a setting id not declared by that verifier, is dropped on load.
+additionalProperties:
+  type: object
+  properties:
+    enabled:
+      type: boolean
+      description: >-
+        Whether the user selected this verifier to run. Absent when the user has
+        not moved the toggle, in which case the catalog's `enabled` applies.
+        Ignored on load for a verifier the catalog marks `toggleable: false` —
+        that verifier's enabled state is catalog-owned.
+
+    settings:
+      type: object
+      description: >-
+        The modified setting inputs, keyed by setting id. A string for text and
+        select settings — numeric settings included, which store their value as
+        a canonical `.`-decimal string so invalid input survives to be flagged
+        rather than silently swallowed — and a real boolean for boolean
+        settings. A value whose type does not match the setting's declaration,
+        or a select value that is not one of the current option ids, falls back
+        to the setting's default on load.
+      additionalProperties:
+        oneOf:
+          - type: string
+          - type: boolean
+
+    settingsUpdatedAt:
+      type: integer
+      format: int64
+      description: >-
+        Set by the editor, as epoch milliseconds, whenever one of this verifier's
+        setting values changes; not on the enabled toggle. A verification job
+        copies it onto every entry it writes for this verifier, so a result whose
+        stamp differs from this one ran under other settings and is shown stale.
+        Only ever compared for equality. Absent until a setting is first changed.
+
+  required:
+    - settings

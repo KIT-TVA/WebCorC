@@ -1,0 +1,9 @@
+description: A skip statement, a leaf that does nothing.
+allOf:
+  - $ref: './abstract.yml'
+  - type: object
+    properties:
+      type:
+        type: string
+        enum:
+          - SKIP

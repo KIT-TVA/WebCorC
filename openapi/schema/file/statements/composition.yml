@@ -1,0 +1,21 @@
+description: A composition statement, `firstStatement` followed by `secondStatement`.
+allOf:
+  - $ref: './abstract.yml'
+  - type: object
+    properties:
+      type:
+        type: string
+        enum:
+          - COMPOSITION
+
+      intermediateCondition:
+        $ref: '../../cbc/condition.yml'
+
+      firstStatement:
+        $ref: '../statement.yml'
+
+      secondStatement:
+        $ref: '../statement.yml'
+
+    required:
+      - intermediateCondition

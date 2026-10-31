@@ -1,0 +1,24 @@
+description: >-
+  A repetition (loop) statement. `guard` is the program's own loop
+  condition — the expression of its `while (…)` — and so the same for every
+  Verifier. `invariant` and `variant` are the loop's own functional ones,
+  the same for every Verifier, and absent where none was written.
+allOf:
+  - $ref: './abstract.yml'
+  - type: object
+    properties:
+      guard:
+        $ref: '../condition.yml'
+
+      invariant:
+        $ref: '../condition.yml'
+
+      variant:
+        $ref: '../condition.yml'
+
+      loopStatement:
+        $ref: '../statement.yml'
+
+    required:
+      - guard
+      - loopStatement

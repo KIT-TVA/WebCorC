@@ -2,18 +2,21 @@
   [_node]="_node"
   [refinement]="this"
   [hideTargetHandle]="true"
+  [hasPopupMiddle]="false"
 >
-  <div class="relative flex justify-center items-center h-full w-56">
-    @if (!_node.childStatementNode) {
-      <app-refinement-widget
-        text="Statement"
-        icon="add"
-        (select)="chooseRefinement($event)"
-      >
-      </app-refinement-widget>
-    }
-    @if (_node.childStatementNode) {
-      <i class="pi pi-circle"> </i>
-    }
-  </div>
+  <ng-template #middleContent>
+    <div class="relative flex justify-center items-center h-full w-56">
+      @if (!_node.childStatementNode) {
+        <app-refinement-widget
+            text="Statement"
+            icon="add"
+            (select)="chooseRefinement($event)"
+        >
+        </app-refinement-widget>
+      }
+      @if (_node.childStatementNode) {
+        <i class="pi pi-circle"> </i>
+      }
+    </div>
+  </ng-template>
 </app-statement-base>

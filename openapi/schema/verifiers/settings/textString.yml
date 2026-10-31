@@ -1,0 +1,48 @@
+type: object
+description: >-
+  VerifierTextStringSetting — a free-text setting holding an arbitrary string. A closed
+  object: it accepts exactly the properties listed here and nothing else. `id`, `label` and
+  `description` are common to every setting kind; `required` and `default` are the string
+  value carrier shared with the text/number and select settings (boolean settings carry
+  a real boolean instead).
+properties:
+  id:
+    type: string
+    description: Stable key of the setting, used to address it when persisting changes.
+
+  label:
+    type: string
+    description: Human-readable label rendered next to the input.
+
+  description:
+    type: string
+    description: Optional longer description of what the setting controls.
+
+  type:
+    type: string
+    enum:
+      - text
+
+  valueType:
+    type: string
+    enum:
+      - string
+    description: May be omitted; a free-text setting defaults to `string`.
+
+  required:
+    type: boolean
+    description: >-
+      Whether the setting must be filled in. When `true`, a non-empty `default` must be
+      provided.
+
+  default:
+    type: string
+    description: >-
+      Value used to preinitialize the setting. `""` means no default, which does not satisfy
+      `required: true`. Mandatory when `required` is `true`, optional otherwise.
+
+required:
+  - id
+  - label
+  - type
+additionalProperties: false

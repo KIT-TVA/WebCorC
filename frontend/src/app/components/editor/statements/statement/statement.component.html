@@ -1,5 +1,5 @@
 <p-card
-        [class]="`refinementBox refinementBox--${_node.statement.nodeState}`"
+        [class]="`refinementBox refinementBox--${getStatementSeverity(_node)}`"
         cdkDragBoundary="#editorContainer"
         #refinementBox
 >
@@ -41,14 +41,23 @@
                 >
                     <i
                             pButtonIcon
-                            [class]="
-              isVerifying() ? 'pi pi-spin pi-spinner' : 'pi pi-check-circle'
-            "
+                            [class]="getStatementIcon(getStatementSeverity(_node))"
                     ></i>
                     <span pButtonLabel class="font-normal">
-                        {{ _node.statement.nodeState}}
+                        {{ getStatementLabel(_node) }}
                     </span>
                 </button>
+                @if (showEditButton) {
+                    <p-button
+                            text
+                            icon="pi pi-pencil"
+                            severity="secondary"
+                            class="cursor-pointer"
+                            (click)="dialogVisible = true"
+                            title="Edit statement in popup"
+                    >
+                    </p-button>
+                }
                 @if (_node.parent) {
                     <p-button
                             text
@@ -109,7 +118,11 @@
         }
 
         <div class="flex items-center statementCenter">
+          @if (middleTemplate) {
+            <ng-container *ngTemplateOutlet="middleTemplate; context: { popup: false, statement: this }"></ng-container>
+          } @else {
             <ng-content></ng-content>
+          }
         </div>
         @if (!globalSettingsService.conditionsAlwaysOpen) {
             <div appGtBorder #postconditionDiv class="w-12">
@@ -158,3 +171,176 @@
         }
     </div>
 </p-card>
+
+<p-dialog
+        [(visible)]="dialogVisible"
+        [modal]="false"
+        closable="false"
+        appendTo="body"
+        [draggable]="true"
+        [keepInViewport]="false"
+        [resizable]="false"
+        [style]="{
+            width: '80rem',
+            maxWidth: '96vw',
+            height: '70vh',
+            maxHeight: '90vh',
+            minHeight: '50vh'
+        }"
+        [contentStyle]="{ overflow: 'auto', height: '100%' }"
+>
+    <ng-template #header>
+        <div class="flex items-center gap-2">
+            <i [class]="icon"></i>
+            <span>Edit {{ refinement.getTitle() }}</span>
+            <span class="text-surface-400">{{ _node.statement.name }}</span>
+        </div>
+    </ng-template>
+
+    <p-accordion [multiple]="true" [(value)]="openPanels">
+        @for (item of items; track item.id) {
+            @if (!hasBody(item)) {
+                <p-accordion-panel [value]="item.id" [class]="panelResultClass(item)">
+                    <p-accordion-header>
+                        <span class="flex items-center gap-2 w-full min-w-0">
+                            <span class="verifier-label">{{ item.label }}</span>
+                            @if (verifierStatusText(item)) {
+                                <span class="verifier-status"
+                                      [matTooltip]="verifierStatusText(item)"
+                                      [attr.aria-label]="verifierStatusText(item)">{{ verifierStatusText(item) }}</span>
+                            }
+                        </span>
+                        <!--
+                          Bodyless panels (status-only verifiers) are static: no chevron, no
+                          expandable content. An empty #toggleicon template overrides PrimeNG's
+                          default chevron slot. The "Unused constant toggleicon" hint is
+                          editor-only (Angular Language Service): the ref is consumed by
+                          AccordionHeader's ContentChild query, not the template.
+                        -->
+                        <ng-template #toggleicon></ng-template>
+                    </p-accordion-header>
+                </p-accordion-panel>
+            } @else {
+            <p-accordion-panel [value]="item.id" [class]="panelResultClass(item)">
+                <p-accordion-header>
+                    <span class="flex items-center gap-2 w-full min-w-0">
+                        <span class="verifier-label">{{ item.label }}</span>
+                        @if (verifierStatusText(item)) {
+                            <span class="verifier-status"
+                                  [matTooltip]="verifierStatusText(item)"
+                                  [attr.aria-label]="verifierStatusText(item)">{{ verifierStatusText(item) }}</span>
+                        }
+                    </span>
+                </p-accordion-header>
+                <p-accordion-content>
+                    <div class="popup-flex-row">
+                        <div class="popup-column" [class.open]="popupColumns(item.id).pre" [class.closed]="!popupColumns(item.id).pre">
+                            @if (popupColumns(item.id).pre) {
+                                <div class="popup-column-header">
+                                    <p-button
+                                        text
+                                        severity="secondary"
+                                        icon="pi pi-chevron-left"
+                                        (click)="togglePopupColumn(item.id, 'pre')"
+                                        title="Collapse precondition"
+                                        label="Precondition"
+                                    ></p-button>
+                                </div>
+                                <div class="popup-column-body">
+                                    <app-condition-editor
+                                        placeholder="Pre Condition"
+                                        [condition]="popupPrecondition(item)"
+                                        [editable]="_node.preconditionEditable | async"
+                                        [fill]="true"
+                                        (textChanged)="onEditableContentChanged()"
+                                        (synthesizeRequested)="synthesizeWithAi()"
+                                    ></app-condition-editor>
+                                </div>
+                            } @else {
+                                <p-button
+                                    text
+                                    severity="secondary"
+                                    icon="pi pi-chevron-right"
+                                    (click)="togglePopupColumn(item.id, 'pre')"
+                                    class="verticalButton bottomLeft popup-collapsed-tab"
+                                    label="Precondition"
+                                    title="Expand precondition"
+                                ></p-button>
+                            }
+                        </div>
+
+                        @if (middleTemplate && hasPopupMiddle && (hasVerifierMiddle || item.id === functionalVerifierId)) {
+                            <div class="popup-column" [class.open]="popupColumns(item.id).mid" [class.closed]="!popupColumns(item.id).mid">
+                                @if (popupColumns(item.id).mid) {
+                                    <div class="popup-column-header">
+                                        <p-button
+                                            text
+                                            severity="secondary"
+                                            icon="pi pi-chevron-left"
+                                            (click)="togglePopupColumn(item.id, 'mid')"
+                                            [title]="'Collapse ' + middleLabel.toLowerCase()"
+                                            [label]="middleLabel"
+                                        ></p-button>
+                                    </div>
+                                    <div class="popup-column-body">
+                                      <ng-container *ngTemplateOutlet="middleTemplate; context: { popup: true, statement: this, verifier: item }"></ng-container>
+                                    </div>
+                                } @else {
+                                    <p-button
+                                        text
+                                        severity="secondary"
+                                        icon="pi pi-chevron-right"
+                                        (click)="togglePopupColumn(item.id, 'mid')"
+                                        class="verticalButton bottomLeft popup-collapsed-tab"
+                                        [label]="middleLabel"
+                                        [title]="'Expand ' + middleLabel.toLowerCase()"
+                                    ></p-button>
+                                }
+                            </div>
+                        }
+
+                        <div class="popup-column" [class.open]="popupColumns(item.id).post" [class.closed]="!popupColumns(item.id).post">
+                            @if (popupColumns(item.id).post) {
+                                <div class="popup-column-header">
+                                    <p-button
+                                        text
+                                        severity="secondary"
+                                        icon="pi pi-chevron-left"
+                                        (click)="togglePopupColumn(item.id, 'post')"
+                                        title="Collapse postcondition"
+                                        label="Postcondition"
+                                    ></p-button>
+                                </div>
+                                <div class="popup-column-body">
+                                    <app-condition-editor
+                                        placeholder="Post Condition"
+                                        [condition]="popupPostcondition(item)"
+                                        [editable]="_node.postconditionEditable | async"
+                                        [fill]="true"
+                                        (textChanged)="onEditableContentChanged()"
+                                        (synthesizeRequested)="synthesizeWithAi()"
+                                    ></app-condition-editor>
+                                </div>
+                            } @else {
+                                <p-button
+                                    text
+                                    severity="secondary"
+                                    icon="pi pi-chevron-right"
+                                    (click)="togglePopupColumn(item.id, 'post')"
+                                    class="verticalButton bottomLeft popup-collapsed-tab"
+                                    label="Postcondition"
+                                    title="Expand postcondition"
+                                ></p-button>
+                            }
+                        </div>
+                    </div>
+                </p-accordion-content>
+            </p-accordion-panel>
+            }
+        }
+    </p-accordion>
+
+    <ng-template #footer>
+        <p-button (click)="dialogVisible = false" label="Close"></p-button>
+    </ng-template>
+</p-dialog>

@@ -30,7 +30,7 @@ jobs:
           cache: maven
 
       - name: Run integration tests
-        run: ./mvnw verify -Dskip.unit.tests=true -Dmicronaut.test.resources.enabled=false
+        run: ./mvnw verify -Dskip.unit.tests=true -Dmicronaut.test.resources.enabled=true
         working-directory: ./backend
         env:
           DEVELOPMENT: "true"

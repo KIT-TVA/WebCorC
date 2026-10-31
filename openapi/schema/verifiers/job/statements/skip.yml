@@ -1,0 +1,4 @@
+description: >-
+  A skip statement: a leaf that does nothing, with no code of its own.
+allOf:
+  - $ref: './abstract.yml'

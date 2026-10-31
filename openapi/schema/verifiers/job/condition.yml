@@ -1,0 +1,9 @@
+type: object
+description: >-
+  A condition, in the same `{condition}` shape the editor model uses.
+properties:
+  condition:
+    type: string
+
+required:
+  - condition

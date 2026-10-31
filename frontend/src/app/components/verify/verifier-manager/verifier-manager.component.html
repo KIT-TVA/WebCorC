@@ -1,0 +1,227 @@
+@if (catalogFetch(); as fetch) {
+  @if (fetch.status === 'fetching') {
+    <p class="catalog-status" role="status">
+      <i class="pi pi-spin pi-spinner"></i>
+      <span>
+        Fetching Verifier Catalog…
+        @if (fetch.attempt > 1) {
+          <br>Backend not reachable yet, attempt {{ fetch.attempt }} of {{ maxFetchAttempts }}
+        }
+      </span>
+    </p>
+  }
+}
+<p-accordion [value]="expandedSections" [multiple]="true" (valueChange)="updateExpandedSections($event)">
+  @for (item of items; track item.id) {
+    @if (item.settings.length === 0 && item.variables.length === 0) {
+      <p-accordion-panel [value]="item.id" [class]="rootResultClass(item)">
+        <p-accordion-header>
+          <span class="flex items-center gap-2 w-full">
+            <p-toggleswitch
+                [ngModel]="item.enabled"
+                [disabled]="item.toggleable === false"
+                (click)="$event.stopPropagation()"
+                (ngModelChange)="onToggle(item, $event)" />
+            <span [class.opacity-50]="!item.enabled">{{ item.label }}</span>
+          </span>
+          <!--
+            Settings-less items are static (no toggle arrow, no body). Providing an empty
+            #toggleicon template makes PrimeNG render this slot instead of the chevron
+            (@if (toggleicon) {...} @else { chevron }), hiding the arrow via the public API.
+            The "Unused constant toggleicon" hint is editor-only (Angular Language Service):
+            the ref is consumed by AccordionHeader's ContentChild query, not the template,
+            so it is intentional and does not affect ng build / ng lint / CI.
+          -->
+          <ng-template #toggleicon></ng-template>
+        </p-accordion-header>
+      </p-accordion-panel>
+    } @else {
+      <p-accordion-panel [value]="item.id" [class]="rootResultClass(item)">
+        <p-accordion-header>
+          <span class="flex items-center gap-2 w-full">
+            <p-toggleswitch
+                [ngModel]="item.enabled"
+                [disabled]="item.toggleable === false"
+                (click)="$event.stopPropagation()"
+                (ngModelChange)="onToggle(item, $event)" />
+            <span [class.opacity-50]="!item.enabled">{{ item.label }}</span>
+          </span>
+        </p-accordion-header>
+        <p-accordion-content>
+          @if (item.settings.length > 0) {
+          @for (field of item.settings; track field.id) {
+            <div class="field">
+              @if (field.type === 'text' && field.valueType === 'number') {
+                <mat-form-field class="w-full" (keydown.enter)="$event.preventDefault()">
+                  <mat-label> {{ field.label }} </mat-label>
+                  <input matInput
+                         type="text"
+                         inputmode="decimal"
+                         [ngModel]="field.input"
+                         (ngModelChange)="onSettingChange(item, field, $event)"
+                         [ngModelOptions]="{ standalone: true }"
+                         [required]="field.required ?? false"
+                         [appNumberInput]="field"
+                         [appSavedValueError]="field"
+                         #ctrl="ngModel" >
+                  <mat-hint align="start"> Step: {{ field.step ?? 1 }}</mat-hint>
+                  @if (field.range?.min != null && field.range?.max != null) {
+                    <mat-hint align="end">Range: {{ field.range?.min }} - {{ field.range?.max }}</mat-hint>
+                  } @else if (field.range?.min != null) {
+                    <mat-hint align="end">Min: {{ field.range?.min }}</mat-hint>
+                  } @else if (field.range?.max != null) {
+                    <mat-hint align="end">Max: {{ field.range?.max }}</mat-hint>
+                  }
+
+                  @if (getDescription(field); as description) {
+                    <button
+                        mat-icon-button
+                        matSuffix
+                        type="button"
+                        [matTooltip]="description"
+                        [attr.aria-label]="description"
+                        (click)="$event.stopPropagation()">
+                      <i class="pi pi-info-circle"></i>
+                    </button>
+                  }
+
+                  @if (ctrl.hasError('required')) {
+                    <mat-error> This field is required </mat-error>
+                  } @else if (ctrl.hasError('savedValueError')) {
+                    <mat-error> Saved value has the wrong type </mat-error>
+                  } @else if (ctrl.hasError('number')) {
+                    <mat-error> Must be a number </mat-error>
+                  } @else if (ctrl.hasError('min')) {
+                    <mat-error> Must be at least {{ field.range?.min }} </mat-error>
+                  } @else if (ctrl.hasError('max')) {
+                    <mat-error> Must be at most {{ field.range?.max }} </mat-error>
+                  } @else if (ctrl.hasError('step') && (field.step ?? 1) === 1) {
+                    <mat-error> Must be a whole number </mat-error>
+                  } @else if (ctrl.hasError('step')) {
+                    <mat-error> Must be a multiple of {{ field.step }} </mat-error>
+                  }
+                </mat-form-field>
+              } @else if (field.type === 'text') {
+                <mat-form-field class="w-full" (keydown.enter)="$event.preventDefault()">
+                  <mat-label> {{ field.label }} </mat-label>
+                  <input matInput
+                         [ngModel]="field.input"
+                         (ngModelChange)="onSettingChange(item, field, $event)"
+                         [ngModelOptions]="{ standalone: true }"
+                         [required]="field.required ?? false"
+                         [appSavedValueError]="field"
+                         #ctrl="ngModel" />
+                  @if (getDescription(field); as description) {
+                    <button
+                        mat-icon-button
+                        matSuffix
+                        type="button"
+                        [matTooltip]="description"
+                        [attr.aria-label]="description"
+                        (click)="$event.stopPropagation()">
+                      <i class="pi pi-info-circle"></i>
+                    </button>
+                  }
+                  @if (ctrl.hasError('required')) {
+                    <mat-error> This field is required </mat-error>
+                  } @else if (ctrl.hasError('savedValueError')) {
+                    <mat-error> Saved value has the wrong type </mat-error>
+                  }
+                </mat-form-field>
+              } @else if (field.type === 'select') {
+                <mat-form-field class="w-full" (keydown.enter)="$event.preventDefault()">
+                  <mat-label> {{ field.label }} </mat-label>
+                  <mat-select [ngModel]="field.input"
+                              (ngModelChange)="onSettingChange(item, field, $event)"
+                              [ngModelOptions]="{ standalone: true }"
+                              [required]="field.required ?? false"
+                              [appSavedValueError]="field"
+                              #ctrl="ngModel">
+                    @if (!field.required) {
+                      <mat-option>None</mat-option>
+                    }
+                    @for (option of field.options; track option.id) {
+                      <mat-option [value]="option.id"> {{ option.label }} </mat-option>
+                    }
+                  </mat-select>
+                  @if (getDescription(field); as description) {
+                    <button
+                        mat-icon-button
+                        matSuffix
+                        type="button"
+                        [matTooltip]="description"
+                        [attr.aria-label]="description"
+                        (click)="$event.stopPropagation()">
+                      <i class="pi pi-info-circle"></i>
+                    </button>
+                  }
+                  @if (field.savedValueError?.reason === 'unknown-option') {
+                    <mat-error> Saved option '{{ savedOptionId(field) }}' is not available </mat-error>
+                  } @else if (ctrl.hasError('savedValueError')) {
+                    <mat-error> Saved value has the wrong type </mat-error>
+                  } @else if (ctrl.hasError('required')) {
+                    <mat-error> This field is required </mat-error>
+                  }
+                </mat-form-field>
+              } @else if (field.type === 'boolean') {
+                <div class="boolean-field">
+                  <span class="boolean-label">{{ field.label }}</span>
+                  @if (getDescription(field); as description) {
+                    <button
+                        mat-icon-button
+                        type="button"
+                        [matTooltip]="description"
+                        [attr.aria-label]="description"
+                        (click)="$event.stopPropagation()">
+                      <i class="pi pi-info-circle"></i>
+                    </button>
+                  }
+                  <p-toggleswitch
+                      [ngModel]="booleanToggleValue(field)"
+                      (ngModelChange)="onSettingChange(item, field, $event)"
+                      [ngModelOptions]="{ standalone: true }"
+                      [attr.aria-label]="field.label" />
+                </div>
+                @if (field.savedValueError) {
+                  <div class="boolean-field-error"> Saved value has the wrong type </div>
+                }
+              }
+            </div>
+          }
+          }
+
+          @if (item.variables.length > 0) {
+            <div class="variables">
+              <div class="variables-header">Variables</div>
+              <div class="variables-scope">
+                @if (item.allowFunctionalVariables) {
+                  Conditions for this verifier may use Java Variables and these:
+                } @else {
+                  Conditions for this verifier may use only these variables:
+                }
+              </div>
+              <ul class="variables-list">
+                @for (variable of item.variables; track variable.id) {
+                  <li class="variable">
+                    <span class="variable-name">{{ variable.id }}</span>
+                    <span class="variable-type">: {{ variable.type }}</span>
+                    @if (variable.description) {
+                      <button
+                          mat-icon-button
+                          type="button"
+                          [matTooltip]="variable.description"
+                          [attr.aria-label]="variable.description"
+                          (click)="$event.stopPropagation()">
+                        <i class="pi pi-info-circle"></i>
+                      </button>
+                    }
+                  </li>
+                }
+              </ul>
+            </div>
+          }
+        </p-accordion-content>
+      </p-accordion-panel>
+    }
+  }
+</p-accordion>
