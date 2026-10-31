@@ -1,0 +1,11 @@
+description: >-
+  A return statement: a backend-only stub the editor cannot create, and that
+  cannot be verified.
+allOf:
+  - $ref: './abstract.yml'
+  - type: object
+    properties:
+      type:
+        type: string
+        enum:
+          - RETURN

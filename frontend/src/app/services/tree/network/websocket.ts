@@ -1,8 +1,22 @@
 import { Subject } from "rxjs";
+import { VerificationMessage } from "../../../types/VerificationMessage";
 
+/**
+ * Parses one WebSocket frame into its typed {@link VerificationMessage} envelope. A frame is
+ * always JSON on this socket, never a bare string — extracted so it is testable without a
+ * live WebSocket connection.
+ */
+export function parseVerificationMessage(data: string): VerificationMessage {
+    return JSON.parse(data) as VerificationMessage;
+}
+
+/**
+ * Thin wrapper around a verification job's WebSocket (`/ws/verify/{jobId}`). Emits each frame
+ * as a parsed {@link VerificationMessage} rather than the raw string.
+ */
 export class WebSocketService {
     private socket: WebSocket;
-    private messagesSubject = new Subject<string>();
+    private messagesSubject = new Subject<VerificationMessage>();
     public messages$ = this.messagesSubject.asObservable();
 
     constructor(url: string) {
@@ -13,8 +27,7 @@ export class WebSocketService {
         };
 
         this.socket.onmessage = (event) => {
-            const message = event.data;
-            this.messagesSubject.next(message);
+            this.messagesSubject.next(parseVerificationMessage(event.data));
         };
 
         this.socket.onerror = (event) => {

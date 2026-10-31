@@ -1,0 +1,42 @@
+parameters:
+  - in: path
+    required: true
+    name: id
+    schema:
+      type: string
+      format: uuid
+    description: The job id `POST /editor/verify` answered with.
+
+get:
+  summary: Stream a verification job's status
+  operationId: streamJobStatusByUUID
+  description: >-
+    A WebSocket carrying the job's status as typed messages (see the
+    referenced schema): log lines tagged with the Verifier — or functional
+    verification — that produced them, one done per Verifier as each
+    finishes, and one final complete once everything has. A socket opened
+    after the job started receives everything sent so far first. An unknown
+    job id closes the socket with code 4404 without sending anything.
+  tags:
+    - Editor
+  responses:
+    '200':
+      description: >-
+        WebSocket opened; see the referenced schema for the messages sent on
+        it afterward.
+      content:
+        application/json:
+          schema:
+            $ref: '../../schema/verification/message.yml'
+    '500':
+      description: Generic Server Error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '../../schema/problem.yml'
+    '503':
+      description: Service Unavailable
+      content:
+        application/problem+json:
+          schema:
+            $ref: '../../schema/problem.yml'

@@ -1,0 +1,37 @@
+description: >-
+  A selection statement: `commands[i]` runs when `guards[i]` holds, in order.
+  `commands` may hold `null` where the editor has not filled in a command for a guard
+  yet.
+allOf:
+  - $ref: './abstract.yml'
+  - type: object
+    properties:
+      type:
+        type: string
+        enum:
+          - SELECTION
+
+      guards:
+        type: array
+        items:
+          $ref: '../../cbc/condition.yml'
+
+      commands:
+        type: array
+        items:
+          type: object
+          nullable: true
+          allOf:
+            - $ref: '../statement.yml'
+
+      isPreProven:
+        type: boolean
+        description: >-
+          Whether the precondition implying one of the guards is already proven. Same
+          field as `cbc/statements/selection.yml`'s `preProven`, under the name the
+          editor itself uses.
+
+    required:
+      - guards
+      - commands
+      - isPreProven

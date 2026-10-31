@@ -1,0 +1,111 @@
+parameters:
+  - in: path
+    name: id
+    required: true
+    schema:
+      type: string
+      format: uuid
+    description: >-
+      The job id the backend has already minted for this run. The Verifier
+      does not mint or return its own id; every operation from here on —
+      the status stream, the result fetch — is addressed by this same id,
+      which the Verifier must use verbatim.
+
+post:
+  summary: Start a verification job
+  operationId: startJob
+  description: >-
+    Starts one verification job under the given, backend-minted id. The
+    request is static-analysis input, never generated or compiled code: the
+    same program representation the editor and the Functional Verifier work
+    from, in the editor model's own field names, with this Verifier's own
+    Verifier Condition already swapped into each statement's (and the
+    program root's) primary condition fields — its sparse per-Verifier
+    conditions are never sent separately, so a statement with nothing
+    written for this Verifier simply carries no condition here. The
+    program's functional specification is not sent: functional verification
+    has already succeeded by the time any Verifier is started.
+
+    The project's existing source and include files are unconditionally
+    attached — every Verifier receives them with every job, with no flag or
+    negotiation to opt out. `settings` is this Verifier's resolved Settings:
+    one concrete value per Setting it declared, the project's persisted
+    Overrides already merged onto the Catalog defaults.
+
+    The response is a bare acknowledgement; the Verifier does not mint or
+    return its own id. A call that fails outright (unreachable, an error
+    response) is treated as an immediate failure for this Verifier alone —
+    every other Verifier and the rest of the job proceed unaffected.
+  tags:
+    - Verifier
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../schema/verifiers/job/startRequest.yml'
+  responses:
+    '202':
+      description: >-
+        The job was accepted under the given id. A bare acknowledgement —
+        no response body.
+    '400':
+      description: Malformed Request Body
+      content:
+        application/problem+json:
+          schema:
+            $ref: '../../schema/problem.yml'
+    '500':
+      description: Generic Server Error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '../../schema/problem.yml'
+    '503':
+      description: Service Unavailable
+      content:
+        application/problem+json:
+          schema:
+            $ref: '../../schema/problem.yml'
+
+get:
+  summary: Stream the job's status
+  operationId: streamJobStatus
+  description: >-
+    Opens a WebSocket carrying this job's status as a typed envelope, never
+    a bare string: a log message, sent at any point during the run (its
+    free text lives inside a `message` field), or a done message, sent
+    exactly once, carrying one aggregate `proven` flag for the whole run —
+    no per-statement detail travels over this connection. The backend
+    re-wraps every message with which Verifier it came from before relaying
+    it to the frontend; nothing is forwarded byte-for-byte, so this
+    Verifier's own messages need not identify themselves.
+  tags:
+    - Verifier
+  responses:
+    '200':
+      description: >-
+        WebSocket opened; see the referenced schema for the messages sent
+        on it afterward.
+      content:
+        application/json:
+          schema:
+            $ref: '../../schema/verifiers/job/statusMessage.yml'
+    '404':
+      description: Job by id not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '../../schema/problem.yml'
+    '500':
+      description: Generic Server Error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '../../schema/problem.yml'
+    '503':
+      description: Service Unavailable
+      content:
+        application/problem+json:
+          schema:
+            $ref: '../../schema/problem.yml'

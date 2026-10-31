@@ -1,0 +1,13 @@
+description: >-
+  Verifier — one entry of the Verifier Catalog: a Verifier Registry-assigned
+  `id` joined with the Verifier's Self-Description (with Verifier Registry
+  policy applied to `label`/`enabled`/`toggleable`/setting defaults).
+allOf:
+  - type: object
+    properties:
+      id:
+        type: string
+        description: Stable identifier of the verifier, used to address it.
+    required:
+      - id
+  - $ref: './selfDescription.yml'

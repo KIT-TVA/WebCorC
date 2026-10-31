@@ -7,6 +7,8 @@ import edu.kit.cbc.common.corc.codegeneration.CodeGenerator;
 import edu.kit.cbc.editor.llm.LLMClientRegistry;
 import edu.kit.cbc.editor.llm.LLMQueryDto;
 import edu.kit.cbc.editor.llm.LLMResponse;
+import edu.kit.cbc.editor.verifier.VerifierCatalog;
+import edu.kit.cbc.editor.verifier.VerifierCatalogService;
 import edu.kit.cbc.projects.files.controller.FilesController;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -29,6 +31,7 @@ import java.util.Optional;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.UUID;
+import java.util.concurrent.CompletionStage;
 import java.util.logging.Logger;
 
 @Controller("/editor")
@@ -41,11 +44,17 @@ public class EditorController {
     private final FilesController filesController;
     private final LLMClientRegistry llmRegistry;
     private final VerificationOrchestrator orchestrator;
+    private final VerifierCatalogService catalogService;
 
-    EditorController(FilesController filesController, LLMClientRegistry llmRegistry, VerificationOrchestrator orchestrator) {
+    EditorController(
+        FilesController filesController,
+        LLMClientRegistry llmRegistry,
+        VerificationOrchestrator orchestrator,
+        VerifierCatalogService catalogService) {
         this.filesController = filesController;
         this.llmRegistry = llmRegistry;
         this.orchestrator = orchestrator;
+        this.catalogService = catalogService;
     }
 
     @Post(uri = "/export")
@@ -65,7 +74,10 @@ public class EditorController {
     @Post(uri = "/verify")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public HttpResponse<?> verify(@QueryValue Optional<String> projectId, @Body @Valid CbCFormula formula)
+    public HttpResponse<?> verify(
+        @QueryValue Optional<String> projectId,
+        @QueryValue boolean functionalOnly,
+        @Body @Valid CbCFormula formula)
         throws IOException {
         try {
             edu.kit.cbc.common.corc.parsing.SemanticChecker.checkVariables(formula);
@@ -75,8 +87,19 @@ public class EditorController {
                 .badRequest(Map.of("_embedded", Map.of("errors", List.of(Map.of("message", e.getMessage())))));
         }
 
-        UUID jobId = orchestrator.addJob(projectId, formula, filesController);
+        UUID jobId = orchestrator.addJob(projectId, functionalOnly, formula, filesController);
         return HttpResponse.ok(jobId);
+    }
+
+    /**
+     * The Verifier Catalog, served from the cache built at startup — no Verifier is contacted
+     * per request. A request arriving while that build is still running is held (without
+     * blocking an event-loop thread) and answered as soon as the Catalog exists.
+     */
+    @Get(uri = "/verifiers")
+    @Produces(MediaType.APPLICATION_JSON)
+    public CompletionStage<VerifierCatalog> verifiers() {
+        return catalogService.catalog();
     }
 
     @Post(uri = "/javaGen")

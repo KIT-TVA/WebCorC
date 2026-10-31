@@ -1,0 +1,14 @@
+type: object
+description: >-
+  A statement's or the diagram's position on the graphical editor's canvas. Field names
+  (including the casing) are `frontend/src/app/types/position.ts`'s own.
+properties:
+  xinPx:
+    type: number
+
+  yinPx:
+    type: number
+
+required:
+  - xinPx
+  - yinPx

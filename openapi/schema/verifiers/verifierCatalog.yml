@@ -1,0 +1,24 @@
+type: object
+description: >-
+  VerifierCatalog — the read-only set of verifier entries the backend presents to
+  the frontend: the Functional Verifier first, then one entry per registered
+  verifier in Verifier Registry order, each being its Self-Description with
+  Registry policy applied. The user cannot change it; their modifications live
+  in the Verifier Overrides.
+properties:
+  verifiers:
+    type: array
+    description: The catalog entries, Functional Verifier first, then Registry order.
+    items:
+      $ref: './verifier.yml'
+
+  message:
+    type: string
+    description: >-
+      One backend-composed console line describing which verifiers are
+      unavailable and why (e.g. "2 verifiers unavailable: eebc (unreachable),
+      sec (invalid description)"). Absent when every verifier loaded; the
+      frontend forwards it verbatim to the console.
+
+required:
+  - verifiers

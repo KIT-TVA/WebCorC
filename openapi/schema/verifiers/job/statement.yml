@@ -1,0 +1,17 @@
+description: >-
+  One statement in the program a Verifier receives, discriminated by `type`
+  with the editor model's own kind values.
+discriminator:
+  propertyName: type
+  mapping:
+    STATEMENT: './statements/statement.yml'
+    SKIP: './statements/skip.yml'
+    COMPOSITION: './statements/composition.yml'
+    SELECTION: './statements/selection.yml'
+    REPETITION: './statements/repetition.yml'
+oneOf:
+  - $ref: './statements/statement.yml'
+  - $ref: './statements/skip.yml'
+  - $ref: './statements/composition.yml'
+  - $ref: './statements/selection.yml'
+  - $ref: './statements/repetition.yml'

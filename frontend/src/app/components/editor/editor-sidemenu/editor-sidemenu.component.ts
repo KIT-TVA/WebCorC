@@ -14,6 +14,7 @@ import {
 import {AiChatComponent} from "../../ai-chat/ai-chat.component";
 import {ConsoleComponent} from "../../console/console.component";
 import {PredicateManagerComponent} from "../predicate-manager/predicate-manager.component";
+import {VerifierManagerComponent} from "../../verify/verifier-manager/verifier-manager.component";
 @Component({
     selector: "app-editor-sidemenu",
     imports: [
@@ -32,6 +33,7 @@ import {PredicateManagerComponent} from "../predicate-manager/predicate-manager.
         AiChatComponent,
         ConsoleComponent,
         PredicateManagerComponent,
+        VerifierManagerComponent,
     ],
     templateUrl: "./editor-sidemenu.component.html",
     standalone: true,

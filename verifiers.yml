@@ -1,0 +1,26 @@
+# Verifier Registry — the file this deployment's backend actually reads.
+#
+# docker-compose.yml mounts it read-only into the `webcorc-backend` container at
+# /config/verifiers.yml, and MICRONAUT_CONFIG_FILES in docker-compose.env points Micronaut at
+# that path, so it is loaded on top of the backend's own application.yml. Changes take effect
+# on the next `docker compose up`/restart of the backend; Verifiers are only registered at
+# startup.
+#
+# `verifiers: []` registers nothing: the Catalog then holds the Functional Verifier (`func`,
+# built in, always present) only. To run more Verifiers, replace the `[]` with a list of entries,
+# template_verifiers.yml next to this file documents every field (id, url, and the optional
+# label/enabled/toggleable/settings policy) with a worked example to copy from. Choose ids users
+# will recognise: the verification console shows the id, not the label, on every line.
+#
+# The dev stack (docker-compose.dev.yml) does not use this file; it mounts verifiers.dev.yml
+# instead.
+
+verifiers: []
+
+# Startup fetch of each registered Verifier's Self-Description: an unreachable Verifier
+# (connect failure, timeout, 5xx — a container start-order race) is retried `retries` times,
+# `retry-delay` apart, before being locked off in the Catalog until the next restart. See
+# template_verifiers.yml for the details and how to lengthen the HTTP client timeouts.
+verifier-catalog:
+  retries: 3
+  retry-delay: 10s

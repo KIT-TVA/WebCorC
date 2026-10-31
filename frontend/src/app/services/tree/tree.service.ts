@@ -1,10 +1,19 @@
-import { Injectable, signal, Signal, WritableSignal } from "@angular/core";
+import { effect, inject, Injectable, signal, Signal, WritableSignal } from "@angular/core";
 import { Subject } from "rxjs";
+import { VerifierService } from "../verifier/verifier.service";
+import { GlobalSettingsService } from "../global-settings.service";
 import {
   AbstractStatement,
   IAbstractStatement,
+  IVerifierEntry,
+  IVerifiers,
+  NodeState,
+  nodeStateFor,
   StatementType,
+  VerifierResult,
+  verifierResultFor,
 } from "../../types/statements/abstract-statement";
+import { FUNCTIONAL_VERIFIER_ID } from "../../types/Verifier";
 import { JavaVariable, JavaVariableKind } from "../../types/JavaVariable";
 import { Renaming } from "../../types/Renaming";
 import { Condition } from "../../types/condition/condition";
@@ -39,12 +48,106 @@ export class TreeService {
   private rootStatementNode: RootStatementNode | undefined;
   private _urn = "";
 
+  private readonly verifierService = inject(VerifierService);
+  private readonly globalSettingsService = inject(GlobalSettingsService);
+
+  /**
+   * Statement ids passed to {@link markSubtreeUnverified}/{@link markWholeTreeUnverified}
+   * while a verification run is in progress. Applied by {@link reapplyRunChanges} once the
+   * run's result lands, so an edit made mid-run is not overwritten by a stale result.
+   * Session-local to the current run only; cleared by {@link beginRun} and by
+   * {@link reapplyRunChanges}.
+   */
+  private editedDuringRun = new Set<string>();
+
   public constructor() {
     this._verificationResultNotifier = new Subject<AbstractStatement>();
     this._verifyNotifier = new Subject<void>();
     this._exportNotifier = new Subject<void>();
     this._resetVerifyNotifier = new Subject<void>();
     this._finalizeNotifier = new Subject<void>();
+
+    // A toggle changes the enabled set, a setting change the stamp the entries are compared with.
+    this.verifierService.overridesChanged.subscribe(() => this.recomputeAllNodeStates());
+
+    // The verify-mode toggle (Functional vs. All), and the Catalog or overrides arriving after
+    // a diagram was loaded, change the enabled-Verifier set `nodeStateFor` derives over without
+    // a new run landing — every rendered node's state must react immediately. Read here, not
+    // in the recompute, which returns early while no diagram is loaded: the effect would then
+    // track nothing but the mode.
+    effect(() => {
+      this.recomputeAllNodeStates(this.verifierService.effectiveEnabledNonFunctionalVerifierIds);
+    });
+  }
+
+  /** Called wherever a verification run starts. */
+  public beginRun(): void {
+    this.editedDuringRun.clear();
+  }
+
+  /**
+   * Keeps edits made during the run from being overwritten by the result just written onto
+   * `statements`: an id edited during the run loses that result again. A setting changed
+   * during the run needs nothing here: the result carries the stamp the run started under.
+   */
+  public reapplyRunChanges(statements: IAbstractStatement[]): void {
+    for (const statement of statements) {
+      if (this.editedDuringRun.has(statement.id)) {
+        TreeService.markUnverified(statement);
+      }
+    }
+    this.editedDuringRun.clear();
+  }
+
+  /**
+   * Re-derives every node's state from its own entries via {@link nodeStateFor}: after a
+   * diagram is loaded, and whenever the enabled-Verifier set the derivation runs over changes
+   * (a `disabled` entry for a newly-enabled id now counts, for instance).
+   */
+  private recomputeAllNodeStates(
+    enabledIds: string[] = this.verifierService.effectiveEnabledNonFunctionalVerifierIds,
+  ): void {
+    if (!this.rootStatementNode) {
+      return;
+    }
+    const subtreeNodes = this.collectSubtreeNodes(this.rootStatementNode);
+    for (const node of subtreeNodes) {
+      node.statement.nodeState = this.deriveNodeState(node.statement.verifiers, enabledIds);
+    }
+    this.refreshNodes();
+  }
+
+  /** A node's card state from its entries, with a stale Verifier counted as not having run. */
+  public deriveNodeState(
+    verifiers: IVerifiers | undefined,
+    enabledIds: string[] = this.verifierService.effectiveEnabledNonFunctionalVerifierIds,
+  ): NodeState {
+    return nodeStateFor(this.withStaleAsDisabled(verifiers), enabledIds);
+  }
+
+  /**
+   * A shallow copy with every stale result marked `disabled`, so the card shows
+   * `settings-changed` for it rather than its old green or red.
+   */
+  private withStaleAsDisabled(verifiers: IVerifiers | undefined): IVerifiers | undefined {
+    if (!verifiers) {
+      return verifiers;
+    }
+    const overlaid: IVerifiers = { ...verifiers };
+    for (const [id, entry] of Object.entries(verifiers)) {
+      if (entry.proven !== undefined && !entry.disabled && this.isStale(id, entry)) {
+        overlaid[id] = { ...entry, disabled: true };
+      }
+    }
+    return overlaid;
+  }
+
+  /** Equality only; missing equals missing. */
+  private isStale(verifierId: string, entry: IVerifierEntry): boolean {
+    return (
+      verifierId !== FUNCTIONAL_VERIFIER_ID &&
+      entry.settingsUpdatedAt !== this.verifierService.settingsStamp(verifierId)
+    );
   }
 
   setFormula(newFormula: LocalCBCFormula, urn: string) {
@@ -73,6 +176,8 @@ export class TreeService {
         e,
       );
     }
+    // The saved `nodeState` is not read back; the entries are the source of truth.
+    this.recomputeAllNodeStates();
   }
 
   private _rootFormula: LocalCBCFormula | undefined;
@@ -408,16 +513,62 @@ export class TreeService {
     return nodes;
   }
 
+  /**
+   * An edit invalidates the results of the edited subtree and of the Root (the project
+   * result). Ancestors in between keep theirs. The Root's card keeps its state until the
+   * next re-derivation; only its entries are cleared.
+   */
   public markSubtreeUnverified(node: AbstractStatementNode): void {
-    const subtreeNodes = this.collectSubtreeNodes(node);
-    subtreeNodes.forEach((subtreeNode) => {
-      subtreeNode.statement.isProven = false;
-      subtreeNode.statement.nodeState = 'unverified'
-    });
+    const subtree = this.collectSubtreeNodes(node).map(
+      (subtreeNode) => subtreeNode.statement,
+    );
+    for (const statement of subtree) {
+      TreeService.markUnverified(statement);
+    }
+    const root = this.rootStatementNode?.statement;
+    const edited = [...subtree];
+    if (root && !subtree.includes(root)) {
+      TreeService.clearResults(root);
+      edited.push(root);
+    }
+    if (this.globalSettingsService.isVerifying) {
+      for (const statement of edited) {
+        this.editedDuringRun.add(statement.id);
+      }
+    }
     if (this.rootFormula) {
       this.rootFormula.isProven = false;
     }
     this.refreshNodes();
+  }
+
+  private static markUnverified(statement: IAbstractStatement): void {
+    TreeService.clearResults(statement);
+    statement.isProven = false;
+    statement.nodeState = "unverified";
+  }
+
+  /**
+   * Drops `proven`/`status` and the settings stamp from every entry, keeping conditions and
+   * `disabled`, so no later {@link nodeStateFor} derivation can bring the old result back.
+   */
+  private static clearResults(statement: IAbstractStatement): void {
+    const kept: IVerifiers = {};
+    for (const [verifierId, entry] of Object.entries(statement.verifiers ?? {})) {
+      const rest = { ...entry };
+      delete rest.proven;
+      delete rest.status;
+      delete rest.settingsUpdatedAt;
+      if (Object.keys(rest).length > 0) {
+        kept[verifierId] = rest;
+      }
+    }
+    statement.verifiers = kept;
+  }
+
+  public verifierResult(statement: IAbstractStatement, verifierId: string): VerifierResult {
+    const entry = statement.verifiers?.[verifierId];
+    return verifierResultFor(entry, entry !== undefined && this.isStale(verifierId, entry));
   }
 
   public markWholeTreeUnverified(): void {

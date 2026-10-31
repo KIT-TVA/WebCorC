@@ -1,0 +1,61 @@
+type: object
+description: >-
+  Shared fields of every saved statement kind. Beyond what `cbc/statements/abstract.yml`
+  carries, the editor also writes `id` (its own client-generated identity), `nodeState`
+  (this statement's last-computed display state) and `position`, none of which the
+  backend's editor format has. Every field here is required (unlike `cbc/`'s, where an
+  empty child is left out of the request): the editor always has a full statement object
+  in memory, so `AbstractStatement`'s own class fields — `verifiers`, `name`, the proof
+  flags — are never left `undefined` the way an optional child statement can be.
+properties:
+  id:
+    type: string
+
+  name:
+    type: string
+
+  type:
+    type: string
+    enum:
+      - STATEMENT
+      - SKIP
+      - COMPOSITION
+      - SELECTION
+      - REPETITION
+
+  preCondition:
+    $ref: '../../cbc/condition.yml'
+
+  postCondition:
+    $ref: '../../cbc/condition.yml'
+
+  verifiers:
+    $ref: '../../cbc/verifiers.yml'
+
+  isProven:
+    type: boolean
+    description: The Functional Verifier's verdict for this statement.
+
+  nodeState:
+    type: string
+    enum:
+      - verified-all
+      - verified-functional
+      - settings-changed
+      - unverified
+      - failed
+      - failed-non-functional
+
+  position:
+    $ref: '../position.yml'
+
+required:
+  - id
+  - name
+  - type
+  - preCondition
+  - postCondition
+  - verifiers
+  - isProven
+  - nodeState
+  - position

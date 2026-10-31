@@ -1,3 +1,20 @@
+## Integration tests
+
+`mvn verify` runs the `*IT` tests with [Micronaut Test Resources](https://micronaut-projects.github.io/micronaut-test-resources/latest/guide/),
+which needs a local Docker daemon: `VerifierCatalogIT` starts the mock Verifier
+(`../mock-verifier`, the same image `docker-compose.dev.yml` runs) as a generic container. The
+build tags that image `webcorc-mock-verifier` itself in `pre-integration-test` (the `docker` CLI
+must be on the `PATH`), so nothing has to be built by hand. `-DskipTests` and `-DskipITs` skip
+the image build along with the tests; `-Dskip.mock.verifier.image=true` skips only the image
+build, for runs that do not start the mock, e.g. with `-Dmicronaut.test.resources.enabled=false`
+as CI does. MongoDB is expected at `localhost:27017` (see
+`src/test/resources/application-test.yml`).
+
+Docker Engine 29 or newer rejects the API version the bundled Testcontainers negotiates
+("client version 1.32 is too old"). Until Test Resources ships a newer Testcontainers, pin the
+version for the Test Resources server JVM, e.g. `JAVA_TOOL_OPTIONS=-Dapi.version=1.44 mvn verify`
+(or put `api.version=1.44` into `~/.docker-java.properties`).
+
 ## Micronaut 4.5.1 Documentation
 - [User Guide](https://docs.micronaut.io/4.5.1/guide/index.html)
 - [API Reference](https://docs.micronaut.io/4.5.1/api/index.html)

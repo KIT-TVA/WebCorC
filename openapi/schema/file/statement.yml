@@ -1,0 +1,19 @@
+description: >-
+  One statement of a saved refinement tree, discriminated by `type`. Unlike
+  `cbc/statement.yml`, `ROOT` and `RETURN` never appear here: the editor strips its
+  synthetic Root wrapper before writing a file, and it cannot create a `RETURN`
+  statement at all.
+discriminator:
+  propertyName: type
+  mapping:
+    STATEMENT: './statements/statement.yml'
+    SKIP: './statements/skip.yml'
+    COMPOSITION: './statements/composition.yml'
+    SELECTION: './statements/selection.yml'
+    REPETITION: './statements/repetition.yml'
+oneOf:
+  - $ref: './statements/statement.yml'
+  - $ref: './statements/skip.yml'
+  - $ref: './statements/composition.yml'
+  - $ref: './statements/selection.yml'
+  - $ref: './statements/repetition.yml'

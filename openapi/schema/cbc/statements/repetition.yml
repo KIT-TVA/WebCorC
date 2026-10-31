@@ -1,34 +1,38 @@
-description: Repetition Statement
+description: >-
+  A repetition statement, `while (guard) loopStatement`. `variantProven`,
+  `preProven` and `postProven` record which of its own proof obligations are
+  already proven.
 allOf:
   - $ref: './abstract.yml'
   - type: object
     properties:
-      postProven:
+      type:
+        type: string
+        enum:
+          - REPETITION
+
+      guard:
+        $ref: '../condition.yml'
+
+      invariant:
+        $ref: '../condition.yml'
+
+      variant:
+        $ref: '../condition.yml'
+
+      loopStatement:
+        $ref: '../statement.yml'
+
+      variantProven:
         type: boolean
 
       preProven:
         type: boolean
 
-      variantProven:
+      postProven:
         type: boolean
 
-      invariantCondition:
-        $ref: '../condition.yml' 
-
-      guardCondition:
-        $ref: '../condition.yml'
-
-      variant: 
-        type: string 
-
-      loopStatement:
-        $ref: '../statement.yml'
-required:
-  - statementType
-  - postProven
-  - preProven
-  - variantProven
-  - invariantCondition
-  - guardCondition
-  - variant
-  - loopStatement
+    required:
+      - guard
+      - invariant
+      - variant

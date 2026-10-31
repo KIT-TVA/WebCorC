@@ -2,6 +2,7 @@ import { Injectable, inject } from "@angular/core";
 import { IProjectElement, ProjectDirectory } from "../types/project-elements";
 import { CbcFormulaMapperService } from "../mapper/cbc-formula-mapper.service";
 import { ProjectPredicate } from "../../../types/ProjectPredicate";
+import { VerifierOverrides } from "../../../types/Verifier";
 import { ProjectElementsMapperService } from "../types/project-elements-mapper.service";
 
 /**
@@ -20,6 +21,7 @@ export class ProjectStorageService {
   private static readonly remoteFileTreeKey = "remoteFileTree";
   private static readonly projectFileUrnPrefix = "_webCorc_";
   private static readonly projectPredicatesKey = "predicates";
+  private static readonly projectVerifiersKey = "verifiers";
 
   /** Inserted by Angular inject() migration for backwards compatibility */
   constructor(...args: unknown[]);
@@ -122,6 +124,21 @@ export class ProjectStorageService {
     sessionStorage.setItem(
       ProjectStorageService.projectPredicatesKey,
       JSON.stringify(predicates),
+    );
+  }
+
+  public getVerifierOverrides(): VerifierOverrides | null {
+    const storageContent = sessionStorage.getItem(
+      ProjectStorageService.projectVerifiersKey,
+    );
+    if (!storageContent) return null;
+    return JSON.parse(storageContent);
+  }
+
+  public setVerifierOverrides(overrides: VerifierOverrides) {
+    sessionStorage.setItem(
+      ProjectStorageService.projectVerifiersKey,
+      JSON.stringify(overrides),
     );
   }
 }

@@ -1,0 +1,18 @@
+type: object
+description: >-
+  One of the project's existing source or include files. Attached
+  unconditionally with every start-a-job request — every Verifier receives
+  every file, with no flag or negotiation to opt in or out — so a Verifier
+  never needs a separate mechanism to fetch project files.
+properties:
+  path:
+    type: string
+    description: The file's project-relative path, including its name.
+
+  content:
+    type: string
+    description: The file's full text content.
+
+required:
+  - path
+  - content

@@ -31,11 +31,14 @@ import io.micronaut.scheduling.annotation.ExecuteOn;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
@@ -124,6 +127,34 @@ public class FilesController {
         String path = String.format(PATH_FORMAT, id, urn);
         return objectStorage.retrieve(path)
             .map(FilesController::buildStreamedFile);
+    }
+
+    /**
+     * The project's text files with {@code extension} under {@code subFolder}, straight from
+     * object storage — no temp files — keyed by project-relative path in listing order.
+     */
+    public Map<String, String> readFiles(String projectId, String extension, String subFolder) throws IOException {
+        Map<String, String> files = new LinkedHashMap<>();
+        for (String file : findFilesWithExtension(projectId, subFolder, extension)) {
+            String urn = subFolder + "/" + file;
+            Optional<byte[]> bytes = retrieveFileBytes(projectId, urn);
+            if (bytes.isEmpty()) {
+                throw new IOException("File " + urn + " of project " + projectId + " is listed but cannot be retrieved");
+            }
+            files.put(urn, new String(bytes.get(), StandardCharsets.UTF_8));
+        }
+        return files;
+    }
+
+    public Optional<byte[]> retrieveFileBytes(String projectId, String urn) throws IOException {
+        String path = String.format(PATH_FORMAT, projectId, urn);
+        Optional<AwsS3ObjectStorageEntry> entry = objectStorage.retrieve(path);
+        if (entry.isEmpty()) {
+            return Optional.empty();
+        }
+        try (InputStream is = entry.get().getInputStream()) {
+            return Optional.of(is.readAllBytes());
+        }
     }
 
     @Post(uri = "/{path:.*}")

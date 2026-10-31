@@ -1,0 +1,13 @@
+type: object
+description: >-
+  Renames `function` to `newName` in the functional conditions for the
+  proof; a `boolean` type compares the new name against `TRUE`.
+properties:
+  type:
+    type: string
+
+  function:
+    type: string
+
+  newName:
+    type: string

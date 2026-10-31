@@ -1,0 +1,39 @@
+type: object
+description: >-
+  VerifierBooleanSetting — a setting rendered as a toggle switch. A closed object: it accepts
+  exactly the properties listed here and nothing else. `id`, `label` and `description` are
+  common to every setting kind. Unlike the string-valued settings it carries a real boolean
+  `default` — a toggle cannot produce an invalid value, so there is nothing to round-trip for
+  validation — and it has no `required`: a toggle always shows a state.
+properties:
+  id:
+    type: string
+    description: Stable key of the setting, used to address it when persisting changes.
+
+  label:
+    type: string
+    description: Human-readable label rendered next to the input.
+
+  description:
+    type: string
+    description: Optional longer description of what the setting controls.
+
+  type:
+    type: string
+    enum:
+      - boolean
+    description: Rendered as a toggle switch.
+
+  default:
+    type: boolean
+    description: >-
+      Value used to preinitialize the toggle. Mandatory — a toggle always shows a state, so
+      the catalog must declare the initial one; there is no unset value and `required` does
+      not apply.
+
+required:
+  - id
+  - label
+  - type
+  - default
+additionalProperties: false

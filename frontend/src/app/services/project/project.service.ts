@@ -12,6 +12,7 @@ import { ProjectElementsMapperService } from "./types/project-elements-mapper.se
 import { ProjectStorageService } from "./storage/project-storage.service";
 import { Inode, LocalDirectory } from "./types/api-elements";
 import { ProjectPredicate } from "../../types/ProjectPredicate";
+import { VerifierOverrides } from "../../types/Verifier";
 import { GlobalSettingsService } from "../global-settings.service";
 
 /**
@@ -35,6 +36,7 @@ export class ProjectService {
   );
   private _saveNotify = new Subject<void>();
   private _savedFinished = new Subject<void>();
+  private _verifierOverridesLoaded = new Subject<void>();
   private _projectName: string = "";
   private rubbishBinName = ".rubbishBin";
 
@@ -188,6 +190,9 @@ export class ProjectService {
       case "key":
         newFile = this.mapper.constructCodeFile(newUrn);
         break;
+      case "json":
+        newFile = this.mapper.constructCodeFile(newUrn);
+        break;
       default:
         throw new Error("Could not add file, unknown type");
     }
@@ -202,7 +207,7 @@ export class ProjectService {
     element: ProjectElement | string,
     directory: ProjectDirectory = this._rootDir,
   ): ProjectDirectory | undefined {
-    let parts: string[] = [];
+    let parts: string[];
     if (typeof element === "string") {
       parts = element.split("/");
     } else {
@@ -399,6 +404,36 @@ export class ProjectService {
     return this.storage.getPredicates();
   }
 
+  public saveVerifierOverrides(overrides: VerifierOverrides) {
+    this.storage.setVerifierOverrides(overrides);
+
+    const internalDirName = ".internal";
+    const verifiersFileName = "verifiers";
+    const verifiersFileExtension = "json";
+    const verifiersFileUrn = `${internalDirName}/${verifiersFileName}.${verifiersFileExtension}`;
+
+    if (!this.findByUrn(internalDirName)) {
+      this.addDirectory("", internalDirName);
+    }
+
+    if (!this.findByUrn(verifiersFileUrn)) {
+      this.addFile(internalDirName, verifiersFileName, verifiersFileExtension);
+    }
+
+    try {
+      this.syncLocalFileContent(
+        verifiersFileUrn,
+        JSON.stringify(overrides, null, 2),
+      );
+    } catch (e) {
+      console.error(`Could not sync verifiers file: ${e}`);
+    }
+  }
+
+  public getVerifierOverrides(): VerifierOverrides | null {
+    return this.storage.getVerifierOverrides();
+  }
+
   /**
    * Export the project by exporting the root directory to the data only classes
    * @returns
@@ -413,6 +448,7 @@ export class ProjectService {
     this._projectName = projectname;
     this.storage.saveProject(imported, projectname);
     this.loadPredicatesFromFile();
+    this.loadVerifiersFromFile();
     this._dataChange.next(this._rootDir.contents);
   }
 
@@ -493,6 +529,7 @@ export class ProjectService {
       }
 
       this.loadPredicatesFromFile();
+      this.loadVerifiersFromFile();
       this._dataChange.next(this._rootDir.contents);
     } catch (error) {
       console.error("Failed to download workspace:", error);
@@ -534,9 +571,11 @@ export class ProjectService {
   private async uploadFolder(folder: ProjectDirectory) {
     console.log("upload folder", folder);
     for (const item of folder.contents) {
+/*
       if (item.urn.startsWith(".internal")) {
         continue;
       }
+*/
 
       if (item.serverSideUrn && item.serverSideUrn !== item.urn) {
         const inodeType = item.type === "DIRECTORY" ? "directory" : "file";
@@ -766,6 +805,31 @@ export class ProjectService {
       );
       this.storage.setPredicates([]);
     }
+  }
+
+  private async loadVerifiersFromFile() {
+    const verifiersFileUrn = ".internal/verifiers.json";
+    try {
+      const content = await this.getFileContent(verifiersFileUrn);
+      if (typeof content === "string") {
+        const overrides = JSON.parse(content) as VerifierOverrides;
+        this.storage.setVerifierOverrides(overrides);
+        this._verifierOverridesLoaded.next();
+      }
+    } catch (e) {
+      console.log(
+        "Verifiers file not found or invalid, falling back to defaults.",
+      );
+    }
+  }
+
+  /**
+   * Fires when the verifier overrides have just been hydrated from `.internal/verifiers.json`
+   * (e.g. after `downloadWorkspace` or `importProject`). The {@link VerifierService}
+   * subscribes to this to re-read the cache and refresh its signal so the UI updates.
+   */
+  public get verifierOverridesLoaded() {
+    return this._verifierOverridesLoaded;
   }
 
   public notifyEditortoSave() {

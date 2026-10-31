@@ -1,0 +1,16 @@
+description: >-
+  One message on a verification job's frontend-facing WebSocket
+  (`/ws/verify/{jobId}`), discriminated by `type`. A typed envelope only —
+  free text always lives inside a `message` field, never sent as a bare
+  string. A socket opened after the job has started receives everything
+  sent so far first, in order, then the rest as it happens.
+discriminator:
+  propertyName: type
+  mapping:
+    log: './logMessage.yml'
+    done: './doneMessage.yml'
+    complete: './completeMessage.yml'
+oneOf:
+  - $ref: './logMessage.yml'
+  - $ref: './doneMessage.yml'
+  - $ref: './completeMessage.yml'

@@ -1,0 +1,28 @@
+type: object
+description: >-
+  A free-text log line from one Verifier, from functional verification, or
+  from the job's own orchestration, relayed by the backend. The `verifier`
+  tag is added by the backend — a Verifier's own message carries none — so
+  the console can attribute it.
+properties:
+  type:
+    type: string
+    enum:
+      - log
+
+  verifier:
+    type: string
+    description: >-
+      The id of the Verifier that produced the line; `func` for functional
+      verification. Absent when the line is about the job's own
+      orchestration (e.g. announcing which Verifiers are about to be
+      called) rather than something any Verifier, functional verification
+      included, produced.
+
+  message:
+    type: string
+    description: Free text, forwarded to the user's console as received.
+
+required:
+  - type
+  - message

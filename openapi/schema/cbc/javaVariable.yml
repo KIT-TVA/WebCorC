@@ -1,0 +1,17 @@
+type: object
+description: A Java variable the program declares.
+properties:
+  name:
+    type: string
+    description: Type and name as one declaration, e.g. `int[] A`.
+
+  kind:
+    type: string
+    enum:
+      - LOCAL
+      - RETURN
+      - GLOBAL
+
+required:
+  - name
+  - kind

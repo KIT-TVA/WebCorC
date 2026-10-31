@@ -1,0 +1,13 @@
+description: >-
+  VerifierSetting — one of four kinds, discriminated by `type` and, for text settings,
+  `valueType`. Each kind is a closed object (`additionalProperties: false`): a setting carries
+  exactly the properties its kind declares, so a property another kind declares — `options` on
+  a text setting, `step` or `range` off a text/number, `required` on a boolean — makes the whole
+  Self-Description invalid. The kinds are spelled out in full rather than composed, because
+  under OpenAPI 3.0 an `allOf` branch cannot be closed without rejecting the other branches'
+  properties.
+oneOf:
+  - $ref: './settings/textString.yml'
+  - $ref: './settings/textNumber.yml'
+  - $ref: './settings/select.yml'
+  - $ref: './settings/boolean.yml'

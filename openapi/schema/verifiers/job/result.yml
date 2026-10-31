@@ -1,0 +1,23 @@
+type: object
+description: >-
+  This Verifier's actual per-statement results, as a flat map keyed by the
+  string form of the statement ids it was given in the start-a-job
+  request's program — never a tree, so this Verifier never has to
+  reconstruct or preserve the shape it was given the ids in.
+additionalProperties:
+  type: object
+  description: One statement's result.
+  properties:
+    proven:
+      type: boolean
+      description: Whether this Verifier's check of this statement passed.
+
+    status:
+      type: string
+      description: >-
+        Opaque status text this Verifier has to report for this statement
+        (see the Verifier Status domain concept). Entirely this Verifier's
+        own business; WebCorC forwards it without interpreting it.
+
+  required:
+    - proven

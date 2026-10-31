@@ -34,13 +34,17 @@ import { AiChatService } from "../../../../services/ai-chat/ai-chat.service";
   styleUrl: "./simple-statement.component.css",
 })
 export class SimpleStatementComponent extends Refinement implements OnInit {
+  private aiChatService = inject(AiChatService);
+
   @Input() _node!: SimpleStatementNode;
 
   override export(): AbstractStatement | undefined {
     throw new Error("Method not implemented.");
   }
 
-  public constructor(treeService: TreeService, private aiChatService: AiChatService) {
+  public constructor() {
+    const treeService = inject(TreeService);
+
     super(treeService);
   }
 

@@ -1,0 +1,35 @@
+type: object
+description: >-
+  The root of the program a Verifier receives to start a job: WebCorC's own
+  program representation — never generated or compiled code — in the editor
+  model's own field names, narrowed to code-level input. Functional
+  verification has already succeeded before any Verifier runs, so the
+  program's functional specification (global conditions, functional
+  pre/postconditions, loop invariants and variants) is not sent. The
+  `preCondition`/`postCondition` fields here and on every statement are not
+  that functional specification: they carry this Verifier's own Verifier
+  Condition, in place of a sparse per-Verifier map, and are absent where the
+  user has not written one.
+properties:
+  name:
+    type: string
+
+  javaVariables:
+    type: array
+    description: The method's own Java variables, by name.
+    items:
+      type: string
+
+  preCondition:
+    $ref: './condition.yml'
+
+  postCondition:
+    $ref: './condition.yml'
+
+  statement:
+    $ref: './statement.yml'
+
+required:
+  - name
+  - javaVariables
+  - statement

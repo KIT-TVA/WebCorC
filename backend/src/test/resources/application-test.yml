@@ -1,10 +1,27 @@
 development: true
 mongodb:
   uri: "mongodb://localhost:27017"
-micronaut:
-  test:
-    resources:
-      enabled: false
+
+# The integration tests register Verifiers nobody listens at (locked off on purpose); do not
+# wait for them to come up.
+verifier-catalog:
+  retries: 1
+  retry-delay: 0s
+
+# The mock Verifier (mock-verifier/ at the repo root, the same image the dev compose stack
+# runs) as a Micronaut Test Resources generic container. It is started on first use, i.e. when
+# a test resolves ${mock-verifier.host} / ${mock-verifier.port} — see VerifierCatalogIT, which
+# registers it as its first Verifier Registry entry. The image is built by the backend's Maven
+# build before the integration tests run (see the exec-maven-plugin execution in pom.xml;
+# skipped with -DskipTests, -DskipITs or -Dskip.mock.verifier.image=true).
+test-resources:
+  containers:
+    mock-verifier:
+      image-name: webcorc-mock-verifier
+      hostnames:
+        - mock-verifier.host
+      exposed-ports:
+        - mock-verifier.port: 80
 
 rate-limit:
   enabled: false

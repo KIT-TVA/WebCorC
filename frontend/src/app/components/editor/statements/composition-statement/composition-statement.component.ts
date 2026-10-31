@@ -18,6 +18,9 @@ import {
 import { Position } from "../../../../types/position";
 import { CompositionStatementNode } from "../../../../types/statements/nodes/composition-statement-node";
 import { HandleComponent } from "ngx-vflow";
+import { BehaviorSubject } from "rxjs";
+import { ICondition } from "../../../../types/condition/condition";
+import { FUNCTIONAL_VERIFIER_ID, Verifier } from "../../../../types/Verifier";
 
 /**
  * Composition statement in {@link EditorComponent}.
@@ -59,6 +62,19 @@ export class CompositionStatementComponent
 
   public onEditableContentChanged(): void {
     this.treeService.markSubtreeUnverified(this._node);
+  }
+
+  /**
+   * The intermediate condition edited in the given verifier's popup panel: the
+   * node's own for the Functional Verifier (and outside the popup, where no verifier
+   * is passed), the verifier-specific one otherwise.
+   */
+  public intermediateConditionFor(
+    verifier?: Verifier,
+  ): BehaviorSubject<ICondition> {
+    return !verifier || verifier.id === FUNCTIONAL_VERIFIER_ID
+      ? this._node.intermediateCondition
+      : this._node.verifierIntermediateCondition(verifier.id);
   }
 
   public override getTitle(): string {

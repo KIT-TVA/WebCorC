@@ -1,0 +1,29 @@
+type: object
+description: >-
+  Sent exactly once, when this Verifier's run has finished, pass or fail.
+  Signals that the result is ready to be fetched; carries no per-statement
+  detail.
+properties:
+  type:
+    type: string
+    enum:
+      - done
+
+  proven:
+    type: boolean
+    description: >-
+      One aggregate pass/fail signal for the whole run — false if any part
+      of it failed — sent immediately so the user gets an outcome without
+      waiting for per-statement detail to be assembled.
+
+  status:
+    type: string
+    description: >-
+      Opaque Verifier Status this Verifier has to report for the whole run
+      (see the Verifier Status domain concept), shown on the program's root;
+      entirely this Verifier's own business, WebCorC forwards it without
+      interpreting it. Optional; omit when there is nothing to say.
+
+required:
+  - type
+  - proven

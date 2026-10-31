@@ -1,0 +1,17 @@
+{
+  "name": "webcorc-mock-verifier",
+  "private": true,
+  "description": "Stand-in Verifier with scripted responses for local development and integration tests.",
+  "type": "module",
+  "main": "mock-verifier.js",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}

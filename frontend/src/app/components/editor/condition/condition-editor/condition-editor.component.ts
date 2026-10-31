@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, inject } from "@angular/core";
+import { Component, EventEmitter, Input, Output, inject, HostBinding } from "@angular/core";
 import { Condition, ICondition } from "../../../../types/condition/condition";
 import { AiChatService } from "../../../../services/ai-chat/ai-chat.service";
 import { Textarea } from "primeng/textarea";
@@ -43,6 +43,8 @@ export class ConditionEditorComponent {
     @Input() public editable: boolean | null = true;
     @Input() public inline = false;
     @Input() public showAiButton = false;
+    @Input() public fill = false;
+    @HostBinding('class.fill') get _fillHostClass(): boolean { return this.fill; }
 
     /**
      * Emitter to emit the condition

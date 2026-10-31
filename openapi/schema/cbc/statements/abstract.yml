@@ -1,38 +1,37 @@
 type: object
-description: AbstractStatement
+description: >-
+  Shared fields of every statement kind. `preCondition`/`postCondition` are
+  the Functional Verifier's; every other Verifier's conditions live in
+  `verifiers`.
 properties:
-  name: 
+  name:
     type: string
 
-  statementType:
-    type: string 
-  
-  id: 
-    type: integer
-    format: int64
-
-  proven:
-    type: boolean
-
-  comment: 
+  type:
     type: string
+    enum:
+      - STATEMENT
+      - SKIP
+      - COMPOSITION
+      - SELECTION
+      - REPETITION
+      - RETURN
 
   preCondition:
-    $ref: '../condition.yml' 
+    $ref: '../condition.yml'
 
   postCondition:
     $ref: '../condition.yml'
 
-  position:
-    $ref: '../position.yml'
+  verifiers:
+    $ref: '../verifiers.yml'
+
+  isProven:
+    type: boolean
+    description: The Functional Verifier's verdict for this statement.
 
 required:
-  - name
-  - id
-  - statementType
-  - proven
-  - comment
+  - type
   - preCondition
   - postCondition
-  - position
-
+  - isProven

@@ -48,6 +48,11 @@ export class SelectionStatementNode extends AbstractStatementNode {
         initialParentPre.condition + " && " + initialGuard.condition,
       ),
     );
+    // Verifiers have no guards: a branch's verifier preconditions are the selection's own.
+    AbstractStatementNode.shareSlotVerifierConditions(
+      this.precondition,
+      computedPreconditionSubject,
+    );
 
     child.overridePrecondition(computedPreconditionSubject);
     child.preconditionEditable.next(false);
@@ -98,6 +103,8 @@ export class SelectionStatementNode extends AbstractStatementNode {
 
   override checkConditionSync(child: AbstractStatementNode): boolean {
     if (child.statement.type == "REPETITION") {
+      // The precondition is linked by the branch's precondition subscription.
+      child.overridePostcondition(this.postcondition);
       return true;
     }
     this.getConditionConflicts(child);

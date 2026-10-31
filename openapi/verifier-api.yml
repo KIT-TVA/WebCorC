@@ -1,0 +1,30 @@
+openapi: '3.0.2'
+info:
+  title: Verifier API
+  version: '1.0'
+  description: >-
+    The fixed contract every Verifier must implement so the WebCorC backend
+    can talk to it uniformly. A Verifier is a separately deployed service;
+    this document is everything its author needs to know — it does not
+    reference any of WebCorC's own routes. The backend calls the Verifier at
+    the base URL a deployment registers it under (see the Verifier Registry),
+    appending the paths below.
+
+    Besides `GET /description` (the Verifier's Self-Description, fetched
+    once at backend startup), this document defines the three operations
+    that actually run a verification job: starting one, streaming its
+    status, and fetching its result. A Verifier keeps working against new
+    WebCorC versions as long as it implements the paths it knows about.
+    There is no separate API version field in any response — this
+    document's `info.version` is the contract version.
+servers:
+  - url: https://verifier.example.test
+paths:
+  /description:
+    $ref: './paths/verifier/description.yml'
+
+  /jobs/{id}:
+    $ref: './paths/verifier/job.yml'
+
+  /jobs/{id}/result:
+    $ref: './paths/verifier/result.yml'

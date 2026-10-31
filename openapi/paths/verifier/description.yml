@@ -1,0 +1,25 @@
+get:
+  summary: Read the Verifier's Self-Description
+  operationId: readSelfDescription
+  description: >-
+    Returns what the Verifier declares about itself: its label, Settings,
+    Variables and status placeholder text. Called once by the backend at
+    startup for each Verifier Registry entry; the result is merged with
+    Verifier Registry policy and cached for the backend's lifetime — this
+    operation is not called per user request.
+  tags:
+    - Verifier
+  responses:
+    '200':
+      description: The Verifier's Self-Description
+      content:
+        application/json:
+          schema:
+            $ref: '../../schema/verifiers/selfDescription.yml'
+
+    '500':
+      description: Generic Server Error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '../../schema/problem.yml'

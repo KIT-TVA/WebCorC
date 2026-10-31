@@ -1,19 +1,21 @@
-description: Compostion Statement 
+description: A composition statement, `firstStatement` followed by `secondStatement`.
 allOf:
- - $ref: './abstract.yml'
- - type: object
-   properties:
+  - $ref: './abstract.yml'
+  - type: object
+    properties:
+      type:
+        type: string
+        enum:
+          - COMPOSITION
+
       intermediateCondition:
         $ref: '../condition.yml'
 
-      leftStatement:
+      firstStatement:
         $ref: '../statement.yml'
 
-      rightStatement:
+      secondStatement:
         $ref: '../statement.yml'
 
-required:
-  - statementType
-  - intermediateCondition
-  - leftStatement
-  - rightStatement
+    required:
+      - intermediateCondition

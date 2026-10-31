@@ -1,22 +1,26 @@
-description: Selection Statement 
+description: >-
+  A selection statement: `commands[i]` runs when `guards[i]` holds, in order.
 allOf:
   - $ref: './abstract.yml'
-  - type: object 
+  - type: object
     properties:
-      preProven:
-        type: boolean 
+      type:
+        type: string
+        enum:
+          - SELECTION
 
-      guards: 
+      guards:
         type: array
-        items: 
+        items:
           $ref: '../condition.yml'
 
-      statements: 
-        type: array 
-        items: 
+      commands:
+        type: array
+        items:
           $ref: '../statement.yml'
 
-required:
-  - statementType
-  - preProven
-  - guar
+      preProven:
+        type: boolean
+        description: >-
+          Whether the precondition implying one of the guards is already
+          proven.

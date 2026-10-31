@@ -4,7 +4,7 @@ import {
   HttpParams,
 } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
-import { ICBCFormula, LocalCBCFormula } from "../../../types/CBCFormula";
+import { CBCFormula, ICBCFormula, LocalCBCFormula } from "../../../types/CBCFormula";
 import { environment } from "../../../../environments/environment";
 import { catchError, map, Observable, of } from "rxjs";
 import { VerificationService } from "../verification/verification.service";
@@ -12,6 +12,7 @@ import { ConsoleService } from "../../console/console.service";
 import { ProjectService } from "../../project/project.service";
 import { CbcFormulaMapperService } from "../../project/mapper/cbc-formula-mapper.service";
 import { WebSocketService } from "./websocket";
+import { VerificationMessage } from "../../../types/VerificationMessage";
 import { ApiDiagramFile } from "../../project/types/api-elements";
 import { AbstractStatementNode } from "../../../types/statements/nodes/abstract-statement-node";
 import { TreeService } from "../tree.service";
@@ -47,25 +48,30 @@ export class NetworkJobService {
    * @param root The root refinement to verify
    * @param projectId The id of the project, is used to give backend more context in form of the helper.key in the project
    * @param urn urn of the file being verified, used to update the file in the project with the verification result
+   * @param functionalOnly when true, instructs the backend to run only the default (functional) verification
+   *                       and ignore the project-wide verifiers stored in `.internal/verifiers.json`;
+   *                       when false, runs all enabled project-wide verifiers
    */
   public verify(
     root: LocalCBCFormula | undefined,
     projectId: string | undefined,
     urn: string,
+    functionalOnly: boolean,
   ) {
-    let params = new HttpParams();
+    let params = new HttpParams().set("functionalOnly", functionalOnly ? "true" : "false");
 
     if (projectId) {
       params = params.set("projectId", projectId);
     }
 
+    const body: CBCFormula | undefined = root
+      ? new ApiDiagramFile("", this.mapper.exportFormula(root), "file").content
+      : undefined;
+
     this.http
       .post<string>(
         environment.apiUrl + NetworkJobService.verifyPath,
-        root
-          ? new ApiDiagramFile("", this.mapper.exportFormula(root), "file")
-              .content
-          : undefined,
+        body,
         {
           params: params,
         },
@@ -86,8 +92,8 @@ export class NetworkJobService {
           environment.apiUrl + NetworkJobService.verifyWebSocketPath + uuid,
         );
         const consoleGroup = this.verificationService.beginVerificationLog();
-        ws.messages$.subscribe((msg: string) => {
-          if (msg === "verification complete") {
+        ws.messages$.subscribe((msg: VerificationMessage) => {
+          if (msg.type === "complete") {
             ws.disconnect();
             this.http
               .get<ICBCFormula>(
@@ -112,6 +118,9 @@ export class NetworkJobService {
    * @param statementNode The statement node being verified
    * @param projectId The id of the project
    * @param urn urn of the file being verified
+   * @param functionalOnly when true, instructs the backend to run only the default (functional) verification
+   *                       and ignore the project-wide verifiers stored in `.internal/verifiers.json`;
+   *                       when false, runs all enabled project-wide verifiers
    * @param onComplete Callback to execute when verification completes (success or error)
    */
   public verifyStatement(
@@ -119,9 +128,10 @@ export class NetworkJobService {
     statementNode: AbstractStatementNode,
     projectId: string | undefined,
     urn: string,
+    functionalOnly: boolean,
     onComplete: () => void,
   ) {
-    let params = new HttpParams();
+    let params = new HttpParams().set("functionalOnly", functionalOnly ? "true" : "false");
 
     if (projectId) {
       params = params.set("projectId", projectId);
@@ -172,8 +182,8 @@ export class NetworkJobService {
           environment.apiUrl + NetworkJobService.verifyWebSocketPath + uuid,
         );
         const consoleGroup = this.verificationService.beginVerificationLog();
-        ws.messages$.subscribe((msg: string) => {
-          if (msg === "verification complete") {
+        ws.messages$.subscribe((msg: VerificationMessage) => {
+          if (msg.type === "complete") {
             ws.disconnect();
             this.http
               .get<ICBCFormula>(

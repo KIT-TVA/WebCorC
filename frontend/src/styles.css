@@ -65,3 +65,84 @@ app-skip-refinement {
   --grey-webcorc: #989696;
   --grey-background-light-webcorc: #dadada;
 }
+
+/*
+ * Disabled + checked ToggleSwitch: PrimeNG's default forces the slider and handle
+ * to the disabled gray tones regardless of the checked state, which makes an "on but
+ * locked" toggle indistinguishable from an "off but locked" one. Blend the checked
+ * green with the disabled gray so a disabled=true state still reads as green (just
+ * muted) rather than fully neutral.
+ */
+.p-toggleswitch.p-disabled.p-toggleswitch-checked .p-toggleswitch-slider {
+  background: color-mix(
+    in srgb,
+    var(--p-toggleswitch-checked-background) 45%,
+    var(--p-toggleswitch-disabled-background)
+  );
+}
+
+.p-toggleswitch.p-disabled.p-toggleswitch-checked .p-toggleswitch-handle {
+  background: color-mix(
+    in srgb,
+    var(--p-toggleswitch-handle-checked-background) 65%,
+    var(--p-toggleswitch-handle-disabled-background)
+  );
+}
+
+/*
+ * Per-Verifier result on an accordion panel (statement popup, Verifier settings panel): a
+ * border in the statement card colors, grey for no result. The panel is rounded like the
+ * accordion's own outer corners (`content.border.radius`) and clips its square-cornered header
+ * to that rounding. A small gap keeps a panel's border from running into its neighbour's.
+ * `--off` (Verifier switched off now) keeps the color, dimmed.
+ */
+.verifier-result--proven {
+  --verifier-result-color: lightgreen;
+}
+
+.verifier-result--stale {
+  --verifier-result-color: orange;
+}
+
+.verifier-result--failed {
+  --verifier-result-color: lightcoral;
+}
+
+.verifier-result--none {
+  --verifier-result-color: slategray;
+}
+
+.p-accordionpanel:is(
+    .verifier-result--proven,
+    .verifier-result--stale,
+    .verifier-result--failed,
+    .verifier-result--none
+  ) {
+  --verifier-result-border: var(--verifier-result-color);
+  border: 2px solid var(--verifier-result-border);
+  border-radius: var(--p-content-border-radius, 6px);
+  overflow: clip;
+  margin-block: 0.25rem;
+}
+
+.p-accordionpanel:is(
+    .verifier-result--proven,
+    .verifier-result--stale,
+    .verifier-result--failed,
+    .verifier-result--none
+  ):first-child {
+  margin-top: 0;
+}
+
+.p-accordionpanel:is(
+    .verifier-result--proven,
+    .verifier-result--stale,
+    .verifier-result--failed,
+    .verifier-result--none
+  ):last-child {
+  margin-bottom: 0;
+}
+
+.p-accordionpanel.verifier-result--off {
+  --verifier-result-border: color-mix(in srgb, var(--verifier-result-color) 40%, transparent);
+}

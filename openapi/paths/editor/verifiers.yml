@@ -1,0 +1,24 @@
+get:
+  summary: Read the Verifier Catalog
+  operationId: readVerifierCatalog
+  description: >-
+    Returns the Verifier Catalog assembled at backend startup: the Functional
+    Verifier followed by every registered verifier in Verifier Registry order.
+    Served from the startup cache — no verifier is contacted per request, and
+    the catalog does not change until the backend restarts.
+  tags:
+    - Editor
+  responses:
+    '200':
+      description: The Verifier Catalog
+      content:
+        application/json:
+          schema:
+            $ref: '../../schema/verifiers/verifierCatalog.yml'
+
+    '500':
+      description: Generic Server Error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '../../schema/problem.yml'

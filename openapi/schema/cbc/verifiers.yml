@@ -1,0 +1,67 @@
+type: object
+description: >
+  Per-Verifier conditions and results, keyed by Verifier id. Sparse — only Verifiers
+  with at least one non-empty condition or an entry from a verification run appear;
+  the Functional Verifier's own conditions are still the owning statement's own
+  preCondition/postCondition/intermediateCondition, but it does appear here too, as a
+  result-only entry (proven only, never status, disabled or conditions) written once
+  functional verification has completed.
+  An entry the user authored carries the conditions; one a run created (every catalog
+  Verifier gets an entry, whether or not a condition was written for it) carries only
+  proven/status/disabled/settingsUpdatedAt, with no conditions at all.
+  The formula carries the same map, with the same shape and the same rules, for the
+  program's root: there a non-functional Verifier's proven and status are the ones
+  from that Verifier's own done message, its verdict for the whole run, rather than a
+  per-statement result.
+additionalProperties:
+  type: object
+  properties:
+    preCondition:
+      $ref: './condition.yml'
+
+    postCondition:
+      $ref: './condition.yml'
+
+    intermediateCondition:
+      description: >
+        Only present on composition statements, and only when non-empty.
+      allOf:
+        - $ref: './condition.yml'
+
+    proven:
+      description: >
+        Whether this Verifier's check passed — of this statement, or, on the
+        formula's own map, of the whole run. Absent until the first verification
+        run; from then on always present, reset to false for every catalog
+        Verifier at the start of every run, functional-only or not, and set true
+        only once this Verifier has itself reported a pass in that run.
+      type: boolean
+
+    status:
+      description: >
+        Either this Verifier's own opaque status text (see the Verifier Status
+        domain concept) — for this statement, or, on the formula's own map, for
+        the whole run — or the reason a Verifier that could not be run at all
+        failed, or absent. Cleared at the start of every run, and until the first
+        run absent entirely, the same as proven. Never a text WebCorC invents in
+        a Verifier's name.
+      type: string
+
+    disabled:
+      description: >
+        Present and `true` only when this catalog Verifier did not run in the last
+        verification because it was not enabled for it (in a functional-only run,
+        every non-functional Verifier). Such an entry is `proven: false` and has no
+        `status`. Absent otherwise.
+      type: boolean
+
+    settingsUpdatedAt:
+      description: >
+        The Verifier Overrides' `settingsUpdatedAt` of this Verifier that the run
+        which wrote this entry used, copied verbatim by the backend. The editor shows
+        the result stale when it differs from the current Overrides' value; the two
+        are only ever compared for equality. Absent when the Overrides carry none,
+        on a `disabled` entry and on the Functional Verifier's entry. Removed with
+        `proven`/`status` when a statement edit clears the results.
+      type: integer
+      format: int64

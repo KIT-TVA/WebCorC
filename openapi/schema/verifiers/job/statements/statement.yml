@@ -1,0 +1,11 @@
+description: >-
+  A leaf statement: Java code with no nested statements of its own.
+allOf:
+  - $ref: './abstract.yml'
+  - type: object
+    properties:
+      programStatement:
+        type: string
+        description: The statement's own Java code, as written in the editor.
+    required:
+      - programStatement

@@ -1,0 +1,41 @@
+type: object
+description: >-
+  One Verifier (or functional verification) has finished, pass or fail. Sent
+  once per Verifier the job called, once its own status stream closed with
+  its done and its result was merged into the job's formula — or once the
+  backend gave up on it as a failure (it could not be started, its stream
+  failed, or its result could not be fetched). Carries no per-statement
+  detail; that is in the job's result once the complete message has arrived.
+properties:
+  type:
+    type: string
+    enum:
+      - done
+
+  verifier:
+    type: string
+    description: >-
+      The id of the Verifier that finished; `func` for functional
+      verification, which always reports first.
+
+  proven:
+    type: boolean
+    description: >-
+      That Verifier's one aggregate verdict — false if any part of its run
+      failed, including a run the Verifier itself called proven but whose
+      result could not be fetched.
+
+  durationMs:
+    type: integer
+    minimum: 0
+    description: >-
+      Wall-clock time from the start of that Verifier's run until its done
+      was sent, including a failed run up to the point where it failed; for
+      func, from the start of the job's run until functional verification's
+      done.
+
+required:
+  - type
+  - verifier
+  - proven
+  - durationMs

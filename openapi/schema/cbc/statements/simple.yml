@@ -1,5 +1,0 @@
-description: Simple Statement 
-allOf:
-  - $ref: './abstract.yml'
-required:
-  - statementType

@@ -1,0 +1,22 @@
+description: >-
+  A composition statement: `firstStatement` followed by `secondStatement`.
+allOf:
+  - $ref: './abstract.yml'
+  - type: object
+    properties:
+      intermediateCondition:
+        description: >-
+          This Verifier's own condition for the join point. Present only
+          where the user has written one for this statement and Verifier.
+        allOf:
+          - $ref: '../condition.yml'
+
+      firstStatement:
+        $ref: '../statement.yml'
+
+      secondStatement:
+        $ref: '../statement.yml'
+
+    required:
+      - firstStatement
+      - secondStatement

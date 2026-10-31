@@ -1,0 +1,22 @@
+type: object
+description: >-
+  This Verifier's resolved Settings values for this job, keyed by Setting id
+  (as declared in this Verifier's own Self-Description). "Resolved" means
+  one concrete value per Setting — the Catalog default already overlaid with
+  the project's persisted Overrides — never the raw sparse Overrides. A
+  Verifier enabled with no Overrides at all still receives every one of its
+  Settings here, at its declared default. `""` is a legal value of an
+  optional select — it clears the setting back to no value, sent as `""`
+  rather than falling back to its default. A Verifier is never started with a
+  value that breaks its own Setting's constraints (wrong type, an unknown
+  select option, a required value left empty, an out-of-range or off-grid
+  number); such a Verifier is skipped and reported as failed instead.
+additionalProperties:
+  description: >-
+    The Setting's current value: a string for text, number and select
+    settings (a number setting's value is a canonical `.`-decimal string,
+    same as its own Self-Description `default`), a real boolean for
+    boolean settings.
+  oneOf:
+    - type: string
+    - type: boolean
