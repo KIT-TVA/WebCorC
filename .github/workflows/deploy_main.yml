@@ -55,7 +55,7 @@ jobs:
 
   deploy:
     needs: ["be-compile", "fe-compile"]
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Execute remote SSH commands
         uses: appleboy/ssh-action@v1.0.3
