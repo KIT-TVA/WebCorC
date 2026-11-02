@@ -18,11 +18,11 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatListModule } from "@angular/material/list";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { IJavaVariable, JavaVariable } from "../../../types/JavaVariable";
-import { FloatLabel } from "primeng/floatlabel";
-import { IconField } from "primeng/iconfield";
-import { InputIcon } from "primeng/inputicon";
-import { $dt } from "@primeuix/themes";
-import { InputText } from "primeng/inputtext";
+import { FloatLabel } from "@openng/optimus-ui/floatlabel";
+import { IconField } from "@openng/optimus-ui/iconfield";
+import { InputIcon } from "@openng/optimus-ui/inputicon";
+import { $dt } from "@openng/optimus-ui-themes";
+import { InputText } from "@openng/optimus-ui/inputtext";
 import { Subscription } from "rxjs";
 
 /**

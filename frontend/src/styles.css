@@ -1,6 +1,6 @@
 @import "tailwindcss";
-@import "tailwindcss-primeui";
-@import "primeicons/primeicons.css";
+@import "@openng/optimus-ui-tailwindcss";
+@import "@openng/icons/openng-icons.css";
 
 h1 {
   font-family:
@@ -42,6 +42,10 @@ body {
   box-sizing: border-box;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.vflow-node > foreignObject {
+  pointer-events: none;
 }
 
 .conditionTileWidth {

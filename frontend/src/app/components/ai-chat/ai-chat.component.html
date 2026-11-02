@@ -27,7 +27,7 @@
 <!--        </mat-form-field>-->
 <!--    </div>-->
 <!--</div>-->
-<div class="chat-container">
+<div class="w-sm chat-container">
     <div class="message-container" #messageContainer>
         @if (synthesisInProgress) {
             <div class="synthesis-overlay">Statements gets synthezied by AI.</div>
@@ -54,27 +54,30 @@
         }
     </div>
     <p-toolbar class="chat-toolbar">
-        <ng-template #start>
-            <p-button [label]="selectedProviderLabel" icon="pi pi-chevron-down" text (click)="modelMenu.toggle($event)"></p-button>
-            <p-menu #modelMenu [model]="modelMenuItems" [popup]="true" appendTo="body"></p-menu>
-        </ng-template>
-        <ng-template #center>
-            <div class="input-wrapper" [formGroup]="questionGroup">
+        <ng-template class="inline-block" #center>
+            <div class="pr-12 inline-block" [formGroup]="questionGroup">
                 <textarea
                         formControlName="question"
                         (keydown.Enter)="onEnter($event)"
-                        class="chat-input"
+                        class="inline-block"
                         rows=1
+                        style="width: 22rem"
                         pTextarea
                         [autoResize]="true"
                         placeholder="Ask me a question.."
                         fluid
                 >
                 </textarea>
+
             </div>
         </ng-template>
         <ng-template #end>
-            <p-button
+        <div style="width: 17rem">
+            <p-button [label]="selectedProviderLabel" icon="pi pi-chevron-down" text (click)="modelMenu.toggle($event)"></p-button>
+            <p-menu #modelMenu [model]="modelMenuItems" [popup]="true" appendTo="body"></p-menu>
+        </div>
+
+            <p-button class="justify-self-end"
               icon="pi pi-trash"
               text
               severity="danger"

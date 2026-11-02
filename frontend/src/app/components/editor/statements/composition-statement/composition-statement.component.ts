@@ -1,6 +1,9 @@
 import { Component, Input, OnInit, inject } from "@angular/core";
 
-import { StatementComponent } from "../statement/statement.component";
+import {
+  STATEMENT_BOTTOM_SPACE_PX,
+  StatementComponent,
+} from "../statement/statement.component";
 import { Refinement } from "../../../../types/refinement";
 import { TreeService } from "../../../../services/tree/tree.service";
 import { MatGridListModule } from "@angular/material/grid-list";
@@ -45,6 +48,7 @@ export class CompositionStatementComponent
 {
   @Input() public icon = "pi pi-circle";
   @Input() _node!: CompositionStatementNode;
+  protected readonly bottomSpace = STATEMENT_BOTTOM_SPACE_PX;
 
   /** Inserted by Angular inject() migration for backwards compatibility */
   constructor(...args: unknown[]);

@@ -1,35 +1,31 @@
 .statements {
-    display: flex;
-    flex-direction: column;
-    width: 400px;
     overflow: visible;
 
-    .first-row {
+    .add-row {
         height: 3em;
-        display: grid;
-        place-items: center;
         color: #e0e0e0;
     }
 
     .statement-container {
-        height: 5em;
         display: flex;
-        flex-direction: row;
-        align-content: center;
+    height: 5em;
+    width: 100%;
+    gap: 10px;
 
         .guard {
             display: flex;
-            flex-grow: 3;
-            position: relative;
             height: 100%;
+            min-width: 0;
+            overflow: hidden;
+            column-wrap: nowrap;
         }
 
         .statement {
             align-content: center;
-            flex-grow: 1;
-            width: 100px;
             display: grid;
             place-items: center;
+            flex: 0;
+            overflow: hidden;
         }
     }
 }

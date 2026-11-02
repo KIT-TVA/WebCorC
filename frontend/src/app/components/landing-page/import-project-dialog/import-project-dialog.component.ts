@@ -6,9 +6,12 @@ import {
   LocalDirectory,
 } from "../../../services/project/types/api-elements";
 import { ConsoleService } from "../../../services/console/console.service";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
-import { FileSelectEvent, FileUpload } from "primeng/fileupload";
-import { Button } from "primeng/button";
+import {
+  DynamicDialogConfig,
+  DynamicDialogRef,
+} from "@openng/optimus-ui/dynamicdialog";
+import { FileSelectEvent, FileUpload } from "@openng/optimus-ui/fileupload";
+import { Button } from "@openng/optimus-ui/button";
 
 /**
  * Dialog for importing a project created with this editor

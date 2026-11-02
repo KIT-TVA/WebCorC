@@ -2,20 +2,35 @@ import { Component, OnInit, inject } from "@angular/core";
 
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { ProjectService } from "../../services/project/project.service";
 import { MatDialog } from "@angular/material/dialog";
 import { OpenProjectDialogComponent } from "./open-project-dialog/open-project-dialog.component";
 import { ImportProjectDialogComponent } from "./import-project-dialog/import-project-dialog.component";
-import { LoadExampleDialogComponent } from "./load-example-dialog/load-example-dialog.component";
+import {
+  ExampleProgram,
+  LoadExampleDialogComponent,
+} from "./load-example-dialog/load-example-dialog.component";
+import { PredicateService } from "../../services/predicates/predicate.service";
 import { ImportFileDialogComponent } from "../project-explorer/import-file-dialog/import-file-dialog";
-import { Card } from "primeng/card";
-import { MenuItem } from "primeng/api";
-import { Divider } from "primeng/divider";
-import { ButtonDirective, ButtonIcon, ButtonLabel } from "primeng/button";
-import { Menubar } from "primeng/menubar";
-import { DialogService, DynamicDialogRef } from "primeng/dynamicdialog";
+import { Card } from "@openng/optimus-ui/card";
+import { MenuItem } from "@openng/optimus-ui/api";
+import { Divider } from "@openng/optimus-ui/divider";
+import {
+  ButtonDirective,
+  ButtonIcon,
+  ButtonLabel,
+} from "@openng/optimus-ui/button";
+import { Menubar } from "@openng/optimus-ui/menubar";
+import {
+  DialogService,
+  DynamicDialogRef,
+} from "@openng/optimus-ui/dynamicdialog";
 import { LocalDirectory } from "../../services/project/types/api-elements";
+import {
+  DiagramFile,
+  ProjectDirectory,
+} from "../../services/project/types/project-elements";
 
 @Component({
   selector: "app-landing-page",
@@ -36,7 +51,9 @@ import { LocalDirectory } from "../../services/project/types/api-elements";
 })
 export class LandingPageComponent {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private projectService = inject(ProjectService);
+  private predicateService = inject(PredicateService);
   private dialog = inject(MatDialog);
   dialogService = inject(DialogService);
 
@@ -107,13 +124,61 @@ export class LandingPageComponent {
       closable: true,
     });
 
-    dialogRef?.onClose.subscribe((selectedExample) => {
-      if (selectedExample) {
-        this.projectService.importProject(
-          selectedExample.project,
-          selectedExample.name,
-        );
+    dialogRef?.onClose.subscribe(
+      async (selectedExample: ExampleProgram | undefined) => {
+        if (selectedExample) {
+          await this.projectService.importProject(
+            selectedExample.project,
+            selectedExample.name,
+          );
+          this.loadExamplePredicates(selectedExample);
+          this.openFirstDiagram(this.projectService.root);
+        }
+      },
+    );
+  }
+
+  /**
+   * Store the example's predicates for the predicate manager and generate
+   * include/generatedPredicates.key from them, so they are available for verification
+   */
+  private loadExamplePredicates(example: ExampleProgram) {
+    const hasPredicates = !!example.predicates?.length;
+    if (hasPredicates) {
+      this.projectService.savePredicates(example.predicates!);
+    }
+    // Refresh the cached list, otherwise the previous project's predicates would be exported on save
+    this.predicateService.retrievePredicates();
+    if (hasPredicates) {
+      this.predicateService.exportPredicates();
+    }
+  }
+
+  private openFirstDiagram(directory: ProjectDirectory) {
+    const diagram = this.findFirstDiagram(directory);
+    if (diagram) {
+      this.router.navigate(["editor/diagram/", diagram.path], {
+        queryParamsHandling: "preserve",
+      });
+    }
+  }
+
+  private findFirstDiagram(
+    directory: ProjectDirectory,
+  ): DiagramFile | undefined {
+    for (const element of directory.contents) {
+      if (element instanceof DiagramFile) {
+        return element;
       }
-    });
+    }
+    for (const element of directory.contents) {
+      if (element instanceof ProjectDirectory) {
+        const diagram = this.findFirstDiagram(element);
+        if (diagram) {
+          return diagram;
+        }
+      }
+    }
+    return undefined;
   }
 }

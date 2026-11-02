@@ -24,20 +24,22 @@ import { MatListModule } from "@angular/material/list";
 import { AbstractStatementNode } from "../../../../types/statements/nodes/abstract-statement-node";
 import { HandleComponent } from "ngx-vflow";
 import { GridTileBorderDirective } from "../../../../directives/grid-tile-border.directive";
-import { Card } from "primeng/card";
+import { Card } from "@openng/optimus-ui/card";
 import {
   Button,
   ButtonDirective,
   ButtonIcon,
   ButtonLabel,
-} from "primeng/button";
-import { Toolbar } from "primeng/toolbar";
+} from "@openng/optimus-ui/button";
+import { Toolbar } from "@openng/optimus-ui/toolbar";
 import { GlobalSettingsService } from "../../../../services/global-settings.service";
 import { NetworkJobService } from "../../../../services/tree/network/network-job.service";
 import { ProjectService } from "../../../../services/project/project.service";
 import { AsyncPipe } from "@angular/common";
 import { AiChatService } from "../../../../services/ai-chat/ai-chat.service";
 import { SimpleStatementNode } from "../../../../types/statements/nodes/simple-statement-node";
+
+export const STATEMENT_BOTTOM_SPACE_PX = 56;
 
 /**
  * Component to present the statements.
@@ -47,6 +49,7 @@ import { SimpleStatementNode } from "../../../../types/statements/nodes/simple-s
  */
 @Component({
   selector: "app-statement-base",
+  host: { "[style.padding-bottom.px]": "bottomSpace" },
   imports: [
     MatGridListModule,
     MatFormFieldModule,
@@ -96,6 +99,7 @@ export class StatementComponent {
   @ViewChild("postconditionDiv") private postconditionDivRef!: ElementRef;
 
   public isVerifying = signal(false);
+  protected readonly bottomSpace = STATEMENT_BOTTOM_SPACE_PX;
 
   /** Inserted by Angular inject() migration for backwards compatibility */
   constructor(...args: unknown[]);

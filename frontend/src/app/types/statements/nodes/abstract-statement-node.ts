@@ -81,14 +81,14 @@ export class AbstractStatementNode {
     let inSync =
       (this.precondition.getValue() == child.precondition.getValue() &&
         this.postcondition.getValue() == child.postcondition.getValue()) ||
-      child.statement.type == "REPETITION";
+      this.statement.type == "REPETITION";
     if (!inSync) {
       this.getConditionConflicts(child);
     }
     inSync =
       (this.precondition.getValue() == child.precondition.getValue() &&
         this.postcondition.getValue() == child.postcondition.getValue()) ||
-      child.statement.type == "REPETITION";
+      this.statement.type == "REPETITION";
     return inSync;
   }
 
@@ -109,7 +109,7 @@ export class AbstractStatementNode {
       type: "PRECONDITION" | "POSTCONDITION";
     }[] = [];
 
-    if (child.statement.type == "REPETITION") {
+    if (this.statement.type == "REPETITION") {
       return conflicts;
     }
 

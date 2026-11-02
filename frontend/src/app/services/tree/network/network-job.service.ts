@@ -185,7 +185,6 @@ export class NetworkJobService {
                   consoleGroup,
                   formula,
                   statementNode,
-                  urn,
                 );
                 onComplete();
               });

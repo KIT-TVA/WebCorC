@@ -153,7 +153,7 @@ export class GlobalConditionsComponent {
       this.items.push(conditionControl);
       this.treeService.addGlobalCondition(condition.condition);
     }
-    this.treeService.markWholeTreeUnverified();
+    //this.treeService.markWholeTreeUnverified();
   }
 
   /**

@@ -11,17 +11,17 @@ import { ProjectService } from "./services/project/project.service";
 import { NetworkJobService } from "./services/tree/network/network-job.service";
 import { CreateProjectDialogComponent } from "./components/project-explorer/create-project-dialog/create-project-dialog.component";
 import { first } from "rxjs";
-import { Toolbar } from "primeng/toolbar";
-import { Button } from "primeng/button";
-import { InputIcon } from "primeng/inputicon";
-import { IconField } from "primeng/iconfield";
-import { DialogService } from "primeng/dynamicdialog";
+import { Toolbar } from "@openng/optimus-ui/toolbar";
+import { Button } from "@openng/optimus-ui/button";
+import { InputIcon } from "@openng/optimus-ui/inputicon";
+import { IconField } from "@openng/optimus-ui/iconfield";
+import { DialogService } from "@openng/optimus-ui/dynamicdialog";
 import { SettingsButtonComponent } from "./components/settings/settings-button/settings-button.component";
-import { Toast } from "primeng/toast";
-import { MessageService, ConfirmationService } from "primeng/api";
-import { InputText } from "primeng/inputtext";
+import { Toast } from "@openng/optimus-ui/toast";
+import { MessageService, ConfirmationService } from "@openng/optimus-ui/api";
+import { InputText } from "@openng/optimus-ui/inputtext";
 import { GlobalSettingsService } from "./services/global-settings.service";
-import { ConfirmDialog } from "primeng/confirmdialog";
+import { ConfirmDialog } from "@openng/optimus-ui/confirmdialog";
 
 /**
  * Top Component of this application,

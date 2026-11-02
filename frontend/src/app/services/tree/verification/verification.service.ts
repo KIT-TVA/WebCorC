@@ -106,7 +106,6 @@ export class VerificationService {
     group: ConsoleLogGroup,
     formula: LocalCBCFormula,
     statementNode: AbstractStatementNode,
-    urn: string,
   ) {
     this.consoleService.finishLoading();
 
@@ -121,54 +120,27 @@ export class VerificationService {
       return;
     }
 
-    // Get statements from the verification result
-    const resultStatements = this.treeService.getStatementsFromFormula(formula);
+      const tempFormula = this.treeService.createTempFormulaFromNode(statementNode);
+      const currentStatements =
+          this.treeService.getStatementsFromFormula(tempFormula);
+      const newStatements = this.treeService.getStatementsFromFormula(formula);
 
-    // Collect all nodes in the subtree starting from the verified node
-    const subtreeNodes = this.treeService.collectSubtreeNodes(statementNode);
+      currentStatements.forEach((stmt, i) => {
+          const proven = newStatements[i]?.isProven ?? false;
+          stmt.isProven = proven;
+          stmt.nodeState = proven ? "verified" : "failed";
+      });
 
-    // Collect statements from subtree in order
-    const subtreeStatements: IAbstractStatement[] = [];
-    this.collectStatementsFromNode(statementNode, subtreeStatements);
-
-    // If the original node wasn't ROOT, the result will have a ROOT wrapper
-    // So we need to skip the ROOT statement in the result
-    let resultStartIndex = 0;
-    if (
-      statementNode.statement.type !== "ROOT" &&
-      resultStatements.length > 0 &&
-      resultStatements[0].type === "ROOT"
-    ) {
-      resultStartIndex = 1; // Skip the ROOT wrapper
-    }
-
-    // Match statements from result to nodes in the subtree by order
-    const minLength = Math.min(
-      resultStatements.length - resultStartIndex,
-      subtreeStatements.length,
-    );
-
-    for (let i = 0; i < minLength; i++) {
-      const resultStmt = resultStatements[resultStartIndex + i];
-      const subtreeStmt = subtreeStatements[i];
-
-      // Find the node corresponding to this statement
-      const node = subtreeNodes.find((n) => n.statement.id === subtreeStmt.id);
-      if (node) {
-        node.statement.isProven = resultStmt.isProven || false;
+      if (
+          formula.statement.type === "ROOT" &&
+          (formula.statement as IRootStatement).statement?.isProven
+      ) {
+          currentStatements[0].isProven = true;
+          currentStatements[0].nodeState = "verified";
+          console.log("verify root")
       }
-    }
 
-    // Update the root statement node if it's a ROOT type
-    if (
-      formula.statement.type === "ROOT" &&
-      (formula.statement as IRootStatement).statement?.isProven
-    ) {
-      statementNode.statement.isProven = true;
-    }
-
-    // Refresh nodes to trigger UI update
-    this.treeService.refreshNodes();
+      this.treeService.refreshNodes();
 
     // Show success/failure message
     if (formula.isProven) {
@@ -187,22 +159,6 @@ export class VerificationService {
         ),
       );
       group.status = "FAIL";
-    }
-  }
-  /**
-   * Collect statements from a node and its subtree in order
-   * @param node The root node
-   * @param statements Array to collect statements into
-   */
-  private collectStatementsFromNode(
-    node: AbstractStatementNode,
-    statements: IAbstractStatement[],
-  ): void {
-    statements.push(node.statement);
-    for (const child of node.children) {
-      if (child) {
-        this.collectStatementsFromNode(child, statements);
-      }
     }
   }
 

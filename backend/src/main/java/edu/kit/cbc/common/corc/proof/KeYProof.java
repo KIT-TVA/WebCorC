@@ -66,6 +66,7 @@ public class KeYProof {
     public boolean execute() {
         try {
             File keyFile = this.createProofFile();
+            System.out.println("Created proof file: " + keyFile.getAbsolutePath());
             Proof proof = KeYInteraction.startKeyProof(keyFile, false);
             System.out.println("Proof result: " + (proof != null && proof.closed()));
             return proof != null && proof.closed();
@@ -164,8 +165,13 @@ public class KeYProof {
         if (tree instanceof OldTree(IdentTree variable)) {
             String varName = variable.name();
             String oldVarName = varName + "_oldVal";
-            String javaVar = "int " + oldVarName;
-            if (variables.stream().noneMatch(var -> var.getName().equals(javaVar))) {
+            String javaVar = variables.stream()
+                .map(JavaVariable::getName)
+                .filter(name -> name.endsWith(" " + varName))
+                .findFirst()
+                .map(name -> name.substring(0, name.length() - varName.length()) + oldVarName)
+                .orElse("int " + oldVarName);
+            if (variables.stream().noneMatch(var -> var.getName().equals(javaVar))) {  
                 assignments.add(new Assignment(oldVarName, varName));
                 variables.add(new JavaVariable(javaVar, JavaVariableKind.LOCAL));
             }

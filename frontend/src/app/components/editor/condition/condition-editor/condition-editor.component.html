@@ -1,18 +1,22 @@
 <div class="condition-editor-root" (mousedown)="$event.stopImmediatePropagation()">
-    <div (focusout)="conditionEditingFinished.emit()">
-        <form>
+    <div (focusout)="onEditingFinished()">
+        <form class="condition-form">
             <p-float-label variant="on" class="flex flex-row">
           <textarea
                   [ngModelOptions]="{ standalone: true }"
                   id="field"
                   pTextarea
                   class="textarea condition-textarea"
+                  [class.condition-textarea--inline]="inline"
                   spellcheck="false"
                   [rows]="inline ? 1 : 5"
                   [ngModel]="(condition | async)?.condition"
                   (ngModelChange)="onConditionChange($event)"
                   variant="filled"
                   [disabled]="!editable"
+                  [invalid]="!!syntaxCheck.error()"
+                  [attr.aria-invalid]="!!syntaxCheck.error()"
+                  [attr.aria-describedby]="syntaxCheck.error() ? syntaxErrorId : null"
                   [dt]="{
               root: {
                 borderColor: redConditions.includes((condition | async)!)
@@ -25,7 +29,9 @@
           >
           </textarea>
                 <label for="field">{{ placeholder }}</label>
-                <div class="condition-button-stack" [class.condition-button-stack--with-ai]="showAiButton">
+                <div class="condition-button-stack"
+                     [class.condition-button-stack--with-ai]="showAiButton"
+                     [class.condition-button-stack--inline]="inline">
                     <p-button
                             (click)="onEditConditionClick()"
                             icon="pi pi-pencil"
@@ -53,7 +59,13 @@
                     </p-button>
                 </div>
             </p-float-label>
-
+            @if (syntaxCheck.error(); as error) {
+                <small class="condition-syntax-error condition-syntax-error--floating"
+                       [id]="syntaxErrorId" aria-live="polite">
+                    <i class="pi pi-exclamation-circle"></i>
+                    <span>{{ error }}</span>
+                </small>
+            }
         </form>
     </div>
     <p-dialog
@@ -75,10 +87,19 @@
                     class="condition-textarea-dialog"
                     spellcheck="false"
                     [ngModel]="dialogConditionText"
-                    (ngModelChange)="dialogConditionText = $event"
+                    (ngModelChange)="onDialogConditionChange($event)"
+                    (focusout)="dialogSyntaxCheck.checkNow(dialogConditionText)"
                     variant="filled"
+                    [invalid]="!!dialogSyntaxCheck.error()"
+                    [attr.aria-invalid]="!!dialogSyntaxCheck.error()"
             >
           </textarea>
+            @if (dialogSyntaxCheck.error(); as error) {
+                <small class="condition-syntax-error" aria-live="polite">
+                    <i class="pi pi-exclamation-circle"></i>
+                    <span>{{ error }}</span>
+                </small>
+            }
             <div class="condition-dialog-buttons">
                 <p-button
                     severity="secondary"

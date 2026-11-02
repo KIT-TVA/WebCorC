@@ -5,3 +5,9 @@
   background-color: var(--p-background);
   z-index: 1;
 }
+
+.sideMenuScroll {
+    height: 100%;
+    min-height: 0;
+    overflow-y: auto;
+}

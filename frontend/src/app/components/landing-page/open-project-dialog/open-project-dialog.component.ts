@@ -2,10 +2,13 @@ import { Component, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 import { ProjectService } from "../../../services/project/project.service";
-import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
-import { Button } from "primeng/button";
-import { FloatLabel } from "primeng/floatlabel";
-import { InputText } from "primeng/inputtext";
+import {
+  DynamicDialogConfig,
+  DynamicDialogRef,
+} from "@openng/optimus-ui/dynamicdialog";
+import { Button } from "@openng/optimus-ui/button";
+import { FloatLabel } from "@openng/optimus-ui/floatlabel";
+import { InputText } from "@openng/optimus-ui/inputtext";
 
 /**
  * Dialog for opening a project based on the project id
