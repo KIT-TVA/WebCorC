@@ -801,6 +801,7 @@ export class ProjectService {
         const predicates = JSON.parse(content) as ProjectPredicate[];
         this.storage.setPredicates(predicates);
       }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (_) {
       console.log(
           "Predicates file not found or invalid, starting with empty predicates.",
