@@ -39,7 +39,6 @@ export class ProjectService {
   private rubbishBinName = ".rubbishBin";
 
   /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
   constructor() {
     const storage = this.storage;
 
