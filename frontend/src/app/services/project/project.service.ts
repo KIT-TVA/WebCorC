@@ -801,7 +801,7 @@ export class ProjectService {
         const predicates = JSON.parse(content) as ProjectPredicate[];
         this.storage.setPredicates(predicates);
       }
-    } catch (e) {
+    } catch (_) {
       console.log(
           "Predicates file not found or invalid, starting with empty predicates.",
       );
