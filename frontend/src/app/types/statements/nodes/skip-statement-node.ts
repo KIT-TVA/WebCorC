@@ -7,5 +7,7 @@ export class SkipStatementNode extends AbstractStatementNode {
     parent: AbstractStatementNode | undefined,
   ) {
     super(statement, parent);
+    this.preconditionEditable.next(false)
+    this.postconditionEditable.next(false)
   }
 }

@@ -29,6 +29,9 @@ export class SelectionStatementNode extends AbstractStatementNode {
     this.children.forEach((_, index) => {
       this.setupChildPreconditionSubscription(index);
     });
+
+    this.preconditionEditable.next(false);
+    this.postconditionEditable.next(false);
   }
 
   private setupChildPreconditionSubscription(index: number) {
