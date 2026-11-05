@@ -1,4 +1,4 @@
-import { ApplicationConfig } from "@angular/core";
+import { ApplicationConfig, provideZonelessChangeDetection } from "@angular/core";
 import { provideRouter, withComponentInputBinding } from "@angular/router";
 
 import { routes } from "./app.routes";
@@ -13,6 +13,7 @@ export const appConfig: ApplicationConfig = {
     /**
      * routes from app.routes.ts, withComponentInputBinding() is needed for passing the file urns to the editors
      */
+    provideZonelessChangeDetection(),
     provideRouter(routes, withComponentInputBinding()),
     provideHttpClient(withFetch()),
     provideAnimations(),

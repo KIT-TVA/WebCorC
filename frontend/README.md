@@ -1,5 +1,5 @@
 # WebCorC - Frontend
-The frontend is a SPA developed in Angular 19 with Angular Material as the component framework.
+The frontend is a SPA developed in Angular 21 with Angular Material and OpenNG Optimus UI as the component frameworks.
 For the development dependencies use the devcontainers.json or install the project dependencies with
 
 ```bash
@@ -9,7 +9,7 @@ npm install
 For running the development server and linting use the angular cli.
 Install the angular cli via npm:
 ```bash
-npm install -g @angular/cli@19
+npm install -g @angular/cli@21
 ```
 
 And use the serve command in the angular cli to run the development server:
@@ -20,6 +20,7 @@ ng serve
 - https://angular.dev/
 - https://angular.dev/tools/cli
 - https://material.angular.io/
+- https://www.npmjs.com/package/@openng/optimus-ui
 
 
 ## Testing 

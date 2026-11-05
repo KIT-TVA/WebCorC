@@ -11,11 +11,16 @@ export class SimpleStatementNode extends AbstractStatementNode {
     parent: AbstractStatementNode | undefined,
   ) {
     super(statement, parent);
-    this.programStatement = new BehaviorSubject<ICondition>(new Condition(statement.programStatement));
+    this.programStatement = new BehaviorSubject<ICondition>(
+      new Condition(statement.programStatement),
+    );
+    this.preconditionEditable.next(false);
+    this.postconditionEditable.next(false);
   }
 
   override finalize() {
     super.finalize();
-    this.statement.programStatement = this.programStatement.getValue().condition;
+    this.statement.programStatement =
+      this.programStatement.getValue().condition;
   }
 }
