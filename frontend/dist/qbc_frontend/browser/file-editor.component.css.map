@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/components/file-editor/file-editor.component.css"],
+  "sourcesContent": [".monaco {\n    height: 100%;\n    width: 100%;\n    display: block;\n}\n\n.monaco-parent {\n    height: 100%;\n    width: 100%;\n    position: relative;\n    display: block;\n}"],
+  "mappings": ";AAAA,CAAA;AACI,UAAA;AACA,SAAA;AACA,WAAA;AACJ;AAEA,CAAA;AACI,UAAA;AACA,SAAA;AACA,YAAA;AACA,WAAA;AACJ;",
+  "names": []
+}

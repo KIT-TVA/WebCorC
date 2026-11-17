@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/components/project-explorer/import-file-dialog/import-file-dialog.component.css"],
+  "sourcesContent": [".fileInput {\n    display: none;\n}\np {\n    padding-bottom: 1em;\n}\n.customFileInput {\n    display: flex;\n    flex-direction: row;\n}"],
+  "mappings": ";AAAA,CAAA;AACI,WAAA;AACJ;AACA;AACI,kBAAA;AACJ;AACA,CAAA;AACI,WAAA;AACA,kBAAA;AACJ;",
+  "names": []
+}

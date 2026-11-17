@@ -29,22 +29,22 @@ export class VerificationService {
 
   public beginVerificationLog() {
     const group = this.consoleService.addGroup();
-    group.status = "RUNNING";
+    this.consoleService.setGroupStatus(group, "RUNNING");
     return group;
   }
 
   public verifyInfo(group: ConsoleLogGroup, msg: string) {
     switch (msg) {
       case "verification started":
-        group.lines.push(new ConsoleInfoLine("Verification started."));
+        this.consoleService.addLineToGroup(group, new ConsoleInfoLine("Verification started."));
         this.consoleService.beginLoading("verifying");
         break;
       case "verification initialized":
-        group.lines.push(new ConsoleInfoLine("Verification initialized."));
+        this.consoleService.addLineToGroup(group, new ConsoleInfoLine("Verification initialized."));
         break;
       case "verification complete":
       default:
-        group.lines.push(new ConsoleInfoLine(msg));
+        this.consoleService.addLineToGroup(group, new ConsoleInfoLine(msg));
         break;
     }
   }
@@ -78,21 +78,23 @@ export class VerificationService {
     }
     this.globalSettingsService.isVerifying = false;
     if (formula.isProven) {
-      group.lines.push(
+      this.consoleService.addLineToGroup(
+        group,
         new ConsoleInfoLine(
           `Verification successful: The formula "${formula.name}" is verified.`,
           "pi pi-check-circle",
         ),
       );
-      group.status = "SUCCESS";
+      this.consoleService.setGroupStatus(group, "SUCCESS");
     } else {
-      group.lines.push(
+      this.consoleService.addLineToGroup(
+        group,
         new ConsoleInfoLine(
           `Verification failed: The formula "${formula.name}" could not be (completely) verified.`,
           "pi pi-times-circle",
         ),
       );
-      group.status = "FAIL";
+      this.consoleService.setGroupStatus(group, "FAIL");
     }
   }
 
@@ -110,13 +112,14 @@ export class VerificationService {
     this.consoleService.finishLoading();
 
     if (!formula.statement) {
-      group.lines.push(
+      this.consoleService.addLineToGroup(
+        group,
         new ConsoleInfoLine(
           `Verification failed: No statement in response for "${statementNode.statement.name}".`,
           "pi pi-times-circle",
         ),
       );
-      group.status = "FAIL";
+      this.consoleService.setGroupStatus(group, "FAIL");
       return;
     }
 
@@ -144,21 +147,23 @@ export class VerificationService {
 
     // Show success/failure message
     if (formula.isProven) {
-      group.lines.push(
+      this.consoleService.addLineToGroup(
+        group,
         new ConsoleInfoLine(
           `Verification successful: The statement "${statementNode.statement.name}" and its subtree are verified.`,
           "pi pi-check-circle",
         ),
       );
-      group.status = "SUCCESS";
+      this.consoleService.setGroupStatus(group, "SUCCESS");
     } else {
-      group.lines.push(
+      this.consoleService.addLineToGroup(
+        group,
         new ConsoleInfoLine(
           `Verification failed: The statement "${statementNode.statement.name}" or its subtree could not be (completely) verified.`,
           "pi pi-times-circle",
         ),
       );
-      group.status = "FAIL";
+      this.consoleService.setGroupStatus(group, "FAIL");
     }
   }
 
