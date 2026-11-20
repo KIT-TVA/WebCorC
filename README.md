@@ -86,7 +86,7 @@ The easiest way to get up and running is with Docker Compose. This will spin up 
     > **Tip**: Press `w` in the terminal after starting to enable **Hot Reloading** via Docker Compose Watch.
 
 3.  **Access the application:**
-    Open your browser and navigate to `http://localhost`.
+    Open your browser and navigate to `http://localhost:4200`.
 > **Note**: For the AI-Features to work, you'll need to also add your OpenAPI key to the docker-compose.env
 ### Option 2: Manual Development Setup
 
