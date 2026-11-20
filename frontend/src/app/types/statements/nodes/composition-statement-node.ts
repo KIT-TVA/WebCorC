@@ -55,6 +55,8 @@ export class CompositionStatementNode extends AbstractStatementNode {
     if (this.secondStatementNode) {
       this.secondStatementNode?.overridePrecondition(this.intermediateCondition)
     }
+    this.preconditionEditable.next(false)
+    this.postconditionEditable.next(false)
   }
 
   override overridePrecondition(condition: BehaviorSubject<ICondition>) {

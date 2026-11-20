@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/components/editor/editor-sidemenu/editor-sidemenu.component.css"],
+  "sourcesContent": [".sideMenuContainer {\n  position: absolute;\n  height: 100%;\n  right: 0;\n  background-color: var(--p-background);\n  z-index: 1;\n}\n\n.sideMenuScroll {\n    height: 100%;\n    min-height: 0;\n    overflow-y: auto;\n}"],
+  "mappings": ";AAAA,CAAA;AACE,YAAA;AACA,UAAA;AACA,SAAA;AACA,oBAAA,IAAA;AACA,WAAA;AACF;AAEA,CAAA;AACI,UAAA;AACA,cAAA;AACA,cAAA;AACJ;",
+  "names": []
+}

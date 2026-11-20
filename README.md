@@ -4,7 +4,7 @@
 
 **The Web-based Correctness-by-Construction (CbC) IDE**
 
-[![Frontend](https://img.shields.io/badge/Frontend-Angular_19-dd0031.svg)](https://angular.io/)
+[![Frontend](https://img.shields.io/badge/Frontend-Angular_21-dd0031.svg)](https://angular.io/)
 [![Backend](https://img.shields.io/badge/Backend-Micronaut-black.svg)](https://micronaut.io/)
 [![Build](https://img.shields.io/badge/Build-Docker-2496ed.svg)](https://www.docker.com/)
 
@@ -41,14 +41,15 @@ For more in-depth information on the concepts, visit the [CorC Wiki](https://kit
 ## 🛠️ Technology Stack
 
 ### Frontend
-- **Framework**: [Angular 19](https://angular.dev/)
-- **Component Library**: [Angular Material](https://material.angular.io/) + [PrimeNG](https://primeng.org/)
+- **Framework**: [Angular 21](https://angular.dev/)
+- **Component Library**: [Angular Material](https://material.angular.io/) + [OpenNG Optimus UI](https://www.npmjs.com/package/@openng/optimus-ui)
 - **Styling**: [TailwindCSS](https://tailwindcss.com/)
 - **Editor**: [Monaco Editor](https://microsoft.github.io/monaco-editor/) (VS Code engine)
 
 ### Backend
-- **Framework**: [Micronaut](https://micronaut.io/)
+- **Framework**: [Micronaut 4.5.1](https://micronaut.io/)
 - **Language**: Java 21
+- **Verification**: [KeY 3.0.0](https://www.key-project.org/)
 - **Database**: MongoDB
 - **Build Tool**: Maven
 

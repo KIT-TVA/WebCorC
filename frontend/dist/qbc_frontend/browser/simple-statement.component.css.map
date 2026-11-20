@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/components/editor/statements/simple-statement/simple-statement.component.css"],
+  "sourcesContent": [".rootEnabledDiv {\n    display: grid;\n    align-items: center;\n    place-items: center;\n}"],
+  "mappings": ";AAAA,CAAA;AACI,WAAA;AACA,eAAA;AACA,eAAA;AACJ;",
+  "names": []
+}
