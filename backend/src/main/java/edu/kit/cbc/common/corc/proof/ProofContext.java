@@ -15,6 +15,7 @@ public final class ProofContext {
     private final Path proofFolder;
     private final List<Path> includeFiles;
     private final List<Path> javaSrcFiles;
+    private final List<Path> javaSrcDirectories;
     private final List<Path> existingProofFiles;
     private final Consumer<String> logger;
 }

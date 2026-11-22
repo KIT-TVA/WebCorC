@@ -8,6 +8,8 @@ import de.uka.ilkd.key.settings.ChoiceSettings;
 import de.uka.ilkd.key.settings.ProofSettings;
 import de.uka.ilkd.key.strategy.StrategyProperties;
 import de.uka.ilkd.key.util.MiscTools;
+import org.jspecify.annotations.NonNull;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -49,21 +51,14 @@ public class KeYInteraction {
             Proof proof = env.getLoadedProof();
 
             /*Set STRATEGY options*/
-            StrategyProperties sp = proof.getSettings().getStrategySettings().getActiveStrategyProperties();
-            sp.setProperty(StrategyProperties.METHOD_OPTIONS_KEY,
-                inlining ? StrategyProperties.METHOD_EXPAND : StrategyProperties.METHOD_CONTRACT);
-            sp.setProperty(StrategyProperties.LOOP_OPTIONS_KEY, StrategyProperties.LOOP_INVARIANT);
-            sp.setProperty(StrategyProperties.DEP_OPTIONS_KEY, StrategyProperties.DEP_ON);
-            sp.setProperty(StrategyProperties.QUERY_OPTIONS_KEY, StrategyProperties.QUERY_RESTRICTED);
-            sp.setProperty(StrategyProperties.NON_LIN_ARITH_OPTIONS_KEY, StrategyProperties.NON_LIN_ARITH_DEF_OPS);
-            sp.setProperty(StrategyProperties.STOPMODE_OPTIONS_KEY, StrategyProperties.STOPMODE_NONCLOSE);
-            proof.getSettings().getStrategySettings().setActiveStrategyProperties(sp);
+            StrategyProperties strategy = getStrategyProperties(inlining, proof);
+            proof.getSettings().getStrategySettings().setActiveStrategyProperties(strategy);
             // Make sure that the new options are used
             int maxSteps = Integer.MAX_VALUE;
             ProofSettings.DEFAULT_SETTINGS.getStrategySettings().setMaxSteps(maxSteps);
-            ProofSettings.DEFAULT_SETTINGS.getStrategySettings().setActiveStrategyProperties(sp);
+            ProofSettings.DEFAULT_SETTINGS.getStrategySettings().setActiveStrategyProperties(strategy);
             proof.getSettings().getStrategySettings().setMaxSteps(maxSteps);
-            proof.setActiveStrategy(proof.getServices().getProfile().getDefaultStrategyFactory().create(proof, sp));
+            proof.setActiveStrategy(proof.getServices().getProfile().getDefaultStrategyFactory().create(proof, strategy));
             // Start auto mode
             env.getUi().getProofControl().startAndWaitForAutoMode(proof);
 
@@ -82,6 +77,18 @@ public class KeYInteraction {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private static @NonNull StrategyProperties getStrategyProperties(boolean inlining, Proof proof) {
+        StrategyProperties strategy = proof.getSettings().getStrategySettings().getActiveStrategyProperties();
+        strategy.setProperty(StrategyProperties.METHOD_OPTIONS_KEY,
+            inlining ? StrategyProperties.METHOD_EXPAND : StrategyProperties.METHOD_CONTRACT);
+        strategy.setProperty(StrategyProperties.LOOP_OPTIONS_KEY, StrategyProperties.LOOP_INVARIANT);
+        strategy.setProperty(StrategyProperties.DEP_OPTIONS_KEY, StrategyProperties.DEP_ON);
+        strategy.setProperty(StrategyProperties.QUERY_OPTIONS_KEY, StrategyProperties.QUERY_RESTRICTED);
+        strategy.setProperty(StrategyProperties.NON_LIN_ARITH_OPTIONS_KEY, StrategyProperties.NON_LIN_ARITH_DEF_OPS);
+        strategy.setProperty(StrategyProperties.STOPMODE_OPTIONS_KEY, StrategyProperties.STOPMODE_NONCLOSE);
+        return strategy;
     }
 
     private static void printFile(String filePath) {

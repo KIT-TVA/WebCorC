@@ -58,13 +58,16 @@ public class VerificationJob extends Thread {
             List<Path> includeFiles = filesController.retrieveFiles(projectId.get(), ".key", "include");
             List<Path> javaSrcFiles = filesController.retrieveFiles(projectId.get(), ".java", "javaSrc");
             List<Path> existingKeyFiles = filesController.retrieveFiles(projectId.get(), ".key", "proofs");
+            List<Path> javaSrcDirectories = filesController.retrieveFileFolders(projectId.get(), ".java", "");
 
             LOGGER.info("Included KeY-Files: " + includeFiles);
             LOGGER.info("Included Java-Files: " + javaSrcFiles);
+            LOGGER.info("Included Java-File-Directories: " + javaSrcDirectories);
             LOGGER.info("Existing Proof-Files: " + existingKeyFiles);
             context.includeFiles(includeFiles);
             context.javaSrcFiles(javaSrcFiles);
             context.existingProofFiles(existingKeyFiles);
+            context.javaSrcDirectories(javaSrcDirectories);
         }
         log("verification initialized");
     }

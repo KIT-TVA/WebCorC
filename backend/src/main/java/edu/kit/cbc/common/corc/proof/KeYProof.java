@@ -20,9 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.Builder;
 
@@ -31,6 +29,7 @@ import lombok.Builder;
 public class KeYProof {
 
     private static final String INCLUDE_FILES = "\\include  \"../../..%s\";\n";
+    private static final String INCLUDE_JAVA_DIRECTORIES = "\\javaSource  \"../../..%s\";\n";
     private static final String KEY_HEADER = """
         \\programVariables {
             %s
@@ -53,6 +52,7 @@ public class KeYProof {
 
     private final List<Path> includedFiles;
     private final List<Path> javaSrcFiles;
+    private final List<Path> javaSrcDirectories;
     private final List<Path> existingProofFiles;
     private final Path proofFolder;
     private final Condition preCondition;
@@ -105,11 +105,11 @@ public class KeYProof {
 
     @Override
     public String toString() {
-        return this.printKeYHeader() + printKeYBody();
+        return this.generateKeYHeader() + generateKeYBody();
     }
 
-    private String printKeYHeader() {
-        String header  = "";
+    private String generateKeYHeader() {
+        String header  = ""; //TODO: Maybe String Joiner with Linebreaks
 
         this.extractOldVariables(
             this.postCondition.getParsedCondition(),
@@ -121,6 +121,10 @@ public class KeYProof {
             header += String.format(INCLUDE_FILES, included);
         }
 
+        for (Path javaSource : this.javaSrcDirectories) {
+            header += INCLUDE_JAVA_DIRECTORIES.formatted(javaSource);
+        }
+
         header += String.format(
             KEY_HEADER,
             this.printProgramVariables()
@@ -129,7 +133,7 @@ public class KeYProof {
         return header;
     }
 
-    private String printKeYBody() {
+    private String generateKeYBody() {
         StringBuilder assignments = new StringBuilder();
 
         for (Assignment ass : this.additionalAssignments) {

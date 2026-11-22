@@ -88,6 +88,7 @@ public final class KeYProofGenerator {
         proofBuilder.programVariables(new ArrayList<>(filterProgramVariables(javaVariables)));
 
         proofBuilder.javaSrcFiles(this.proofContext.getJavaSrcFiles());
+        proofBuilder.javaSrcDirectories(this.proofContext.getJavaSrcDirectories());
         proofBuilder.includedFiles(this.proofContext.getIncludeFiles());
         proofBuilder.existingProofFiles(this.proofContext.getExistingProofFiles());
         proofBuilder.proofFolder(this.proofContext.getProofFolder());

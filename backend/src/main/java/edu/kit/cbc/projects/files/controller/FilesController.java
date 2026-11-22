@@ -33,10 +33,9 @@ import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.nio.file.Paths;
+import java.util.*;
+
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
@@ -78,6 +77,15 @@ public class FilesController {
         return HttpResponse.ok(projectService.findById(id).files());
     }
 
+    public List<Path> retrieveFileFolders(String projectId, String extension, String subFolder) throws IOException {
+        List<Path> foundFiles = this.retrieveFiles(projectId, extension, subFolder);
+        HashSet<Path> foundBaseFolders = new HashSet<>();
+        for (Path current : foundFiles) {
+            foundBaseFolders.add(current.getParent());
+        }
+        return new ArrayList<>(foundBaseFolders);
+    }
+
     public List<Path> retrieveFiles(String projectId, String extension, String subFolder) throws IOException {
         Path targetFolder = Files.createTempDirectory(subFolder);
         Collection<String> relevantFiles = new ArrayList<>(findFilesWithExtension(projectId, subFolder, extension));
@@ -87,7 +95,7 @@ public class FilesController {
         }
 
         for (String file : relevantFiles) {
-            Optional<HttpResponse<StreamedFile>> response = getFile(projectId, subFolder + "/" + file);
+            Optional<HttpResponse<StreamedFile>> response = getFile(projectId, (subFolder.isEmpty() ? "" : (subFolder + "/")) + file);
             if (response.isPresent()) {
                 InputStream fileInput = response.get().body().getInputStream();
                 Path targetPath = targetFolder.resolve(file);
@@ -115,8 +123,11 @@ public class FilesController {
         return response.contents().stream()
             .filter(obj -> obj.key().substring((String.format(PATH_FORMAT, id, "")).length()).startsWith(subFolder))
             .filter(obj -> obj.key().endsWith(extension))
-            .map(obj -> obj.key().substring((String.format(SUBFOLDER_PATH_FORMAT, id, subFolder)).length()))
-            .toList();
+            .map(obj ->
+                obj.key().substring((String.format(
+                    subFolder.isEmpty() ? PATH_FORMAT : SUBFOLDER_PATH_FORMAT
+                    , id, subFolder)).length())
+            ).toList();
     }
 
     @Get(uri = "/{urn:.*}")
