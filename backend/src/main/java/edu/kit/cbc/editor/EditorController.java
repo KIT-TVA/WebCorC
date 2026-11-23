@@ -4,6 +4,7 @@ package edu.kit.cbc.editor;
 import edu.kit.cbc.common.Problem;
 import edu.kit.cbc.common.corc.cbcmodel.CbCFormula;
 import edu.kit.cbc.common.corc.codegeneration.CodeGenerator;
+import edu.kit.cbc.common.corc.parsing.JavaFileCheckerUtil;
 import edu.kit.cbc.common.corc.parsing.SemanticChecker;
 import edu.kit.cbc.editor.llm.LLMClientRegistry;
 import edu.kit.cbc.editor.llm.LLMQueryDto;
@@ -66,6 +67,8 @@ public class EditorController {
         try {
             Set<String> foundVariables = SemanticChecker.checkVariables(formula);
             SemanticChecker.checkStatement(formula.getStatement(), foundVariables);
+            //TODO: Check that Classes used and Method called do exist.
+            JavaFileCheckerUtil.checkFiles(projectId.get(), this.filesController);
         } catch (edu.kit.cbc.common.corc.parsing.SemanticException e) {
 
             return HttpResponse
