@@ -29,9 +29,9 @@ public class SemanticChecker {
 
     private static final java.util.List<String> IGNORED_VARIABLES = java.util.List.of("true", "false", "null");
 
-    public static void checkVariables(CbCFormula formula) throws SemanticException {
+    public static Set<String> checkVariables(CbCFormula formula) throws SemanticException {
         if (formula == null) {
-            return;
+            return new HashSet<>();
         }
 
         Set<String> declaredVariables = new HashSet<>();
@@ -51,11 +51,10 @@ public class SemanticChecker {
                 checkCondition(condition, declaredVariables);
             }
         }
-
-        checkStatement(formula.getStatement(), declaredVariables);
+        return declaredVariables;
     }
 
-    private static void checkStatement(AbstractStatement statement, Set<String> declaredVariables)
+    public static void checkStatement(AbstractStatement statement, Set<String> declaredVariables)
             throws SemanticException {
         if (statement == null) {
             return;
@@ -64,28 +63,33 @@ public class SemanticChecker {
         checkCondition(statement.getPreCondition(), declaredVariables);
         checkCondition(statement.getPostCondition(), declaredVariables);
 
-        if (statement instanceof CompositionStatement comp) {
-            checkCondition(comp.getIntermediateCondition(), declaredVariables);
-            checkStatement(comp.getFirstStatement(), declaredVariables);
-            checkStatement(comp.getSecondStatement(), declaredVariables);
-        } else if (statement instanceof SelectionStatement sel) {
-            if (sel.getGuards() != null) {
-                for (Condition guard : sel.getGuards()) {
-                    checkCondition(guard, declaredVariables);
+        switch (statement) {
+            case CompositionStatement comp -> {
+                checkCondition(comp.getIntermediateCondition(), declaredVariables);
+                checkStatement(comp.getFirstStatement(), declaredVariables);
+                checkStatement(comp.getSecondStatement(), declaredVariables);
+            }
+            case SelectionStatement sel -> {
+                if (sel.getGuards() != null) {
+                    for (Condition guard : sel.getGuards()) {
+                        checkCondition(guard, declaredVariables);
+                    }
+                }
+                if (sel.getCommands() != null) {
+                    for (AbstractStatement cmd : sel.getCommands()) {
+                        checkStatement(cmd, declaredVariables);
+                    }
                 }
             }
-            if (sel.getCommands() != null) {
-                for (AbstractStatement cmd : sel.getCommands()) {
-                    checkStatement(cmd, declaredVariables);
-                }
+            case SmallRepetitionStatement rep -> {
+                checkCondition(rep.getInvariant(), declaredVariables);
+                checkCondition(rep.getVariant(), declaredVariables);
+                checkCondition(rep.getGuard(), declaredVariables);
+                checkStatement(rep.getLoopStatement(), declaredVariables);
             }
-        } else if (statement instanceof SmallRepetitionStatement rep) {
-            checkCondition(rep.getInvariant(), declaredVariables);
-            checkCondition(rep.getVariant(), declaredVariables);
-            checkCondition(rep.getGuard(), declaredVariables);
-            checkStatement(rep.getLoopStatement(), declaredVariables);
-        } else if (statement instanceof Statement stmt) {
-            checkTree(stmt.getProgramTree(), declaredVariables);
+            case Statement stmt -> checkTree(stmt.getProgramTree(), declaredVariables);
+            default -> {
+            }
         }
     }
 
