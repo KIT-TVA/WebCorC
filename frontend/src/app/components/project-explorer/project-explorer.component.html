@@ -13,17 +13,13 @@
     (onNodeExpand)="setExpanded($event.node)"
     (onNodeCollapse)="setCollapsed($event)"
     (onNodeDrop)="dropNode($event)"
-    emptyMessage="No files yet."
+    emptyMessage='Add a file by clicking "New"'
   >
     <ng-template #header>
-      <div class="project-header">
-        <h4>
-          {{
-            projectService.projectName
-              ? projectService.projectName
-              : "Projectname"
-          }}
-        </h4>
+      <div class="project-header" [title]="projectService.projectName || 'Untitled project'">
+        <span class="project-header-name">
+          {{ projectService.projectName || "Untitled project" }}
+        </span>
       </div>
     </ng-template>
     <ng-template #emptymessage>

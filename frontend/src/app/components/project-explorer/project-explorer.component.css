@@ -104,7 +104,23 @@ p-tree {
 
 .project-header {
   display: flex;
-  padding-left: 15px;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem 0.6rem;
+  margin-bottom: 0.25rem;
+  border-bottom: 1px solid var(--p-content-border-color);
+  color: var(--p-text-muted-color);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.project-header-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 #import {
