@@ -1,7 +1,6 @@
 package edu.kit.cbc.common.corc.diagramexport;
 
 import jakarta.inject.Singleton;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -82,6 +81,7 @@ public class DiagramExporter {
                     .map(Path::toFile)
                     .forEach(File::delete);
         } catch (IOException ignored) {
+            //Intentionally ignored
         }
     }
 
