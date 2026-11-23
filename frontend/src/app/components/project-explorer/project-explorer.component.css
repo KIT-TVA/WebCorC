@@ -12,8 +12,29 @@
   background-color: var(--p-background);
   color: var(--p-menubar-color);
 }
+p-tree {
+  display: block;
+  contain: inline-size; /* the tree's content doesn't count towards the drawer's width */
+}
+
+/* Let rows shrink to the drawer width so long names truncate instead of widening the explorer */
+:host ::ng-deep .p-tree-node-content {
+  min-width: 0;
+}
+
+:host ::ng-deep .explorer-file-name .p-button {
+  max-width: 100%;
+  justify-content: flex-start;
+}
+
+:host ::ng-deep .explorer-file-name .p-button-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
 :host ::ng-deep .p-tree-node-label {
+  min-width: 0;
   width: 100%;
 }
 

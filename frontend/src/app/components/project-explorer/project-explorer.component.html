@@ -39,11 +39,11 @@
           [class.explorer-active]="node.key === activeKey"
         >
           <span
-            class="flex items-center gap-2 cursor-pointer select-none"
+            class="flex items-center gap-2 min-w-0 cursor-pointer select-none"
             (click)="toggleDirectory(node)"
           >
-            <i [class]="node.icon + ' explorer-node-icon'"></i>
-            {{ node.label }}
+            <i [class]="node.icon + ' explorer-node-icon shrink-0'"></i>
+            <span class="truncate">{{ node.label }}</span>
             @if (isInRubbishBin(node.data)) {
               <p-tag
                 severity="secondary"
@@ -54,7 +54,7 @@
             }
           </span>
 
-          <span class="self-end">
+          <span class="self-end shrink-0">
             @if (!isInRubbishBin(node.data)) {
               <p-button
                 icon="pi pi-upload"
@@ -177,9 +177,9 @@
          class="w-full flex items-center justify-between"
          [class.explorer-active]="node.key === activeKey"
        >
-         <span class="flex items-center gap-2 w-full">
+         <span class="flex items-center gap-2 w-full min-w-0">
            <p-button
-             class="w-full explorer-file-name"
+             class="w-full min-w-0 explorer-file-name"
              (click)="activeKey = node.key; navigate(node.data)"
              text
              severity="contrast"
@@ -203,7 +203,7 @@
              />
            }
          </span>
-          <span class="self-end file-actions">
+          <span class="self-end file-actions shrink-0">
             @if (!isInRubbishBin(node.data)) {
               <p-button
                 icon="pi pi-file-edit"
