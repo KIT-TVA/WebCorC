@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, signal } from "@angular/core";
 import { NetworkJobService } from "../../../services/tree/network/network-job.service";
 import { MenuItem } from "@openng/optimus-ui/api";
 import { SplitButtonModule } from "@openng/optimus-ui/splitbutton";
@@ -16,7 +16,7 @@ export type ExportType = 'pdf' |'drawio' | 'png';
 })
 export class ExportButtonComponent implements OnInit {
   exportItems: MenuItem[] = [];
-  isExporting = false;
+  isExporting = signal(false);
 
   constructor(
     private networkTreeService: NetworkJobService,
@@ -44,12 +44,10 @@ export class ExportButtonComponent implements OnInit {
   }
 
   public export(type: ExportType): void {
-    if (this.isExporting) return;
-
-    this.isExporting = true;
+    this.isExporting.set(true);
 
     this.networkTreeService.export(type)
-      .pipe(finalize(() => this.isExporting = false))
+      .pipe(finalize(() => this.isExporting.set(false)))
       .subscribe();
   }
 }

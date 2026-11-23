@@ -252,8 +252,6 @@ export class NetworkJobService {
   const structureJson = JSON.stringify(exportedProject, null, 2);
   const filename = this.projectService.projectName;
 
-  console.log("Halo");
-
   const params = new HttpParams()
     .set('exportType', exportType);
 
