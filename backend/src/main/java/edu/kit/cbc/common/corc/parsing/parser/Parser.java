@@ -10,14 +10,7 @@ import edu.kit.cbc.common.corc.parsing.lexer.Keyword;
 import edu.kit.cbc.common.corc.parsing.lexer.NumberLiteral;
 import edu.kit.cbc.common.corc.parsing.lexer.Operator;
 import edu.kit.cbc.common.corc.parsing.lexer.Separator;
-import edu.kit.cbc.common.corc.parsing.parser.ast.ArrayAcessTree;
-import edu.kit.cbc.common.corc.parsing.parser.ast.BinaryOperationTree;
-import edu.kit.cbc.common.corc.parsing.parser.ast.CallTree;
-import edu.kit.cbc.common.corc.parsing.parser.ast.IdentTree;
-import edu.kit.cbc.common.corc.parsing.parser.ast.IntLiteralTree;
-import edu.kit.cbc.common.corc.parsing.parser.ast.LengthTree;
-import edu.kit.cbc.common.corc.parsing.parser.ast.Tree;
-import edu.kit.cbc.common.corc.parsing.parser.ast.UnaryOperationTree;
+import edu.kit.cbc.common.corc.parsing.parser.ast.*;
 import edu.kit.cbc.common.corc.parsing.program.ast.LValue;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +34,13 @@ public abstract class Parser {
         return parseExpressionWithPrecedence(Operator.OperatorType.maxPrecedence());
     }
 
-    protected Tree parseCall() {
+    protected Tree parseClassCall() {
+        final Identifier predicateName = tokenSource.expectIdentifier();
+        tokenSource.expectSeparator(Separator.SeparatorType.DOT);
+        return new ClassCallTree(new IdentTree(predicateName.identifier()), this.parseCall());
+    }
+
+    protected CallTree parseCall() {
         final Identifier predicateName = tokenSource.expectIdentifier();
         tokenSource.expectSeparator(Separator.SeparatorType.PAREN_OPEN);
         List<Tree> params = new ArrayList<>();

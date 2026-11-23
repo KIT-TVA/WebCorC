@@ -61,11 +61,19 @@ public final class ProgramParser extends Parser {
     protected Tree parseStatement() {
         if (tokenSource.hasMore() && tokenSource.peek() instanceof Identifier) {
             LValue lvalue = null;
+            System.out.println(System.lineSeparator() + tokenSource.peek() + System.lineSeparator() + tokenSource.peek(1) + System.lineSeparator());
+            System.out.println((tokenSource.peek(1) instanceof  Separator) + System.lineSeparator());
             if (tokenSource.peek(1) instanceof Separator sep) {
-                //METHOD CALL
+                //DIRECT METHOD CALL
                 if (sep.type() == Separator.SeparatorType.PAREN_OPEN) {
 
                     Tree call = parseCall();
+                    tokenSource.expectSeparator(Separator.SeparatorType.SEMICOLON);
+                    return call;
+                }
+                //MOTHOD CALL ON CLASS
+                if (sep.type() == Separator.SeparatorType.DOT) {
+                    Tree call = parseClassCall();
                     tokenSource.expectSeparator(Separator.SeparatorType.SEMICOLON);
                     return call;
                 }
