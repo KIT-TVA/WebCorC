@@ -22,6 +22,7 @@ import { MessageService, ConfirmationService } from "@openng/optimus-ui/api";
 import { InputText } from "@openng/optimus-ui/inputtext";
 import { GlobalSettingsService } from "./services/global-settings.service";
 import { ConfirmDialog } from "@openng/optimus-ui/confirmdialog";
+import { ExportButtonComponent } from "./components/toolbar/export-button/export-button.component";
 
 /**
  * Top Component of this application,
@@ -44,6 +45,7 @@ import { ConfirmDialog } from "@openng/optimus-ui/confirmdialog";
     Toast,
     InputText,
     ConfirmDialog,
+    ExportButtonComponent
   ],
   templateUrl: "./app.component.html",
   providers: [DialogService, MessageService, ConfirmationService],

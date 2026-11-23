@@ -1,20 +1,22 @@
 import {
   HttpClient,
   HttpErrorResponse,
+  HttpHeaders,
   HttpParams,
 } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
 import { ICBCFormula, LocalCBCFormula } from "../../../types/CBCFormula";
 import { environment } from "../../../../environments/environment";
-import { catchError, map, Observable, of } from "rxjs";
+import { catchError, EMPTY, map, Observable, of, tap, throwError } from "rxjs";
 import { VerificationService } from "../verification/verification.service";
 import { ConsoleService } from "../../console/console.service";
 import { ProjectService } from "../../project/project.service";
 import { CbcFormulaMapperService } from "../../project/mapper/cbc-formula-mapper.service";
 import { WebSocketService } from "./websocket";
-import { ApiDiagramFile } from "../../project/types/api-elements";
+import { ApiDiagramFile, ApiDirectory, LocalDiagramFile, LocalDirectory } from "../../project/types/api-elements";
 import { AbstractStatementNode } from "../../../types/statements/nodes/abstract-statement-node";
 import { TreeService } from "../tree.service";
+import { ExportType } from "../../../components/toolbar/export-button/export-button.component";
 
 /**
  * The Service to send the editor contents over the network to the backend for verification or code generation.
@@ -36,6 +38,7 @@ export class NetworkJobService {
   private static readonly verifyWebSocketPath = "/ws/verify/";
   private static readonly verifyResultPath = "/editor/jobs/";
   private static readonly generatePath = "/editor/javaGen";
+  private static readonly exportPath = "/editor/export";
 
   /** Inserted by Angular inject() migration for backwards compatibility */
   constructor(...args: unknown[]);
@@ -238,4 +241,56 @@ export class NetworkJobService {
         window.URL.revokeObjectURL(url);
       });
   }
+
+  public export(exportType: ExportType): Observable<Blob> {
+  const exportedProject = this.projectService.export();
+
+  if (!exportedProject) {
+    return throwError(() => new Error("No diagram found for export."));
+  }
+
+  const structureJson = JSON.stringify(exportedProject, null, 2);
+  const filename = this.projectService.projectName;
+
+  console.log("Halo");
+
+  const params = new HttpParams()
+    .set('exportType', exportType);
+
+  return this.http
+    .post(
+      environment.apiUrl + NetworkJobService.exportPath,
+      structureJson,
+      {
+        headers: new HttpHeaders({
+          'Content-Type': 'application/json'
+        }),
+        params: params,
+        responseType: "blob",
+      }
+    )
+    .pipe(
+      tap((fileBlob: Blob) => {
+        const extension = exportType;
+        const url = window.URL.createObjectURL(fileBlob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${filename}.${extension}`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      }),
+      catchError((error: HttpErrorResponse): Observable<Blob> => {
+        if (error.error instanceof Blob) {
+          error.error.text().then(text => console.error('Backend error:', text));
+        }
+
+        this.consoleService.addErrorResponse(
+          error,
+          `${exportType.toUpperCase()} export failed`
+        );
+        return EMPTY;
+      })
+    );
+  }
 }
+

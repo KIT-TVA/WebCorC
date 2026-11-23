@@ -18,16 +18,19 @@ services:
       RUSTFS_ACCESS_KEY: "root"
       RUSTFS_SECRET_KEY: "changeme"
 
-
   mongo:
     image: mongo
     ports:
       - "27017:27017"
 
+  drawio-renderer:
+    image: jgraph/export-server:latest
+    restart: unless-stopped
+
   webcorc-backend:
     build:
-      context: backend
-      dockerfile: dev.Dockerfile
+      context: .
+      dockerfile: backend/dev.Dockerfile
     env_file:
       - docker-compose.env
     environment:
@@ -46,6 +49,8 @@ services:
       rustfs:
         condition: service_started
       mongo:
+        condition: service_started
+      drawio-renderer:
         condition: service_started
 
   webcorc-frontend:
