@@ -23,6 +23,7 @@ import { InputText } from "@openng/optimus-ui/inputtext";
 import { GlobalSettingsService } from "./services/global-settings.service";
 import { ConfirmDialog } from "@openng/optimus-ui/confirmdialog";
 import { ExportButtonComponent } from "./components/toolbar/export-button/export-button.component";
+import { PredicateService } from "./services/predicates/predicate.service";
 
 /**
  * Top Component of this application,
@@ -63,6 +64,7 @@ export class AppComponent implements OnInit {
   protected globalSettingsService = inject(GlobalSettingsService);
   private confirmationService = inject(ConfirmationService);
   private messageService = inject(MessageService);
+  private predicateService = inject(PredicateService);
 
   /** Inserted by Angular inject() migration for backwards compatibility */
   constructor(...args: unknown[]);
@@ -82,8 +84,10 @@ export class AppComponent implements OnInit {
   }
   /**
    * Triggered on pressing the verify Button in the Top Bar.
-   * Sideeffect: When the helper.key exists and no backend project connected prompt user to create project in the backend.
-   * This is needed for the backend to use the contents of helper.key
+   * The backend reads the include, Java source and proof files of the project from storage,
+   * so the project is always saved before verifying. Otherwise the backend would verify
+   * against stale files (e.g. those of a previously loaded example).
+   * Sideeffect: When no backend project is connected the user is prompted to create one.
    */
   public verify(): void {
     this.treeService.finalizeStatements();
@@ -96,13 +100,7 @@ export class AppComponent implements OnInit {
         accept: () => {
           this.openNewProjectDialog()?.onClose.subscribe((created) => {
             if (created) {
-              this.projectService.uploadWorkspace().then(() => {
-                this.messageService.add({
-                  summary: "Save successful",
-                  severity: "success",
-                });
-                this.verify();
-              });
+              this.saveAndVerify();
             } else {
               this.messageService.add({
                 summary: "Save cancelled",
@@ -112,23 +110,46 @@ export class AppComponent implements OnInit {
             }
           });
         },
-        reject: () => {
-          this.globalSettingsService.isVerifying = true;
-          this.networkTreeService.verify(
-            this.treeService.rootFormula,
-            this.projectService.projectId,
-            this.treeService.urn,
-          );
-        },
+        reject: () => this.startVerification(),
       });
     } else {
-      this.globalSettingsService.isVerifying = true;
-      this.networkTreeService.verify(
-        this.treeService.rootFormula,
-        this.projectService.projectId,
-        this.treeService.urn,
-      );
+      this.saveAndVerify();
     }
+  }
+
+  /**
+   * Save the current project to the backend and verify the currently opened diagram afterwards.
+   */
+  private saveAndVerify(): void {
+    this.globalSettingsService.isVerifying = true;
+    this.predicateService.exportPredicates();
+    this.projectService.uploadWorkspace().then(
+      () => {
+        this.messageService.add({
+          summary: "Save successful",
+          severity: "success",
+        });
+        this.startVerification();
+      },
+      () => {
+        this.globalSettingsService.isVerifying = false;
+        this.messageService.add({
+          summary: "Save failed",
+          detail:
+            "The project could not be saved, verification was not started",
+          severity: "error",
+        });
+      },
+    );
+  }
+
+  private startVerification(): void {
+    this.globalSettingsService.isVerifying = true;
+    this.networkTreeService.verify(
+      this.treeService.rootFormula,
+      this.projectService.projectId,
+      this.treeService.urn,
+    );
   }
 
   private openNewProjectDialog() {

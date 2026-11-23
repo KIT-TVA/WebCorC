@@ -8,7 +8,7 @@ ARG configuration=production
 RUN npm run build -- --output-path=./dist/out --configuration $configuration
 
 # Stage 1, based on Nginx, to have only the compiled app, ready for production with Nginx
-FROM nginx:latest
+FROM nginx:1.31.9
 #Copy ci-dashboard-dist
 COPY --from=build-stage /app/dist/out/browser/. /usr/share/nginx/html
 #Copy default nginx configuration

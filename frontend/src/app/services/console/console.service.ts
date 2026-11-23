@@ -5,6 +5,7 @@ import {
   ConsoleInfoLine,
   ConsoleLogGroup,
   ConsoleLogLine,
+  LogStatus,
 } from "./log";
 
 /**
@@ -15,40 +16,54 @@ import {
   providedIn: "root",
 })
 export class ConsoleService {
-  private _logs: (ConsoleLogLine | ConsoleLogGroup)[] = [];
+  /**
+   * Signal so the console re-renders under zoneless change detection.
+   * Changes to group lines/status must go through addLineToGroup/setGroupStatus, which replace the array to notify.
+   */
+  private readonly _logs = signal<(ConsoleLogLine | ConsoleLogGroup)[]>([]);
   public loading = signal(false);
   public loadingMessage = signal("");
 
   constructor() {}
 
   public get logs() {
-    return this._logs;
+    return this._logs();
   }
 
   public get numberOfLogs() {
-    return this._logs.length;
+    return this._logs().length;
   }
 
   public addErrorResponse(error: HttpErrorResponse, action: string = "") {
-    this._logs.push(new ConsoleErrorLine(action, error));
+    this.append(new ConsoleErrorLine(action, error));
   }
 
   public addStringError(error: string, action: string = "") {
-    this._logs.push(new ConsoleErrorLine(action, error));
+    this.append(new ConsoleErrorLine(action, error));
   }
 
   public addStringInfo(info: string, icon?: string) {
-    this._logs.push(new ConsoleInfoLine(info, icon));
+    this.append(new ConsoleInfoLine(info, icon));
   }
 
   public addGroup() {
     const group = new ConsoleLogGroup();
-    this._logs.push(group);
+    this.append(group);
     return group;
   }
 
+  public addLineToGroup(group: ConsoleLogGroup, line: ConsoleLogLine) {
+    group.lines.push(line);
+    this.notifyChange();
+  }
+
+  public setGroupStatus(group: ConsoleLogGroup, status: LogStatus) {
+    group.status = status;
+    this.notifyChange();
+  }
+
   public clear() {
-    this._logs = [];
+    this._logs.set([]);
   }
 
   public beginLoading(action: string) {
@@ -59,5 +74,13 @@ export class ConsoleService {
   public finishLoading() {
     this.loading.set(false);
     this.loadingMessage.set("");
+  }
+
+  private append(line: ConsoleLogLine | ConsoleLogGroup) {
+    this._logs.update((logs) => [...logs, line]);
+  }
+
+  private notifyChange() {
+    this._logs.update((logs) => [...logs]);
   }
 }

@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/app.component.css"],
+  "sourcesContent": ["mat-toolbar > h1 {\n  font-size: 1.7em;\n  color: white;\n  letter-spacing: -1px;\n  font-weight: bold;\n}\n\n.spacer {\n  flex: 1 1 auto;\n}\n\n.editorWindow {\n  height: calc(100% - 64px);\n}\n\n.consoleWindow {\n  height: 100%\n}\n\n.editor {\n  overflow: hidden;\n}\n\n.mat-badge-content {\n  background-color: red;\n}\n\n.chatWindow {\n  height: 100%;\n}"],
+  "mappings": ";AAAA,YAAA,EAAA;AACE,aAAA;AACA,SAAA;AACA,kBAAA;AACA,eAAA;AACF;AAEA,CAAA;AACE,QAAA,EAAA,EAAA;AACF;AAEA,CAAA;AACE,UAAA,KAAA,KAAA,EAAA;AACF;AAEA,CAAA;AACE,UAAA;AACF;AAEA,CAAA;AACE,YAAA;AACF;AAEA,CAAA;AACE,oBAAA;AACF;AAEA,CAAA;AACE,UAAA;AACF;",
+  "names": []
+}

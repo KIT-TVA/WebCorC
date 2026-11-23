@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/components/editor/renaming/renaming.component.css"],
+  "sourcesContent": [".renaming {\n    border-radius: 4px;\n    border: 1px solid #8f8f8f;\n    padding: 5px;\n    background-color: #ffffff;\n    margin-bottom: 0.25rem;\n}\n\n.addRenaming {\n    border: 1px solid #4caf50;\n}"],
+  "mappings": ";AAAA,CAAA;AACI,iBAAA;AACA,UAAA,IAAA,MAAA;AACA,WAAA;AACA,oBAAA;AACA,iBAAA;AACJ;AAEA,CAAA;AACI,UAAA,IAAA,MAAA;AACJ;",
+  "names": []
+}

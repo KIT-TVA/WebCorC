@@ -31,7 +31,7 @@ export class ProjectService {
   // Use empty string as the project root urn - this aligns with ApiDirectory roots like '/'
   private _rootDir = new ProjectDirectory("", [], true);
   private _dataChange = new BehaviorSubject<ProjectElement[]>(
-    this._rootDir.contents,
+      this._rootDir.contents,
   );
   private _saveNotify = new Subject<void>();
   private _savedFinished = new Subject<void>();
@@ -39,7 +39,6 @@ export class ProjectService {
   private rubbishBinName = ".rubbishBin";
 
   /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
   constructor() {
     const storage = this.storage;
 
@@ -64,13 +63,13 @@ export class ProjectService {
    * @see ProjectElement
    */
   public findByUrn(
-    urn: string,
-    directory: ProjectDirectory = this._rootDir,
+      urn: string,
+      directory: ProjectDirectory = this._rootDir,
   ): ProjectElement | null {
     const normalizedUrn = urn.startsWith("/") ? urn.slice(1) : urn;
     const normalizedDirUrn = directory.urn.startsWith("/")
-      ? directory.urn.slice(1)
-      : directory.urn;
+        ? directory.urn.slice(1)
+        : directory.urn;
 
     if (normalizedUrn === normalizedDirUrn) {
       return directory;
@@ -87,15 +86,15 @@ export class ProjectService {
         return null;
       }
       const found = (current as ProjectDirectory).contents.find(
-        (element) => element.urn.split("/").pop() === part,
+          (element) => element.urn.split("/").pop() === part,
       );
       if (!found) return null;
       current = found;
     }
 
     return current.urn === urn || current.urn === normalizedUrn
-      ? current
-      : null;
+        ? current
+        : null;
   }
 
   /**
@@ -124,10 +123,10 @@ export class ProjectService {
       }
 
       if (
-        definedParentDir.contents.find((element) => element.urn === newDir.urn)
+          definedParentDir.contents.find((element) => element.urn === newDir.urn)
       ) {
         throw new Error(
-          "Could not add directory, maybe you tried to create a duplicate?",
+            "Could not add directory, maybe you tried to create a duplicate?",
         );
       }
 
@@ -149,9 +148,9 @@ export class ProjectService {
    * @returns The parent directory of the newly created file
    */
   public addFile(
-    parentPath: string,
-    name: string,
-    type: string,
+      parentPath: string,
+      name: string,
+      type: string,
   ): ProjectDirectory {
     console.log("Creating file", parentPath, name, type);
     const parent = this.findByUrn(parentPath);
@@ -159,9 +158,9 @@ export class ProjectService {
       parentPath = parentPath.slice(0, -1);
     }
     const newUrn =
-      parentPath === ""
-        ? name + "." + type
-        : parentPath + "/" + name + "." + type;
+        parentPath === ""
+            ? name + "." + type
+            : parentPath + "/" + name + "." + type;
 
     if (name.includes("/")) {
       throw new Error("File name contains forbidden character '/'");
@@ -173,7 +172,7 @@ export class ProjectService {
 
     if (parentDir.contents.find((element) => element.urn === newUrn)) {
       throw new Error(
-        "File with this name already exists in the target directory",
+          "File with this name already exists in the target directory",
       );
     }
 
@@ -199,8 +198,8 @@ export class ProjectService {
   }
 
   public getParentDirectory(
-    element: ProjectElement | string,
-    directory: ProjectDirectory = this._rootDir,
+      element: ProjectElement | string,
+      directory: ProjectDirectory = this._rootDir,
   ): ProjectDirectory | undefined {
     let parts: string[] = [];
     if (typeof element === "string") {
@@ -255,7 +254,7 @@ export class ProjectService {
 
     if (parent) {
       parent.contents = parent.contents.filter(
-        (child) => child.urn !== element.urn,
+          (child) => child.urn !== element.urn,
       );
     }
   }
@@ -339,9 +338,9 @@ export class ProjectService {
     }
 
     let content: string | LocalCBCFormula =
-      file.type === "CODE_FILE"
-        ? ((file as CodeFile).content as string)
-        : ((file as DiagramFile).formula as LocalCBCFormula);
+        file.type === "CODE_FILE"
+            ? ((file as CodeFile).content as string)
+            : ((file as DiagramFile).formula as LocalCBCFormula);
 
     // If file not in local storage yet
     if (!file.present) {
@@ -379,16 +378,16 @@ export class ProjectService {
 
     if (!this.findByUrn(predicatesFileUrn)) {
       this.addFile(
-        internalDirName,
-        predicatesFileName,
-        predicatesFileExtension,
+          internalDirName,
+          predicatesFileName,
+          predicatesFileExtension,
       );
     }
 
     try {
       this.syncLocalFileContent(
-        predicatesFileUrn,
-        JSON.stringify(predicates, null, 2),
+          predicatesFileUrn,
+          JSON.stringify(predicates, null, 2),
       );
     } catch (e) {
       console.error(`Could not sync predicates file: ${e}`);
@@ -438,7 +437,7 @@ export class ProjectService {
       const timeoutPromise = new Promise<void>((resolve) => {
         setTimeout(() => {
           console.warn(
-            `uploadWorkspace: save-finished event did not fire within ${timeoutMs}ms; continuing with last known state`,
+              `uploadWorkspace: save-finished event did not fire within ${timeoutMs}ms; continuing with last known state`,
           );
           resolve();
         }, timeoutMs);
@@ -487,6 +486,11 @@ export class ProjectService {
           this.mergeTrees(this._rootDir, remoteProject);
           this.storage.saveProject(this._rootDir, this.projectName);
         }
+
+        // Fetch all file contents now, so that placeholder (empty) files are never
+        // uploaded back to the server and overwrite the real content on save.
+        await this.downloadMissingFileContents(this._rootDir);
+        this.storage.saveProject(this._rootDir, this.projectName);
       } else if (localProjectTree) {
         this._rootDir = localProjectTree;
         this._projectName = localProjectName ?? "";
@@ -503,19 +507,52 @@ export class ProjectService {
   private mergeTrees(local: ProjectDirectory, remote: ProjectDirectory) {
     for (const remoteElement of remote.contents) {
       const localElement = local.contents.find(
-        (e) => e.urn === remoteElement.urn,
+          (e) => e.urn === remoteElement.urn,
       );
       if (!localElement) {
         local.contents.push(remoteElement);
       } else if (
-        localElement.type === "DIRECTORY" &&
-        remoteElement.type === "DIRECTORY"
+          localElement.type === "DIRECTORY" &&
+          remoteElement.type === "DIRECTORY"
       ) {
         this.mergeTrees(
-          localElement as ProjectDirectory,
-          remoteElement as ProjectDirectory,
+            localElement as ProjectDirectory,
+            remoteElement as ProjectDirectory,
         );
       }
+    }
+  }
+
+  /**
+   * Download the content of every file in the directory tree that is not present locally yet
+   * Failures are logged per file so that one broken file does not abort loading the workspace
+   */
+  private async downloadMissingFileContents(directory: ProjectDirectory) {
+    const downloads: Promise<void>[] = [];
+    const collect = (dir: ProjectDirectory) => {
+      for (const element of dir.contents) {
+        if (element.type === "DIRECTORY") {
+          collect(element as ProjectDirectory);
+        } else if (!element.present) {
+          downloads.push(this.downloadFileContent(element));
+        }
+      }
+    };
+    collect(directory);
+    await Promise.all(downloads);
+  }
+
+  private async downloadFileContent(file: ProjectElement) {
+    try {
+      const content = await this.network.getFileContent(file.urn);
+      if (file.type === "DIAGRAM_FILE") {
+        (file as DiagramFile).formula = content as LocalCBCFormula;
+      } else {
+        (file as CodeFile).content = content as string;
+      }
+      file.present = true;
+    } catch (error) {
+      console.error(`Could not download content of ${file.urn}:`, error);
     }
   }
 
@@ -568,8 +605,12 @@ export class ProjectService {
           continue;
         case "CODE_FILE":
         case "DIAGRAM_FILE": {
+          // Content never loaded from the server: uploading it would overwrite the remote file with an empty placeholder
+          if (!item.present) {
+            break;
+          }
           const success = await this.network.uploadFile(
-            this.mapper.exportFile(item),
+              this.mapper.exportFile(item),
           );
           if (success) {
             const remoteRoot = this.storage.getRemoteProjectTree();
@@ -604,9 +645,9 @@ export class ProjectService {
    * Move a element in the project
    */
   public moveElement(
-    file: ProjectElement,
-    target: ProjectElement,
-    name?: string,
+      file: ProjectElement,
+      target: ProjectElement,
+      name?: string,
   ) {
     console.log("Move action requested (file, target):", file, target);
     const newParentPath = target.urn;
@@ -644,11 +685,11 @@ export class ProjectService {
         if (child.urn.startsWith(oldPrefix)) {
           child.urn = newPrefix + child.urn.substring(oldPrefix.length);
           if (
-            child.serverSideUrn &&
-            child.serverSideUrn.startsWith(oldPrefix)
+              child.serverSideUrn &&
+              child.serverSideUrn.startsWith(oldPrefix)
           ) {
             child.serverSideUrn =
-              newPrefix + child.serverSideUrn.substring(oldPrefix.length);
+                newPrefix + child.serverSideUrn.substring(oldPrefix.length);
           }
         }
         if (child.type === "DIRECTORY") {
@@ -693,7 +734,7 @@ export class ProjectService {
       const dotIndex = trimmedName.lastIndexOf(".");
       const oldDotIndex = element.name.lastIndexOf(".");
       const baseName =
-        dotIndex === -1 ? trimmedName : trimmedName.substring(0, dotIndex);
+          dotIndex === -1 ? trimmedName : trimmedName.substring(0, dotIndex);
       if (oldDotIndex < 0) {
         throw new Error("Cannot rename file without a known fileType");
       }
@@ -732,11 +773,11 @@ export class ProjectService {
         if (child.urn.startsWith(oldPrefix)) {
           child.urn = newPrefix + child.urn.substring(oldPrefix.length);
           if (
-            child.serverSideUrn &&
-            child.serverSideUrn.startsWith(oldPrefix)
+              child.serverSideUrn &&
+              child.serverSideUrn.startsWith(oldPrefix)
           ) {
             child.serverSideUrn =
-              newPrefix + child.serverSideUrn.substring(oldPrefix.length);
+                newPrefix + child.serverSideUrn.substring(oldPrefix.length);
           }
         }
         if (child.type === "DIRECTORY") {
@@ -760,9 +801,10 @@ export class ProjectService {
         const predicates = JSON.parse(content) as ProjectPredicate[];
         this.storage.setPredicates(predicates);
       }
-    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (_) {
       console.log(
-        "Predicates file not found or invalid, starting with empty predicates.",
+          "Predicates file not found or invalid, starting with empty predicates.",
       );
       this.storage.setPredicates([]);
     }
