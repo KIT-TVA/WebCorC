@@ -17,6 +17,40 @@
   width: 100%;
 }
 
+:host ::ng-deep .p-tree-node-toggle-button { display: none; }
+
+/* Faint guide line left of a directory's contents (the root list is .p-tree-root-children, so it gets none) */
+:host ::ng-deep .p-tree-node-children {
+  border-inline-start: 1px solid var(--p-content-border-color);
+  margin-inline-start: 0.75rem;
+}
+
+/* Directory icons are rendered inside the directory template so they are clickable */
+:host ::ng-deep .explorer-directory > .p-tree-node-content > .p-tree-node-icon {
+  display: none;
+}
+
+:host ::ng-deep .explorer-node-icon {
+  color: var(--p-tree-node-icon-color);
+}
+
+/* Highlight the whole row of the last clicked file/directory */
+:host ::ng-deep .p-tree-node-content:has(> .p-tree-node-label .explorer-active) {
+  /* light tint of the primary green instead of the theme's solid selected color */
+  background: color-mix(in srgb, var(--p-primary-color) 15%, transparent);
+}
+
+/* The file name is a text button: don't draw its hover/press background on top of the row highlight */
+:host ::ng-deep .explorer-active .explorer-file-name .p-button:not(:disabled):hover,
+:host ::ng-deep .explorer-active .explorer-file-name .p-button:not(:disabled):active {
+  background: transparent;
+}
+
+:host ::ng-deep .p-tree-node-content:has(> .p-tree-node-label .explorer-active) .p-tree-node-icon,
+:host ::ng-deep .p-tree-node-content:has(> .p-tree-node-label .explorer-active) .explorer-node-icon {
+  color: var(--p-primary-color);
+}
+
 .project-actions {
   display: flex;
   place-content: center;

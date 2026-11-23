@@ -117,6 +117,8 @@ export class ProjectExplorerComponent {
   private expandedNodes: string[] = [];
 
   protected treeNodes: TreeNode[] = [];
+  /** Key (urn) of the last clicked file or directory; that row is highlighted. */
+  protected activeKey: string | null = null;
 
   // Track the element currently being renamed (ephemeral, UI-only)
   private renamingElement: ProjectElement | null = null;
@@ -233,6 +235,8 @@ export class ProjectExplorerComponent {
         draggable: !inRubbishBin,
         expanded: expanded,
         icon: icon,
+        // Directory rows render their icon inside the template (so it is clickable); hide the tree's own
+        styleClass: type == "directory" ? "explorer-directory" : undefined,
         type: type,
         children: children,
         leaf: type != "directory",
@@ -505,6 +509,17 @@ export class ProjectExplorerComponent {
       this.projectService.root.content.includes(node.data);
 
     node.icon = isRootRubbishBin ? "pi pi-trash" : "pi pi-folder-open";
+  }
+
+  /** Expands/collapses a directory when its label is clicked (the tree's toggle button is hidden via CSS). */
+  protected toggleDirectory(node: TreeNode) {
+    this.activeKey = node.key ?? null;
+    node.expanded = !node.expanded;
+    if (node.expanded) {
+      this.setExpanded(node);
+    } else {
+      this.setCollapsed({ node } as TreeNodeCollapseEvent);
+    }
   }
 
   setCollapsed(event: TreeNodeCollapseEvent) {

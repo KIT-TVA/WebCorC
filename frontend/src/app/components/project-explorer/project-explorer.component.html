@@ -36,8 +36,13 @@
       >
         <div
           class="w-full flex items-center justify-between"
+          [class.explorer-active]="node.key === activeKey"
         >
-          <span class="flex items-center gap-2">
+          <span
+            class="flex items-center gap-2 cursor-pointer select-none"
+            (click)="toggleDirectory(node)"
+          >
+            <i [class]="node.icon + ' explorer-node-icon'"></i>
             {{ node.label }}
             @if (isInRubbishBin(node.data)) {
               <p-tag
@@ -48,7 +53,7 @@
               />
             }
           </span>
- 
+
           <span class="self-end">
             @if (!isInRubbishBin(node.data)) {
               <p-button
@@ -170,11 +175,12 @@
      >
        <div
          class="w-full flex items-center justify-between"
+         [class.explorer-active]="node.key === activeKey"
        >
          <span class="flex items-center gap-2 w-full">
            <p-button
-             class="w-full"
-             (click)="navigate(node.data)"
+             class="w-full explorer-file-name"
+             (click)="activeKey = node.key; navigate(node.data)"
              text
              severity="contrast"
              [label]="node.label"
