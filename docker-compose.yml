@@ -18,7 +18,8 @@ services:
    webcorc-backend:
     image: ${BACKEND_IMAGE:-ghcr.io/kit-tva/webcorc-backend:latest}
     build:
-      context: backend
+      context: .
+      dockerfile: backend/Dockerfile
     env_file:
       - docker-compose.env
     depends_on:

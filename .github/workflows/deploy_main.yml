@@ -31,7 +31,7 @@ jobs:
           IMAGE_ID=ghcr.io/${{ github.repository_owner }}/webcorc-backend-main
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
           
-          docker build ./backend --tag $IMAGE_ID:latest --tag $IMAGE_ID:${{ github.sha }}
+          docker build . --file backend/Dockerfile --tag $IMAGE_ID:latest --tag $IMAGE_ID:${{ github.sha }}
           docker push $IMAGE_ID --all-tags
 
   fe-compile:

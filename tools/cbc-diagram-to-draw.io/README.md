@@ -1,3 +1,5 @@
+The drawio converter is kindly provided by [madalime](https://github.com/madalime/cbc-diagram-to-draw.io).
+
 # cbc-diagram-to-draw.io
 Converts CbC diagrams imported from WebCorC into [draw.io](https://www.draw.io) diagrams
 
