@@ -1,0 +1,160 @@
+{
+  "urn": "",
+  "content": [
+    {
+      "urn": "linearSearch.diagram",
+      "inodeType": "file",
+      "type": "diagram",
+      "content": {
+        "name": "LinearSearch",
+        "preCondition": {
+          "condition": "appears(A, x, 0, A.length)"
+        },
+        "postCondition": {
+          "condition": "A[i] == x"
+        },
+        "verifierConditions": {},
+        "javaVariables": [
+          {
+            "name": "int i",
+            "kind": "LOCAL"
+          },
+          {
+            "name": "int x",
+            "kind": "LOCAL"
+          },
+          {
+            "name": "int[] A",
+            "kind": "LOCAL"
+          }
+        ],
+        "globalConditions": [
+          {
+            "condition": "A != null"
+          },
+          {
+            "condition": "i >= 0 && i < A.length"
+          },
+          {
+            "condition": "A.length > 0"
+          },
+          {
+            "condition": "A.length < 10"
+          },
+          {
+            "condition": "appears(A,x,0,A.length)"
+          }
+        ],
+        "renamings": [],
+        "isProven": false,
+        "position": {
+          "xinPx": 0,
+          "yinPx": 0
+        },
+        "statement": {
+          "name": "Comp",
+          "type": "COMPOSITION",
+          "preCondition": {
+            "condition": "appears(A, x, 0, A.length)"
+          },
+          "postCondition": {
+            "condition": "A[i] == x"
+          },
+          "position": {
+            "xinPx": 0,
+            "yinPx": 400
+          },
+          "isProven": false,
+          "verifierConditions": {},
+          "id": "154698266724.14005",
+          "nodeState": "unverified",
+          "intermediateCondition": {
+            "condition": "appears(A, x, 0, A.length) && i == A.length-1"
+          },
+          "verifierIntermediateConditions": {},
+          "firstStatement": {
+            "name": "Statement",
+            "type": "STATEMENT",
+            "preCondition": {
+              "condition": "appears(A, x, 0, A.length)"
+            },
+            "postCondition": {
+              "condition": "appears(A, x, 0, A.length) && i == A.length-1"
+            },
+            "position": {
+              "xinPx": -450,
+              "yinPx": 725
+            },
+            "isProven": false,
+            "verifierConditions": {},
+            "id": "71435419048.67198",
+            "nodeState": "unverified",
+            "programStatement": "i = A.length-1;"
+          },
+          "secondStatement": {
+            "name": "Repetition",
+            "type": "REPETITION",
+            "preCondition": {
+              "condition": "!appears(A, x, i+1, A.length) && (A[i] != x)"
+            },
+            "postCondition": {
+              "condition": "!appears(A, x, i+1, A.length)"
+            },
+            "position": {
+              "xinPx": 350,
+              "yinPx": 725
+            },
+            "isProven": false,
+            "verifierConditions": {},
+            "id": "532334319805.1403",
+            "nodeState": "unverified",
+            "variant": {
+              "condition": "i"
+            },
+            "invariant": {
+              "condition": "!appears(A, x, i+1, A.length)"
+            },
+            "guard": {
+              "condition": "(A[i] != x)"
+            },
+            "isVariantProven": false,
+            "isPreProven": false,
+            "isPostProven": false,
+            "loopStatement": {
+              "name": "Statement2",
+              "type": "STATEMENT",
+              "preCondition": {
+                "condition": "!appears(A, x, i+1, A.length) && (A[i] != x)"
+              },
+              "postCondition": {
+                "condition": "!appears(A, x, i+1, A.length)"
+              },
+              "position": {
+                "xinPx": 675,
+                "yinPx": 1125
+              },
+              "isProven": false,
+              "verifierConditions": {},
+              "id": "287676570351.2809",
+              "nodeState": "unverified",
+              "programStatement": "i = i-1;"
+            }
+          }
+        }
+      }
+    },
+    {
+      "urn": "include",
+      "content": [
+        {
+          "urn": "include/predicates.key",
+          "content": "\\predicates {\n    appears(int[], int, int, int);\n}\n\n\\rules {\n    appears {\n        \\schemaVar \\term int[] A;\n        \\schemaVar \\term int x;\n        \\schemaVar \\term int start;\n        \\schemaVar \\term int end;\n        \\schemaVar \\variable int q;\n        \\find (appears(A, x, start, end))\n        \\varcond (\\notFreeIn(q,A), \\notFreeIn(q,x), \\notFreeIn(q,start), \\notFreeIn(q,end))\n        \\replacewith (\\exists int q; (q >= start & q < end & A[q]=x))\n        \\heuristics(simplify)\n    };\n}\n",
+          "inodeType": "file",
+          "type": "key"
+        }
+      ],
+      "inodeType": "directory"
+    }
+  ],
+  "inodeType": "directory"
+}

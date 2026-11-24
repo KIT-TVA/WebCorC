@@ -1,0 +1,289 @@
+{
+  "urn": "",
+  "content": [
+    {
+      "urn": "maxElement.diagram",
+      "inodeType": "file",
+      "type": "diagram",
+      "content": {
+        "name": "MaxElement",
+        "preCondition": {
+          "condition": "A.length > 0"
+        },
+        "postCondition": {
+          "condition": "maxe(A, 0, A.length, i)"
+        },
+        "verifierConditions": {},
+        "javaVariables": [
+          {
+            "name": "int j",
+            "kind": "LOCAL"
+          },
+          {
+            "name": "int i",
+            "kind": "LOCAL"
+          },
+          {
+            "name": "int[] A",
+            "kind": "LOCAL"
+          }
+        ],
+        "globalConditions": [
+          {
+            "condition": "A != null"
+          },
+          {
+            "condition": "A.length > 0"
+          },
+          {
+            "condition": "A.length < 10"
+          },
+          {
+            "condition": "i >= 0 && i < A.length"
+          },
+          {
+            "condition": "j >= 0 && j <= A.length"
+          }
+        ],
+        "renamings": [],
+        "isProven": false,
+        "position": {
+          "xinPx": 0,
+          "yinPx": 0
+        },
+        "statement": {
+          "name": "Comp1",
+          "type": "COMPOSITION",
+          "preCondition": {
+            "condition": "A.length > 0"
+          },
+          "postCondition": {
+            "condition": "maxe(A, 0, A.length, i)"
+          },
+          "position": {
+            "xinPx": 0,
+            "yinPx": 400
+          },
+          "isProven": false,
+          "verifierConditions": {},
+          "id": "90191539684.06445",
+          "nodeState": "unverified",
+          "intermediateCondition": {
+            "condition": "A.length > 0 && i == 0 && j == 1"
+          },
+          "verifierIntermediateConditions": {},
+          "firstStatement": {
+            "name": "Comp2",
+            "type": "COMPOSITION",
+            "preCondition": {
+              "condition": "A.length > 0"
+            },
+            "postCondition": {
+              "condition": "A.length > 0 && i == 0 && j == 1"
+            },
+            "position": {
+              "xinPx": 0,
+              "yinPx": 800
+            },
+            "isProven": false,
+            "verifierConditions": {},
+            "id": "1363368125911.5847",
+            "nodeState": "unverified",
+            "intermediateCondition": {
+              "condition": "A.length > 0 && i == 0"
+            },
+            "verifierIntermediateConditions": {},
+            "firstStatement": {
+              "name": "Statement1",
+              "type": "STATEMENT",
+              "preCondition": {
+                "condition": "A.length > 0"
+              },
+              "postCondition": {
+                "condition": "A.length > 0 && i == 0"
+              },
+              "position": {
+                "xinPx": 0,
+                "yinPx": 1200
+              },
+              "isProven": false,
+              "verifierConditions": {},
+              "id": "768776590751.0098",
+              "nodeState": "unverified",
+              "programStatement": "i = 0;"
+            },
+            "secondStatement": {
+              "name": "Statement2",
+              "type": "STATEMENT",
+              "preCondition": {
+                "condition": "A.length > 0 && i == 0"
+              },
+              "postCondition": {
+                "condition": "A.length > 0 && i == 0 && j == 1"
+              },
+              "position": {
+                "xinPx": 825,
+                "yinPx": 1200
+              },
+              "isProven": false,
+              "verifierConditions": {},
+              "id": "1557417316142.6465",
+              "nodeState": "unverified",
+              "programStatement": "j = 1;"
+            }
+          },
+          "secondStatement": {
+            "name": "Repetition",
+            "type": "REPETITION",
+            "preCondition": {
+              "condition": "maxe(A,0,j,i) && j != A.length"
+            },
+            "postCondition": {
+              "condition": "maxe(A,0,j,i)"
+            },
+            "position": {
+              "xinPx": 825,
+              "yinPx": 800
+            },
+            "isProven": false,
+            "verifierConditions": {},
+            "id": "1734347163264.9421",
+            "nodeState": "unverified",
+            "variant": {
+              "condition": "A.length - j"
+            },
+            "invariant": {
+              "condition": "maxe(A,0,j,i)"
+            },
+            "guard": {
+              "condition": "j != A.length"
+            },
+            "isVariantProven": false,
+            "isPreProven": false,
+            "isPostProven": false,
+            "loopStatement": {
+              "name": "CompLoop",
+              "type": "COMPOSITION",
+              "preCondition": {
+                "condition": "maxe(A,0,j,i) && j != A.length"
+              },
+              "postCondition": {
+                "condition": "maxe(A,0,j,i)"
+              },
+              "position": {
+                "xinPx": 1650,
+                "yinPx": 1200
+              },
+              "isProven": false,
+              "verifierConditions": {},
+              "id": "247844843909.01328",
+              "nodeState": "unverified",
+              "intermediateCondition": {
+                "condition": "maxe(A,0,j+1,i)"
+              },
+              "verifierIntermediateConditions": {},
+              "firstStatement": {
+                "name": "Selection",
+                "type": "SELECTION",
+                "preCondition": {
+                  "condition": "maxe(A,0,j,i) && j != A.length"
+                },
+                "postCondition": {
+                  "condition": "maxe(A,0,j+1,i)"
+                },
+                "position": {
+                  "xinPx": 0,
+                  "yinPx": 1575
+                },
+                "isProven": false,
+                "verifierConditions": {},
+                "id": "559617154620.5312",
+                "nodeState": "unverified",
+                "guards": [
+                  {
+                    "condition": "A[j] > A[i]"
+                  },
+                  {
+                    "condition": "A[j] <= A[i]"
+                  }
+                ],
+                "isPreProven": false,
+                "commands": [
+                  {
+                    "name": "Statement3",
+                    "type": "STATEMENT",
+                    "preCondition": {
+                      "condition": "maxe(A,0,j,i) && j != A.length && A[j] > A[i]"
+                    },
+                    "postCondition": {
+                      "condition": "maxe(A,0,j+1,i)"
+                    },
+                    "position": {
+                      "xinPx": 600,
+                      "yinPx": 2000
+                    },
+                    "isProven": false,
+                    "verifierConditions": {},
+                    "id": "379959900779.5318",
+                    "nodeState": "unverified",
+                    "programStatement": "i = j;"
+                  },
+                  {
+                    "name": "Statement4",
+                    "type": "SKIP",
+                    "preCondition": {
+                      "condition": "maxe(A,0,j,i) && j != A.length && A[j] <= A[i]"
+                    },
+                    "postCondition": {
+                      "condition": "maxe(A,0,j+1,i)"
+                    },
+                    "position": {
+                      "xinPx": 0,
+                      "yinPx": 2000
+                    },
+                    "isProven": false,
+                    "verifierConditions": {},
+                    "id": "284398832739.1759",
+                    "nodeState": "unverified"
+                  }
+                ]
+              },
+              "secondStatement": {
+                "name": "Statement5",
+                "type": "STATEMENT",
+                "preCondition": {
+                  "condition": "maxe(A,0,j+1,i)"
+                },
+                "postCondition": {
+                  "condition": "maxe(A,0,j,i)"
+                },
+                "position": {
+                  "xinPx": 1650,
+                  "yinPx": 1600
+                },
+                "isProven": false,
+                "verifierConditions": {},
+                "id": "1071666283664.6799",
+                "nodeState": "unverified",
+                "programStatement": "j = j + 1;"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "urn": "include",
+      "content": [
+        {
+          "urn": "include/predicates.key",
+          "content": "\\predicates {\n    maxe(int[], int, int, int);\n}\n\n\\rules {\n    maxe {\n        \\schemaVar \\term int[] A;\n        \\schemaVar \\term int begin;\n        \\schemaVar \\term int end;\n        \\schemaVar \\term int m;\n        \\schemaVar \\variable int q;\n        \\find (maxe(A, begin, end, m))\n        \\varcond (\\notFreeIn(q,A), \\notFreeIn(q,begin), \\notFreeIn(q,end), \\notFreeIn(q,m))\n        \\replacewith (\\forall int q; ((q >= begin & q < end) -> A[m]>=A[q]))\n        \\heuristics(simplify)\n    };\n}\n",
+          "inodeType": "file",
+          "type": "key"
+        }
+      ],
+      "inodeType": "directory"
+    }
+  ],
+  "inodeType": "directory"
+}

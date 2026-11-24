@@ -26,8 +26,8 @@ services:
 
   webcorc-backend:
     build:
-      context: backend
-      dockerfile: dev.Dockerfile
+      context: .
+      dockerfile: backend/dev.Dockerfile
     env_file:
       - docker-compose.env
     environment:

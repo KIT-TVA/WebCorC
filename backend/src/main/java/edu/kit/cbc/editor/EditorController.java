@@ -4,6 +4,7 @@ package edu.kit.cbc.editor;
 import edu.kit.cbc.common.Problem;
 import edu.kit.cbc.common.corc.cbcmodel.CbCFormula;
 import edu.kit.cbc.common.corc.codegeneration.CodeGenerator;
+import edu.kit.cbc.common.corc.diagramexport.DiagramExporter;
 import edu.kit.cbc.editor.llm.LLMClientRegistry;
 import edu.kit.cbc.editor.llm.LLMQueryDto;
 import edu.kit.cbc.editor.llm.LLMResponse;
@@ -41,18 +42,23 @@ public class EditorController {
     private final FilesController filesController;
     private final LLMClientRegistry llmRegistry;
     private final VerificationOrchestrator orchestrator;
+    private final DiagramExporter diagramExporter;
 
-    EditorController(FilesController filesController, LLMClientRegistry llmRegistry, VerificationOrchestrator orchestrator) {
+    EditorController(FilesController filesController,
+                     LLMClientRegistry llmRegistry,
+                     VerificationOrchestrator orchestrator,
+                     DiagramExporter diagramExporter) {
         this.filesController = filesController;
         this.llmRegistry = llmRegistry;
         this.orchestrator = orchestrator;
+        this.diagramExporter = diagramExporter;
     }
 
     @Post(uri = "/export")
-    @Produces(MediaType.APPLICATION_ZIP)
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
     @Consumes(MediaType.APPLICATION_JSON)
-    public HttpResponse<String> export() {
-        return HttpResponse.serverError(String.format("NOT IMPLEMENTED"));
+    public HttpResponse<byte[]> export(@QueryValue String exportType, @Body String structureJson) throws IOException, InterruptedException {
+        return HttpResponse.ok(diagramExporter.export(exportType, structureJson));
     }
 
     @Post(uri = "/generate")

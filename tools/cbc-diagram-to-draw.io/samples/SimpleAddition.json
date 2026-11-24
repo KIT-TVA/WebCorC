@@ -1,0 +1,53 @@
+{
+  "urn": "",
+  "content": [
+    {
+      "urn": "simpleAddition.diagram",
+      "inodeType": "file",
+      "type": "diagram",
+      "content": {
+        "name": "SimpleAddition",
+        "preCondition": {
+          "condition": "i > 7"
+        },
+        "postCondition": {
+          "condition": "i > 8"
+        },
+        "verifierConditions": {},
+        "javaVariables": [
+          {
+            "name": "int i",
+            "kind": "LOCAL"
+          }
+        ],
+        "globalConditions": [],
+        "renamings": [],
+        "isProven": false,
+        "position": {
+          "xinPx": 0,
+          "yinPx": 0
+        },
+        "statement": {
+          "name": "Statement",
+          "type": "STATEMENT",
+          "preCondition": {
+            "condition": "i > 7"
+          },
+          "postCondition": {
+            "condition": "i > 8"
+          },
+          "position": {
+            "xinPx": 0,
+            "yinPx": 400
+          },
+          "isProven": false,
+          "verifierConditions": {},
+          "id": "1631199254535.5608",
+          "nodeState": "unverified",
+          "programStatement": "i = i + 1;"
+        }
+      }
+    }
+  ],
+  "inodeType": "directory"
+}

@@ -36,6 +36,7 @@
         <i class="pi pi-share-alt"></i>
         Share
       </p-button>
+      <app-export-button></app-export-button>
       <p-button (click)="generateCode()" [disabled]="!treeService.rootFormula || projectService.shouldCreateProject">
         <i class="pi pi-code"></i>
         Generate code
