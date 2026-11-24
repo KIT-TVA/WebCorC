@@ -12,9 +12,57 @@
   background-color: var(--p-background);
   color: var(--p-menubar-color);
 }
+p-tree {
+  display: block;
+  contain: inline-size; /* the tree's content doesn't count towards the drawer's width */
+}
+
+/* Let rows shrink to the drawer width so long names truncate instead of widening the explorer */
+:host ::ng-deep .p-tree-node-content {
+  min-width: 0;
+  cursor: pointer; /* whole row is clickable (see onTreeClick) */
+}
 
 :host ::ng-deep .p-tree-node-label {
+  min-width: 0;
   width: 100%;
+}
+
+:host ::ng-deep .p-tree-node-toggle-button { display: none; }
+
+/* Faint guide line left of a directory's contents (the root list is .p-tree-root-children, so it gets none) */
+:host ::ng-deep .p-tree-node-children {
+  border-inline-start: 1px solid var(--p-content-border-color);
+  margin-inline-start: 0.75rem;
+}
+
+/* Directory icons are rendered inside the directory template so they are clickable */
+:host ::ng-deep .explorer-directory > .p-tree-node-content > .p-tree-node-icon {
+  display: none;
+}
+
+:host ::ng-deep .explorer-node-icon {
+  color: var(--p-tree-node-icon-color);
+}
+
+:host ::ng-deep .p-tree-node-content:has(> .p-tree-node-label .explorer-active) {
+  background: color-mix(in srgb, var(--p-primary-color) 15%, transparent);
+}
+
+/* Hover highlights the whole row (except the active row, which keeps its tint) */
+:host ::ng-deep .p-tree-node-content:hover:not(:has(> .p-tree-node-label .explorer-active)) {
+  background: var(--p-tree-node-hover-background);
+}
+
+:host ::ng-deep .p-tree-node-content:has(> .p-tree-node-label .explorer-active) .p-tree-node-icon,
+:host ::ng-deep .p-tree-node-content:has(> .p-tree-node-label .explorer-active) .explorer-node-icon {
+  color: var(--p-primary-color);
+}
+
+/* "Delete" entry of the row "⋮" menu (the menu is appended to <body>, so no :host here) */
+::ng-deep .explorer-menu-danger .p-tieredmenu-item-label,
+::ng-deep .explorer-menu-danger .p-tieredmenu-item-icon {
+  color: var(--p-red-500);
 }
 
 .project-actions {
@@ -49,7 +97,23 @@
 
 .project-header {
   display: flex;
-  padding-left: 15px;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem 0.6rem;
+  margin-bottom: 0.25rem;
+  border-bottom: 1px solid var(--p-content-border-color);
+  color: var(--p-text-muted-color);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.project-header-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 #import {

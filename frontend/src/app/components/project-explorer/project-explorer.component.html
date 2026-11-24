@@ -13,21 +13,15 @@
     (onNodeExpand)="setExpanded($event.node)"
     (onNodeCollapse)="setCollapsed($event)"
     (onNodeDrop)="dropNode($event)"
-    emptyMessage="No files yet."
+    (click)="onTreeClick($event)"
+    emptyMessage='Add a file by clicking "New"'
   >
     <ng-template #header>
-      <div class="project-header">
-        <h4>
-          {{
-            projectService.projectName
-              ? projectService.projectName
-              : "Projectname"
-          }}
-        </h4>
+      <div class="project-header" [title]="projectService.projectName || 'Untitled project'">
+        <span class="project-header-name">
+          {{ projectService.projectName || "Untitled project" }}
+        </span>
       </div>
-    </ng-template>
-    <ng-template #emptymessage>
-      <span> No files yet </span>
     </ng-template>
      <ng-template
         let-node
@@ -36,9 +30,13 @@
       >
         <div
           class="w-full flex items-center justify-between"
+          [class.explorer-active]="node.key === activeKey"
         >
-          <span class="flex items-center gap-2">
-            {{ node.label }}
+          <span
+            class="flex items-center gap-2 min-w-0 select-none"
+          >
+            <i [class]="node.icon + ' explorer-node-icon shrink-0'"></i>
+            <span class="truncate">{{ node.label }}</span>
             @if (isInRubbishBin(node.data)) {
               <p-tag
                 severity="secondary"
@@ -48,38 +46,17 @@
               />
             }
           </span>
- 
-          <span class="self-end">
-            @if (!isInRubbishBin(node.data)) {
-              <p-button
-                icon="pi pi-upload"
-                severity="contrast"
-                text
-                (click)="importElement(node.data)"
-              >
-              </p-button>
-              <p-button
-                icon="pi pi-file-edit"
-                severity="contrast"
-                text
-                (click)="toggleRename(node.data)"
-              >
-              </p-button>
-              <p-button
-                icon="pi pi-plus"
-                text
-                severity="success"
-                (click)="addElementToDirectory(node.data, node)"
-              >
-              </p-button>
-            }
+
+          <span class="self-end shrink-0">
+            <!-- always rendered so every row has the same height; only visible on the highlighted row -->
             <p-button
-              icon="pi pi-trash"
+              icon="pi pi-ellipsis-v"
               text
-              severity="danger"
-              (click)="deleteElement(node.data)"
-            >
-            </p-button>
+              severity="contrast"
+              ariaLabel="More actions"
+              [class.invisible]="node.key !== activeKey"
+              (click)="openDotMenu($event, node, nodeMenu)"
+            ></p-button>
           </span>
         </div>
       </ng-template>
@@ -170,16 +147,10 @@
      >
        <div
          class="w-full flex items-center justify-between"
+         [class.explorer-active]="node.key === activeKey"
        >
-         <span class="flex items-center gap-2 w-full">
-           <p-button
-             class="w-full"
-             (click)="navigate(node.data)"
-             text
-             severity="contrast"
-             [label]="node.label"
-           >
-           </p-button>
+         <span class="flex items-center gap-2 w-full min-w-0">
+           <span class="truncate select-none">{{ node.label }}</span>
            @if ((node.data.urn) === "include/generatedPredicates.key") {
              <p-tag
                severity="secondary"
@@ -197,25 +168,20 @@
              />
            }
          </span>
-          <span class="self-end file-actions">
-            @if (!isInRubbishBin(node.data)) {
-              <p-button
-                icon="pi pi-file-edit"
-                text
-                severity="contrast"
-                (click)="toggleRename(node.data)"
-              >
-              </p-button>
-            }
+          <span class="self-end file-actions shrink-0">
+            <!-- always rendered so every row has the same height; only visible on the highlighted row -->
             <p-button
-              icon="pi pi-trash"
+              icon="pi pi-ellipsis-v"
               text
-              severity="danger"
-              (click)="deleteElement(node.data)"
-            >
-            </p-button>
+              severity="contrast"
+              ariaLabel="More actions"
+              [class.invisible]="node.key !== activeKey"
+              (click)="openDotMenu($event, node, nodeMenu)"
+            ></p-button>
           </span>
        </div>
      </ng-template>
 </p-tree>
+  <!-- One shared popup menu; openDotMenu() fills it with the clicked node's actions -->
+  <p-tieredmenu #nodeMenu [model]="nodeMenuItems" [popup]="true" appendTo="body" />
 </div>
