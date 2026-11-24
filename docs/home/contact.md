@@ -4,7 +4,7 @@ If you have questions, feedback, or discover a bug in our tool, we’d love to h
 
 **Contact us:** [corc@kastel.kit.edu](mailto:corc@kastel.kit.edu)
 
-## 🪑 Chair of Test, Validation and Analysis of Software-Intensive Systems (TVA)
+## 🪑 Chair for Test, Validation and Analysis of Software-Intensive Systems (TVA)
 
 **Head:** Prof. Dr.-Ing. Ina Schaefer  
 
