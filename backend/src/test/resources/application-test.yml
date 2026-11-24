@@ -22,3 +22,6 @@ test-resources:
         - mock-verifier.host
       exposed-ports:
         - mock-verifier.port: 80
+
+rate-limit:
+  enabled: false
