@@ -27,6 +27,7 @@
           (nodesChanges.position)="handlePositionChange($event)"
           [background]="{ backgroundColor: 'var(--p-background)', type: 'dots' }"
           [snapGrid]="[25, 25]"
+          [elevateNodesOnSelect]="false"
           (edgesChanges.select)="handleEdgeSelect($event)"
         >
           <ng-template let-ctx nodeHtml style="width: fit-content">
