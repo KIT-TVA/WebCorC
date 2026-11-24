@@ -48,11 +48,13 @@
           </span>
 
           <span class="self-end shrink-0">
+            <!-- always rendered so every row has the same height; only visible on the highlighted row -->
             <p-button
               icon="pi pi-ellipsis-v"
               text
               severity="contrast"
               ariaLabel="More actions"
+              [class.invisible]="node.key !== activeKey"
               (click)="openDotMenu($event, node, nodeMenu)"
             ></p-button>
           </span>
@@ -167,11 +169,13 @@
            }
          </span>
           <span class="self-end file-actions shrink-0">
+            <!-- always rendered so every row has the same height; only visible on the highlighted row -->
             <p-button
               icon="pi pi-ellipsis-v"
               text
               severity="contrast"
               ariaLabel="More actions"
+              [class.invisible]="node.key !== activeKey"
               (click)="openDotMenu($event, node, nodeMenu)"
             ></p-button>
           </span>
