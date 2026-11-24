@@ -38,6 +38,7 @@ import { ProjectService } from "../../../../services/project/project.service";
 import { AsyncPipe } from "@angular/common";
 import { AiChatService } from "../../../../services/ai-chat/ai-chat.service";
 import { SimpleStatementNode } from "../../../../types/statements/nodes/simple-statement-node";
+import { IAbstractStatement } from "../../../../types/statements/abstract-statement";
 
 export const STATEMENT_BOTTOM_SPACE_PX = 56;
 
@@ -132,10 +133,19 @@ export class StatementComponent {
     }
   }
 
+  /**
+   * The node state is mutated in place by the tree and verification services,
+   * so read it through the tree's revision signal to make the template re-render under zoneless change detection.
+   */
+  public nodeState(node: AbstractStatementNode): IAbstractStatement["nodeState"] {
+    this.treeService.statementRevision();
+    return node.statement.nodeState;
+  }
+
   public getStatementSeverity(
     node: AbstractStatementNode,
   ): "success" | "secondary" | "warn" {
-    switch (node.statement.nodeState) {
+    switch (this.nodeState(node)) {
       case "verified":
         return "success";
       case "failed":

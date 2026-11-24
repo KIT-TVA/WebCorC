@@ -1,5 +1,5 @@
 <p-card
-        [class]="`refinementBox refinementBox--${_node.statement.nodeState}`"
+        [class]="`refinementBox refinementBox--${nodeState(_node)}`"
         cdkDragBoundary="#editorContainer"
         #refinementBox
 >
@@ -46,7 +46,7 @@
             "
                     ></i>
                     <span pButtonLabel class="font-normal">
-                        {{ _node.statement.nodeState}}
+                        {{ nodeState(_node) }}
                     </span>
                 </button>
                 @if (_node.parent) {

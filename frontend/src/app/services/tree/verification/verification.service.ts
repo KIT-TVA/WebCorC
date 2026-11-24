@@ -75,6 +75,7 @@ export class VerificationService {
         (currentFormula as LocalCBCFormula).statement!.nodeState = "verified";
       }
       this.projectService.syncLocalFileContent(urn, currentFormula);
+      this.treeService.refreshNodes();
     }
     this.globalSettingsService.isVerifying = false;
     if (formula.isProven) {

@@ -36,6 +36,9 @@ export class TreeService {
     private _globalConditions: string[] = [];
     private _renames: Renaming[] = [];
     private _statementNodes: WritableSignal<AbstractStatementNode[]> = signal([]);
+    private readonly _statementRevision = signal(0);
+    /** Bumped on every refresh so components that display mutable statement state re-render under zoneless change detection */
+    public readonly statementRevision = this._statementRevision.asReadonly();
     private rootStatementNode: RootStatementNode | undefined;
     private _urn = "";
 
@@ -217,6 +220,7 @@ export class TreeService {
 
     public refreshNodes(): void {
         this._statementNodes.update((old) => [...old]);
+        this._statementRevision.update((revision) => revision + 1);
     }
 
     public addStatementNode(statementNode: AbstractStatementNode) {
