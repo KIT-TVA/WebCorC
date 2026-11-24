@@ -20,17 +20,7 @@ p-tree {
 /* Let rows shrink to the drawer width so long names truncate instead of widening the explorer */
 :host ::ng-deep .p-tree-node-content {
   min-width: 0;
-}
-
-:host ::ng-deep .explorer-file-name .p-button {
-  max-width: 100%;
-  justify-content: flex-start;
-}
-
-:host ::ng-deep .explorer-file-name .p-button-label {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  cursor: pointer; /* whole row is clickable (see onTreeClick) */
 }
 
 :host ::ng-deep .p-tree-node-label {
@@ -55,21 +45,24 @@ p-tree {
   color: var(--p-tree-node-icon-color);
 }
 
-/* Highlight the whole row of the last clicked file/directory */
 :host ::ng-deep .p-tree-node-content:has(> .p-tree-node-label .explorer-active) {
-  /* light tint of the primary green instead of the theme's solid selected color */
   background: color-mix(in srgb, var(--p-primary-color) 15%, transparent);
 }
 
-/* The file name is a text button: don't draw its hover/press background on top of the row highlight */
-:host ::ng-deep .explorer-active .explorer-file-name .p-button:not(:disabled):hover,
-:host ::ng-deep .explorer-active .explorer-file-name .p-button:not(:disabled):active {
-  background: transparent;
+/* Hover highlights the whole row (except the active row, which keeps its tint) */
+:host ::ng-deep .p-tree-node-content:hover:not(:has(> .p-tree-node-label .explorer-active)) {
+  background: var(--p-tree-node-hover-background);
 }
 
 :host ::ng-deep .p-tree-node-content:has(> .p-tree-node-label .explorer-active) .p-tree-node-icon,
 :host ::ng-deep .p-tree-node-content:has(> .p-tree-node-label .explorer-active) .explorer-node-icon {
   color: var(--p-primary-color);
+}
+
+/* "Delete" entry of the row "⋮" menu (the menu is appended to <body>, so no :host here) */
+::ng-deep .explorer-menu-danger .p-tieredmenu-item-label,
+::ng-deep .explorer-menu-danger .p-tieredmenu-item-icon {
+  color: var(--p-red-500);
 }
 
 .project-actions {

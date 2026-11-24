@@ -42,6 +42,7 @@ import { TreeService } from "../../services/tree/tree.service";
 import { PredicateService } from "../../services/predicates/predicate.service";
 import { Tag } from "@openng/optimus-ui/tag";
 import { Tooltip } from "@openng/optimus-ui/tooltip";
+import { TieredMenu } from "@openng/optimus-ui/tieredmenu";
 
 /**
  * Component for the file management and navigating between the files,
@@ -66,6 +67,7 @@ import { Tooltip } from "@openng/optimus-ui/tooltip";
     InputIcon,
     Tag,
     Tooltip,
+    TieredMenu,
   ],
   providers: [TreeDragDropService, DialogService],
   templateUrl: "./project-explorer.component.html",
@@ -73,6 +75,7 @@ import { Tooltip } from "@openng/optimus-ui/tooltip";
   styleUrl: "./project-explorer.component.css",
 })
 export class ProjectExplorerComponent {
+
   projectService = inject(ProjectService);
   private router = inject(Router);
   private dialogService = inject(DialogService);
@@ -475,6 +478,50 @@ export class ProjectExplorerComponent {
     this.treeNodes = this.getTreeNodes(this.projectService.root.content);
   }
 
+  /** Items of the shared "⋮" menu, rebuilt for the node whose menu is opened */
+  protected nodeMenuItems: MenuItem[] = [];
+
+  /** Opens the "⋮" menu of a file or directory row with the actions available for it */
+  protected openDotMenu(event: Event, node: TreeNode, menu: TieredMenu) {
+    const element: ProjectElement = node.data;
+    const readOnly = this.isInRubbishBin(element);
+    const items: MenuItem[] = [];
+
+    if (!readOnly) {
+      if (node.type === "directory") {
+        items.push(
+          {
+            label: "New element",
+            icon: "pi pi-plus",
+            command: () => this.addElementToDirectory(element, node),
+          },
+          {
+            label: "Import",
+            icon: "pi pi-upload",
+            command: () => this.importElement(element),
+          },
+        );
+      }
+      items.push(
+        {
+          label: "Rename",
+          icon: "pi pi-file-edit",
+          command: () => this.toggleRename(element),
+        },
+        { separator: true },
+      );
+    }
+    items.push({
+      label: "Delete",
+      icon: "pi pi-trash",
+      styleClass: "explorer-menu-danger",
+      command: () => this.deleteElement(element),
+    });
+
+    this.nodeMenuItems = items;
+    menu.toggle(event);
+  }
+
   /**
    * Rename element
    * @param node The node to rename
@@ -511,15 +558,47 @@ export class ProjectExplorerComponent {
     node.icon = isRootRubbishBin ? "pi pi-trash" : "pi pi-folder-open";
   }
 
-  /** Expands/collapses a directory when its label is clicked (the tree's toggle button is hidden via CSS). */
-  protected toggleDirectory(node: TreeNode) {
-    this.activeKey = node.key ?? null;
-    node.expanded = !node.expanded;
-    if (node.expanded) {
-      this.setExpanded(node);
-    } else {
-      this.setCollapsed({ node } as TreeNodeCollapseEvent);
+  /**
+   * Makes whole rows clickable: a click anywhere on a file row opens the file,
+   * on a directory row it expands/collapses the directory. Clicks on the row's
+   * action buttons and inputs are left alone.
+   */
+  protected onTreeClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (target.closest("button, input, .p-inputicon")) {
+      return;
     }
+    const row = target.closest<HTMLElement>(".p-tree-node-content");
+    const key = row?.closest("li[data-id]")?.getAttribute("data-id");
+    const node = key ? this.findNode(this.treeNodes, key) : undefined;
+    if (!row || !node) {
+      return;
+    }
+
+    if (node.type === "directory") {
+      this.activeKey = node.key ?? null;
+      // Let the tree expand/collapse itself (it fires onNodeExpand/onNodeCollapse and re-renders);
+      // its toggle button is only hidden via CSS, so it can still be clicked programmatically.
+      row
+        .querySelector<HTMLButtonElement>(":scope > .p-tree-node-toggle-button")
+        ?.click();
+    } else if (node.type === "file") {
+      this.activeKey = node.key ?? null;
+      this.navigate(node.data);
+    }
+  }
+
+  private findNode(nodes: TreeNode[], key: string): TreeNode | undefined {
+    for (const node of nodes) {
+      if (node.key === key) {
+        return node;
+      }
+      const found = node.children && this.findNode(node.children, key);
+      if (found) {
+        return found;
+      }
+    }
+    return undefined;
   }
 
   setCollapsed(event: TreeNodeCollapseEvent) {
