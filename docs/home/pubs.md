@@ -18,6 +18,10 @@ The list of publications is grouped by publication year.
 
 ---
 
+### 📅 2026
+
+- M. Kodetzki, H. Grimm, F. Demmler, and I. Schaefer. [**LLM-Based Program Synthesis in Correctness-by-Construction Engineering**](https://doi.org/10.1007/978-3-032-40121-2_14). ISoLA 2026.
+
 ### 📅 2025
 
 - M. Kodetzki. [**X-by-Construction: Unifying Functional Correctness and Non-Functional Guarantees**](). ISSRE Workshops 2025.
