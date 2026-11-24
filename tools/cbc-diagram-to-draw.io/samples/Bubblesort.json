@@ -1,0 +1,361 @@
+{
+  "urn": "",
+  "content": [
+    {
+      "urn": "bubblesort.diagram",
+      "inodeType": "file",
+      "type": "diagram",
+      "content": {
+        "name": "bubblesort",
+        "preCondition": {
+          "condition": "true"
+        },
+        "postCondition": {
+          "condition": "containsOldElements(A, \\old(A)) && sort(A)"
+        },
+        "verifierConditions": {},
+        "javaVariables": [
+          {
+            "name": "int[] A",
+            "kind": "LOCAL"
+          },
+          {
+            "name": "int i",
+            "kind": "LOCAL"
+          },
+          {
+            "name": "int j",
+            "kind": "LOCAL"
+          },
+          {
+            "name": "int tmp",
+            "kind": "LOCAL"
+          }
+        ],
+        "globalConditions": [
+          {
+            "condition": "A!=null"
+          },
+          {
+            "condition": "(\\forall int m; (0 <= m && m < A.length ==> (\\forall int n; (0 <= n && n < A.length ==> (m != n ==> A[m] != A[n])))))"
+          },
+          {
+            "condition": "j <= A.length-2 && j >= i"
+          },
+          {
+            "condition": "i >= 0 && i <= A.length"
+          }
+        ],
+        "renamings": [],
+        "isProven": false,
+        "position": {
+          "xinPx": 0,
+          "yinPx": 0
+        },
+        "statement": {
+          "name": "0",
+          "type": "COMPOSITION",
+          "preCondition": {
+            "condition": "true"
+          },
+          "postCondition": {
+            "condition": "containsOldElements(A, \\old(A)) && sort(A)"
+          },
+          "position": {
+            "xinPx": 525,
+            "yinPx": 350
+          },
+          "isProven": false,
+          "verifierConditions": {},
+          "id": "1727961437920.9062",
+          "nodeState": "unverified",
+          "intermediateCondition": {
+            "condition": "i==0"
+          },
+          "verifierIntermediateConditions": {},
+          "firstStatement": {
+            "name": "1",
+            "type": "STATEMENT",
+            "preCondition": {
+              "condition": "true"
+            },
+            "postCondition": {
+              "condition": "i==0"
+            },
+            "position": {
+              "xinPx": -25,
+              "yinPx": 650
+            },
+            "isProven": false,
+            "verifierConditions": {},
+            "id": "1006176173510.8462",
+            "nodeState": "unverified",
+            "programStatement": "i=0;"
+          },
+          "secondStatement": {
+            "name": "2",
+            "type": "REPETITION",
+            "preCondition": {
+              "condition": "partSort(A,i) && i < A.length"
+            },
+            "postCondition": {
+              "condition": "partSort(A,i)"
+            },
+            "position": {
+              "xinPx": 750,
+              "yinPx": 650
+            },
+            "isProven": false,
+            "verifierConditions": {},
+            "id": "1135069212946.4255",
+            "nodeState": "unverified",
+            "variant": {
+              "condition": "A.length-i"
+            },
+            "invariant": {
+              "condition": "partSort(A,i)"
+            },
+            "guard": {
+              "condition": "i < A.length"
+            },
+            "isVariantProven": false,
+            "isPreProven": false,
+            "isPostProven": false,
+            "loopStatement": {
+              "name": "3",
+              "type": "COMPOSITION",
+              "preCondition": {
+                "condition": "partSort(A,i) && i < A.length"
+              },
+              "postCondition": {
+                "condition": "partSort(A,i)"
+              },
+              "position": {
+                "xinPx": 1000,
+                "yinPx": 950
+              },
+              "isProven": false,
+              "verifierConditions": {},
+              "id": "219856788273.31247",
+              "nodeState": "unverified",
+              "intermediateCondition": {
+                "condition": "partSort(A,i) && i < A.length && j == A.length-2"
+              },
+              "verifierIntermediateConditions": {},
+              "firstStatement": {
+                "name": "4",
+                "type": "STATEMENT",
+                "preCondition": {
+                  "condition": "partSort(A,i) && i < A.length"
+                },
+                "postCondition": {
+                  "condition": "partSort(A,i) && i < A.length && j == A.length-2"
+                },
+                "position": {
+                  "xinPx": 450,
+                  "yinPx": 1250
+                },
+                "isProven": false,
+                "verifierConditions": {},
+                "id": "1745249531094.121",
+                "nodeState": "unverified",
+                "programStatement": "j=A.length-2;"
+              },
+              "secondStatement": {
+                "name": "5",
+                "type": "COMPOSITION",
+                "preCondition": {
+                  "condition": "partSort(A,i) && i < A.length && j == A.length-2"
+                },
+                "postCondition": {
+                  "condition": "partSort(A,i)"
+                },
+                "position": {
+                  "xinPx": 1350,
+                  "yinPx": 1250
+                },
+                "isProven": false,
+                "verifierConditions": {},
+                "id": "1097209594509.9592",
+                "nodeState": "unverified",
+                "intermediateCondition": {
+                  "condition": "partSort(A,i+1)"
+                },
+                "verifierIntermediateConditions": {},
+                "firstStatement": {
+                  "name": "7",
+                  "type": "REPETITION",
+                  "preCondition": {
+                    "condition": "partSort(A,i) && (\\forall int h; (j < h && h < A.length ==> A[j+1] <= A[h])) && j>=i"
+                  },
+                  "postCondition": {
+                    "condition": "partSort(A,i) && (\\forall int h; (j < h && h < A.length ==> A[j+1] <= A[h]))"
+                  },
+                  "position": {
+                    "xinPx": 300,
+                    "yinPx": 1550
+                  },
+                  "isProven": false,
+                  "verifierConditions": {},
+                  "id": "517459948113.4231",
+                  "nodeState": "unverified",
+                  "variant": {
+                    "condition": "j+1"
+                  },
+                  "invariant": {
+                    "condition": "partSort(A,i) && (\\forall int h; (j < h && h < A.length ==> A[j+1] <= A[h]))"
+                  },
+                  "guard": {
+                    "condition": "j>=i"
+                  },
+                  "isVariantProven": false,
+                  "isPreProven": false,
+                  "isPostProven": false,
+                  "loopStatement": {
+                    "name": "8",
+                    "type": "COMPOSITION",
+                    "preCondition": {
+                      "condition": "partSort(A,i) && (\\forall int h; (j < h && h < A.length ==> A[j+1] <= A[h])) && j>=i"
+                    },
+                    "postCondition": {
+                      "condition": "partSort(A,i) && (\\forall int h; (j < h && h < A.length ==> A[j+1] <= A[h]))"
+                    },
+                    "position": {
+                      "xinPx": 600,
+                      "yinPx": 1850
+                    },
+                    "isProven": false,
+                    "verifierConditions": {},
+                    "id": "1038093439401.0924",
+                    "nodeState": "unverified",
+                    "intermediateCondition": {
+                      "condition": "partSort(A,i) && (\\forall int h; (j < h && h < A.length ==> A[j] <= A[h]))"
+                    },
+                    "verifierIntermediateConditions": {},
+                    "firstStatement": {
+                      "name": "10",
+                      "type": "SELECTION",
+                      "preCondition": {
+                        "condition": "partSort(A,i) && (\\forall int h; (j < h && h < A.length ==> A[j+1] <= A[h])) && j>=i"
+                      },
+                      "postCondition": {
+                        "condition": "partSort(A,i) && (\\forall int h; (j < h && h < A.length ==> A[j] <= A[h]))"
+                      },
+                      "position": {
+                        "xinPx": 250,
+                        "yinPx": 2150
+                      },
+                      "isProven": false,
+                      "verifierConditions": {},
+                      "id": "507466891429.45325",
+                      "nodeState": "unverified",
+                      "guards": [
+                        {
+                          "condition": "A[j] > A[j+1]"
+                        },
+                        {
+                          "condition": "A[j] <= A[j+1]"
+                        }
+                      ],
+                      "isPreProven": false,
+                      "commands": [
+                        {
+                          "name": "11",
+                          "type": "STATEMENT",
+                          "preCondition": {
+                            "condition": "partSort(A,i) && (\\forall int h; (j < h && h < A.length ==> A[j+1] <= A[h])) && j>=i && A[j] > A[j+1]"
+                          },
+                          "postCondition": {
+                            "condition": "partSort(A,i) && (\\forall int h; (j < h && h < A.length ==> A[j] <= A[h]))"
+                          },
+                          "position": {
+                            "xinPx": 425,
+                            "yinPx": 2625
+                          },
+                          "isProven": false,
+                          "verifierConditions": {},
+                          "id": "1267804436602.874",
+                          "nodeState": "unverified",
+                          "programStatement": "tmp = A[j]; A[j] = A[j+1]; A[j+1] = tmp;"
+                        },
+                        {
+                          "name": "12",
+                          "type": "SKIP",
+                          "preCondition": {
+                            "condition": "partSort(A,i) && (\\forall int h; (j < h && h < A.length ==> A[j+1] <= A[h])) && j>=i && A[j] <= A[j+1]"
+                          },
+                          "postCondition": {
+                            "condition": "partSort(A,i) && (\\forall int h; (j < h && h < A.length ==> A[j] <= A[h]))"
+                          },
+                          "position": {
+                            "xinPx": 1250,
+                            "yinPx": 2600
+                          },
+                          "isProven": false,
+                          "verifierConditions": {},
+                          "id": "691371730348.8113",
+                          "nodeState": "unverified"
+                        }
+                      ]
+                    },
+                    "secondStatement": {
+                      "name": "9",
+                      "type": "STATEMENT",
+                      "preCondition": {
+                        "condition": "partSort(A,i) && (\\forall int h; (j < h && h < A.length ==> A[j] <= A[h]))"
+                      },
+                      "postCondition": {
+                        "condition": "partSort(A,i) && (\\forall int h; (j < h && h < A.length ==> A[j+1] <= A[h]))"
+                      },
+                      "position": {
+                        "xinPx": 1550,
+                        "yinPx": 2175
+                      },
+                      "isProven": false,
+                      "verifierConditions": {},
+                      "id": "299959534327.10223",
+                      "nodeState": "unverified",
+                      "programStatement": "j=j-1;"
+                    }
+                  }
+                },
+                "secondStatement": {
+                  "name": "6",
+                  "type": "STATEMENT",
+                  "preCondition": {
+                    "condition": "partSort(A,i+1)"
+                  },
+                  "postCondition": {
+                    "condition": "partSort(A,i)"
+                  },
+                  "position": {
+                    "xinPx": 1650,
+                    "yinPx": 1550
+                  },
+                  "isProven": false,
+                  "verifierConditions": {},
+                  "id": "114507080431.24179",
+                  "nodeState": "unverified",
+                  "programStatement": "i=i+1;"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "urn": "include",
+      "content": [
+        {
+          "urn": "include/bubblesort.key",
+          "content": "\\predicates {\npartSort(int[], int);\nsort(int[]);\ncontainsOldElements(int[], int[]);\n}\n\\rules {\npartSort {\n\\schemaVar \\term int[] list;\n\\schemaVar \\term int index;\n\\schemaVar \\variable  int k;\n\\schemaVar \\variable  int m;\n\\find(partSort(list, index))\n\\varcond (\\notFreeIn(k, list), \\notFreeIn(k, index), \\notFreeIn(m, list), \\notFreeIn(m, index))\n\\replacewith ((\\forall int k; (0 <= k & k < index -> (\\forall int m; (k < m & m <length(list) -> list[k] <= list[m])))))\n\\heuristics(simplify)\n};\nsort {\n\\schemaVar \\term int[] list;\n\\schemaVar \\variable  int k;\n\\find(sort(list))\n\\varcond (\\notFreeIn(k, list))\n\\replacewith (\\forall int k; (0 <= k & k <length(list)-1 -> (list[k] <= list[k+1])))\n\\heuristics(simplify)\n};\ncontainsOldElements {\n\\schemaVar \\term int[] list;\n\\schemaVar \\term int[] oldList;\n\\schemaVar \\variable  int k;\n\\schemaVar \\variable  int z;\n\\find(containsOldElements(list, oldList))\n\\varcond (\\notFreeIn(k, list), \\notFreeIn(k, oldList), \\notFreeIn(z, list), \\notFreeIn(z, oldList))\n\\replacewith (\\forall int k; (0 <= k & k <length(oldList) -> (\\exists int z; (0 <= z & z <length(list) & list[z] = oldList[k]))))\n\\heuristics(simplify)\n};\n}\n",
+          "inodeType": "file",
+          "type": "key"
+        }
+      ],
+      "inodeType": "directory"
+    }
+  ],
+  "inodeType": "directory"
+}
