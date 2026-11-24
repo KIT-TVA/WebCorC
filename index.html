@@ -347,9 +347,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#webcorc-and-corc-eclipse" class="md-nav__link">
+  <a href="#webcorc" class="md-nav__link">
     <span class="md-ellipsis">
-      🛠️ WebCorC and CorC (Eclipse)
+      🛠️ WebCorC
     </span>
   </a>
   
@@ -463,29 +463,6 @@
   
   <span class="md-ellipsis">
     Contact
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="home/references/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    References
     
   </span>
   
@@ -705,29 +682,6 @@
   
   
     <li class="md-nav__item">
-      <a href="webcorc/webcorc-overview/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Overview
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="webcorc/gettingstarted/" class="md-nav__link">
         
   
@@ -744,56 +698,6 @@
 
               
             
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-    
-    
-      
-        
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
-        
-          
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
-            
-  
-  
-  <span class="md-ellipsis">
-    CorC (Eclipse)
-    
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4">
-            <span class="md-nav__icon md-icon"></span>
-            CorC (Eclipse)
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
               
                 
   
@@ -801,12 +705,12 @@
   
   
     <li class="md-nav__item">
-      <a href="corc/corc-overview/" class="md-nav__link">
+      <a href="webcorc/gettingstarted_dev/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Overview
+    Getting Started for Devs
     
   </span>
   
@@ -824,35 +728,12 @@
   
   
     <li class="md-nav__item">
-      <a href="corc/gettingstarted/" class="md-nav__link">
+      <a href="webcorc/releases/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Getting Started
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="corc/casestudies/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Case Studies
+    Releases
     
   </span>
   
@@ -897,9 +778,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#webcorc-and-corc-eclipse" class="md-nav__link">
+  <a href="#webcorc" class="md-nav__link">
     <span class="md-ellipsis">
-      🛠️ WebCorC and CorC (Eclipse)
+      🛠️ WebCorC
     </span>
   </a>
   
@@ -925,15 +806,12 @@
 
 
 <h1 id="the-corc-ecosystem-tool-support-for-by-construction-engineering">The CorC Ecosystem: Tool Support for by-Construction Engineering</h1>
-<div class="admonition note">
-<p class="admonition-title">News: Our new wiki and documentation is online!</p>
-</div>
 <p>Functional correctness is a central aspect of every software system. Software development approaches based on test cases are a fast and reliable way to show that the tested parts of a software system function as intended. However, testing only gives partial correctness guarantees, as the absence of bugs cnnot be shown. <strong>Formal verification</strong> on contrast can prove that a software is working as intended w.r.t. its formal specification.</p>
 <p>Post-hoc approaches ensuring functional correctness after implementing a software are common techniques to prove a software correct. <a href="theory/cbc/theory/"><strong>Correctness-by-Construction (CbC)</strong></a> instead offers correctness guarantees already during program construction and, thus, enables <strong>early detection and fixing of bugs</strong>.</p>
 <p>In CbC, using logical formulas, a program's contract formally specifies what it expects as input, denoted as <strong>precondition</strong>, and which outputs it produces, denoted as <strong>postcondition</strong>. Traditionally, once a program is implemented and specified, it is verified afterwards whether it fulfills its obligations according to its contract. In difference, the main idea in CbC is to guide developers in <strong>incrementally</strong> specifying and implementing a program. Stepwise specification and implementation enable the creation of correct programs by construction since each specification and implementation step can be verified individually.</p>
 <hr />
-<p>In recent years, the scope of CbC was extended to ensure secure information flow in CbC programs besides functional correctness. We refer to work in the field of non-functional properties in by-Construction engineering as <a href="theory/xbc/xbctheory/"><strong>X-by-Construction (XbC)</strong></a>.</p>
-<h2 id="webcorc-and-corc-eclipse">🛠️ WebCorC and CorC (Eclipse)</h2>
+<h2 id="webcorc">🛠️ WebCorC</h2>
+<p>WebCorC is a graphical IDE to construct algorithms following the Correctness-by-Construction approach. It supports CbC developers to refine a program by a sequence of refinement steps and to verify the correctness of these refinement steps using the deductive verifier <strong>KeY</strong>.</p>
 
 
 

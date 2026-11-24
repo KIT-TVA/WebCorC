@@ -11,10 +11,10 @@
         <link rel="canonical" href="https://corc.informatik.kit.edu/webcorc/gettingstarted/">
       
       
-        <link rel="prev" href="../webcorc-overview/">
+        <link rel="prev" href="../../theory/cbc/example/">
       
       
-        <link rel="next" href="../../corc/corc-overview/">
+        <link rel="next" href="../gettingstarted_dev/">
       
       
       <link rel="icon" href="../../figures/favicon.png">
@@ -72,6 +72,11 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
+      
+        
+        <a href="#webcorc-getting-started" class="md-skip">
+          Skip to content
+        </a>
       
     </div>
     <div data-md-component="announce">
@@ -417,29 +422,6 @@
 
               
             
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../home/references/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    References
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
           </ul>
         </nav>
       
@@ -648,29 +630,6 @@
                 
   
   
-  
-  
-    <li class="md-nav__item">
-      <a href="../webcorc-overview/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Overview
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
     
   
   
@@ -680,6 +639,21 @@
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
         
@@ -693,79 +667,61 @@
 
       </a>
       
-    </li>
-  
+        
 
-              
-            
-          </ul>
-        </nav>
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
-    </li>
+        <li class="md-nav__item">
+  <a href="#open-the-tool" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔗 Open the Tool
+    </span>
+  </a>
   
-
-    
+</li>
       
+        <li class="md-nav__item">
+  <a href="#landing-page" class="md-nav__link">
+    <span class="md-ellipsis">
+      🏁 Landing Page
+    </span>
+  </a>
+  
+</li>
       
+        <li class="md-nav__item">
+  <a href="#working-with-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      🗄️ Working with Examples
+    </span>
+  </a>
   
-  
-  
-  
-    
-    
-    
-    
+</li>
       
-        
-        
+        <li class="md-nav__item">
+  <a href="#modifying-cbc-programs" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧰 Modifying CbC Programs
+    </span>
+  </a>
+  
+</li>
       
-    
-    
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    </ul>
+  
+</nav>
       
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
-        
-          
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
-            
-  
-  
-  <span class="md-ellipsis">
-    CorC (Eclipse)
-    
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4">
-            <span class="md-nav__icon md-icon"></span>
-            CorC (Eclipse)
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../corc/corc-overview/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Overview
-    
-  </span>
-  
-
-      </a>
     </li>
   
 
@@ -778,12 +734,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../../corc/gettingstarted/" class="md-nav__link">
+      <a href="../gettingstarted_dev/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Getting Started
+    Getting Started for Devs
     
   </span>
   
@@ -801,12 +757,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../../corc/casestudies/" class="md-nav__link">
+      <a href="../releases/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Case Studies
+    Releases
     
   </span>
   
@@ -841,6 +797,52 @@
   
   
   
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#open-the-tool" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔗 Open the Tool
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#landing-page" class="md-nav__link">
+    <span class="md-ellipsis">
+      🏁 Landing Page
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#working-with-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      🗄️ Working with Examples
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#modifying-cbc-programs" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧰 Modifying CbC Programs
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -859,9 +861,56 @@
   
 
 
-  <h1>Getting Started</h1>
-
-
+<h1 id="webcorc-getting-started">🚀 WebCorC - Getting Started</h1>
+<p>WebCorC is the web-based CbC IDE. You can use the public instance right away or <a href="../gettingstarted_dev/">run it yourself</a>.</p>
+<h3 id="open-the-tool">🔗 Open the Tool</h3>
+<p>Open the public instance at <a href="https://corc.informatik.kit.edu/">corc.informatik.kit.edu</a>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Browser support</p>
+<p>WebKit-based browsers such as Safari are <strong>not</strong> supported. Use Chrome, Edge, or Firefox.</p>
+</div>
+<h3 id="landing-page">🏁 Landing Page</h3>
+<p>The landing page offers several actions to choose from.</p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>💡 <strong>Load Example</strong></td>
+<td>Choose a predefined example to be opened to try out WebCorC</td>
+</tr>
+<tr>
+<td>📩 <strong>Import File</strong></td>
+<td>Import an individual CbC diagram (.json)</td>
+</tr>
+<tr>
+<td>📃 <strong>Import Project</strong></td>
+<td>Import a whole WebCorC project (project .json)</td>
+</tr>
+<tr>
+<td>📂 <strong>Open Project</strong></td>
+<td>Open a project that already exists using its ID</td>
+</tr>
+</tbody>
+</table>
+<h3 id="working-with-examples">🗄️ Working with Examples</h3>
+<ol>
+<li>Choose an example to be opened from the landing page. The graphical editor will open with the chosen program shown.</li>
+<li>Click <strong>Verify</strong> in the top bar.</li>
+<li>Save the program with an individual name.</li>
+<li>WebCorC checks every refinement step with the deductive verifier <a href="https://www.key-project.org/">KeY</a>.</li>
+<li>Results of the verification are shown in the <em>‹› Console</em> tab on the right hand side of the UI. The verification result is also color-coded in the graphical editor at the respective refinement step.</li>
+</ol>
+<h3 id="modifying-cbc-programs">🧰 Modifying CbC Programs</h3>
+<ul>
+<li>The CbC program shown in the editor can be edited where necessary. Specifications may only be edited where introduced. The specification language is JML.</li>
+<li>Assignments and methods calls require explicit Java code.</li>
+<li>Once a project is saved, triggering verification auto-saves the current project status.</li>
+</ul>
 
 
 
@@ -897,7 +946,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../webcorc-overview/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Overview">
+          <a href="../../theory/cbc/example/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Practical Example">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -907,20 +956,20 @@
                 Previous
               </span>
               <div class="md-ellipsis">
-                Overview
+                Practical Example
               </div>
             </div>
           </a>
         
         
           
-          <a href="../../corc/corc-overview/" class="md-footer__link md-footer__link--next" aria-label="Next: Overview">
+          <a href="../gettingstarted_dev/" class="md-footer__link md-footer__link--next" aria-label="Next: Getting Started for Devs">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Overview
+                Getting Started for Devs
               </div>
             </div>
             <div class="md-footer__button md-icon">

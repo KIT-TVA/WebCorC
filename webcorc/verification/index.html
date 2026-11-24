@@ -8,7 +8,7 @@
       
       
       
-        <link rel="canonical" href="https://corc.informatik.kit.edu/corc/code-conversion/">
+        <link rel="canonical" href="https://corc.informatik.kit.edu/webcorc/verification/">
       
       
       
@@ -18,7 +18,7 @@
     
     
       
-        <title>Code conversion - WebCorC - Wiki</title>
+        <title>✅ Verification - WebCorC - Wiki</title>
       
     
     
@@ -70,7 +70,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#code-to-cbc" class="md-skip">
+        <a href="#verification" class="md-skip">
           Skip to content
         </a>
       
@@ -105,7 +105,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Code conversion
+              ✅ Verification
             
           </span>
         </div>
@@ -418,29 +418,6 @@
 
               
             
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../home/references/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    References
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
           </ul>
         </nav>
       
@@ -650,125 +627,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../../webcorc/webcorc-overview/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Overview
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../webcorc/gettingstarted/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Getting Started
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-    
-    
-      
-        
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
-        
-          
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
-            
-  
-  
-  <span class="md-ellipsis">
-    CorC (Eclipse)
-    
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4">
-            <span class="md-nav__icon md-icon"></span>
-            CorC (Eclipse)
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../corc-overview/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Overview
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../gettingstarted/" class="md-nav__link">
         
   
@@ -792,12 +650,35 @@
   
   
     <li class="md-nav__item">
-      <a href="../casestudies/" class="md-nav__link">
+      <a href="../gettingstarted_dev/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Case Studies
+    Getting Started for Devs
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../releases/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Releases
     
   </span>
   
@@ -832,23 +713,8 @@
   
   
   
+    
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#code-to-cbc" class="md-nav__link">
-    <span class="md-ellipsis">
-      Code to CbC
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
   
 </nav>
                   </div>
@@ -867,13 +733,8 @@
   
 
 
-  <h1>Code conversion</h1>
-
-<h2 id="code-to-cbc">Code to CbC</h2>
-<p>Use the Code to CbC extension to generate a CbC program from plain Java code. The extension generates the corresponding diagram in the graphical editor. Following the creation of the diagram, we must provide missing conditions for the refinement rules. Use the extension by:
-1. Select the Java source file.
-2. Press the context menu option <code>Generate Diagrams from Class</code>.
-3. Add additional conditions to the generated Java code using <a href="#references">JML</a>.</p>
+<h1 id="verification">✅ Verification</h1>
+<p>Verifying entire CbC programs and the application of refinement rules in CorC is possible through the deductive verifier <a href="https://www.key-project.org/thebook2/">KeY</a>. There are two ways to verify CbC programs in CorC: through the graphical editor and the textual editor. The <strong>verification process</strong> is identical for both extensions. Once the verification process is started, CorC generates <strong>proof obligations</strong> for KeY in <code>.key</code> files found in the current project folder. Every time KeY provides output, CorC shows status information depending on the response from KeY. Afterwards, the verification results are saved in <code>.proof</code> files next to their corresponding <code>.key</code> files. All successfully verified refinements are highlighted in green in the graphical editor if the verification was successful. If the proof for a refinement rule cannot be closed, CorC will highlight the refinement in red.</p>
 
 
 
