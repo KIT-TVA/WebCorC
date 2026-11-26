@@ -15,6 +15,8 @@ import edu.kit.cbc.common.corc.parsing.parser.ast.BinaryOperationTree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.CallTree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.ClassCallTree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.IdentTree;
+import edu.kit.cbc.common.corc.parsing.parser.ast.IntLiteralTree;
+import edu.kit.cbc.common.corc.parsing.parser.ast.LengthTree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.Tree;
 import edu.kit.cbc.common.corc.parsing.parser.ast.UnaryOperationTree;
 import edu.kit.cbc.common.corc.parsing.program.ast.LValue;

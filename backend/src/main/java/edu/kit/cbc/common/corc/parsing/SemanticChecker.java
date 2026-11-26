@@ -23,11 +23,7 @@ import edu.kit.cbc.common.corc.parsing.program.ast.AssignTree;
 import edu.kit.cbc.common.corc.parsing.program.ast.BlockTree;
 import edu.kit.cbc.common.corc.parsing.program.ast.StatementTree;
 import edu.kit.cbc.projects.files.controller.FilesController;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class SemanticChecker {
@@ -35,151 +31,160 @@ public class SemanticChecker {
     private static final java.util.List<String> IGNORED_VARIABLES = java.util.List.of("true", "false", "null");
 
     public static void check(Optional<String> projectId, CbCFormula formula, FilesController filesController) throws SemanticException {
-        Set<String> foundVariables = SemanticChecker.checkVariables(formula);
+        Scope scope = SemanticChecker.checkVariables(formula);
 
         //TODO: Check that Classes used and Method called do exist.
         JavaFileChecker fileChecker = new JavaFileChecker(projectId, filesController);
-        Map<String, List<String>> availableClassesAndMethods = fileChecker.checkFiles();
+        scope.merge(fileChecker.checkFiles());
 
         if (formula.getGlobalConditions() != null) {
             for (Condition condition : formula.getGlobalConditions()) {
-                checkCondition(condition, foundVariables, availableClassesAndMethods);
+                checkCondition(condition, scope);
             }
         }
 
-        SemanticChecker.checkStatement(formula.getStatement(), foundVariables, availableClassesAndMethods);
+        SemanticChecker.checkStatement(formula.getStatement(), scope);
     }
 
-    private static Set<String> checkVariables(CbCFormula formula) throws SemanticException {
+    private static Scope checkVariables(CbCFormula formula) {
         if (formula == null) {
-            return new HashSet<>();
+            return new Scope();
         }
 
-        Set<String> declaredVariables = new HashSet<>();
+        Scope scope = new Scope();
         if (formula.getJavaVariables() != null) {
-            declaredVariables = formula.getJavaVariables().stream()
+            scope.addAllVariables(
+                formula.getJavaVariables().stream()
                     .map(v -> {
                         String name = v.getName().trim();
                         String[] parts = name.split("\\s+");
                         String last = parts[parts.length - 1];
                         return last.replace("[]", "");
                     })
-                    .collect(Collectors.toSet());
+                    .collect(Collectors.toSet())
+            );
         }
 
-        return declaredVariables;
+        return scope;
     }
 
-    private static void checkStatement(AbstractStatement statement, Set<String> declaredVariables, Map<String, List<String>> availableClassesAndMethods)
+    private static void checkStatement(AbstractStatement statement, Scope scope)
             throws SemanticException {
         if (statement == null) {
             return;
         }
 
-        checkCondition(statement.getPreCondition(), declaredVariables, availableClassesAndMethods);
-        checkCondition(statement.getPostCondition(), declaredVariables, availableClassesAndMethods);
+        checkCondition(statement.getPreCondition(), scope);
+        checkCondition(statement.getPostCondition(), scope);
 
         switch (statement) {
             case CompositionStatement comp -> {
-                checkCondition(comp.getIntermediateCondition(), declaredVariables, availableClassesAndMethods);
-                checkStatement(comp.getFirstStatement(), declaredVariables, availableClassesAndMethods);
-                checkStatement(comp.getSecondStatement(), declaredVariables, availableClassesAndMethods);
+                checkCondition(comp.getIntermediateCondition(), scope);
+                checkStatement(comp.getFirstStatement(), scope);
+                checkStatement(comp.getSecondStatement(), scope);
             }
             case SelectionStatement sel -> {
                 if (sel.getGuards() != null) {
                     for (Condition guard : sel.getGuards()) {
-                        checkCondition(guard, declaredVariables, availableClassesAndMethods);
+                        checkCondition(guard, scope);
                     }
                 }
                 if (sel.getCommands() != null) {
                     for (AbstractStatement cmd : sel.getCommands()) {
-                        checkStatement(cmd, declaredVariables, availableClassesAndMethods);
+                        checkStatement(cmd, scope);
                     }
                 }
             }
             case SmallRepetitionStatement rep -> {
-                checkCondition(rep.getInvariant(), declaredVariables, availableClassesAndMethods);
-                checkCondition(rep.getVariant(), declaredVariables, availableClassesAndMethods);
-                checkCondition(rep.getGuard(), declaredVariables, availableClassesAndMethods);
-                checkStatement(rep.getLoopStatement(), declaredVariables, availableClassesAndMethods);
+                checkCondition(rep.getInvariant(), scope);
+                checkCondition(rep.getVariant(), scope);
+                checkCondition(rep.getGuard(), scope);
+                checkStatement(rep.getLoopStatement(), scope);
             }
-            case Statement stmt -> checkTree(stmt.getProgramTree(), declaredVariables, availableClassesAndMethods);
+            case Statement stmt -> checkTree(stmt.getProgramTree(), scope);
             default -> {
             }
         }
     }
 
-    private static void checkCondition(Condition condition, Set<String> declaredVariables, Map<String, List<String>> availableClassesAndMethods) throws SemanticException {
+    private static void checkCondition(Condition condition, Scope scope) throws SemanticException {
         if (condition == null) {
             return;
         }
-        checkTree(condition.getParsedCondition(), declaredVariables, availableClassesAndMethods);
+        checkTree(condition.getParsedCondition(), scope);
     }
 
-    private static void checkTree(Tree node, Set<String> scope, Map<String, List<String>> availableClassesAndMethods) throws SemanticException {
+    private static void checkTree(Tree node, Scope scope) throws SemanticException {
         switch (node) {
             case ForAllTree forAll -> {
-                Set<String> newScope = new HashSet<>(scope);
+                Scope newScope = new Scope(scope);
                 if (forAll.variable() != null) {
-                    newScope.add(forAll.variable().name());
+                    newScope.addVariable(forAll.variable().name());
                 }
-                checkTree(forAll.condition(), newScope, availableClassesAndMethods);
+                checkTree(forAll.condition(), newScope);
             }
             case ExistsTree exists -> {
-                Set<String> newScope = new HashSet<>(scope);
+                Scope newScope = new Scope(scope);
                 if (exists.variable() != null) {
-                    newScope.add(exists.variable().name());
+                    newScope.addVariable(exists.variable().name());
                 }
-                checkTree(exists.condition(), newScope, availableClassesAndMethods);
+                checkTree(exists.condition(), newScope);
             }
             case IdentTree id -> {
                 String name = id.name();
-                if (!scope.contains(name) && IGNORED_VARIABLES.stream().noneMatch(name::equalsIgnoreCase)) {
+                if (!scope.containsVariable(name) && IGNORED_VARIABLES.stream().noneMatch(name::equalsIgnoreCase)) {
                     throw new SemanticException("Variable '" + name + "' is used but not defined.");
                 }
             }
             case LengthTree len -> {
-                if (!scope.contains(len.variable())) {
+                if (!scope.containsVariable(len.variable())) {
                     throw new SemanticException("Variable '" + len.variable() + "' is used but not defined.");
                 }
             }
             case ArrayAcessTree arr -> {
-                checkTree(arr.name(), scope, availableClassesAndMethods);
-                checkTree(arr.expr(), scope, availableClassesAndMethods);
+                checkTree(arr.name(), scope);
+                checkTree(arr.expr(), scope);
             }
             case BinaryOperationTree bin -> {
-                checkTree(bin.lhs(), scope, availableClassesAndMethods);
-                checkTree(bin.rhs(), scope, availableClassesAndMethods);
+                checkTree(bin.lhs(), scope);
+                checkTree(bin.rhs(), scope);
             }
             case CallTree call -> {
                 if (call.params() != null) {
-                    for (Tree param : call.params()) {
-                        checkTree(param, scope, availableClassesAndMethods);
+                    if (scope.containsMethod(call.name().name())) {
+                        for (Tree param : call.params()) {
+                            checkTree(param, scope);
+                        }
+                    } else {
+                        throw new SemanticException("Method '" + call.name().name() + "' is used but not defined.");
                     }
+
                 }
             }
             case ClassCallTree classCall -> {
                 if (classCall.name() != null) {
-                    if (availableClassesAndMethods.containsKey(classCall.name().name())) {
-                        checkTree(classCall.call(), scope, availableClassesAndMethods);
+                    if (scope.containsClass(classCall.name().name())) {
+                        Scope newScope = new Scope(scope);
+                        newScope.filterClasses(classCall.name().name());
+                        checkTree(classCall.call(), newScope);
                     } else {
                         throw new SemanticException("Class '" + classCall.name().name() + "' is used but not defined.");
                     }
                 }
             }
-            case UnaryOperationTree un -> checkTree(un.expr(), scope, availableClassesAndMethods);
+            case UnaryOperationTree un -> checkTree(un.expr(), scope);
             case AssignTree assign -> {
-                checkTree(assign.name(), scope, availableClassesAndMethods);
-                checkTree(assign.expr(), scope, availableClassesAndMethods);
+                checkTree(assign.name(), scope);
+                checkTree(assign.expr(), scope);
             }
             case BlockTree block -> {
                 if (block.statements() != null) {
                     for (StatementTree stmt : block.statements()) {
-                        checkTree(stmt, scope, availableClassesAndMethods);
+                        checkTree(stmt, scope);
                     }
                 }
             }
-            case OldTree old -> checkTree(old.variable(), scope, availableClassesAndMethods);
+            case OldTree old -> checkTree(old.variable(), scope);
             default -> {
             }
         }
