@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/components/project-explorer/create-project-dialog/create-project-dialog.component.css"],
-  "sourcesContent": ["#projectName {\n    width: 100%;\n}\n\nmat-dialog-actions {\n    display: flex;\n    width: 100%;\n\n    .confirm {\n        margin-left: auto;\n    }\n}"],
-  "mappings": ";AAAA,CAAA;AACI,SAAA;AACJ;AAEA;AACI,WAAA;AACA,SAAA;AAKJ;AAPA,mBAII,CAAA;AACI,eAAA;AACJ;",
-  "names": []
-}

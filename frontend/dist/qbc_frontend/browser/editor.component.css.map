@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/components/editor/editor.component.css"],
-  "sourcesContent": [".toggleButton {\n  position: sticky;\n  top: 0;\n}\n\n.bottomContainer {\n  display: block;\n  border: 0;\n  bottom: 0;\n  width: 100%;\n  z-index: 1;\n}\n\n.tabContent {\n  display: flex;\n  height: 15em;\n}\n\n.resetButton {\n  position: fixed;\n  top: 80px;\n  right: 50px;\n  box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.75);\n  z-index: 1000;\n}\n\n#editorContainer {\n  height: 100%;\n  flex: auto;\n}\n\n#controlsBar {\n  padding: 10px 0 10px 10px;\n  border-bottom: 1px solid black;\n}\n\ntd {\n  padding: 5px 5px\n}\n"],
-  "mappings": ";AAAA,CAAA;AACE,YAAA;AACA,OAAA;AACF;AAEA,CAAA;AACE,WAAA;AACA,UAAA;AACA,UAAA;AACA,SAAA;AACA,WAAA;AACF;AAEA,CAAA;AACE,WAAA;AACA,UAAA;AACF;AAEA,CAAA;AACE,YAAA;AACA,OAAA;AACA,SAAA;AACA,cAAA,EAAA,EAAA,EAAA,IAAA,KAAA,GAAA,EAAA,GAAA,EAAA,GAAA,EAAA;AACA,WAAA;AACF;AAEA,CAAA;AACE,UAAA;AACA,QAAA;AACF;AAEA,CAAA;AACE,WAAA,KAAA,EAAA,KAAA;AACA,iBAAA,IAAA,MAAA;AACF;AAEA;AACE,WAAA,IAAA;AACF;",
-  "names": []
-}

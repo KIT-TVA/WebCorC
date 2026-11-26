@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/components/editor/statements/selection-statement/selection-statement.component.css"],
-  "sourcesContent": [".statements {\n    overflow: visible;\n\n    .add-row {\n        height: 3em;\n        color: #e0e0e0;\n    }\n\n    .statement-container {\n        display: flex;\n    height: 5em;\n    width: 100%;\n    gap: 10px;\n\n        .guard {\n            display: flex;\n            height: 100%;\n            min-width: 0;\n            overflow: hidden;\n            column-wrap: nowrap;\n        }\n\n        .statement {\n            align-content: center;\n            display: grid;\n            place-items: center;\n            flex: 0;\n            overflow: hidden;\n        }\n    }\n}\n"],
-  "mappings": ";AAAA,CAAA;AACI,YAAA;AA6BJ;AA9BA,CAAA,WAGI,CAAA;AACI,UAAA;AACA,SAAA;AACJ;AANJ,CAAA,WAQI,CAAA;AACI,WAAA;AACJ,UAAA;AACA,SAAA;AACA,OAAA;AAiBA;AA7BJ,CAAA,WAQI,CAAA,oBAMI,CAAA;AACI,WAAA;AACA,UAAA;AACA,aAAA;AACA,YAAA;AACA,eAAA;AACJ;AApBR,CAAA,WAQI,CAAA,oBAcI,CAAA;AACI,iBAAA;AACA,WAAA;AACA,eAAA;AACA,QAAA;AACA,YAAA;AACJ;",
-  "names": []
-}
