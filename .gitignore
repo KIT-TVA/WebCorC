@@ -131,6 +131,7 @@ replay_pid*
 # Frontend files
 frontend/node_modules
 frontend/.angular
+frontend/dist
 
 # Data from docker production deployment
 data/
