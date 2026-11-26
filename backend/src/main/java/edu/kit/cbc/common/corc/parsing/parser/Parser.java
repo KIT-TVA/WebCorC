@@ -45,7 +45,20 @@ public abstract class Parser {
     protected Tree parseClassCall() {
         final Identifier predicateName = tokenSource.expectIdentifier();
         tokenSource.expectSeparator(Separator.SeparatorType.DOT);
-        return new ClassCallTree(new IdentTree(predicateName.identifier()), this.parseCall());
+
+        if (this.tokenSource.hasMore()
+            && this.tokenSource.peek() instanceof Identifier
+            && this.tokenSource.hasMore(1)
+            && this.tokenSource.peek(1) instanceof Separator) {
+            return new ClassCallTree(new IdentTree(predicateName.identifier()), this.parseCall());
+        }
+
+        final Identifier second = this.tokenSource.expectIdentifier();
+        if (second.identifier().equals("length")) {
+            return new LengthTree(predicateName.identifier());
+        }
+
+        return new IdentTree(predicateName.identifier());
     }
 
     protected CallTree parseCall() {
@@ -159,16 +172,7 @@ public abstract class Parser {
                         yield this.parseArrayAccess();
                     }
                     if (type == Separator.SeparatorType.DOT) {
-                        //chained call (for example this.doThat())
-                        Identifier var = this.tokenSource.expectIdentifier();
-                        this.tokenSource.expectSeparator(Separator.SeparatorType.DOT);
-                        Identifier secondVar = this.tokenSource.expectIdentifier();
-
-                        if (secondVar.identifier().equals("length")) {
-                            yield new LengthTree(var.identifier());
-                        } else {
-                            yield new IdentTree(var.identifier() + "." + secondVar.identifier());
-                        }
+                        yield this.parseClassCall();
                     }
                 }
                 this.tokenSource.consume();

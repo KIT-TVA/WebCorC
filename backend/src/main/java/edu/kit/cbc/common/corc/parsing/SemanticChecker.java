@@ -153,6 +153,7 @@ public class SemanticChecker {
                 if (call.params() != null) {
                     if (scope.containsMethod(call.name().name())) {
                         for (Tree param : call.params()) {
+                            //TODO: compare provided argument against the method signature.
                             checkTree(param, scope);
                         }
                     } else {
