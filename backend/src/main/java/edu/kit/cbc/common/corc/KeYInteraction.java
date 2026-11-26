@@ -8,14 +8,13 @@ import de.uka.ilkd.key.settings.ChoiceSettings;
 import de.uka.ilkd.key.settings.ProofSettings;
 import de.uka.ilkd.key.strategy.StrategyProperties;
 import de.uka.ilkd.key.util.MiscTools;
-import org.jspecify.annotations.NonNull;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Information: This class is taken from <a href="https://github.com/KeYProject/key-java-example">here</a>.

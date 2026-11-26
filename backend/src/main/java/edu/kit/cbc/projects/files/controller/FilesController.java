@@ -30,12 +30,13 @@ import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
@@ -125,8 +126,7 @@ public class FilesController {
             .filter(obj -> obj.key().endsWith(extension))
             .map(obj ->
                 obj.key().substring((String.format(
-                    subFolder.isEmpty() ? PATH_FORMAT : SUBFOLDER_PATH_FORMAT
-                    , id, subFolder)).length())
+                    subFolder.isEmpty() ? PATH_FORMAT : SUBFOLDER_PATH_FORMAT, id, subFolder)).length())
             ).toList();
     }
 

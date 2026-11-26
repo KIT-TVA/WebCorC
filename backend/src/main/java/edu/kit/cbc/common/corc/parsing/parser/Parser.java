@@ -10,7 +10,13 @@ import edu.kit.cbc.common.corc.parsing.lexer.Keyword;
 import edu.kit.cbc.common.corc.parsing.lexer.NumberLiteral;
 import edu.kit.cbc.common.corc.parsing.lexer.Operator;
 import edu.kit.cbc.common.corc.parsing.lexer.Separator;
-import edu.kit.cbc.common.corc.parsing.parser.ast.*;
+import edu.kit.cbc.common.corc.parsing.parser.ast.ArrayAcessTree;
+import edu.kit.cbc.common.corc.parsing.parser.ast.BinaryOperationTree;
+import edu.kit.cbc.common.corc.parsing.parser.ast.CallTree;
+import edu.kit.cbc.common.corc.parsing.parser.ast.ClassCallTree;
+import edu.kit.cbc.common.corc.parsing.parser.ast.IdentTree;
+import edu.kit.cbc.common.corc.parsing.parser.ast.Tree;
+import edu.kit.cbc.common.corc.parsing.parser.ast.UnaryOperationTree;
 import edu.kit.cbc.common.corc.parsing.program.ast.LValue;
 import java.util.ArrayList;
 import java.util.List;
@@ -118,6 +124,7 @@ public abstract class Parser {
                 yield new OldTree(new IdentTree(var.identifier()));
             }
             case Operator(Operator.OperatorType type, var ignored) when type == Operator.OperatorType.FORALL -> {
+                //TODO: big parts of branch are identical to EXISTS branch
                 this.tokenSource.consume();
                 this.tokenSource.expectKeyword(Keyword.KeywordType.INT);
                 final Identifier var = this.tokenSource.expectIdentifier();

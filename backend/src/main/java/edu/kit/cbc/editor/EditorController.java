@@ -4,7 +4,6 @@ package edu.kit.cbc.editor;
 import edu.kit.cbc.common.Problem;
 import edu.kit.cbc.common.corc.cbcmodel.CbCFormula;
 import edu.kit.cbc.common.corc.codegeneration.CodeGenerator;
-import edu.kit.cbc.common.corc.parsing.JavaFileCheckerUtil;
 import edu.kit.cbc.common.corc.parsing.SemanticChecker;
 import edu.kit.cbc.editor.llm.LLMClientRegistry;
 import edu.kit.cbc.editor.llm.LLMQueryDto;
@@ -25,7 +24,10 @@ import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import jakarta.validation.Valid;
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 @Controller("/editor")
@@ -65,10 +67,7 @@ public class EditorController {
     public HttpResponse<?> verify(@QueryValue Optional<String> projectId, @Body @Valid CbCFormula formula)
         throws IOException {
         try {
-            Set<String> foundVariables = SemanticChecker.checkVariables(formula);
-            SemanticChecker.checkStatement(formula.getStatement(), foundVariables);
-            //TODO: Check that Classes used and Method called do exist.
-            JavaFileCheckerUtil.checkFiles(projectId.get(), this.filesController);
+            SemanticChecker.check(projectId, formula, filesController);
         } catch (edu.kit.cbc.common.corc.parsing.SemanticException e) {
 
             return HttpResponse
