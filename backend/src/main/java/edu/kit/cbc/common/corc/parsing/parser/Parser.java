@@ -138,8 +138,9 @@ public abstract class Parser {
 
                 yield new OldTree(new IdentTree(var.identifier()));
             }
-            case Operator(Operator.OperatorType type, var ignored) when type == Operator.OperatorType.FORALL -> {
-                //TODO: big parts of branch are identical to EXISTS branch
+            case Operator(Operator.OperatorType type, var ignored)
+                when type == Operator.OperatorType.FORALL || type == Operator.OperatorType.EXISTS -> {
+
                 this.tokenSource.consume();
                 this.tokenSource.expectKeyword(Keyword.KeywordType.INT);
                 final Identifier var = this.tokenSource.expectIdentifier();
@@ -149,19 +150,11 @@ public abstract class Parser {
                 Tree conditionTree = parseExpression();
                 this.tokenSource.expectSeparator(Separator.SeparatorType.PAREN_CLOSE);
 
-                yield new ForAllTree(new IdentTree(var.identifier()), conditionTree);
-            }
-            case Operator(Operator.OperatorType type, var ignored) when type == Operator.OperatorType.EXISTS -> {
-                this.tokenSource.consume();
-                this.tokenSource.expectKeyword(Keyword.KeywordType.INT);
-                final Identifier var = this.tokenSource.expectIdentifier();
-                this.tokenSource.expectSeparator(Separator.SeparatorType.SEMICOLON);
-
-                this.tokenSource.expectSeparator(Separator.SeparatorType.PAREN_OPEN);
-                Tree conditionTree = parseExpression();
-                this.tokenSource.expectSeparator(Separator.SeparatorType.PAREN_CLOSE);
-
-                yield new ExistsTree(new IdentTree(var.identifier()), conditionTree);
+                if (type == Operator.OperatorType.FORALL) {
+                    yield new ForAllTree(new IdentTree(var.identifier()), conditionTree);
+                } else {
+                    yield new ExistsTree(new IdentTree(var.identifier()), conditionTree);
+                }
             }
             case Identifier ident -> {
                 if (this.tokenSource.hasMore(1) && this.tokenSource.peek(1) instanceof Separator(Separator.SeparatorType type, var ignored)) {

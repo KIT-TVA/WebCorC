@@ -33,7 +33,6 @@ public class SemanticChecker {
     public static void check(Optional<String> projectId, CbCFormula formula, FilesController filesController) throws SemanticException {
         Scope scope = SemanticChecker.checkVariables(formula);
 
-        //TODO: Check that Classes used and Method called do exist.
         JavaFileChecker fileChecker = new JavaFileChecker(projectId, filesController);
         scope.merge(fileChecker.checkFiles());
 

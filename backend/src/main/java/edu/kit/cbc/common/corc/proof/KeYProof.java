@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import lombok.Builder;
 
@@ -109,7 +110,7 @@ public class KeYProof {
     }
 
     private String generateKeYHeader() {
-        String header  = ""; //TODO: Maybe String Joiner with Linebreaks
+        StringJoiner header  = new StringJoiner("");
 
         this.extractOldVariables(
             this.postCondition.getParsedCondition(),
@@ -118,19 +119,16 @@ public class KeYProof {
         );
 
         for (Path included : this.includedFiles) {
-            header += String.format(INCLUDE_FILES, included);
+            header.add(INCLUDE_FILES.formatted(included));
         }
 
         for (Path javaSource : this.javaSrcDirectories) {
-            header += INCLUDE_JAVA_DIRECTORIES.formatted(javaSource);
+            header.add(INCLUDE_JAVA_DIRECTORIES.formatted(javaSource));
         }
 
-        header += String.format(
-            KEY_HEADER,
-            this.printProgramVariables()
-        );
+        header.add(KEY_HEADER.formatted(this.printProgramVariables()));
 
-        return header;
+        return header.toString();
     }
 
     private String generateKeYBody() {
